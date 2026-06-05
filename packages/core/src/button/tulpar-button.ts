@@ -25,6 +25,19 @@ export class TulparButton extends LitElement {
   @property({ type: Boolean, reflect: true })
   loading = false;
 
+  @property({ type: Boolean, reflect: true, attribute: "icon-only" })
+  iconOnly = false;
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    if (this.iconOnly && !this.getAttribute("aria-label")) {
+      console.warn(
+        '[tulpar-button] icon-only buttons must have an aria-label for accessibility',
+        this,
+      );
+    }
+  }
+
   constructor() {
     super();
     this.addEventListener("click", this._handleClick);

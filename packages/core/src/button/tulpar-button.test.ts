@@ -69,4 +69,25 @@ describe("<tulpar-button>", () => {
       expect(clicked).to.be.false;
     });
   });
+
+  describe("icon-only mode", () => {
+    it("reflects icon-only attribute", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button icon-only aria-label="Save"></tulpar-button>`,
+      );
+      expect(el.hasAttribute("icon-only")).to.be.true;
+    });
+
+    it("warns when icon-only is used without aria-label (in dev)", async () => {
+      const warn = console.warn;
+      let warned = false;
+      console.warn = () => { warned = true; };
+      try {
+        await fixture<TulparButton>(html`<tulpar-button icon-only></tulpar-button>`);
+        expect(warned).to.be.true;
+      } finally {
+        console.warn = warn;
+      }
+    });
+  });
 });
