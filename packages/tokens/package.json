@@ -1,0 +1,34 @@
+{
+  "name": "@tulpar-ui/tokens",
+  "version": "0.0.0",
+  "description": "Design tokens for Tulpar UI",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./css/tulpar-light.css": "./dist/css/tulpar-light.css",
+    "./css/tulpar-dark.css": "./dist/css/tulpar-dark.css",
+    "./css/tulpar.css": "./dist/css/tulpar.css"
+  },
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "vite build && tsx build/generate-css.ts",
+    "build:css": "tsx build/generate-css.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "vite": "^5.1.0",
+    "vite-plugin-dts": "^3.7.0",
+    "vitest": "^1.3.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
