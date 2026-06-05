@@ -1,0 +1,9 @@
+@import "@tulpar-ui/tokens/css/tulpar.css";
+
+body {
+  font-family: var(--tulpar-font-family-body);
+  background: var(--tulpar-color-bg-surface);
+  color: var(--tulpar-color-text-primary);
+  margin: 0;
+  padding: 2rem;
+}
