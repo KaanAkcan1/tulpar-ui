@@ -90,4 +90,30 @@ describe("<tulpar-button>", () => {
       }
     });
   });
+
+  describe("polymorphism", () => {
+    it("renders an <a> element when href is set", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button href="/save">Save</tulpar-button>`,
+      );
+      const link = el.shadowRoot!.querySelector("a");
+      expect(link).to.exist;
+      expect(link!.getAttribute("href")).to.equal("/save");
+    });
+
+    it("renders a <button> element when href is NOT set", async () => {
+      const el = await fixture<TulparButton>(html`<tulpar-button>Save</tulpar-button>`);
+      expect(el.shadowRoot!.querySelector("button")).to.exist;
+      expect(el.shadowRoot!.querySelector("a")).to.not.exist;
+    });
+
+    it("applies aria-disabled to <a> instead of disabled attribute when disabled", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button href="/x" disabled>X</tulpar-button>`,
+      );
+      const link = el.shadowRoot!.querySelector("a");
+      expect(link!.getAttribute("aria-disabled")).to.equal("true");
+      expect(link!.getAttribute("tabindex")).to.equal("-1");
+    });
+  });
 });

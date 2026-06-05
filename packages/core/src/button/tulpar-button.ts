@@ -28,6 +28,15 @@ export class TulparButton extends LitElement {
   @property({ type: Boolean, reflect: true, attribute: "icon-only" })
   iconOnly = false;
 
+  @property({ type: String, reflect: true })
+  href?: string;
+
+  @property({ type: String, reflect: true })
+  target?: string;
+
+  @property({ type: String, reflect: true })
+  rel?: string;
+
   override connectedCallback(): void {
     super.connectedCallback();
     if (this.iconOnly && !this.getAttribute("aria-label")) {
@@ -51,6 +60,10 @@ export class TulparButton extends LitElement {
   };
 
   override render() {
+    return this.href ? this._renderAnchor() : this._renderButton();
+  }
+
+  private _renderButton() {
     return html`
       <button
         class="btn"
@@ -58,11 +71,33 @@ export class TulparButton extends LitElement {
         ?disabled=${this.disabled}
         aria-busy=${this.loading ? "true" : "false"}
       >
-        <slot name="start"></slot>
-        <slot></slot>
-        <slot name="end"></slot>
-        <span class="spinner" aria-hidden="true"></span>
+        ${this._renderContents()}
       </button>
+    `;
+  }
+
+  private _renderAnchor() {
+    return html`
+      <a
+        class="btn"
+        href=${this.disabled ? "javascript:void(0)" : (this.href ?? "")}
+        target=${this.target ?? ""}
+        rel=${this.rel ?? ""}
+        aria-disabled=${this.disabled ? "true" : "false"}
+        aria-busy=${this.loading ? "true" : "false"}
+        tabindex=${this.disabled ? "-1" : "0"}
+      >
+        ${this._renderContents()}
+      </a>
+    `;
+  }
+
+  private _renderContents() {
+    return html`
+      <slot name="start"></slot>
+      <slot></slot>
+      <slot name="end"></slot>
+      <span class="spinner" aria-hidden="true"></span>
     `;
   }
 }
