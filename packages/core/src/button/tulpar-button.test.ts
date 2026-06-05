@@ -116,4 +116,47 @@ describe("<tulpar-button>", () => {
       expect(link!.getAttribute("tabindex")).to.equal("-1");
     });
   });
+
+  describe("form integration", () => {
+    it("submits parent form when type='submit' is clicked", async () => {
+      let submitted = false;
+      const form = await fixture<HTMLFormElement>(html`
+        <form @submit=${(e: Event) => { e.preventDefault(); submitted = true; }}>
+          <tulpar-button type="submit">Save</tulpar-button>
+        </form>
+      `);
+      const btn = form.querySelector("tulpar-button") as TulparButton;
+      btn.shadowRoot!.querySelector("button")!.click();
+      await new Promise((r) => setTimeout(r, 0));
+      expect(submitted).to.be.true;
+    });
+
+    it("resets parent form when type='reset' is clicked", async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <input name="x" value="initial" />
+          <tulpar-button type="reset">Reset</tulpar-button>
+        </form>
+      `);
+      const input = form.querySelector("input")!;
+      input.value = "changed";
+      const btn = form.querySelector("tulpar-button") as TulparButton;
+      btn.shadowRoot!.querySelector("button")!.click();
+      await new Promise((r) => setTimeout(r, 0));
+      expect(input.value).to.equal("initial");
+    });
+
+    it("does NOT submit when disabled", async () => {
+      let submitted = false;
+      const form = await fixture<HTMLFormElement>(html`
+        <form @submit=${(e: Event) => { e.preventDefault(); submitted = true; }}>
+          <tulpar-button type="submit" disabled>Save</tulpar-button>
+        </form>
+      `);
+      const btn = form.querySelector("tulpar-button") as TulparButton;
+      btn.shadowRoot!.querySelector("button")!.click();
+      await new Promise((r) => setTimeout(r, 0));
+      expect(submitted).to.be.false;
+    });
+  });
 });

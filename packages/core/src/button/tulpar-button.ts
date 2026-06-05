@@ -9,6 +9,8 @@ export type ButtonType = "button" | "submit" | "reset";
 @customElement("tulpar-button")
 export class TulparButton extends LitElement {
   static override styles = buttonStyles;
+  static formAssociated = true;
+  private _internals: ElementInternals;
 
   @property({ type: String, reflect: true })
   variant: ButtonVariant = "primary";
@@ -49,6 +51,7 @@ export class TulparButton extends LitElement {
 
   constructor() {
     super();
+    this._internals = this.attachInternals();
     this.addEventListener("click", this._handleClick);
   }
 
@@ -56,6 +59,15 @@ export class TulparButton extends LitElement {
     if (this.disabled || this.loading) {
       e.preventDefault();
       e.stopImmediatePropagation();
+      return;
+    }
+    if (this.href) return; // anchor handles its own activation
+    const form = this._internals.form;
+    if (!form) return;
+    if (this.type === "submit") {
+      form.requestSubmit();
+    } else if (this.type === "reset") {
+      form.reset();
     }
   };
 
