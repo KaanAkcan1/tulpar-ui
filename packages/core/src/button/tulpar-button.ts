@@ -1,5 +1,6 @@
-import { LitElement, html, css } from "lit";
+import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import { buttonStyles } from "./tulpar-button.styles";
 
 export type ButtonVariant = "primary" | "secondary" | "danger" | "ghost" | "link";
 export type ButtonSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
@@ -7,15 +8,7 @@ export type ButtonType = "button" | "submit" | "reset";
 
 @customElement("tulpar-button")
 export class TulparButton extends LitElement {
-  static styles = css`
-    :host {
-      display: inline-flex;
-    }
-    button {
-      font: inherit;
-      cursor: pointer;
-    }
-  `;
+  static override styles = buttonStyles;
 
   @property({ type: String, reflect: true })
   variant: ButtonVariant = "primary";
@@ -27,7 +20,14 @@ export class TulparButton extends LitElement {
   type: ButtonType = "button";
 
   override render() {
-    return html`<button type=${this.type}><slot></slot></button>`;
+    return html`
+      <button class="btn" type=${this.type}>
+        <slot name="start"></slot>
+        <slot></slot>
+        <slot name="end"></slot>
+        <span class="spinner" aria-hidden="true"></span>
+      </button>
+    `;
   }
 }
 
