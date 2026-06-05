@@ -21,4 +21,24 @@ describe("<tulpar-button>", () => {
     const tag = el.shadowRoot!.querySelector("button");
     expect(tag).to.exist;
   });
+
+  describe("disabled state", () => {
+    it("reflects the disabled attribute to host", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button disabled>X</tulpar-button>`,
+      );
+      expect(el.hasAttribute("disabled")).to.be.true;
+      expect(el.disabled).to.be.true;
+    });
+
+    it("does NOT dispatch click events when disabled", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button disabled>X</tulpar-button>`,
+      );
+      let clicked = false;
+      el.addEventListener("click", () => { clicked = true; });
+      el.shadowRoot!.querySelector("button")!.click();
+      expect(clicked).to.be.false;
+    });
+  });
 });

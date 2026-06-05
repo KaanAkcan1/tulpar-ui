@@ -19,9 +19,24 @@ export class TulparButton extends LitElement {
   @property({ type: String, reflect: true })
   type: ButtonType = "button";
 
+  @property({ type: Boolean, reflect: true })
+  disabled = false;
+
+  constructor() {
+    super();
+    this.addEventListener("click", this._handleClick);
+  }
+
+  private _handleClick = (e: Event) => {
+    if (this.disabled) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }
+  };
+
   override render() {
     return html`
-      <button class="btn" type=${this.type}>
+      <button class="btn" type=${this.type} ?disabled=${this.disabled}>
         <slot name="start"></slot>
         <slot></slot>
         <slot name="end"></slot>
