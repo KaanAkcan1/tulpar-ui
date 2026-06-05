@@ -134,4 +134,21 @@ export const buttonStyles = css`
 
   /* --- Position context for spinner --- */
   .btn { position: relative; }
+
+  /* --- Button-group positioning (set by tulpar-button-group via attribute) --- */
+  :host([data-group-position="middle"]) .btn {
+    border-radius: 0;
+  }
+  :host([data-group-position="first"]) .btn {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  :host([data-group-position="last"]) .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  :host([data-group-position="middle"]),
+  :host([data-group-position="last"]) {
+    margin-left: -1px;
+  }
 `;
