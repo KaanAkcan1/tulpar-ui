@@ -22,13 +22,16 @@ export class TulparButton extends LitElement {
   @property({ type: Boolean, reflect: true })
   disabled = false;
 
+  @property({ type: Boolean, reflect: true })
+  loading = false;
+
   constructor() {
     super();
     this.addEventListener("click", this._handleClick);
   }
 
   private _handleClick = (e: Event) => {
-    if (this.disabled) {
+    if (this.disabled || this.loading) {
       e.preventDefault();
       e.stopImmediatePropagation();
     }
@@ -36,7 +39,12 @@ export class TulparButton extends LitElement {
 
   override render() {
     return html`
-      <button class="btn" type=${this.type} ?disabled=${this.disabled}>
+      <button
+        class="btn"
+        type=${this.type}
+        ?disabled=${this.disabled}
+        aria-busy=${this.loading ? "true" : "false"}
+      >
         <slot name="start"></slot>
         <slot></slot>
         <slot name="end"></slot>

@@ -41,4 +41,32 @@ describe("<tulpar-button>", () => {
       expect(clicked).to.be.false;
     });
   });
+
+  describe("loading state", () => {
+    it("reflects loading attribute and sets aria-busy", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button loading>X</tulpar-button>`,
+      );
+      expect(el.hasAttribute("loading")).to.be.true;
+      expect(el.shadowRoot!.querySelector("button")!.getAttribute("aria-busy")).to.equal("true");
+    });
+
+    it("renders a spinner when loading", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button loading>X</tulpar-button>`,
+      );
+      const spinner = el.shadowRoot!.querySelector(".spinner");
+      expect(spinner).to.exist;
+    });
+
+    it("suppresses clicks when loading", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button loading>X</tulpar-button>`,
+      );
+      let clicked = false;
+      el.addEventListener("click", () => { clicked = true; });
+      el.shadowRoot!.querySelector("button")!.click();
+      expect(clicked).to.be.false;
+    });
+  });
 });
