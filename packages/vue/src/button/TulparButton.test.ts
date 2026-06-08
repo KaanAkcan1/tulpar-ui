@@ -27,4 +27,23 @@ describe("TulparButton", () => {
     await wrapper.find("tulpar-button").trigger("click");
     expect(wrapper.emitted("click")).toBeTruthy();
   });
+
+  it("passes v0.3 props through to the underlying tulpar-button", () => {
+    const wrapper = mount(TulparButton, {
+      props: {
+        severity: "danger",
+        variant: "outlined",
+        shape: "round",
+        raised: true,
+        iconSeparator: true,
+        loadingLabel: "Saving…",
+      },
+      slots: { default: "Delete" },
+    });
+    const inner = wrapper.find("tulpar-button");
+    expect(inner.attributes("severity")).toBe("danger");
+    expect(inner.attributes("variant")).toBe("outlined");
+    expect(inner.attributes("shape")).toBe("round");
+    expect(inner.attributes("loading-label")).toBe("Saving…");
+  });
 });
