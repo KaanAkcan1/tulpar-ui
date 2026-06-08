@@ -77,13 +77,16 @@ export const tulparLight: SemanticTokens = {
       subtleHover: c.stone[200],
     },
     premium: {
-      // Gold accent as a first-class semantic role — marketing CTAs,
-      // upgrade flows, premium feature buttons.
-      default: c.gold[700],
-      hover: c.gold[800],
-      active: c.gold[900],
+      // Gold is mid-luminance — using DARK text + BRIGHTENING on hover/active
+      // (vs the standard "deepen on interaction" pattern) is the only path
+      // that keeps every state above WCAG AA contrast. Visual reflex: a
+      // "premium glow up" on interaction — gold gets brighter as you push.
+      // gold.500 default matches the original D4 spec brand accent value.
+      default: c.gold[500],
+      hover: c.gold[400],
+      active: c.gold[300],
       disabled: c.stone[300],
-      onColor: c.stone[50],
+      onColor: c.stone[900],
       subtle: c.gold[50],
       subtleHover: c.gold[100],
     },

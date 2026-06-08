@@ -42,11 +42,11 @@ describe("tulparLight", () => {
     expect(tulparLight.color.neutral.hover).toBe("#292524");
   });
 
-  it("uses gold.700 for premium severity (marketing/upgrade CTAs)", () => {
-    expect(tulparLight.color.premium.default).toBe("#6f5b32"); // gold.700
-    expect(tulparLight.color.premium.hover).toBe("#4a3d22"); // gold.800
-    expect(tulparLight.color.premium.active).toBe("#2a2412"); // gold.900
-    expect(tulparLight.color.premium.onColor).toBe("#fafaf9"); // stone.50 white text
+  it("uses gold.500 for premium severity + DARK text + brighten-on-hover (matches D4 brand accent)", () => {
+    expect(tulparLight.color.premium.default).toBe("#b8985a"); // gold.500
+    expect(tulparLight.color.premium.hover).toBe("#c9a23e"); // gold.400 (brighter)
+    expect(tulparLight.color.premium.active).toBe("#dbb958"); // gold.300 (brightest)
+    expect(tulparLight.color.premium.onColor).toBe("#1c1917"); // stone.900 dark text
     expect(tulparLight.color.premium.subtle).toBe("#fbf6e9"); // gold.50
   });
 
