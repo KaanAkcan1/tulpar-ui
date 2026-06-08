@@ -4,11 +4,13 @@ import { primitiveShadow } from "./shadow";
 import { primitiveTransition } from "./transition";
 
 describe("primitiveRadius", () => {
-  it("provides radius scale from none to full", () => {
+  it("provides radius scale from none to full (conservative — D4 reflex)", () => {
     expect(primitiveRadius.none).toBe("0");
     expect(primitiveRadius.sm).toBe("2px");
-    expect(primitiveRadius.md).toBe("6px");
-    expect(primitiveRadius.lg).toBe("8px");
+    expect(primitiveRadius.md).toBe("4px");
+    expect(primitiveRadius.lg).toBe("6px");
+    expect(primitiveRadius.xl).toBe("12px");
+    expect(primitiveRadius["2xl"]).toBe("16px");
     expect(primitiveRadius.full).toBe("9999px");
   });
 });
