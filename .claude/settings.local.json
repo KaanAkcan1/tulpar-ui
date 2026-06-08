@@ -90,7 +90,8 @@
       "WebSearch",
       "WebFetch(domain:primeng.org)",
       "Bash(Select-String \"color.test|primitive\")",
-      "Bash(pnpm --filter @tulpar-ui/vue build)"
+      "Bash(pnpm --filter @tulpar-ui/vue build)",
+      "Bash(grep -A1 \"dark .* {$\" \"c:/Source/Kaan/tulpar-ui/packages/tokens/dist/css/tulpar.css\")"
     ]
   }
 }
