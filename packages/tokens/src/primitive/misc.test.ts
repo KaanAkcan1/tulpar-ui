@@ -16,14 +16,18 @@ describe("primitiveRadius", () => {
 });
 
 describe("primitiveShadow", () => {
-  it("provides shadow scale from none to xl", () => {
+  it("provides shadow scale from none to xl (navy-tinted)", () => {
     expect(primitiveShadow.none).toBe("none");
-    expect(primitiveShadow.sm).toContain("rgba");
-    expect(primitiveShadow.lg).toContain("rgba");
+    expect(primitiveShadow.xs).toContain("rgba(10, 37, 64");
+    expect(primitiveShadow.sm).toContain("rgba(10, 37, 64");
+    expect(primitiveShadow.md).toContain("rgba(10, 37, 64");
+    expect(primitiveShadow.lg).toContain("rgba(10, 37, 64");
+    expect(primitiveShadow.xl).toContain("rgba(10, 37, 64");
   });
 
-  it("focus shadow includes a ring with 3px spread", () => {
+  it("focus shadow uses navy tint and 3px spread", () => {
     expect(primitiveShadow.focus).toMatch(/0 0 0 3px/);
+    expect(primitiveShadow.focus).toContain("rgba(10, 37, 64, 0.40)");
   });
 });
 
