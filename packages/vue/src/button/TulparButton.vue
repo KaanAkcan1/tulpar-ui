@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed, useSlots, type Component } from "vue";
 import "@tulpar-ui/core/button";
 
 export type ButtonSeverity =
@@ -42,6 +43,17 @@ export type ButtonColor =
   | "pink"
   | "rose";
 
+/** Default icon size per button size — matches the token scale. */
+const ICON_SIZE_BY_BUTTON_SIZE: Record<ButtonSize, number> = {
+  xs: 12,
+  sm: 14,
+  md: 16,
+  lg: 18,
+  xl: 20,
+  "2xl": 24,
+  "3xl": 28,
+};
+
 interface Props {
   severity?: ButtonSeverity;
   variant?: ButtonVariant;
@@ -64,6 +76,11 @@ interface Props {
   target?: string;
   rel?: string;
   ariaLabel?: string;
+  tooltip?: string;
+  /** Lucide-vue-next component (or any Vue component accepting :size) */
+  icon?: Component;
+  /** Optional override for icon size; defaults to button's size-scale value. */
+  iconSize?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -87,6 +104,14 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   click: [event: MouseEvent];
 }>();
+
+const slots = useSlots();
+
+/** Auto icon-only when an `icon` is set AND no default-slot content was passed. */
+const autoIconOnly = computed(() => Boolean(props.icon) && !slots.default);
+
+/** Effective icon size: explicit `iconSize` overrides per-size default. */
+const effectiveIconSize = computed(() => props.iconSize ?? ICON_SIZE_BY_BUTTON_SIZE[props.size]);
 </script>
 
 <template>
@@ -105,15 +130,23 @@ const emit = defineEmits<{
     :loading="props.loading || null"
     :loading-label="props.loadingLabel ?? null"
     :loading-position="props.loadingPosition"
-    :icon-only="props.iconOnly || null"
+    :icon-only="props.iconOnly || autoIconOnly || null"
     :icon-position="props.iconPosition"
     :icon-separator="props.iconSeparator || null"
     :href="props.href ?? null"
     :target="props.target ?? null"
     :rel="props.rel ?? null"
     :aria-label="props.ariaLabel ?? null"
+    :tooltip="props.tooltip ?? null"
     @click="(e: MouseEvent) => emit('click', e)"
   >
+    <!--
+      :icon prop renders inside <span slot="start">.
+      For non-Lucide libraries, consumers still use <span slot="start"> directly.
+    -->
+    <span v-if="props.icon" slot="start">
+      <component :is="props.icon" :size="effectiveIconSize" />
+    </span>
     <slot name="start" />
     <slot />
     <slot name="end" />

@@ -270,6 +270,39 @@ describe("<tulpar-button>", () => {
     });
   });
 
+  describe("tooltip", () => {
+    it("renders a tooltip span when tooltip attribute is set", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button tooltip="Delete item">X</tulpar-button>`,
+      );
+      const tip = el.shadowRoot!.querySelector(".tooltip");
+      expect(tip).to.exist;
+      expect(tip!.getAttribute("role")).to.equal("tooltip");
+      expect(tip!.textContent?.trim()).to.equal("Delete item");
+    });
+
+    it("does NOT render tooltip span when tooltip is unset", async () => {
+      const el = await fixture<TulparButton>(html`<tulpar-button>X</tulpar-button>`);
+      expect(el.shadowRoot!.querySelector(".tooltip")).to.not.exist;
+    });
+
+    it("sets aria-describedby on the inner button when tooltip is set", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button tooltip="Save changes">X</tulpar-button>`,
+      );
+      const btn = el.shadowRoot!.querySelector("button")!;
+      expect(btn.getAttribute("aria-describedby")).to.equal("tulpar-btn-tooltip");
+    });
+
+    it("sets aria-describedby on the anchor when tooltip + href are both set", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button tooltip="Open" href="/x">X</tulpar-button>`,
+      );
+      const anchor = el.shadowRoot!.querySelector("a")!;
+      expect(anchor.getAttribute("aria-describedby")).to.equal("tulpar-btn-tooltip");
+    });
+  });
+
   describe("polymorphism", () => {
     it("renders an <a> when href is set", async () => {
       const el = await fixture<TulparButton>(

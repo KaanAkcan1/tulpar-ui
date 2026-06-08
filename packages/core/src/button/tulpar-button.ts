@@ -152,6 +152,10 @@ export class TulparButton extends LitElement {
   @property({ type: String, reflect: true })
   type: ButtonType = "button";
 
+  // --- Tooltip ---
+  @property({ type: String, reflect: true })
+  tooltip?: string;
+
   constructor() {
     super();
     this._internals = this.attachInternals();
@@ -215,7 +219,9 @@ export class TulparButton extends LitElement {
   };
 
   override render() {
-    return this.href ? this._renderAnchor() : this._renderButton();
+    return html`
+      ${this.href ? this._renderAnchor() : this._renderButton()} ${this._renderTooltip()}
+    `;
   }
 
   private _renderButton() {
@@ -225,6 +231,7 @@ export class TulparButton extends LitElement {
         type=${this.type}
         ?disabled=${this.disabled}
         aria-busy=${this.loading ? "true" : "false"}
+        aria-describedby=${this.tooltip ? "tulpar-btn-tooltip" : ""}
       >
         ${this._renderContents()}
       </button>
@@ -240,11 +247,19 @@ export class TulparButton extends LitElement {
         rel=${this.rel ?? ""}
         aria-disabled=${this.disabled ? "true" : "false"}
         aria-busy=${this.loading ? "true" : "false"}
+        aria-describedby=${this.tooltip ? "tulpar-btn-tooltip" : ""}
         tabindex=${this.disabled ? "-1" : "0"}
       >
         ${this._renderContents()}
       </a>
     `;
+  }
+
+  private _renderTooltip() {
+    if (!this.tooltip) return "";
+    return html`<span class="tooltip" role="tooltip" id="tulpar-btn-tooltip"
+      >${this.tooltip}</span
+    >`;
   }
 
   private _renderContents() {

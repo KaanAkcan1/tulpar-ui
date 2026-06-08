@@ -6,6 +6,7 @@ export const buttonStyles = css`
    * ============================================================ */
   :host {
     display: inline-flex;
+    position: relative; /* anchor for absolutely-positioned tooltip */
 
     /* Default severity (primary) — color stops feed the variant rules below.
        Severity selectors below override these. JS color attribute overrides
@@ -478,6 +479,40 @@ export const buttonStyles = css`
   /* icon-only does NOT hide the default slot — consumer may put their icon
      there or in start/end. The label-text wrapper still renders empty when
      no text is provided. */
+
+  /* ============================================================
+   * Tooltip (string-only, hover/focus reveal, fixed-below position)
+   * ============================================================ */
+  .tooltip {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--tulpar-color-text-primary, #1c1917);
+    color: var(--tulpar-color-text-inverse, #fafaf9);
+    font-family: var(--tulpar-font-family-ui, system-ui);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.3;
+    padding: 6px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 150ms ease;
+    z-index: 100;
+    box-shadow: 0 2px 6px rgba(10, 37, 64, 0.18);
+  }
+  :host(:hover) .tooltip,
+  :host(:focus-within) .tooltip {
+    opacity: 1;
+  }
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .tooltip {
+      transition: none;
+    }
+  }
 
   /* ============================================================
    * Group positioning — row (default)
