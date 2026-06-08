@@ -7,3 +7,4 @@ export type {
   VariantColorTokens,
 } from "./semantic/types";
 export { tulparLight, tulparDark } from "./brand/tulpar";
+export { FALLBACKS, type FallbackKey } from "./fallbacks";

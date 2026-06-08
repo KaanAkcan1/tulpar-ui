@@ -11,6 +11,10 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./fallbacks": {
+      "types": "./dist/fallbacks.d.ts",
+      "import": "./dist/fallbacks.js"
+    },
     "./css/tulpar-light.css": "./dist/css/tulpar-light.css",
     "./css/tulpar-dark.css": "./dist/css/tulpar-dark.css",
     "./css/tulpar.css": "./dist/css/tulpar.css"
@@ -20,8 +24,10 @@
     "README.md"
   ],
   "scripts": {
+    "prebuild": "tsx build/generate-fallbacks.ts",
     "build": "vite build && tsx build/generate-css.ts",
     "build:css": "tsx build/generate-css.ts",
+    "build:fallbacks": "tsx build/generate-fallbacks.ts",
     "test": "vitest run",
     "test:watch": "vitest"
   },
