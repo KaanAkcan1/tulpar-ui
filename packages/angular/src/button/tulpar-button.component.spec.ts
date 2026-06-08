@@ -15,21 +15,39 @@ describe("TulparButtonComponent (smoke)", () => {
     expect(TulparButtonComponent.name).toBe("TulparButtonComponent");
   });
 
-  it("instances have the expected signal-based inputs", () => {
+  it("provides the v0.3 signal-based inputs", () => {
     const instance = runInInjectionContext(injector, () => new TulparButtonComponent());
+    expect(typeof instance.severity).toBe("function");
     expect(typeof instance.variant).toBe("function");
+    expect(typeof instance.color).toBe("function");
+    expect(typeof instance.shape).toBe("function");
     expect(typeof instance.size).toBe("function");
-    expect(typeof instance.type).toBe("function");
-    expect(typeof instance.disabled).toBe("function");
-    expect(typeof instance.loading).toBe("function");
+    expect(typeof instance.raised).toBe("function");
+    expect(typeof instance.block).toBe("function");
+    expect(typeof instance.justify).toBe("function");
+    expect(typeof instance.iconPosition).toBe("function");
+    expect(typeof instance.iconSeparator).toBe("function");
+    expect(typeof instance.loadingLabel).toBe("function");
+    expect(typeof instance.loadingPosition).toBe("function");
+    expect(typeof instance.dataDisabled).toBe("function");
   });
 
-  it("defaults reflect spec (variant=primary, size=md, type=button)", () => {
+  it("defaults match the v0.3 spec", () => {
     const instance = runInInjectionContext(injector, () => new TulparButtonComponent());
-    expect(instance.variant()).toBe("primary");
+    expect(instance.severity()).toBe("primary");
+    expect(instance.variant()).toBe("solid");
+    expect(instance.shape()).toBe("default");
     expect(instance.size()).toBe("md");
-    expect(instance.type()).toBe("button");
+    expect(instance.justify()).toBe("center");
+    expect(instance.iconPosition()).toBe("start");
+    expect(instance.loadingPosition()).toBe("center");
+    expect(instance.raised()).toBe(false);
+    expect(instance.block()).toBe(false);
+    expect(instance.iconSeparator()).toBe(false);
     expect(instance.disabled()).toBe(false);
+    expect(instance.dataDisabled()).toBe(false);
     expect(instance.loading()).toBe(false);
+    expect(instance.color()).toBeUndefined();
+    expect(instance.loadingLabel()).toBeUndefined();
   });
 });
