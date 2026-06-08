@@ -60,4 +60,55 @@ describe("<tulpar-button-group>", () => {
     await el.updateComplete;
     expect(document.activeElement).to.equal(buttons[0]);
   });
+
+  describe("stacked layout", () => {
+    it("reflects stacked attribute and sets data-group-orientation on children", async () => {
+      const el = await fixture<TulparButtonGroup>(html`
+        <tulpar-button-group stacked>
+          <tulpar-button>A</tulpar-button>
+          <tulpar-button>B</tulpar-button>
+          <tulpar-button>C</tulpar-button>
+        </tulpar-button-group>
+      `);
+      await el.updateComplete;
+      const buttons = el.querySelectorAll("tulpar-button");
+      buttons.forEach((btn) => {
+        expect(btn.getAttribute("data-group-orientation")).to.equal("stacked");
+      });
+    });
+
+    it("ArrowDown moves focus to next button when stacked", async () => {
+      const el = await fixture<TulparButtonGroup>(html`
+        <tulpar-button-group stacked>
+          <tulpar-button>A</tulpar-button>
+          <tulpar-button>B</tulpar-button>
+        </tulpar-button-group>
+      `);
+      await el.updateComplete;
+      const buttons = el.querySelectorAll("tulpar-button");
+      buttons[0].focus();
+      buttons[0].dispatchEvent(
+        new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }),
+      );
+      await el.updateComplete;
+      expect(document.activeElement).to.equal(buttons[1]);
+    });
+
+    it("ArrowRight is ignored when stacked (no horizontal nav)", async () => {
+      const el = await fixture<TulparButtonGroup>(html`
+        <tulpar-button-group stacked>
+          <tulpar-button>A</tulpar-button>
+          <tulpar-button>B</tulpar-button>
+        </tulpar-button-group>
+      `);
+      await el.updateComplete;
+      const buttons = el.querySelectorAll("tulpar-button");
+      buttons[0].focus();
+      buttons[0].dispatchEvent(
+        new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }),
+      );
+      await el.updateComplete;
+      expect(document.activeElement).to.equal(buttons[0]); // unchanged
+    });
+  });
 });

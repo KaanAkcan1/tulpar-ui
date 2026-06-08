@@ -1,10 +1,13 @@
 import { LitElement, html } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { buttonGroupStyles } from "./tulpar-button-group.styles";
 
 @customElement("tulpar-button-group")
 export class TulparButtonGroup extends LitElement {
   static override styles = buttonGroupStyles;
+
+  @property({ type: Boolean, reflect: true })
+  stacked = false;
 
   override connectedCallback(): void {
     super.connectedCallback();
@@ -20,6 +23,12 @@ export class TulparButtonGroup extends LitElement {
     this.removeEventListener("keydown", this._handleKeydown);
   }
 
+  override updated(changed: Map<string, unknown>): void {
+    if (changed.has("stacked")) {
+      this._positionChildren();
+    }
+  }
+
   private _buttons(): HTMLElement[] {
     return Array.from(this.querySelectorAll("tulpar-button"));
   }
@@ -33,7 +42,13 @@ export class TulparButtonGroup extends LitElement {
 
   private _positionChildren(): void {
     const buttons = this._buttons();
+    const orientation = this.stacked ? "stacked" : "";
     buttons.forEach((btn, i) => {
+      if (orientation) {
+        btn.setAttribute("data-group-orientation", orientation);
+      } else {
+        btn.removeAttribute("data-group-orientation");
+      }
       if (buttons.length === 1) {
         btn.removeAttribute("data-group-position");
       } else if (i === 0) {
@@ -51,12 +66,15 @@ export class TulparButtonGroup extends LitElement {
     const currentIndex = buttons.findIndex((b) => b === document.activeElement);
     if (currentIndex === -1) return;
 
+    const nextKey = this.stacked ? "ArrowDown" : "ArrowRight";
+    const prevKey = this.stacked ? "ArrowUp" : "ArrowLeft";
+
     let nextIndex = currentIndex;
     switch (e.key) {
-      case "ArrowRight":
+      case nextKey:
         nextIndex = (currentIndex + 1) % buttons.length;
         break;
-      case "ArrowLeft":
+      case prevKey:
         nextIndex = (currentIndex - 1 + buttons.length) % buttons.length;
         break;
       case "Home":
