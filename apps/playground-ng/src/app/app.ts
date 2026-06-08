@@ -371,7 +371,7 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Escape hatch: non-Lucide libraries (Heroico
             <code class="inline-code">round</code> (pill), and
             <code class="inline-code">circle</code> (icon-only).
           </p>
-          <div class="preview preview--baseline">
+          <div class="preview">
             <tulpar-button-ng shape="default">Default</tulpar-button-ng>
             <tulpar-button-ng shape="round">Round</tulpar-button-ng>
             <tulpar-button-ng shape="circle" [icon]="Plus" ariaLabel="Add item"></tulpar-button-ng>

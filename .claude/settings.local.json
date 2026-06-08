@@ -111,7 +111,8 @@
       "Bash(pnpm dev *)",
       "Bash(tee c:/tmp/brainstorm/dev.log)",
       "Bash(grep -q \"ready in\" c:/tmp/brainstorm/dev.log)",
-      "Bash(node verify_shape.mjs)"
+      "Bash(node verify_shape.mjs)",
+      "PowerShell(pnpm lint 2>&1)"
     ]
   }
 }
