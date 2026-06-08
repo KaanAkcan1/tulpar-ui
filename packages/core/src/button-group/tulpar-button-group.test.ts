@@ -121,7 +121,7 @@ describe("<tulpar-button-group>", () => {
     await el.updateComplete;
     const direct = el.querySelectorAll(":scope > tulpar-button");
     expect(direct.length).to.equal(2);
-    const nested = el.querySelector("div tulpar-button")!;
+    const nested = el.querySelector(":scope > div > tulpar-button")!;
     expect(nested.hasAttribute("data-group-position")).to.be.false;
   });
 });
