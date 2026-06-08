@@ -478,4 +478,34 @@ describe("<tulpar-button>", () => {
       expect(count).to.equal(1);
     });
   });
+
+  describe("form value parity", () => {
+    it("carries name/value into FormData on submit", async () => {
+      let captured: FormData | null = null;
+      const form = await fixture<HTMLFormElement>(html`
+        <form
+          @submit=${(e: Event) => {
+            e.preventDefault();
+            captured = new FormData(e.target as HTMLFormElement);
+          }}
+        >
+          <tulpar-button type="submit" name="action" value="save">Save</tulpar-button>
+        </form>
+      `);
+      const btn = form.querySelector("tulpar-button") as TulparButton;
+      btn.shadowRoot!.querySelector("button")!.click();
+      await new Promise((r) => setTimeout(r, 0));
+      expect(captured).to.not.be.null;
+      expect(captured!.get("action")).to.equal("save");
+    });
+
+    it("reflects value attribute changes back to the property", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button name="x" value="initial">A</tulpar-button>`,
+      );
+      el.value = "updated";
+      await el.updateComplete;
+      expect(el.value).to.equal("updated");
+    });
+  });
 });

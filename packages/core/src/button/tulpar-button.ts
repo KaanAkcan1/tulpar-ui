@@ -152,6 +152,12 @@ export class TulparButton extends LitElement {
   @property({ type: String, reflect: true })
   type: ButtonType = "button";
 
+  @property({ type: String, reflect: true })
+  name?: string;
+
+  @property({ type: String, reflect: true })
+  value?: string;
+
   // --- Tooltip ---
   @property({ type: String, reflect: true })
   tooltip?: string;
@@ -213,11 +219,15 @@ export class TulparButton extends LitElement {
     if (!form) return;
     if (this.type === "submit") {
       e.preventDefault();
-      // TODO(B2): pass `this` as submitter once name/value parity lands.
-      // Current Chromium rejects FACEs as `requestSubmit` submitters
-      // ("not a submit button"); B2 will introduce the submitter pathway
-      // (likely via a hidden <input type="submit"> trampoline).
+      // Chromium rejects FACEs as `requestSubmit` submitters ("not a submit
+      // button"), so we can't pass `this`. Instead, push our value into
+      // FormData via ElementInternals.setFormValue right before submit, then
+      // clear it after so we don't contribute to submits driven by another
+      // button. The `name` attribute is read by the browser as the FormData
+      // key during form participation.
+      this._internals.setFormValue(this.value ?? null);
       form.requestSubmit();
+      this._internals.setFormValue(null);
     } else if (this.type === "reset") {
       e.preventDefault();
       form.reset();
