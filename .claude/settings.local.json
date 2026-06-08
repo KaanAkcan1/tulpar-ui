@@ -92,7 +92,9 @@
       "Bash(Select-String \"color.test|primitive\")",
       "Bash(pnpm --filter @tulpar-ui/vue build)",
       "Bash(grep -A1 \"dark .* {$\" \"c:/Source/Kaan/tulpar-ui/packages/tokens/dist/css/tulpar.css\")",
-      "Bash(pnpm --filter @tulpar-ui/core build)"
+      "Bash(pnpm --filter @tulpar-ui/core build)",
+      "Bash(pnpm --filter playground-vue add lucide-vue-next)",
+      "Bash(pnpm --filter playground-ng add lucide-angular)"
     ]
   }
 }
