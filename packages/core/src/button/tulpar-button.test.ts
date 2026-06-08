@@ -406,6 +406,14 @@ describe("<tulpar-button>", () => {
       expect(link!.getAttribute("aria-disabled")).to.equal("true");
       expect(link!.getAttribute("tabindex")).to.equal("-1");
     });
+
+    it("disabled anchor has no href attribute (CSP-safe)", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button href="/x" disabled>X</tulpar-button>`,
+      );
+      const a = el.shadowRoot!.querySelector("a")!;
+      expect(a.hasAttribute("href")).to.be.false;
+    });
   });
 
   describe("form integration", () => {

@@ -1,4 +1,4 @@
-import { LitElement, html } from "lit";
+import { LitElement, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { buttonStyles } from "./tulpar-button.styles";
 
@@ -258,9 +258,9 @@ export class TulparButton extends LitElement {
     return html`
       <a
         class="btn"
-        href=${this.disabled ? "javascript:void(0)" : (this.href ?? "")}
-        target=${this.target ?? ""}
-        rel=${this.rel ?? ""}
+        href=${this.disabled ? nothing : (this.href ?? nothing)}
+        target=${this.target ?? nothing}
+        rel=${this.rel ?? nothing}
         aria-disabled=${this.disabled ? "true" : "false"}
         aria-busy=${this.loading ? "true" : "false"}
         aria-describedby=${this.tooltip ? "tulpar-btn-tooltip" : ""}
