@@ -88,7 +88,9 @@
       "WebFetch(domain:carbondesignsystem.com)",
       "WebFetch(domain:react.carbondesignsystem.com)",
       "WebSearch",
-      "WebFetch(domain:primeng.org)"
+      "WebFetch(domain:primeng.org)",
+      "Bash(Select-String \"color.test|primitive\")",
+      "Bash(pnpm --filter @tulpar-ui/vue build)"
     ]
   }
 }
