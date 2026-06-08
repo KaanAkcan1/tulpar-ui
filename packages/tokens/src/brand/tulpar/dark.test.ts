@@ -2,17 +2,27 @@ import { describe, it, expect } from "vitest";
 import { tulparDark } from "./dark";
 
 describe("tulparDark", () => {
-  it("uses dark gray as surface background", () => {
-    expect(tulparDark.color.bg.surface).toMatch(/#111827|#1f2937/);
+  it("uses stone.900 as surface and lighter stone for text", () => {
+    expect(tulparDark.color.bg.surface).toBe("#1c1917"); // stone.900
+    expect(tulparDark.color.text.primary).toBe("#fafaf9"); // stone.50
   });
-  it("uses light gray for primary text", () => {
-    expect(tulparDark.color.text.primary).toMatch(/#f9fafb|#f3f4f6/);
+
+  it("uses navy.400 as brand default (lighter for dark contrast)", () => {
+    expect(tulparDark.color.brand.default).toBe("#3a679f");
   });
-  it("uses blue.400 (lighter) as brand default for better contrast on dark", () => {
-    expect(tulparDark.color.brand.default).toBe("#60a5fa");
+
+  it("uses navy.300 @ 60% as focus ring", () => {
+    expect(tulparDark.color.focusRing).toBe("rgba(102, 137, 184, 0.60)");
   });
-  it("button sizes are identical across modes (only colors differ)", () => {
+
+  it("button sizes identical across modes (only colors differ); border-radius 4px", () => {
     expect(tulparDark.button.size.md.height).toBe("40px");
     expect(tulparDark.button.size.xs.height).toBe("24px");
+    expect(tulparDark.button.borderRadius).toBe("4px");
+  });
+
+  it("uses Source Sans 3 for ui font and Source Serif 4 for display", () => {
+    expect(tulparDark.font.family.ui).toContain("Source Sans 3");
+    expect(tulparDark.font.family.display).toContain("Source Serif 4");
   });
 });

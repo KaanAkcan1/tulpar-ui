@@ -65,7 +65,8 @@ export interface SemanticTokens {
   button: ButtonTokens;
   font: {
     family: {
-      body: string;
+      display: string;
+      ui: string;
       mono: string;
     };
   };
