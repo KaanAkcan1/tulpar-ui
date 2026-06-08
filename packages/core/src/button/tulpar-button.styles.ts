@@ -469,6 +469,12 @@ export const buttonStyles = css`
   /* ============================================================
    * Icon-only mode
    * ============================================================ */
+  :host([icon-only]) .btn,
+  :host([shape="circle"]) .btn {
+    /* Empty .label/.end are still flex items; gap between them would
+       shift the lone icon off-center. Collapse gap so centering is true. */
+    gap: 0;
+  }
   :host([icon-only]) .btn {
     padding: 0;
     width: var(--_btn-height);

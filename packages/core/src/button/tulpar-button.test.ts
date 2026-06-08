@@ -220,6 +220,24 @@ describe("<tulpar-button>", () => {
         console.warn = warn;
       }
     });
+
+    it("collapses .btn gap to 0 so a lone icon stays centered", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button icon-only aria-label="Add"><span slot="start">+</span></tulpar-button>`,
+      );
+      const btn = el.shadowRoot!.querySelector(".btn") as HTMLElement;
+      expect(getComputedStyle(btn).gap).to.equal("0px");
+    });
+
+    it("collapses .btn gap to 0 for shape=circle as well", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button shape="circle" aria-label="Add"
+          ><span slot="start">+</span></tulpar-button
+        >`,
+      );
+      const btn = el.shadowRoot!.querySelector(".btn") as HTMLElement;
+      expect(getComputedStyle(btn).gap).to.equal("0px");
+    });
   });
 
   describe("icon-position layout", () => {
