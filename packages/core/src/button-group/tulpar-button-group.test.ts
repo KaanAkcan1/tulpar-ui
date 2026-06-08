@@ -138,4 +138,40 @@ describe("<tulpar-button-group>", () => {
     const nested = el.querySelector(":scope > div > tulpar-button")!;
     expect(nested.hasAttribute("data-group-position")).to.be.false;
   });
+
+  it("re-syncs tabindex when a button is added after mount", async () => {
+    const el = await fixture<TulparButtonGroup>(html`
+      <tulpar-button-group>
+        <tulpar-button>A</tulpar-button>
+        <tulpar-button>B</tulpar-button>
+      </tulpar-button-group>
+    `);
+    await el.updateComplete;
+    const newBtn = document.createElement("tulpar-button");
+    newBtn.textContent = "C";
+    el.appendChild(newBtn);
+    await new Promise((r) => setTimeout(r, 0));
+    const buttons = el.querySelectorAll(":scope > tulpar-button");
+    expect(buttons.length).to.equal(3);
+    expect(buttons[2].getAttribute("data-group-position")).to.equal("last");
+    expect(buttons[1].getAttribute("data-group-position")).to.equal("middle");
+  });
+
+  it("re-syncs tabindex when a button is removed after mount", async () => {
+    const el = await fixture<TulparButtonGroup>(html`
+      <tulpar-button-group>
+        <tulpar-button>A</tulpar-button>
+        <tulpar-button>B</tulpar-button>
+        <tulpar-button>C</tulpar-button>
+      </tulpar-button-group>
+    `);
+    await el.updateComplete;
+    const middle = el.querySelectorAll(":scope > tulpar-button")[1];
+    middle.remove();
+    await new Promise((r) => setTimeout(r, 0));
+    const remaining = el.querySelectorAll(":scope > tulpar-button");
+    expect(remaining.length).to.equal(2);
+    expect(remaining[0].getAttribute("data-group-position")).to.equal("first");
+    expect(remaining[1].getAttribute("data-group-position")).to.equal("last");
+  });
 });

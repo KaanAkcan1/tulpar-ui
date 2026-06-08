@@ -8,24 +8,30 @@ export class TulparButtonGroup extends LitElement {
   @property({ type: Boolean, reflect: true })
   stacked = false;
 
+  private _observer?: MutationObserver;
+
   override connectedCallback(): void {
     super.connectedCallback();
     this.addEventListener("keydown", this._handleKeydown);
-    queueMicrotask(() => {
-      this._initializeTabindex();
-      this._positionChildren();
-    });
+    this._observer = new MutationObserver(() => this._sync());
+    this._observer.observe(this, { childList: true });
+    this._sync();
   }
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     this.removeEventListener("keydown", this._handleKeydown);
+    this._observer?.disconnect();
+    this._observer = undefined;
   }
 
   override updated(changed: Map<string, unknown>): void {
-    if (changed.has("stacked")) {
-      this._positionChildren();
-    }
+    if (changed.has("stacked")) this._sync();
+  }
+
+  private _sync(): void {
+    this._initializeTabindex();
+    this._positionChildren();
   }
 
   private _buttons(): HTMLElement[] {
