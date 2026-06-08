@@ -351,6 +351,15 @@ describe("<tulpar-button>", () => {
     });
   });
 
+  describe("focus ring", () => {
+    it("uses outline + outline-offset (not box-shadow) for focus-visible", async () => {
+      const { buttonStyles } = await import("./tulpar-button.styles");
+      const cssText = (buttonStyles as { cssText: string }).cssText;
+      expect(cssText).to.include("outline-offset");
+      expect(cssText).to.include("forced-colors");
+    });
+  });
+
   describe("tooltip", () => {
     it("renders a tooltip span when tooltip attribute is set", async () => {
       const el = await fixture<TulparButton>(

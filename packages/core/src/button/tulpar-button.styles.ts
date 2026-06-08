@@ -377,8 +377,13 @@ export const buttonStyles = css`
    * Focus ring
    * ============================================================ */
   .btn:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px var(--tulpar-color-focus-ring, rgba(10, 37, 64, 0.4));
+    outline: 2px solid var(--tulpar-color-focus-ring, var(--_btn-color-active));
+    outline-offset: 2px;
+  }
+  @media (forced-colors: active) {
+    .btn:focus-visible {
+      outline-color: CanvasText;
+    }
   }
 
   /* ============================================================
