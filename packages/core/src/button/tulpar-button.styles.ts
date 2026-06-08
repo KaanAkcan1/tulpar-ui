@@ -417,7 +417,7 @@ export const buttonStyles = css`
     border: 2px solid currentColor;
     border-top-color: transparent;
     border-radius: 50%;
-    animation: tulpar-spin 600ms linear infinite;
+    animation: tulpar-button-spin 600ms linear infinite;
     display: inline-block;
   }
 
@@ -469,7 +469,7 @@ export const buttonStyles = css`
     display: inline;
   }
 
-  @keyframes tulpar-spin {
+  @keyframes tulpar-button-spin {
     to {
       transform: rotate(360deg);
     }
