@@ -279,6 +279,50 @@ describe("<tulpar-button>", () => {
       const separators = el.shadowRoot!.querySelectorAll(".separator");
       expect(separators.length).to.equal(2); // start + end
     });
+
+    it("only shows separator on the side with a slotted icon", async () => {
+      const startOnly = await fixture<TulparButton>(
+        html`<tulpar-button icon-separator
+          ><span slot="start">i</span>Label</tulpar-button
+        >`,
+      );
+      const startSep = startOnly.shadowRoot!.querySelector(".separator--start")!;
+      const endSep = startOnly.shadowRoot!.querySelector(".separator--end")!;
+      expect(getComputedStyle(startSep).display).to.equal("block");
+      expect(getComputedStyle(endSep).display).to.equal("none");
+
+      const endOnly = await fixture<TulparButton>(
+        html`<tulpar-button icon-separator>Label<span slot="end">i</span></tulpar-button>`,
+      );
+      expect(getComputedStyle(endOnly.shadowRoot!.querySelector(".separator--start")!).display).to.equal(
+        "none",
+      );
+      expect(getComputedStyle(endOnly.shadowRoot!.querySelector(".separator--end")!).display).to.equal(
+        "block",
+      );
+
+      const both = await fixture<TulparButton>(
+        html`<tulpar-button icon-separator
+          ><span slot="start">a</span>Label<span slot="end">b</span></tulpar-button
+        >`,
+      );
+      expect(getComputedStyle(both.shadowRoot!.querySelector(".separator--start")!).display).to.equal(
+        "block",
+      );
+      expect(getComputedStyle(both.shadowRoot!.querySelector(".separator--end")!).display).to.equal(
+        "block",
+      );
+
+      const none = await fixture<TulparButton>(
+        html`<tulpar-button icon-separator>Label</tulpar-button>`,
+      );
+      expect(getComputedStyle(none.shadowRoot!.querySelector(".separator--start")!).display).to.equal(
+        "none",
+      );
+      expect(getComputedStyle(none.shadowRoot!.querySelector(".separator--end")!).display).to.equal(
+        "none",
+      );
+    });
   });
 
   describe("modifiers", () => {

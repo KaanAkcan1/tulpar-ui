@@ -98,7 +98,20 @@
       "Bash(pnpm -F @tulpar-ui/core build)",
       "Bash(pnpm -F @tulpar-ui/core test)",
       "Bash(echo \"exit=$?\")",
-      "Bash(pnpm -F @tulpar-ui/vue build)"
+      "Bash(pnpm -F @tulpar-ui/vue build)",
+      "Bash(python \"C:\\\\Users\\\\kaan.akcan\\\\.claude\\\\skills\\\\webapp-testing\\\\scripts\\\\with_server.py\" --server \"pnpm --filter playground-vue dev\" --port 5173 -- python c:/tmp/brainstorm/verify_shape.py)",
+      "Bash(where py *)",
+      "Bash(py --version)",
+      "Bash(where python *)",
+      "Bash(python -c \"import playwright\")",
+      "Bash(npm init *)",
+      "Bash(npm i *)",
+      "Bash(npx playwright *)",
+      "Bash(pnpm --filter @tulpar-ui/core lint)",
+      "Bash(pnpm dev *)",
+      "Bash(tee c:/tmp/brainstorm/dev.log)",
+      "Bash(grep -q \"ready in\" c:/tmp/brainstorm/dev.log)",
+      "Bash(node verify_shape.mjs)"
     ]
   }
 }

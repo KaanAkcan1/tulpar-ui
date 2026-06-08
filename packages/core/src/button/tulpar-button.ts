@@ -265,7 +265,7 @@ export class TulparButton extends LitElement {
   private _renderContents() {
     return html`
       <span class="start">
-        <slot name="start"></slot>
+        <slot name="start" @slotchange=${this._onStartSlotChange}></slot>
       </span>
       <span class="separator separator--start" aria-hidden="true"></span>
       <span class="label">
@@ -274,7 +274,7 @@ export class TulparButton extends LitElement {
       </span>
       <span class="separator separator--end" aria-hidden="true"></span>
       <span class="end">
-        <slot name="end"></slot>
+        <slot name="end" @slotchange=${this._onEndSlotChange}></slot>
       </span>
       <span class="spinner" aria-hidden="true">
         <slot name="loading-icon">
@@ -282,6 +282,22 @@ export class TulparButton extends LitElement {
         </slot>
       </span>
     `;
+  }
+
+  private _onStartSlotChange = (e: Event): void => {
+    this.toggleAttribute("data-has-start", TulparButton._slotHasContent(e.target as HTMLSlotElement));
+  };
+
+  private _onEndSlotChange = (e: Event): void => {
+    this.toggleAttribute("data-has-end", TulparButton._slotHasContent(e.target as HTMLSlotElement));
+  };
+
+  private static _slotHasContent(slot: HTMLSlotElement): boolean {
+    return slot.assignedNodes({ flatten: true }).some((n) => {
+      if (n.nodeType === Node.ELEMENT_NODE) return true;
+      if (n.nodeType === Node.TEXT_NODE) return (n.textContent ?? "").trim() !== "";
+      return false;
+    });
   }
 }
 

@@ -332,7 +332,14 @@ export const buttonStyles = css`
     background: var(--tulpar-button-separator-color, var(--_btn-separator));
     flex-shrink: 0;
   }
-  :host([icon-separator]) .separator {
+  /* Only show the separator on the side that actually has a slotted icon.
+     data-has-start / data-has-end are toggled by slotchange listeners,
+     so empty .start / .end wrappers do not get a phantom 1px line when
+     the user only passed an icon on one side. */
+  :host([icon-separator][data-has-start]) .separator--start {
+    display: block;
+  }
+  :host([icon-separator][data-has-end]) .separator--end {
     display: block;
   }
 
