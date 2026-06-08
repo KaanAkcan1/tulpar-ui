@@ -19,34 +19,54 @@ function onSubmit(event: Event) {
 </script>
 
 <template>
-  <h1>Tulpar UI — Vue Playground</h1>
+  <h1>Tulpar UI — Vue Playground (v0.3)</h1>
 
-  <button @click="toggleDark">Toggle dark mode (current: {{ isDark ? "dark" : "light" }})</button>
+  <button @click="toggleDark">
+    Toggle dark mode (current: {{ isDark ? "dark" : "light" }})
+  </button>
 
   <section>
-    <h2>Variants</h2>
-    <TulparButton variant="primary">Primary</TulparButton>
-    <TulparButton variant="secondary">Secondary</TulparButton>
-    <TulparButton variant="danger">Danger</TulparButton>
+    <h2>Severities × Solid variant</h2>
+    <TulparButton severity="primary">Primary</TulparButton>
+    <TulparButton severity="secondary">Secondary</TulparButton>
+    <TulparButton severity="info">Info</TulparButton>
+    <TulparButton severity="success">Success</TulparButton>
+    <TulparButton severity="warn">Warn</TulparButton>
+    <TulparButton severity="help">Help</TulparButton>
+    <TulparButton severity="danger">Danger</TulparButton>
+    <TulparButton severity="contrast">Contrast</TulparButton>
+  </section>
+
+  <section>
+    <h2>Variants × Primary</h2>
+    <TulparButton variant="solid">Solid</TulparButton>
+    <TulparButton variant="outlined">Outlined</TulparButton>
+    <TulparButton variant="tonal">Tonal</TulparButton>
     <TulparButton variant="ghost">Ghost</TulparButton>
     <TulparButton variant="link">Link</TulparButton>
   </section>
 
   <section>
-    <h2>Sizes</h2>
-    <TulparButton size="xs">xs</TulparButton>
-    <TulparButton size="sm">sm</TulparButton>
-    <TulparButton size="md">md</TulparButton>
-    <TulparButton size="lg">lg</TulparButton>
-    <TulparButton size="xl">xl</TulparButton>
-    <TulparButton size="2xl">2xl</TulparButton>
-    <TulparButton size="3xl">3xl</TulparButton>
+    <h2>Color overrides</h2>
+    <TulparButton color="gold">Gold</TulparButton>
+    <TulparButton color="emerald" variant="tonal">Emerald tonal</TulparButton>
+    <TulparButton color="rose" variant="outlined">Rose outlined</TulparButton>
+    <TulparButton color="indigo">Indigo</TulparButton>
+    <TulparButton color="yellow">Yellow (auto-dark text)</TulparButton>
   </section>
 
   <section>
-    <h2>States</h2>
-    <TulparButton disabled>Disabled</TulparButton>
-    <TulparButton loading>Loading</TulparButton>
+    <h2>Shapes + modifiers</h2>
+    <TulparButton shape="round">Round</TulparButton>
+    <TulparButton raised>Raised</TulparButton>
+    <TulparButton raised severity="danger">Raised danger</TulparButton>
+  </section>
+
+  <section>
+    <h2>Loading</h2>
+    <TulparButton loading>Save</TulparButton>
+    <TulparButton loading loading-label="Saving…">Save</TulparButton>
+    <TulparButton loading loading-position="start">Save</TulparButton>
   </section>
 
   <section>
@@ -54,7 +74,7 @@ function onSubmit(event: Event) {
     <form @submit="onSubmit">
       <input name="email" type="email" placeholder="Email" />
       <TulparButton type="submit">Submit</TulparButton>
-      <TulparButton type="reset" variant="secondary">Reset</TulparButton>
+      <TulparButton type="reset" severity="secondary" variant="outlined">Reset</TulparButton>
     </form>
     <p v-if="submittedEmail">Submitted: {{ submittedEmail }}</p>
   </section>
@@ -73,6 +93,7 @@ section {
 }
 section > * {
   margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 form {
   display: flex;
@@ -83,10 +104,11 @@ input {
   height: 40px;
   padding: 0 12px;
   border: 1px solid var(--tulpar-color-border-default);
-  border-radius: 6px;
+  border-radius: 4px;
 }
 h1,
 h2 {
   color: var(--tulpar-color-text-primary);
+  font-family: var(--tulpar-font-family-display);
 }
 </style>
