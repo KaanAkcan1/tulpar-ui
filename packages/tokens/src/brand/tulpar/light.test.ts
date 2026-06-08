@@ -42,6 +42,14 @@ describe("tulparLight", () => {
     expect(tulparLight.color.neutral.hover).toBe("#292524");
   });
 
+  it("uses gold.700 for premium severity (marketing/upgrade CTAs)", () => {
+    expect(tulparLight.color.premium.default).toBe("#6f5b32"); // gold.700
+    expect(tulparLight.color.premium.hover).toBe("#4a3d22"); // gold.800
+    expect(tulparLight.color.premium.active).toBe("#2a2412"); // gold.900
+    expect(tulparLight.color.premium.onColor).toBe("#fafaf9"); // stone.50 white text
+    expect(tulparLight.color.premium.subtle).toBe("#fbf6e9"); // gold.50
+  });
+
   it("uses navy@40% as focus ring", () => {
     expect(tulparLight.color.focusRing).toBe("rgba(10, 37, 64, 0.40)");
   });

@@ -28,6 +28,12 @@ describe("tulparDark", () => {
     expect(tulparDark.color.focusRing).toBe("rgba(102, 137, 184, 0.60)");
   });
 
+  it("uses gold.400 for premium severity in dark mode (AA contrast with stone.900 text)", () => {
+    expect(tulparDark.color.premium.default).toBe("#c9a23e"); // gold.400
+    expect(tulparDark.color.premium.hover).toBe("#dbb958"); // gold.300
+    expect(tulparDark.color.premium.onColor).toBe("#1c1917"); // stone.900
+  });
+
   it("button sizes identical across modes; border-radius 4px", () => {
     expect(tulparDark.button.size.md.height).toBe("40px");
     expect(tulparDark.button.borderRadius).toBe("4px");

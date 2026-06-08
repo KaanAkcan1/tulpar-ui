@@ -66,7 +66,17 @@ const meta: Meta = {
   argTypes: {
     severity: {
       control: "select",
-      options: ["primary", "secondary", "info", "success", "warn", "help", "danger", "contrast"],
+      options: [
+        "primary",
+        "secondary",
+        "info",
+        "success",
+        "warn",
+        "help",
+        "danger",
+        "contrast",
+        "premium",
+      ],
     },
     variant: {
       control: "select",
@@ -130,6 +140,7 @@ export const AllSeverities: Story = {
       <tulpar-button severity="help">Help</tulpar-button>
       <tulpar-button severity="danger">Danger</tulpar-button>
       <tulpar-button severity="contrast">Contrast</tulpar-button>
+      <tulpar-button severity="premium">Premium</tulpar-button>
     </div>
   `,
 };

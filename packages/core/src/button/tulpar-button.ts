@@ -10,7 +10,8 @@ export type ButtonSeverity =
   | "warn"
   | "help"
   | "danger"
-  | "contrast";
+  | "contrast"
+  | "premium";
 
 export type ButtonVariant = "solid" | "outlined" | "tonal" | "ghost" | "link";
 

@@ -26,6 +26,7 @@ export interface ColorTokens {
   info: VariantColorTokens;
   help: VariantColorTokens;
   contrast: VariantColorTokens;
+  premium: VariantColorTokens;
   neutral: VariantColorTokens;
   focusRing: string;
 }

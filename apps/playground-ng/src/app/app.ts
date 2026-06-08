@@ -23,6 +23,7 @@ import { TulparButtonComponent } from '@tulpar-ui/angular';
       <tulpar-button-ng severity="help">Help</tulpar-button-ng>
       <tulpar-button-ng severity="danger">Danger</tulpar-button-ng>
       <tulpar-button-ng severity="contrast">Contrast</tulpar-button-ng>
+      <tulpar-button-ng severity="premium">Premium</tulpar-button-ng>
     </section>
 
     <section>

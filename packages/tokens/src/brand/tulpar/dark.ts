@@ -80,6 +80,15 @@ export const tulparDark: SemanticTokens = {
       subtle: c.stone[800],
       subtleHover: c.stone[700],
     },
+    premium: {
+      default: c.gold[400],
+      hover: c.gold[300],
+      active: c.gold[200],
+      disabled: c.stone[700],
+      onColor: c.stone[900],
+      subtle: c.stone[800],
+      subtleHover: c.stone[700],
+    },
     neutral: {
       default: c.stone[700],
       hover: c.stone[600],

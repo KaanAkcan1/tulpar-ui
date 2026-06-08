@@ -33,6 +33,7 @@ function onSubmit(event: Event) {
     <TulparButton severity="help">Help</TulparButton>
     <TulparButton severity="danger">Danger</TulparButton>
     <TulparButton severity="contrast">Contrast</TulparButton>
+    <TulparButton severity="premium">Premium</TulparButton>
   </section>
 
   <section>

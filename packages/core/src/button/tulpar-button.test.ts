@@ -42,6 +42,7 @@ describe("<tulpar-button>", () => {
         "help",
         "danger",
         "contrast",
+        "premium",
       ] as const;
       for (const s of severities) {
         const el = await fixture<TulparButton>(

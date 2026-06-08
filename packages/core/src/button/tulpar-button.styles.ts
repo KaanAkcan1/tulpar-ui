@@ -103,6 +103,15 @@ export const buttonStyles = css`
     --_btn-color-subtle: var(--tulpar-color-contrast-subtle);
     --_btn-color-subtle-hover: var(--tulpar-color-contrast-subtle-hover);
   }
+  :host([severity="premium"]) {
+    --_btn-color-default: var(--tulpar-color-premium-default);
+    --_btn-color-hover: var(--tulpar-color-premium-hover);
+    --_btn-color-active: var(--tulpar-color-premium-active);
+    --_btn-color-disabled: var(--tulpar-color-premium-disabled);
+    --_btn-color-on: var(--tulpar-color-premium-on-color);
+    --_btn-color-subtle: var(--tulpar-color-premium-subtle);
+    --_btn-color-subtle-hover: var(--tulpar-color-premium-subtle-hover);
+  }
 
   /* ============================================================
    * Button base

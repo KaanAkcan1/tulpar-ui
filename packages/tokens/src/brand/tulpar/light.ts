@@ -76,6 +76,17 @@ export const tulparLight: SemanticTokens = {
       subtle: c.stone[100],
       subtleHover: c.stone[200],
     },
+    premium: {
+      // Gold accent as a first-class semantic role — marketing CTAs,
+      // upgrade flows, premium feature buttons.
+      default: c.gold[700],
+      hover: c.gold[800],
+      active: c.gold[900],
+      disabled: c.stone[300],
+      onColor: c.stone[50],
+      subtle: c.gold[50],
+      subtleHover: c.gold[100],
+    },
     neutral: {
       default: c.stone[700],
       hover: c.stone[800],
