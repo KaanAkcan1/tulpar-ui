@@ -384,7 +384,7 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
           <code class="inline-code">round</code> (pill), and
           <code class="inline-code">circle</code> (icon-only).
         </p>
-        <div class="preview preview--baseline">
+        <div class="preview">
           <TulparButton shape="default">Default</TulparButton>
           <TulparButton shape="round">Round</TulparButton>
           <TulparButton shape="circle" :icon="Plus" aria-label="Add item" />
