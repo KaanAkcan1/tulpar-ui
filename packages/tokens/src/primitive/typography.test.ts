@@ -9,9 +9,7 @@ describe("primitiveTypography", () => {
   });
 
   it("does NOT expose the deprecated v0.1 `body` font family (renamed to `ui`)", () => {
-    expect(
-      (primitiveTypography.fontFamily as Record<string, string>).body,
-    ).toBeUndefined();
+    expect((primitiveTypography.fontFamily as Record<string, string>).body).toBeUndefined();
   });
 
   it("provides 11-step type scale from xs to 7xl", () => {

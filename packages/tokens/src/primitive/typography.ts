@@ -1,11 +1,8 @@
 export const primitiveTypography = {
   fontFamily: {
-    display:
-      '"Source Serif 4", "Source Serif Pro", Georgia, serif',
-    ui:
-      '"Source Sans 3", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-    mono:
-      '"JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, monospace',
+    display: '"Source Serif 4", "Source Serif Pro", Georgia, serif',
+    ui: '"Source Sans 3", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    mono: '"JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, monospace',
   },
   fontSize: {
     xs: "12px",

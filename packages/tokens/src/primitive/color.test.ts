@@ -51,11 +51,27 @@ describe("primitiveColor", () => {
 
   it("every ramp has all 11 stops (50–950) with valid hex format", () => {
     const ramps = [
-      "navy", "gold", "stone", "slate",
-      "red", "orange", "amber", "yellow",
-      "lime", "green", "emerald", "teal",
-      "cyan", "sky", "blue", "indigo",
-      "violet", "purple", "fuchsia", "pink", "rose",
+      "navy",
+      "gold",
+      "stone",
+      "slate",
+      "red",
+      "orange",
+      "amber",
+      "yellow",
+      "lime",
+      "green",
+      "emerald",
+      "teal",
+      "cyan",
+      "sky",
+      "blue",
+      "indigo",
+      "violet",
+      "purple",
+      "fuchsia",
+      "pink",
+      "rose",
     ] as const;
     for (const name of ramps) {
       for (const stop of TAILWIND_STOPS) {
