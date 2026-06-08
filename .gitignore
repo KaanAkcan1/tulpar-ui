@@ -29,6 +29,11 @@ pnpm-debug.log*
 coverage/
 .web-test-runner/
 
+# Framework caches
+.angular/
+.vite/
+out-tsc/
+
 # Env
 .env
 .env.local

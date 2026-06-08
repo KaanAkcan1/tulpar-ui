@@ -8,6 +8,9 @@ export default [
       "**/node_modules/**",
       "**/storybook-static/**",
       "**/.web-test-runner/**",
+      "**/.angular/**",
+      "**/.vite/**",
+      "**/out-tsc/**",
     ],
   },
   {
