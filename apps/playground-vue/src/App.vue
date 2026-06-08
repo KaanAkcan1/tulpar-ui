@@ -62,7 +62,7 @@ function onSubmit(event: Event) {
 
 <style>
 body {
-  font-family: var(--tulpar-font-family-body);
+  font-family: var(--tulpar-font-family-ui);
   background: var(--tulpar-color-bg-surface);
   color: var(--tulpar-color-text-primary);
   margin: 0;
