@@ -459,5 +459,23 @@ describe("<tulpar-button>", () => {
       await new Promise((r) => setTimeout(r, 0));
       expect(submitted).to.be.false;
     });
+
+    it("dispatches exactly one submit event per click", async () => {
+      let count = 0;
+      const form = await fixture<HTMLFormElement>(html`
+        <form
+          @submit=${(e: Event) => {
+            e.preventDefault();
+            count++;
+          }}
+        >
+          <tulpar-button type="submit">Save</tulpar-button>
+        </form>
+      `);
+      const btn = form.querySelector("tulpar-button") as TulparButton;
+      btn.shadowRoot!.querySelector("button")!.click();
+      await new Promise((r) => setTimeout(r, 0));
+      expect(count).to.equal(1);
+    });
   });
 });

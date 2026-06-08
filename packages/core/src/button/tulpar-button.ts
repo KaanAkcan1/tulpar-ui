@@ -212,8 +212,14 @@ export class TulparButton extends LitElement {
     const form = this._internals.form;
     if (!form) return;
     if (this.type === "submit") {
+      e.preventDefault();
+      // TODO(B2): pass `this` as submitter once name/value parity lands.
+      // Current Chromium rejects FACEs as `requestSubmit` submitters
+      // ("not a submit button"); B2 will introduce the submitter pathway
+      // (likely via a hidden <input type="submit"> trampoline).
       form.requestSubmit();
     } else if (this.type === "reset") {
+      e.preventDefault();
       form.reset();
     }
   };
@@ -228,7 +234,7 @@ export class TulparButton extends LitElement {
     return html`
       <button
         class="btn"
-        type=${this.type}
+        type="button"
         ?disabled=${this.disabled}
         aria-busy=${this.loading ? "true" : "false"}
         aria-describedby=${this.tooltip ? "tulpar-btn-tooltip" : ""}
