@@ -36,6 +36,34 @@ pnpm build
 pnpm test
 ```
 
+## Browser baseline
+
+v0.4 targets:
+- Chromium ≥ 65
+- Firefox ≥ 78
+- **Safari ≥ 17** — required for reliable `delegatesFocus` on form-associated
+  custom elements. Safari 16 still works; only focus-ring visibility on inner
+  buttons may regress.
+
+## Tooltip
+
+The `tooltip` property on `<tulpar-button>` is a simple inline string tooltip.
+Limitations:
+
+- Clipped by ancestors with `overflow: hidden`.
+- Fixed `z-index: 100`; may be obscured by modals or drawers.
+- No ESC dismiss, no hover delay, no viewport-edge collision detection.
+
+For production tooltips, wait for the dedicated component in v0.5 (Popover API
++ CSS Anchor Positioning).
+
+## Angular wrapper transparency
+
+`<tulpar-button-ng>` uses `display: contents` so its host element is excluded
+from layout. Visually identical to placing `<tulpar-button>` directly. CSS that
+targets `tulpar-button-ng { … }` for layout (width, padding, border) will not
+take effect — apply layout to `<tulpar-button>` instead.
+
 ## Status
 
 v0.3 — Button API expansion (severity + variant + composable modifiers + 21-family color override + icon-position/separator + stacked ButtonGroup).

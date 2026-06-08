@@ -1,8 +1,7 @@
 import { LitElement, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { property } from "lit/decorators.js";
 import { buttonGroupStyles } from "./tulpar-button-group.styles";
 
-@customElement("tulpar-button-group")
 export class TulparButtonGroup extends LitElement {
   static override styles = buttonGroupStyles;
 
@@ -102,4 +101,8 @@ declare global {
   interface HTMLElementTagNameMap {
     "tulpar-button-group": TulparButtonGroup;
   }
+}
+
+if (!customElements.get("tulpar-button-group")) {
+  customElements.define("tulpar-button-group", TulparButtonGroup);
 }
