@@ -1,4 +1,4 @@
-@import "@tulpar-ui/tokens/css/tulpar.css";
+@import '@tulpar-ui/tokens/css/tulpar.css';
 
 body {
   font-family: var(--tulpar-font-family-body);

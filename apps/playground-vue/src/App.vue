@@ -21,9 +21,7 @@ function onSubmit(event: Event) {
 <template>
   <h1>Tulpar UI — Vue Playground</h1>
 
-  <button @click="toggleDark">
-    Toggle dark mode (current: {{ isDark ? "dark" : "light" }})
-  </button>
+  <button @click="toggleDark">Toggle dark mode (current: {{ isDark ? "dark" : "light" }})</button>
 
   <section>
     <h2>Variants</h2>
@@ -70,9 +68,25 @@ body {
   margin: 0;
   padding: 2rem;
 }
-section { margin: 2rem 0; }
-section > * { margin-right: 0.5rem; }
-form { display: flex; gap: 0.5rem; align-items: center; }
-input { height: 40px; padding: 0 12px; border: 1px solid var(--tulpar-color-border-default); border-radius: 6px; }
-h1, h2 { color: var(--tulpar-color-text-primary); }
+section {
+  margin: 2rem 0;
+}
+section > * {
+  margin-right: 0.5rem;
+}
+form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+input {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--tulpar-color-border-default);
+  border-radius: 6px;
+}
+h1,
+h2 {
+  color: var(--tulpar-color-text-primary);
+}
 </style>

@@ -15,7 +15,10 @@
     "./css/tulpar-dark.css": "./dist/css/tulpar-dark.css",
     "./css/tulpar.css": "./dist/css/tulpar.css"
   },
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "vite build && tsx build/generate-css.ts",
     "build:css": "tsx build/generate-css.ts",

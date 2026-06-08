@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { createEnvironmentInjector, EnvironmentInjector, runInInjectionContext } from "@angular/core";
+import { createEnvironmentInjector, runInInjectionContext } from "@angular/core";
+import type { EnvironmentInjector } from "@angular/core";
 import { TulparButtonComponent } from "./tulpar-button.component";
 
 let injector: EnvironmentInjector;

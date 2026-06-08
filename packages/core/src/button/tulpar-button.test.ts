@@ -24,19 +24,17 @@ describe("<tulpar-button>", () => {
 
   describe("disabled state", () => {
     it("reflects the disabled attribute to host", async () => {
-      const el = await fixture<TulparButton>(
-        html`<tulpar-button disabled>X</tulpar-button>`,
-      );
+      const el = await fixture<TulparButton>(html`<tulpar-button disabled>X</tulpar-button>`);
       expect(el.hasAttribute("disabled")).to.be.true;
       expect(el.disabled).to.be.true;
     });
 
     it("does NOT dispatch click events when disabled", async () => {
-      const el = await fixture<TulparButton>(
-        html`<tulpar-button disabled>X</tulpar-button>`,
-      );
+      const el = await fixture<TulparButton>(html`<tulpar-button disabled>X</tulpar-button>`);
       let clicked = false;
-      el.addEventListener("click", () => { clicked = true; });
+      el.addEventListener("click", () => {
+        clicked = true;
+      });
       el.shadowRoot!.querySelector("button")!.click();
       expect(clicked).to.be.false;
     });
@@ -44,27 +42,23 @@ describe("<tulpar-button>", () => {
 
   describe("loading state", () => {
     it("reflects loading attribute and sets aria-busy", async () => {
-      const el = await fixture<TulparButton>(
-        html`<tulpar-button loading>X</tulpar-button>`,
-      );
+      const el = await fixture<TulparButton>(html`<tulpar-button loading>X</tulpar-button>`);
       expect(el.hasAttribute("loading")).to.be.true;
       expect(el.shadowRoot!.querySelector("button")!.getAttribute("aria-busy")).to.equal("true");
     });
 
     it("renders a spinner when loading", async () => {
-      const el = await fixture<TulparButton>(
-        html`<tulpar-button loading>X</tulpar-button>`,
-      );
+      const el = await fixture<TulparButton>(html`<tulpar-button loading>X</tulpar-button>`);
       const spinner = el.shadowRoot!.querySelector(".spinner");
       expect(spinner).to.exist;
     });
 
     it("suppresses clicks when loading", async () => {
-      const el = await fixture<TulparButton>(
-        html`<tulpar-button loading>X</tulpar-button>`,
-      );
+      const el = await fixture<TulparButton>(html`<tulpar-button loading>X</tulpar-button>`);
       let clicked = false;
-      el.addEventListener("click", () => { clicked = true; });
+      el.addEventListener("click", () => {
+        clicked = true;
+      });
       el.shadowRoot!.querySelector("button")!.click();
       expect(clicked).to.be.false;
     });
@@ -81,7 +75,9 @@ describe("<tulpar-button>", () => {
     it("warns when icon-only is used without aria-label (in dev)", async () => {
       const warn = console.warn;
       let warned = false;
-      console.warn = () => { warned = true; };
+      console.warn = () => {
+        warned = true;
+      };
       try {
         await fixture<TulparButton>(html`<tulpar-button icon-only></tulpar-button>`);
         expect(warned).to.be.true;
@@ -121,7 +117,12 @@ describe("<tulpar-button>", () => {
     it("submits parent form when type='submit' is clicked", async () => {
       let submitted = false;
       const form = await fixture<HTMLFormElement>(html`
-        <form @submit=${(e: Event) => { e.preventDefault(); submitted = true; }}>
+        <form
+          @submit=${(e: Event) => {
+            e.preventDefault();
+            submitted = true;
+          }}
+        >
           <tulpar-button type="submit">Save</tulpar-button>
         </form>
       `);
@@ -149,7 +150,12 @@ describe("<tulpar-button>", () => {
     it("does NOT submit when disabled", async () => {
       let submitted = false;
       const form = await fixture<HTMLFormElement>(html`
-        <form @submit=${(e: Event) => { e.preventDefault(); submitted = true; }}>
+        <form
+          @submit=${(e: Event) => {
+            e.preventDefault();
+            submitted = true;
+          }}
+        >
           <tulpar-button type="submit" disabled>Save</tulpar-button>
         </form>
       `);

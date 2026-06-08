@@ -12,7 +12,10 @@
       "import": "./dist/fesm2022/tulpar-ui-angular.mjs"
     }
   },
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "ng-packagr -p ng-package.json -c tsconfig.json",
     "test": "vitest run"

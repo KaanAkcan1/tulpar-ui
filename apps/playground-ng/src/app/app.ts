@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
-import { TulparButtonComponent } from "@tulpar-ui/angular";
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { TulparButtonComponent } from '@tulpar-ui/angular';
 
 @Component({
-  selector: "app-root",
+  selector: 'app-root',
   standalone: true,
   imports: [TulparButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -10,7 +10,7 @@ import { TulparButtonComponent } from "@tulpar-ui/angular";
     <h1>Tulpar UI — Angular Playground</h1>
 
     <button (click)="toggleDark()">
-      Toggle dark mode (current: {{ isDark() ? "dark" : "light" }})
+      Toggle dark mode (current: {{ isDark() ? 'dark' : 'light' }})
     </button>
 
     <section>
@@ -51,13 +51,31 @@ import { TulparButtonComponent } from "@tulpar-ui/angular";
       }
     </section>
   `,
-  styles: [`
-    section { margin: 2rem 0; }
-    section tulpar-button-ng { margin-right: 0.5rem; }
-    form { display: flex; gap: 0.5rem; align-items: center; }
-    input { height: 40px; padding: 0 12px; border: 1px solid var(--tulpar-color-border-default); border-radius: 6px; }
-    h1, h2 { color: var(--tulpar-color-text-primary); }
-  `],
+  styles: [
+    `
+      section {
+        margin: 2rem 0;
+      }
+      section tulpar-button-ng {
+        margin-right: 0.5rem;
+      }
+      form {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
+      input {
+        height: 40px;
+        padding: 0 12px;
+        border: 1px solid var(--tulpar-color-border-default);
+        border-radius: 6px;
+      }
+      h1,
+      h2 {
+        color: var(--tulpar-color-text-primary);
+      }
+    `,
+  ],
 })
 export class App {
   isDark = signal(false);
@@ -66,13 +84,13 @@ export class App {
   toggleDark(): void {
     const next = !this.isDark();
     this.isDark.set(next);
-    document.documentElement.classList.toggle("dark", next);
+    document.documentElement.classList.toggle('dark', next);
   }
 
   onSubmit(event: Event): void {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
     const fd = new FormData(form);
-    this.submittedEmail.set(String(fd.get("email") ?? ""));
+    this.submittedEmail.set(String(fd.get('email') ?? ''));
   }
 }

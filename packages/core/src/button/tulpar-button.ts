@@ -43,7 +43,7 @@ export class TulparButton extends LitElement {
     super.connectedCallback();
     if (this.iconOnly && !this.getAttribute("aria-label")) {
       console.warn(
-        '[tulpar-button] icon-only buttons must have an aria-label for accessibility',
+        "[tulpar-button] icon-only buttons must have an aria-label for accessibility",
         this,
       );
     }
