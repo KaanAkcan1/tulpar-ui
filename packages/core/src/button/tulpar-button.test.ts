@@ -2,6 +2,13 @@ import { fixture, html, expect } from "@open-wc/testing";
 import "./tulpar-button";
 import type { TulparButton } from "./tulpar-button";
 
+describe("public type exports", () => {
+  it("re-exports all button type unions from index", async () => {
+    const mod = await import("./index");
+    expect(mod.TulparButton).to.exist;
+  });
+});
+
 describe("<tulpar-button>", () => {
   describe("defaults", () => {
     it("renders with default severity=primary, variant=solid, size=md", async () => {
