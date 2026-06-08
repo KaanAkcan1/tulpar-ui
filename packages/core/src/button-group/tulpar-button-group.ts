@@ -8,7 +8,20 @@ export class TulparButtonGroup extends LitElement {
   @property({ type: Boolean, reflect: true })
   stacked = false;
 
+  private _internals: ElementInternals;
   private _observer?: MutationObserver;
+  /** @internal Test probe — do not use in production code. */
+  __role?: string;
+  /** @internal Test probe — do not use in production code. */
+  __orientation?: string;
+
+  constructor() {
+    super();
+    this._internals = this.attachInternals();
+    this._internals.role = "toolbar";
+    this.__role = "toolbar";
+    this._setOrientation();
+  }
 
   override connectedCallback(): void {
     super.connectedCallback();
@@ -26,7 +39,16 @@ export class TulparButtonGroup extends LitElement {
   }
 
   override updated(changed: Map<string, unknown>): void {
-    if (changed.has("stacked")) this._sync();
+    if (changed.has("stacked")) {
+      this._sync();
+      this._setOrientation();
+    }
+  }
+
+  private _setOrientation(): void {
+    const orientation = this.stacked ? "vertical" : "horizontal";
+    this._internals.ariaOrientation = orientation;
+    this.__orientation = orientation;
   }
 
   private _sync(): void {
@@ -99,7 +121,7 @@ export class TulparButtonGroup extends LitElement {
   };
 
   override render() {
-    return html`<div class="group" role="group"><slot></slot></div>`;
+    return html`<div class="group"><slot></slot></div>`;
   }
 }
 

@@ -4,7 +4,7 @@ import "./tulpar-button-group";
 import type { TulparButtonGroup } from "./tulpar-button-group";
 
 describe("<tulpar-button-group>", () => {
-  it("renders with role='group'", async () => {
+  it("host carries role='toolbar' via ElementInternals (shadow div has no role)", async () => {
     const el = await fixture<TulparButtonGroup>(html`
       <tulpar-button-group>
         <tulpar-button>A</tulpar-button>
@@ -12,7 +12,21 @@ describe("<tulpar-button-group>", () => {
       </tulpar-button-group>
     `);
     const inner = el.shadowRoot!.querySelector("div");
-    expect(inner!.getAttribute("role")).to.equal("group");
+    expect(inner!.getAttribute("role")).to.be.null;
+    expect((el as unknown as { __role?: string }).__role).to.equal("toolbar");
+  });
+
+  it("aria-orientation flips between horizontal and vertical with `stacked`", async () => {
+    const el = await fixture<TulparButtonGroup>(html`
+      <tulpar-button-group>
+        <tulpar-button>A</tulpar-button>
+      </tulpar-button-group>
+    `);
+    await el.updateComplete;
+    expect((el as unknown as { __orientation?: string }).__orientation).to.equal("horizontal");
+    el.stacked = true;
+    await el.updateComplete;
+    expect((el as unknown as { __orientation?: string }).__orientation).to.equal("vertical");
   });
 
   it("sets tabindex=0 on first button, -1 on others (roving tabindex)", async () => {
