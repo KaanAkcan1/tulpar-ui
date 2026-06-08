@@ -7,9 +7,11 @@ describe("tulparDark", () => {
     expect(tulparDark.color.text.primary).toBe("#fafaf9");
   });
 
-  it("uses navy.400 as brand default", () => {
-    expect(tulparDark.color.brand.default).toBe("#3a679f");
-    expect(tulparDark.color.brand.onColor).toBe("#1c1917"); // stone.900 (inverse)
+  it("uses navy.300 as brand default (luminance parity with other .400 severities + AA contrast)", () => {
+    expect(tulparDark.color.brand.default).toBe("#6689b8"); // navy.300
+    expect(tulparDark.color.brand.hover).toBe("#99b1d0"); // navy.200
+    expect(tulparDark.color.brand.active).toBe("#ccd8e8"); // navy.100
+    expect(tulparDark.color.brand.onColor).toBe("#1c1917"); // stone.900
   });
 
   it("provides info (blue.400), help (purple.400) for dark mode", () => {

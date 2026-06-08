@@ -14,9 +14,13 @@ export const tulparDark: SemanticTokens = {
     },
     border: { default: c.stone[700], strong: c.stone[600] },
     brand: {
-      default: c.navy[400],
-      hover: c.navy[300],
-      active: c.navy[200],
+      // Navy's .400 stop is intrinsically darker than other families' .400
+      // (red.400/green.400/blue.400 are bright). Using navy.300 brings the
+      // dark-mode primary into visual luminance parity with other severities
+      // AND clears WCAG AA (navy.300 + stone.900 ≈ 4.77).
+      default: c.navy[300],
+      hover: c.navy[200],
+      active: c.navy[100],
       disabled: c.stone[700],
       onColor: c.stone[900],
       subtle: c.stone[800],
