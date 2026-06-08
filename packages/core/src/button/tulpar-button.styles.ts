@@ -16,7 +16,7 @@ export const buttonStyles = css`
     justify-content: center;
     gap: var(--tulpar-button-icon-gap, 8px);
 
-    font-family: var(--tulpar-font-family-body, system-ui);
+    font-family: var(--tulpar-font-family-ui, system-ui);
     font-weight: var(--tulpar-button-font-weight, 500);
     font-size: var(--_btn-font-size);
     line-height: 1;
