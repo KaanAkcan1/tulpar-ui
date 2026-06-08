@@ -157,6 +157,14 @@ describe("<tulpar-button>", () => {
   });
 
   describe("loading state", () => {
+    it("loading-label-text has aria-live=polite for SR announcement", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button loading loading-label="Saving">X</tulpar-button>`,
+      );
+      const live = el.shadowRoot!.querySelector(".loading-label-text") as HTMLElement;
+      expect(live.getAttribute("aria-live")).to.equal("polite");
+    });
+
     it("reflects loading + sets aria-busy", async () => {
       const el = await fixture<TulparButton>(html`<tulpar-button loading>X</tulpar-button>`);
       expect(el.hasAttribute("loading")).to.be.true;

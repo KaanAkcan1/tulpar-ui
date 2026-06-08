@@ -293,7 +293,7 @@ export class TulparButton extends LitElement {
       <span class="separator separator--start" aria-hidden="true"></span>
       <span class="label">
         <span class="label-text"><slot></slot></span>
-        <span class="loading-label-text">${this.loadingLabel ?? ""}</span>
+        <span class="loading-label-text" aria-live="polite">${this.loadingLabel ?? ""}</span>
       </span>
       <span class="separator separator--end" aria-hidden="true"></span>
       <span class="end">
