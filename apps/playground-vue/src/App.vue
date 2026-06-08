@@ -77,83 +77,54 @@ const shapeCode = `<!-- Default (rectangle) -->
 <!-- Round (pill) -->
 <TulparButton shape="round">Round</TulparButton>
 
-<!-- Circle (icon-only) -->
-<TulparButton shape="circle" :icon-only="true" aria-label="Add item">
-  <span slot="start"><Plus :size="16" /></span>
-</TulparButton>`;
+<!-- Circle (icon-only) — :icon prop, auto icon-only -->
+<TulparButton shape="circle" :icon="Plus" aria-label="Add item" />`;
 
-const iconsCode = `<!-- Leading icon -->
-<TulparButton severity="success">
-  <span slot="start"><Check :size="16" /></span>
-  Save
-</TulparButton>
+const iconsCode = `<!-- Leading icon via :icon prop -->
+<TulparButton severity="success" :icon="Check">Save</TulparButton>
 
-<!-- Trailing icon -->
+<!-- Trailing icon — use slot="end" (single icon prop always renders at start) -->
 <TulparButton severity="primary">
   Continue
   <span slot="end"><ArrowRight :size="16" /></span>
 </TulparButton>
 
-<!-- Both icons -->
-<TulparButton severity="primary">
-  <span slot="start"><Check :size="16" /></span>
+<!-- Both icons — :icon for start, slot="end" for trailing -->
+<TulparButton severity="primary" :icon="Check">
   Save and continue
   <span slot="end"><ArrowRight :size="16" /></span>
 </TulparButton>`;
 
-const iconOnlyCode = `<!-- Danger + default shape -->
-<TulparButton severity="danger" :icon-only="true" aria-label="Delete item">
-  <span slot="start"><Trash2 :size="16" /></span>
-</TulparButton>
+const iconOnlyCode = `<!-- Auto icon-only: icon set + no text → icon-only applied automatically -->
+<TulparButton severity="danger" :icon="Trash2" aria-label="Delete item" />
+<TulparButton severity="secondary" :icon="Settings" aria-label="Settings" />
 
-<!-- Secondary + default shape -->
-<TulparButton severity="secondary" :icon-only="true" aria-label="Settings">
-  <span slot="start"><Settings :size="16" /></span>
-</TulparButton>
+<!-- Auto icon-only + circle shape -->
+<TulparButton severity="success" :icon="Save" shape="circle" aria-label="Save" />
 
-<!-- Success + circle shape -->
-<TulparButton severity="success" :icon-only="true" shape="circle" aria-label="Save">
-  <span slot="start"><Save :size="16" /></span>
-</TulparButton>
-
-<!-- Premium + round shape -->
-<TulparButton severity="premium" :icon-only="true" shape="round" aria-label="Premium">
-  <span slot="start"><Crown :size="16" /></span>
-</TulparButton>`;
+<!-- Explicit iconOnly still works (useful when you need to be explicit) -->
+<TulparButton severity="premium" :icon-only="true" shape="round" :icon="Crown" aria-label="Premium" />`;
 
 const iconPositionCode = `<!-- Start (default) -->
-<TulparButton icon-position="start" size="lg">
-  <span slot="start"><Check :size="16" /></span>
-  Confirm
-</TulparButton>
-
-<!-- End -->
-<TulparButton icon-position="end" size="lg">
-  <span slot="end"><Check :size="16" /></span>
-  Confirm
-</TulparButton>
+<TulparButton :icon="Check" icon-position="start" size="lg">Confirm</TulparButton>
 
 <!-- Top -->
-<TulparButton icon-position="top" size="lg">
-  <span slot="start"><Check :size="16" /></span>
-  Confirm
-</TulparButton>
+<TulparButton :icon="Check" icon-position="top" size="lg">Confirm</TulparButton>
 
 <!-- Bottom -->
-<TulparButton icon-position="bottom" size="lg">
-  <span slot="start"><Check :size="16" /></span>
+<TulparButton :icon="Check" icon-position="bottom" size="lg">Confirm</TulparButton>
+
+<!-- End — use slot="end" (icon prop is always in start slot) -->
+<TulparButton icon-position="end" size="lg">
   Confirm
+  <span slot="end"><Check :size="18" /></span>
 </TulparButton>`;
 
 const iconSeparatorCode = `<!-- Outlined + separator + leading icon -->
-<TulparButton variant="outlined" :icon-separator="true">
-  <span slot="start"><Download :size="16" /></span>
-  Download
-</TulparButton>
+<TulparButton variant="outlined" :icon-separator="true" :icon="Download">Download</TulparButton>
 
-<!-- Tonal + separator + both icons -->
-<TulparButton variant="tonal" :icon-separator="true">
-  <span slot="start"><ArrowLeft :size="16" /></span>
+<!-- Tonal + separator + both icons (leading via prop, trailing via slot) -->
+<TulparButton variant="tonal" :icon-separator="true" :icon="ArrowLeft">
   Navigate
   <span slot="end"><ArrowRight :size="16" /></span>
 </TulparButton>
@@ -174,8 +145,7 @@ const modifiersCode = `<!-- Raised solid -->
 <TulparButton :block="true">Block Button</TulparButton>
 
 <!-- Block + justify=between with icons -->
-<TulparButton :block="true" justify="between">
-  <span slot="start"><Mail :size="16" /></span>
+<TulparButton :block="true" justify="between" :icon="Mail">
   Send Email
   <span slot="end"><ArrowRight :size="16" /></span>
 </TulparButton>`;
@@ -223,10 +193,7 @@ const polymorphismCode = `<!-- External link — renders as <a> -->
 
 const formCode = `<form @submit="onSubmit">
   <input name="email" type="email" placeholder="your@email.com" />
-  <TulparButton type="submit" severity="primary">
-    <span slot="start"><Mail :size="16" /></span>
-    Submit
-  </TulparButton>
+  <TulparButton type="submit" severity="primary" :icon="Mail">Submit</TulparButton>
   <TulparButton type="reset" severity="secondary" variant="outlined">
     Reset
   </TulparButton>
@@ -252,20 +219,65 @@ const buttonGroupCode = `<!-- Horizontal group (ArrowLeft/Right navigation) -->
   Both:       Home (first) / End (last) -->`;
 
 const premiumCode = `<!-- Solid premium — gold marketing CTA -->
-<TulparButton severity="premium">
-  <span slot="start"><Crown :size="16" /></span>
-  Upgrade to Pro
-</TulparButton>
+<TulparButton severity="premium" :icon="Crown">Upgrade to Pro</TulparButton>
 
 <!-- Tonal premium — softer CTA -->
-<TulparButton severity="premium" variant="tonal">
-  <span slot="start"><Sparkles :size="16" /></span>
-  Get early access
-</TulparButton>
+<TulparButton severity="premium" variant="tonal" :icon="Sparkles">Get early access</TulparButton>
+
+<!-- Icon-size override for premium large CTA -->
+<TulparButton severity="premium" size="lg" :icon="Crown" :icon-size="24">Go Pro</TulparButton>
 
 <!-- premium = gold accent, distinct from primary (navy)
      Light theme: gold.500 bg + dark text
      Hover: brightens (gold.500 → .400 → .300) -->`;
+
+const tooltipCode = `<!-- Tooltip on icon-only button (fills the a11y gap) -->
+<TulparButton :icon="Settings" tooltip="Open settings" aria-label="Open settings" />
+
+<!-- Tooltip on a regular button -->
+<TulparButton severity="danger" :icon="Trash2" tooltip="Permanently delete this item">
+  Delete
+</TulparButton>
+
+<!-- Tooltip on an anchor button -->
+<TulparButton
+  href="https://example.com"
+  target="_blank"
+  rel="noopener noreferrer"
+  tooltip="Opens in a new tab"
+>
+  Visit Example
+</TulparButton>`;
+
+const iconPropCode = `<!-- :icon prop — convenience for Lucide icons (replaces verbose slot boilerplate) -->
+<TulparButton severity="success" :icon="Check">Save</TulparButton>
+
+<!-- :icon-size override — useful for larger CTAs -->
+<TulparButton severity="premium" size="lg" :icon="Crown" :icon-size="24">Go Pro</TulparButton>
+
+<!-- Auto icon-only: icon + no text = square, no extra props needed -->
+<TulparButton severity="danger" :icon="Trash2" aria-label="Delete" />
+
+<!-- Icon prop respects icon-position for top/bottom layouts -->
+<TulparButton :icon="Check" icon-position="top" size="lg">Confirm</TulparButton>`;
+
+const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons, Tabler, custom SVG) -->
+<!-- When :icon is not an option, use <span slot="start"> directly -->
+<TulparButton severity="primary">
+  <span slot="start">
+    <!-- Any Vue component, SVG, or img that accepts width/height -->
+    <MyHeroIcon class="w-4 h-4" />
+  </span>
+  Save with Heroicon
+</TulparButton>
+
+<!-- Multi-icon pattern (two icons) — slot is the only option here;
+     :icon supports a single leading icon only -->
+<TulparButton severity="primary">
+  <span slot="start"><ArrowLeft :size="16" /></span>
+  Navigate
+  <span slot="end"><ArrowRight :size="16" /></span>
+</TulparButton>`;
 </script>
 
 <template>
@@ -273,12 +285,13 @@ const premiumCode = `<!-- Solid premium — gold marketing CTA -->
     <header class="page-header">
       <div class="header-inner">
         <div class="header-text">
-          <p class="eyebrow">Tulpar UI · Vue · v0.3</p>
+          <p class="eyebrow">Tulpar UI · Vue · v0.3.1</p>
           <h1 class="page-title">Button — full feature reference</h1>
           <p class="page-lede">
-            Live previews and copy-paste code for every Button capability. All examples use Lucide
-            icons and the <code class="inline-code">&#60;span slot="..."&#62;</code> projection
-            pattern required for Shadow DOM slot routing.
+            Live previews and copy-paste code for every Button capability. Most examples use the
+            <code class="inline-code">:icon</code> prop (v0.3.1) for Lucide icons. The
+            <code class="inline-code">&#60;span slot="..."&#62;</code> pattern remains supported as
+            a fallback for non-Lucide libraries.
           </p>
         </div>
         <button class="theme-toggle" @click="toggleDark">
@@ -375,9 +388,7 @@ const premiumCode = `<!-- Solid premium — gold marketing CTA -->
         <div class="preview preview--baseline">
           <TulparButton shape="default">Default</TulparButton>
           <TulparButton shape="round">Round</TulparButton>
-          <TulparButton shape="circle" :icon-only="true" aria-label="Add item">
-            <span slot="start"><Plus :size="16" /></span>
-          </TulparButton>
+          <TulparButton shape="circle" :icon="Plus" aria-label="Add item" />
         </div>
         <pre class="code"><code>{{ shapeCode }}</code></pre>
       </section>
@@ -386,22 +397,20 @@ const premiumCode = `<!-- Solid premium — gold marketing CTA -->
       <section class="doc-section">
         <h2 class="section-title">6. Icons — leading, trailing, both</h2>
         <p class="section-desc">
-          Wrap icons in
-          <code class="inline-code">&#60;span slot="start"&#62;</code> or
-          <code class="inline-code">&#60;span slot="end"&#62;</code> to route them into the correct
-          Shadow DOM slot. Without the wrapping span, content falls to the default slot only.
+          Use the <code class="inline-code">:icon</code> prop for Lucide icons — it renders into the
+          <code class="inline-code">slot="start"</code> automatically. For a trailing icon, use
+          <code class="inline-code">&#60;span slot="end"&#62;</code>. For multi-icon, combine both.
         </p>
         <div class="preview">
-          <TulparButton severity="success">
-            <span slot="start"><Check :size="16" /></span>
-            Save
-          </TulparButton>
+          <!-- Leading icon via prop -->
+          <TulparButton severity="success" :icon="Check">Save</TulparButton>
+          <!-- Trailing icon via slot -->
           <TulparButton severity="primary">
             Continue
             <span slot="end"><ArrowRight :size="16" /></span>
           </TulparButton>
-          <TulparButton severity="primary">
-            <span slot="start"><Check :size="16" /></span>
+          <!-- Both: prop for start, slot for end -->
+          <TulparButton severity="primary" :icon="Check">
             Save and continue
             <span slot="end"><ArrowRight :size="16" /></span>
           </TulparButton>
@@ -413,32 +422,18 @@ const premiumCode = `<!-- Solid premium — gold marketing CTA -->
       <section class="doc-section">
         <h2 class="section-title">7. Icon-only</h2>
         <p class="section-desc">
-          Always include <code class="inline-code">aria-label</code> on icon-only buttons for
-          screen reader accessibility.
+          When <code class="inline-code">:icon</code> is set and no text is in the default slot,
+          icon-only mode is applied <em>automatically</em> — no extra prop needed. Always include
+          <code class="inline-code">aria-label</code> for screen reader accessibility.
         </p>
         <div class="preview preview--baseline">
-          <TulparButton severity="danger" :icon-only="true" aria-label="Delete item">
-            <span slot="start"><Trash2 :size="16" /></span>
-          </TulparButton>
-          <TulparButton severity="secondary" :icon-only="true" aria-label="Settings">
-            <span slot="start"><Settings :size="16" /></span>
-          </TulparButton>
-          <TulparButton
-            severity="success"
-            :icon-only="true"
-            shape="circle"
-            aria-label="Save"
-          >
-            <span slot="start"><Save :size="16" /></span>
-          </TulparButton>
-          <TulparButton
-            severity="premium"
-            :icon-only="true"
-            shape="round"
-            aria-label="Premium"
-          >
-            <span slot="start"><Crown :size="16" /></span>
-          </TulparButton>
+          <!-- Auto icon-only -->
+          <TulparButton severity="danger" :icon="Trash2" aria-label="Delete item" />
+          <TulparButton severity="secondary" :icon="Settings" aria-label="Settings" />
+          <!-- Auto icon-only + circle shape -->
+          <TulparButton severity="success" :icon="Save" shape="circle" aria-label="Save" />
+          <!-- Explicit iconOnly still works -->
+          <TulparButton severity="premium" :icon-only="true" shape="round" :icon="Crown" aria-label="Premium" />
         </div>
         <pre class="code"><code>{{ iconOnlyCode }}</code></pre>
       </section>
@@ -449,27 +444,18 @@ const premiumCode = `<!-- Solid premium — gold marketing CTA -->
         <p class="section-desc">
           Control where the icon renders relative to the label:
           <code class="inline-code">start</code>, <code class="inline-code">end</code>,
-          <code class="inline-code">top</code>, <code class="inline-code">bottom</code>. Use
-          <code class="inline-code">size="lg"</code> for top/bottom layouts to ensure a comfortable
-          touch target.
+          <code class="inline-code">top</code>, <code class="inline-code">bottom</code>. The
+          <code class="inline-code">:icon</code> prop always renders in the start slot; for
+          <code class="inline-code">icon-position="end"</code> use <code class="inline-code">&#60;span slot="end"&#62;</code>.
         </p>
         <div class="preview preview--baseline">
-          <TulparButton icon-position="start" size="lg">
-            <span slot="start"><Check :size="16" /></span>
-            Confirm
-          </TulparButton>
+          <TulparButton :icon="Check" icon-position="start" size="lg">Confirm</TulparButton>
           <TulparButton icon-position="end" size="lg">
-            <span slot="end"><Check :size="16" /></span>
             Confirm
+            <span slot="end"><Check :size="18" /></span>
           </TulparButton>
-          <TulparButton icon-position="top" size="lg">
-            <span slot="start"><Check :size="16" /></span>
-            Confirm
-          </TulparButton>
-          <TulparButton icon-position="bottom" size="lg">
-            <span slot="start"><Check :size="16" /></span>
-            Confirm
-          </TulparButton>
+          <TulparButton :icon="Check" icon-position="top" size="lg">Confirm</TulparButton>
+          <TulparButton :icon="Check" icon-position="bottom" size="lg">Confirm</TulparButton>
         </div>
         <pre class="code"><code>{{ iconPositionCode }}</code></pre>
       </section>
@@ -482,12 +468,8 @@ const premiumCode = `<!-- Solid premium — gold marketing CTA -->
           icon and label. Works across all variants.
         </p>
         <div class="preview">
-          <TulparButton variant="outlined" :icon-separator="true">
-            <span slot="start"><Download :size="16" /></span>
-            Download
-          </TulparButton>
-          <TulparButton variant="tonal" :icon-separator="true">
-            <span slot="start"><ArrowLeft :size="16" /></span>
+          <TulparButton variant="outlined" :icon-separator="true" :icon="Download">Download</TulparButton>
+          <TulparButton variant="tonal" :icon-separator="true" :icon="ArrowLeft">
             Navigate
             <span slot="end"><ArrowRight :size="16" /></span>
           </TulparButton>
@@ -514,8 +496,7 @@ const premiumCode = `<!-- Solid premium — gold marketing CTA -->
             <TulparButton :raised="true" variant="outlined">Raised Outlined</TulparButton>
           </div>
           <TulparButton :block="true">Block Button</TulparButton>
-          <TulparButton :block="true" justify="between">
-            <span slot="start"><Mail :size="16" /></span>
+          <TulparButton :block="true" justify="between" :icon="Mail">
             Send Email
             <span slot="end"><ArrowRight :size="16" /></span>
           </TulparButton>
@@ -605,10 +586,7 @@ const premiumCode = `<!-- Solid premium — gold marketing CTA -->
               type="email"
               placeholder="your@email.com"
             />
-            <TulparButton type="submit" severity="primary">
-              <span slot="start"><Mail :size="16" /></span>
-              Submit
-            </TulparButton>
+            <TulparButton type="submit" severity="primary" :icon="Mail">Submit</TulparButton>
             <TulparButton type="reset" severity="secondary" variant="outlined">
               Reset
             </TulparButton>
@@ -659,17 +637,104 @@ const premiumCode = `<!-- Solid premium — gold marketing CTA -->
           <em>brightens</em> (gold.500 → .400 → .300) — intentionally distinct from
           <code class="inline-code">primary</code> (navy), which darkens on hover.
         </p>
-        <div class="preview">
-          <TulparButton severity="premium">
-            <span slot="start"><Crown :size="16" /></span>
-            Upgrade to Pro
-          </TulparButton>
-          <TulparButton severity="premium" variant="tonal">
-            <span slot="start"><Sparkles :size="16" /></span>
-            Get early access
-          </TulparButton>
+        <div class="preview preview--baseline">
+          <TulparButton severity="premium" :icon="Crown">Upgrade to Pro</TulparButton>
+          <TulparButton severity="premium" variant="tonal" :icon="Sparkles">Get early access</TulparButton>
+          <TulparButton severity="premium" size="lg" :icon="Crown" :icon-size="24">Go Pro</TulparButton>
         </div>
         <pre class="code"><code>{{ premiumCode }}</code></pre>
+      </section>
+
+      <!-- ── 17. :icon prop — Lucide convenience API ───────────────────── -->
+      <section class="doc-section">
+        <h2 class="section-title">17. :icon prop — Lucide convenience API (v0.3.1)</h2>
+        <p class="section-desc">
+          Pass any <code class="inline-code">lucide-vue-next</code> component reference via
+          <code class="inline-code">:icon</code>. The wrapper renders it into
+          <code class="inline-code">slot="start"</code> at the correct size for the button's
+          <code class="inline-code">size</code>. Use <code class="inline-code">:icon-size</code>
+          to override. Auto icon-only kicks in when no default-slot text is provided.
+        </p>
+        <div class="preview preview--baseline">
+          <TulparButton severity="success" :icon="Check">Save</TulparButton>
+          <TulparButton severity="premium" size="lg" :icon="Crown" :icon-size="24">Go Pro</TulparButton>
+          <TulparButton severity="danger" :icon="Trash2" aria-label="Delete" />
+          <TulparButton :icon="Check" icon-position="top" size="lg">Confirm</TulparButton>
+        </div>
+        <pre class="code"><code>{{ iconPropCode }}</code></pre>
+      </section>
+
+      <!-- ── 18. Tooltip ──────────────────────────────────────────────── -->
+      <section class="doc-section">
+        <h2 class="section-title">18. Tooltip (v0.3.1)</h2>
+        <p class="section-desc">
+          Pass a string to <code class="inline-code">tooltip</code> to show an inline tooltip on
+          hover and focus. Especially useful for icon-only buttons where the label is visually
+          hidden — the tooltip satisfies the a11y gap alongside
+          <code class="inline-code">aria-label</code>. Tooltip appears below the button, 150 ms
+          fade.
+        </p>
+        <div class="preview preview--baseline">
+          <!-- Tooltip on icon-only button -->
+          <TulparButton :icon="Settings" tooltip="Open settings" aria-label="Open settings" />
+          <!-- Tooltip on a labelled button -->
+          <TulparButton severity="danger" :icon="Trash2" tooltip="Permanently delete this item">
+            Delete
+          </TulparButton>
+          <!-- Tooltip on an anchor -->
+          <TulparButton
+            href="https://example.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            tooltip="Opens in a new tab"
+          >
+            Visit Example
+          </TulparButton>
+        </div>
+        <pre class="code"><code>{{ tooltipCode }}</code></pre>
+      </section>
+
+      <!-- ── 19. Escape hatch — non-Lucide icon libraries ──────────────── -->
+      <section class="doc-section">
+        <h2 class="section-title">19. Escape hatch — non-Lucide icon libraries</h2>
+        <p class="section-desc">
+          The <code class="inline-code">:icon</code> prop is Lucide-optimised (passes
+          <code class="inline-code">:size</code> automatically). For Heroicons, Tabler, Material,
+          or custom SVG, project your icon directly via
+          <code class="inline-code">&#60;span slot="start"&#62;</code> — the slot pattern still
+          works as the underlying Web Component escape hatch. Multi-icon layouts (two icons) also
+          require the slot pattern, since <code class="inline-code">:icon</code> supports a single
+          leading icon only.
+        </p>
+        <div class="preview preview--baseline">
+          <!-- Heroicon / custom icon via slot -->
+          <TulparButton severity="primary">
+            <span slot="start">
+              <!-- Substitute your own icon component here -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M12 5v14M5 12l7 7 7-7" />
+              </svg>
+            </span>
+            Save with custom icon
+          </TulparButton>
+          <!-- Multi-icon via slot (both start and end) -->
+          <TulparButton severity="secondary" variant="outlined">
+            <span slot="start"><ArrowLeft :size="16" /></span>
+            Navigate
+            <span slot="end"><ArrowRight :size="16" /></span>
+          </TulparButton>
+        </div>
+        <pre class="code"><code>{{ slotEscapeHatchCode }}</code></pre>
       </section>
     </main>
   </div>

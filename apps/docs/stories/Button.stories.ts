@@ -390,3 +390,148 @@ export const FormSubmission: Story = {
     </form>
   `,
 };
+
+// ─── v0.3.1 additions ─────────────────────────────────────────────────────────
+// These stories demonstrate the new :icon prop, auto icon-only, and tooltip.
+// Existing slot-based stories above are preserved — they document the escape
+// hatch pattern for non-Lucide icon libraries.
+
+/**
+ * **WithIconProp** — demonstrates the `icon` / `icon-size` convenience
+ * attribute vs. the slot-based fallback shown in `WithStartIcon`.
+ *
+ * In the core Web Component the `icon` attribute is not wired — icon rendering
+ * lives in the Vue/Angular wrappers. This story uses inline SVG via
+ * `<span slot="start">` to simulate the same visual output for documentation
+ * parity, showing both patterns side-by-side.
+ */
+export const WithIconProp: Story = {
+  render: () => html`
+    <div style="display:flex; flex-direction:column; gap:24px;">
+      <!-- Vue/Angular wrapper usage (shown as code comment for documentation) -->
+      <div>
+        <p style="margin:0 0 8px; font-size:12px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:#78716c; font-family:monospace;">
+          :icon prop (Vue) / [icon] input (Angular)
+        </p>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+          <!-- Simulated: <TulparButton severity="success" :icon="Check">Save</TulparButton> -->
+          <tulpar-button severity="success">
+            <span slot="start">${checkIcon}</span>
+            Save
+          </tulpar-button>
+          <!-- Simulated: icon-size override -->
+          <tulpar-button severity="premium" size="lg">
+            <span slot="start"
+              ><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+            Go Pro
+          </tulpar-button>
+          <!-- Simulated: icon-position="top" -->
+          <tulpar-button icon-position="top" size="lg">
+            <span slot="start">${checkIcon}</span>
+            Confirm
+          </tulpar-button>
+        </div>
+      </div>
+
+      <div style="background:#1c1917; padding:16px 20px; border-radius:6px; font-family:monospace; font-size:13px; color:#e7e5e4; white-space:pre;"><!-- Vue -->
+&lt;TulparButton severity="success" :icon="Check"&gt;Save&lt;/TulparButton&gt;
+&lt;TulparButton severity="premium" size="lg" :icon="Crown" :icon-size="24"&gt;Go Pro&lt;/TulparButton&gt;
+&lt;TulparButton :icon="Check" icon-position="top" size="lg"&gt;Confirm&lt;/TulparButton&gt;
+
+&lt;!-- Angular --&gt;
+&lt;tulpar-button-ng severity="success" [icon]="Check"&gt;Save&lt;/tulpar-button-ng&gt;
+&lt;tulpar-button-ng severity="premium" size="lg" [icon]="Crown" [iconSize]="24"&gt;Go Pro&lt;/tulpar-button-ng&gt;</div>
+    </div>
+  `,
+};
+
+/**
+ * **IconOnlyAutoDetect** — when `icon` is set AND no text is in the default slot,
+ * the wrapper automatically applies `icon-only` mode (square, fixed width = height).
+ * No explicit `icon-only` attribute needed.
+ *
+ * This story uses explicit `icon-only` on the core element to simulate the same
+ * result, since the auto-detection lives in the Vue/Angular wrappers.
+ */
+export const IconOnlyAutoDetect: Story = {
+  render: () => html`
+    <div style="display:flex; flex-direction:column; gap:24px;">
+      <div>
+        <p style="margin:0 0 8px; font-size:12px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:#78716c; font-family:monospace;">
+          Auto icon-only — no text in default slot
+        </p>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <!-- icon + no text → auto icon-only -->
+          <tulpar-button icon-only severity="danger" aria-label="Delete item">${trashIcon}</tulpar-button>
+          <tulpar-button icon-only severity="secondary" aria-label="Settings">${checkIcon}</tulpar-button>
+          <tulpar-button icon-only severity="success" shape="circle" aria-label="Save">${checkIcon}</tulpar-button>
+          <!-- explicit iconOnly is still valid -->
+          <tulpar-button icon-only severity="premium" shape="round" aria-label="Premium">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </tulpar-button>
+        </div>
+      </div>
+
+      <div style="background:#1c1917; padding:16px 20px; border-radius:6px; font-family:monospace; font-size:13px; color:#e7e5e4; white-space:pre;"><!-- Vue: icon + no text = auto icon-only, no :icon-only prop needed -->
+&lt;TulparButton severity="danger" :icon="Trash2" aria-label="Delete item" /&gt;
+&lt;TulparButton severity="secondary" :icon="Settings" aria-label="Settings" /&gt;
+&lt;TulparButton severity="success" :icon="Save" shape="circle" aria-label="Save" /&gt;
+
+&lt;!-- Angular --&gt;
+&lt;tulpar-button-ng severity="danger" [icon]="Trash2" ariaLabel="Delete item"&gt;&lt;/tulpar-button-ng&gt;
+&lt;tulpar-button-ng severity="secondary" [icon]="Settings" ariaLabel="Settings"&gt;&lt;/tulpar-button-ng&gt;</div>
+    </div>
+  `,
+};
+
+/**
+ * **WithTooltip** — string tooltip shown on hover and `:focus-visible`.
+ * Rendered natively by the core Web Component via `tooltip` attribute.
+ * Especially useful for icon-only buttons where visual label is absent.
+ */
+export const WithTooltip: Story = {
+  render: () => html`
+    <div style="display:flex; flex-direction:column; gap:24px;">
+      <div>
+        <p style="margin:0 0 8px; font-size:12px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:#78716c; font-family:monospace;">
+          Hover or focus each button to see the tooltip
+        </p>
+        <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; padding:32px 0 16px;">
+          <!-- Icon-only + tooltip -->
+          <tulpar-button icon-only aria-label="Open settings" tooltip="Open settings">
+            ${checkIcon}
+          </tulpar-button>
+          <!-- Labelled button + tooltip -->
+          <tulpar-button severity="danger" tooltip="Permanently delete this item">
+            <span slot="start">${trashIcon}</span>
+            Delete
+          </tulpar-button>
+          <!-- Anchor + tooltip -->
+          <tulpar-button
+            href="https://example.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            tooltip="Opens in a new tab"
+          >
+            <span slot="start">${arrowRightIcon}</span>
+            Visit Example
+          </tulpar-button>
+        </div>
+        <p style="font-size:12px; color:#78716c; margin:0;">
+          Tooltip uses <code>role="tooltip"</code> + <code>aria-describedby</code> for full
+          keyboard and screen reader support. Shows on hover and focus-visible.
+        </p>
+      </div>
+
+      <div style="background:#1c1917; padding:16px 20px; border-radius:6px; font-family:monospace; font-size:13px; color:#e7e5e4; white-space:pre;">&lt;!-- Core Web Component --&gt;
+&lt;tulpar-button icon-only aria-label="Open settings" tooltip="Open settings"&gt;...&lt;/tulpar-button&gt;
+&lt;tulpar-button severity="danger" tooltip="Permanently delete this item"&gt;Delete&lt;/tulpar-button&gt;
+
+&lt;!-- Vue wrapper --&gt;
+&lt;TulparButton :icon="Settings" tooltip="Open settings" aria-label="Open settings" /&gt;
+
+&lt;!-- Angular wrapper --&gt;
+&lt;tulpar-button-ng [icon]="Settings" tooltip="Open settings" ariaLabel="Open settings"&gt;&lt;/tulpar-button-ng&gt;</div>
+    </div>
+  `,
+};

@@ -57,83 +57,54 @@ const SHAPE_CODE = `<!-- Default (rectangle) -->
 <!-- Round (pill) -->
 <tulpar-button-ng shape="round">Round</tulpar-button-ng>
 
-<!-- Circle (icon-only) -->
-<tulpar-button-ng shape="circle" [iconOnly]="true" ariaLabel="Add item">
-  <span slot="start"><lucide-angular [img]="Plus" [size]="16"></lucide-angular></span>
-</tulpar-button-ng>`;
+<!-- Circle (icon-only) — [icon] prop, auto icon-only -->
+<tulpar-button-ng shape="circle" [icon]="Plus" ariaLabel="Add item"></tulpar-button-ng>`;
 
-const ICONS_CODE = `<!-- Leading icon -->
-<tulpar-button-ng severity="success">
-  <span slot="start"><lucide-angular [img]="Check" [size]="16"></lucide-angular></span>
-  Save
-</tulpar-button-ng>
+const ICONS_CODE = `<!-- Leading icon via [icon] prop -->
+<tulpar-button-ng severity="success" [icon]="Check">Save</tulpar-button-ng>
 
-<!-- Trailing icon -->
+<!-- Trailing icon — use slot="end" ([icon] always renders at start) -->
 <tulpar-button-ng severity="primary">
   Continue
   <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
 </tulpar-button-ng>
 
-<!-- Both icons -->
-<tulpar-button-ng severity="primary">
-  <span slot="start"><lucide-angular [img]="Check" [size]="16"></lucide-angular></span>
+<!-- Both: [icon] for start, slot="end" for trailing -->
+<tulpar-button-ng severity="primary" [icon]="Check">
   Save and continue
   <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
 </tulpar-button-ng>`;
 
-const ICON_ONLY_CODE = `<!-- Danger + default shape -->
-<tulpar-button-ng severity="danger" [iconOnly]="true" ariaLabel="Delete item">
-  <span slot="start"><lucide-angular [img]="Trash2" [size]="16"></lucide-angular></span>
-</tulpar-button-ng>
+const ICON_ONLY_CODE = `<!-- Auto icon-only: [icon] set + no text → icon-only applied automatically -->
+<tulpar-button-ng severity="danger" [icon]="Trash2" ariaLabel="Delete item"></tulpar-button-ng>
+<tulpar-button-ng severity="secondary" [icon]="Settings" ariaLabel="Settings"></tulpar-button-ng>
 
-<!-- Secondary + default shape -->
-<tulpar-button-ng severity="secondary" [iconOnly]="true" ariaLabel="Settings">
-  <span slot="start"><lucide-angular [img]="Settings" [size]="16"></lucide-angular></span>
-</tulpar-button-ng>
+<!-- Auto icon-only + circle shape -->
+<tulpar-button-ng severity="success" [icon]="Save" shape="circle" ariaLabel="Save"></tulpar-button-ng>
 
-<!-- Success + circle shape -->
-<tulpar-button-ng severity="success" [iconOnly]="true" shape="circle" ariaLabel="Save">
-  <span slot="start"><lucide-angular [img]="Save" [size]="16"></lucide-angular></span>
-</tulpar-button-ng>
-
-<!-- Premium + round shape -->
-<tulpar-button-ng severity="premium" [iconOnly]="true" shape="round" ariaLabel="Premium">
-  <span slot="start"><lucide-angular [img]="Crown" [size]="16"></lucide-angular></span>
-</tulpar-button-ng>`;
+<!-- Explicit iconOnly still works (useful when you need to be explicit) -->
+<tulpar-button-ng severity="premium" [iconOnly]="true" shape="round" [icon]="Crown" ariaLabel="Premium"></tulpar-button-ng>`;
 
 const ICON_POSITION_CODE = `<!-- Start (default) -->
-<tulpar-button-ng iconPosition="start" size="lg">
-  <span slot="start"><lucide-angular [img]="Check" [size]="16"></lucide-angular></span>
-  Confirm
-</tulpar-button-ng>
-
-<!-- End -->
-<tulpar-button-ng iconPosition="end" size="lg">
-  <span slot="end"><lucide-angular [img]="Check" [size]="16"></lucide-angular></span>
-  Confirm
-</tulpar-button-ng>
+<tulpar-button-ng [icon]="Check" iconPosition="start" size="lg">Confirm</tulpar-button-ng>
 
 <!-- Top -->
-<tulpar-button-ng iconPosition="top" size="lg">
-  <span slot="start"><lucide-angular [img]="Check" [size]="16"></lucide-angular></span>
-  Confirm
-</tulpar-button-ng>
+<tulpar-button-ng [icon]="Check" iconPosition="top" size="lg">Confirm</tulpar-button-ng>
 
 <!-- Bottom -->
-<tulpar-button-ng iconPosition="bottom" size="lg">
-  <span slot="start"><lucide-angular [img]="Check" [size]="16"></lucide-angular></span>
+<tulpar-button-ng [icon]="Check" iconPosition="bottom" size="lg">Confirm</tulpar-button-ng>
+
+<!-- End — use slot="end" ([icon] is always in start slot) -->
+<tulpar-button-ng iconPosition="end" size="lg">
   Confirm
+  <span slot="end"><lucide-angular [img]="Check" [size]="18"></lucide-angular></span>
 </tulpar-button-ng>`;
 
 const ICON_SEPARATOR_CODE = `<!-- Outlined + separator + leading icon -->
-<tulpar-button-ng variant="outlined" [iconSeparator]="true">
-  <span slot="start"><lucide-angular [img]="Download" [size]="16"></lucide-angular></span>
-  Download
-</tulpar-button-ng>
+<tulpar-button-ng variant="outlined" [iconSeparator]="true" [icon]="Download">Download</tulpar-button-ng>
 
-<!-- Tonal + separator + both icons -->
-<tulpar-button-ng variant="tonal" [iconSeparator]="true">
-  <span slot="start"><lucide-angular [img]="ArrowLeft" [size]="16"></lucide-angular></span>
+<!-- Tonal + separator + both icons (leading via prop, trailing via slot) -->
+<tulpar-button-ng variant="tonal" [iconSeparator]="true" [icon]="ArrowLeft">
   Navigate
   <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
 </tulpar-button-ng>
@@ -154,8 +125,7 @@ const MODIFIERS_CODE = `<!-- Raised solid -->
 <tulpar-button-ng [block]="true">Block Button</tulpar-button-ng>
 
 <!-- Block + justify=between with icons -->
-<tulpar-button-ng [block]="true" justify="between">
-  <span slot="start"><lucide-angular [img]="Mail" [size]="16"></lucide-angular></span>
+<tulpar-button-ng [block]="true" justify="between" [icon]="Mail">
   Send Email
   <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
 </tulpar-button-ng>`;
@@ -203,10 +173,7 @@ const POLYMORPHISM_CODE = `<!-- External link — renders as <a> -->
 
 const FORM_CODE = `<form (submit)="onSubmit($event)">
   <input name="email" type="email" placeholder="your@email.com" />
-  <tulpar-button-ng type="submit" severity="primary">
-    <span slot="start"><lucide-angular [img]="Mail" [size]="16"></lucide-angular></span>
-    Submit
-  </tulpar-button-ng>
+  <tulpar-button-ng type="submit" severity="primary" [icon]="Mail">Submit</tulpar-button-ng>
   <tulpar-button-ng type="reset" severity="secondary" variant="outlined">
     Reset
   </tulpar-button-ng>
@@ -232,20 +199,66 @@ const BUTTON_GROUP_CODE = `<!-- Horizontal group (ArrowLeft/Right navigation) --
   Both:       Home (first) / End (last) -->`;
 
 const PREMIUM_CODE = `<!-- Solid premium — gold marketing CTA -->
-<tulpar-button-ng severity="premium">
-  <span slot="start"><lucide-angular [img]="Crown" [size]="16"></lucide-angular></span>
-  Upgrade to Pro
-</tulpar-button-ng>
+<tulpar-button-ng severity="premium" [icon]="Crown">Upgrade to Pro</tulpar-button-ng>
 
 <!-- Tonal premium — softer CTA -->
-<tulpar-button-ng severity="premium" variant="tonal">
-  <span slot="start"><lucide-angular [img]="Sparkles" [size]="16"></lucide-angular></span>
-  Get early access
-</tulpar-button-ng>
+<tulpar-button-ng severity="premium" variant="tonal" [icon]="Sparkles">Get early access</tulpar-button-ng>
+
+<!-- Icon-size override for premium large CTA -->
+<tulpar-button-ng severity="premium" size="lg" [icon]="Crown" [iconSize]="24">Go Pro</tulpar-button-ng>
 
 <!-- premium = gold accent, distinct from primary (navy)
      Light theme: gold.500 bg + dark text
      Hover: brightens (gold.500 -> .400 -> .300) -->`;
+
+const ICON_PROP_CODE = `<!-- [icon] input — convenience for Lucide icons (replaces verbose slot boilerplate) -->
+<!-- Must expose the icon as a class property: protected readonly Check = Check; -->
+<tulpar-button-ng severity="success" [icon]="Check">Save</tulpar-button-ng>
+
+<!-- [iconSize] override — useful for larger CTAs -->
+<tulpar-button-ng severity="premium" size="lg" [icon]="Crown" [iconSize]="24">Go Pro</tulpar-button-ng>
+
+<!-- Auto icon-only: [icon] + no text = square, no extra props needed -->
+<tulpar-button-ng severity="danger" [icon]="Trash2" ariaLabel="Delete"></tulpar-button-ng>
+
+<!-- [icon] respects iconPosition for top/bottom layouts -->
+<tulpar-button-ng [icon]="Check" iconPosition="top" size="lg">Confirm</tulpar-button-ng>`;
+
+const TOOLTIP_CODE = `<!-- Tooltip on icon-only button (fills the a11y gap) -->
+<tulpar-button-ng [icon]="Settings" tooltip="Open settings" ariaLabel="Open settings"></tulpar-button-ng>
+
+<!-- Tooltip on a labelled button -->
+<tulpar-button-ng severity="danger" [icon]="Trash2" tooltip="Permanently delete this item">
+  Delete
+</tulpar-button-ng>
+
+<!-- Tooltip on an anchor button -->
+<tulpar-button-ng
+  href="https://example.com"
+  target="_blank"
+  rel="noopener noreferrer"
+  tooltip="Opens in a new tab"
+>
+  Visit Example
+</tulpar-button-ng>`;
+
+const SLOT_ESCAPE_HATCH_CODE = `<!-- Escape hatch: non-Lucide libraries (Heroicons, Tabler, custom SVG) -->
+<!-- When [icon] is not an option, use <span slot="start"> directly -->
+<tulpar-button-ng severity="primary">
+  <span slot="start">
+    <!-- Any component or SVG; you control sizing via class/style -->
+    <my-hero-icon class="w-4 h-4"></my-hero-icon>
+  </span>
+  Save with Heroicon
+</tulpar-button-ng>
+
+<!-- Multi-icon pattern (two icons) — slot is the only option;
+     [icon] supports a single leading icon only -->
+<tulpar-button-ng severity="secondary" variant="outlined">
+  <span slot="start"><lucide-angular [img]="ArrowLeft" [size]="16"></lucide-angular></span>
+  Navigate
+  <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+</tulpar-button-ng>`;
 
 @Component({
   selector: 'app-root',
@@ -259,12 +272,13 @@ const PREMIUM_CODE = `<!-- Solid premium — gold marketing CTA -->
       <header class="page-header">
         <div class="header-inner">
           <div class="header-text">
-            <p class="eyebrow">Tulpar UI · Angular · v0.3</p>
+            <p class="eyebrow">Tulpar UI · Angular · v0.3.1</p>
             <h1 class="page-title">Button — full feature reference</h1>
             <p class="page-lede">
-              Live previews and copy-paste code for every Button capability. All examples use Lucide
-              icons and the <code class="inline-code">&lt;span slot="..."&gt;</code> projection
-              pattern required for Shadow DOM slot routing.
+              Live previews and copy-paste code for every Button capability. Most examples use the
+              <code class="inline-code">[icon]</code> input (v0.3.1) for Lucide icons. The
+              <code class="inline-code">&lt;span slot="..."&gt;</code> pattern remains supported as
+              a fallback for non-Lucide libraries.
             </p>
           </div>
           <button class="theme-toggle" (click)="toggleDark()">
@@ -360,9 +374,7 @@ const PREMIUM_CODE = `<!-- Solid premium — gold marketing CTA -->
           <div class="preview preview--baseline">
             <tulpar-button-ng shape="default">Default</tulpar-button-ng>
             <tulpar-button-ng shape="round">Round</tulpar-button-ng>
-            <tulpar-button-ng shape="circle" [iconOnly]="true" ariaLabel="Add item">
-              <span slot="start"><lucide-angular [img]="Plus" [size]="16"></lucide-angular></span>
-            </tulpar-button-ng>
+            <tulpar-button-ng shape="circle" [icon]="Plus" ariaLabel="Add item"></tulpar-button-ng>
           </div>
           <pre class="code"><code>{{ shapeCode }}</code></pre>
         </section>
@@ -371,21 +383,20 @@ const PREMIUM_CODE = `<!-- Solid premium — gold marketing CTA -->
         <section class="doc-section">
           <h2 class="section-title">6. Icons — leading, trailing, both</h2>
           <p class="section-desc">
-            Wrap icons in <code class="inline-code">&lt;span slot="start"&gt;</code> or
-            <code class="inline-code">&lt;span slot="end"&gt;</code> to route them into the correct
-            Shadow DOM slot. Without the wrapping span, content falls to the default slot only.
+            Use the <code class="inline-code">[icon]</code> input for Lucide icons — it renders into
+            <code class="inline-code">slot="start"</code> automatically. For a trailing icon, use
+            <code class="inline-code">&lt;span slot="end"&gt;</code>. For multi-icon, combine both.
           </p>
           <div class="preview">
-            <tulpar-button-ng severity="success">
-              <span slot="start"><lucide-angular [img]="Check" [size]="16"></lucide-angular></span>
-              Save
-            </tulpar-button-ng>
+            <!-- Leading icon via [icon] prop -->
+            <tulpar-button-ng severity="success" [icon]="Check">Save</tulpar-button-ng>
+            <!-- Trailing icon via slot -->
             <tulpar-button-ng severity="primary">
               Continue
               <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
             </tulpar-button-ng>
-            <tulpar-button-ng severity="primary">
-              <span slot="start"><lucide-angular [img]="Check" [size]="16"></lucide-angular></span>
+            <!-- Both: [icon] for start, slot for end -->
+            <tulpar-button-ng severity="primary" [icon]="Check">
               Save and continue
               <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
             </tulpar-button-ng>
@@ -397,22 +408,18 @@ const PREMIUM_CODE = `<!-- Solid premium — gold marketing CTA -->
         <section class="doc-section">
           <h2 class="section-title">7. Icon-only</h2>
           <p class="section-desc">
-            Always include <code class="inline-code">ariaLabel</code> on icon-only buttons for
-            screen reader accessibility.
+            When <code class="inline-code">[icon]</code> is set and no text is projected, icon-only
+            mode is applied <em>automatically</em> — no extra input needed. Always include
+            <code class="inline-code">ariaLabel</code> for screen reader accessibility.
           </p>
           <div class="preview preview--baseline">
-            <tulpar-button-ng severity="danger" [iconOnly]="true" ariaLabel="Delete item">
-              <span slot="start"><lucide-angular [img]="Trash2" [size]="16"></lucide-angular></span>
-            </tulpar-button-ng>
-            <tulpar-button-ng severity="secondary" [iconOnly]="true" ariaLabel="Settings">
-              <span slot="start"><lucide-angular [img]="Settings" [size]="16"></lucide-angular></span>
-            </tulpar-button-ng>
-            <tulpar-button-ng severity="success" [iconOnly]="true" shape="circle" ariaLabel="Save">
-              <span slot="start"><lucide-angular [img]="Save" [size]="16"></lucide-angular></span>
-            </tulpar-button-ng>
-            <tulpar-button-ng severity="premium" [iconOnly]="true" shape="round" ariaLabel="Premium">
-              <span slot="start"><lucide-angular [img]="Crown" [size]="16"></lucide-angular></span>
-            </tulpar-button-ng>
+            <!-- Auto icon-only -->
+            <tulpar-button-ng severity="danger" [icon]="Trash2" ariaLabel="Delete item"></tulpar-button-ng>
+            <tulpar-button-ng severity="secondary" [icon]="Settings" ariaLabel="Settings"></tulpar-button-ng>
+            <!-- Auto icon-only + circle shape -->
+            <tulpar-button-ng severity="success" [icon]="Save" shape="circle" ariaLabel="Save"></tulpar-button-ng>
+            <!-- Explicit iconOnly still works -->
+            <tulpar-button-ng severity="premium" [iconOnly]="true" shape="round" [icon]="Crown" ariaLabel="Premium"></tulpar-button-ng>
           </div>
           <pre class="code"><code>{{ iconOnlyCode }}</code></pre>
         </section>
@@ -423,26 +430,19 @@ const PREMIUM_CODE = `<!-- Solid premium — gold marketing CTA -->
           <p class="section-desc">
             Control where the icon renders relative to the label:
             <code class="inline-code">start</code>, <code class="inline-code">end</code>,
-            <code class="inline-code">top</code>, <code class="inline-code">bottom</code>. Use
-            <code class="inline-code">size="lg"</code> for top/bottom layouts.
+            <code class="inline-code">top</code>, <code class="inline-code">bottom</code>. The
+            <code class="inline-code">[icon]</code> input always renders in the start slot; for
+            <code class="inline-code">iconPosition="end"</code> use
+            <code class="inline-code">&lt;span slot="end"&gt;</code>.
           </p>
           <div class="preview preview--baseline">
-            <tulpar-button-ng iconPosition="start" size="lg">
-              <span slot="start"><lucide-angular [img]="Check" [size]="16"></lucide-angular></span>
-              Confirm
-            </tulpar-button-ng>
+            <tulpar-button-ng [icon]="Check" iconPosition="start" size="lg">Confirm</tulpar-button-ng>
             <tulpar-button-ng iconPosition="end" size="lg">
-              <span slot="end"><lucide-angular [img]="Check" [size]="16"></lucide-angular></span>
               Confirm
+              <span slot="end"><lucide-angular [img]="Check" [size]="18"></lucide-angular></span>
             </tulpar-button-ng>
-            <tulpar-button-ng iconPosition="top" size="lg">
-              <span slot="start"><lucide-angular [img]="Check" [size]="16"></lucide-angular></span>
-              Confirm
-            </tulpar-button-ng>
-            <tulpar-button-ng iconPosition="bottom" size="lg">
-              <span slot="start"><lucide-angular [img]="Check" [size]="16"></lucide-angular></span>
-              Confirm
-            </tulpar-button-ng>
+            <tulpar-button-ng [icon]="Check" iconPosition="top" size="lg">Confirm</tulpar-button-ng>
+            <tulpar-button-ng [icon]="Check" iconPosition="bottom" size="lg">Confirm</tulpar-button-ng>
           </div>
           <pre class="code"><code>{{ iconPositionCode }}</code></pre>
         </section>
@@ -451,16 +451,12 @@ const PREMIUM_CODE = `<!-- Solid premium — gold marketing CTA -->
         <section class="doc-section">
           <h2 class="section-title">9. Icon separator</h2>
           <p class="section-desc">
-            The <code class="inline-code">iconSeparator</code> prop draws a visual divider between
+            The <code class="inline-code">iconSeparator</code> input draws a visual divider between
             icon and label. Works across all variants.
           </p>
           <div class="preview">
-            <tulpar-button-ng variant="outlined" [iconSeparator]="true">
-              <span slot="start"><lucide-angular [img]="Download" [size]="16"></lucide-angular></span>
-              Download
-            </tulpar-button-ng>
-            <tulpar-button-ng variant="tonal" [iconSeparator]="true">
-              <span slot="start"><lucide-angular [img]="ArrowLeft" [size]="16"></lucide-angular></span>
+            <tulpar-button-ng variant="outlined" [iconSeparator]="true" [icon]="Download">Download</tulpar-button-ng>
+            <tulpar-button-ng variant="tonal" [iconSeparator]="true" [icon]="ArrowLeft">
               Navigate
               <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
             </tulpar-button-ng>
@@ -487,8 +483,7 @@ const PREMIUM_CODE = `<!-- Solid premium — gold marketing CTA -->
               <tulpar-button-ng [raised]="true" variant="outlined">Raised Outlined</tulpar-button-ng>
             </div>
             <tulpar-button-ng [block]="true">Block Button</tulpar-button-ng>
-            <tulpar-button-ng [block]="true" justify="between">
-              <span slot="start"><lucide-angular [img]="Mail" [size]="16"></lucide-angular></span>
+            <tulpar-button-ng [block]="true" justify="between" [icon]="Mail">
               Send Email
               <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
             </tulpar-button-ng>
@@ -500,7 +495,7 @@ const PREMIUM_CODE = `<!-- Solid premium — gold marketing CTA -->
         <section class="doc-section">
           <h2 class="section-title">11. Loading states</h2>
           <p class="section-desc">
-            The <code class="inline-code">loading</code> prop disables interaction and shows a
+            The <code class="inline-code">loading</code> input disables interaction and shows a
             spinner. Control spinner position with <code class="inline-code">loadingPosition</code>.
             Provide a <code class="inline-code">loadingLabel</code> for status announcements. Use
             <code class="inline-code">slot="loading-icon"</code> to swap the spinner.
@@ -547,7 +542,7 @@ const PREMIUM_CODE = `<!-- Solid premium — gold marketing CTA -->
         <section class="doc-section">
           <h2 class="section-title">13. Polymorphism — href renders &lt;a&gt;</h2>
           <p class="section-desc">
-            Pass an <code class="inline-code">href</code> prop to render the button as an anchor
+            Pass an <code class="inline-code">href</code> input to render the button as an anchor
             element. All ARIA and keyboard semantics are preserved.
           </p>
           <div class="preview">
@@ -573,10 +568,7 @@ const PREMIUM_CODE = `<!-- Solid premium — gold marketing CTA -->
           <div class="preview preview--col">
             <form class="demo-form" (submit)="onSubmit($event)">
               <input class="demo-input" name="email" type="email" placeholder="your@email.com" />
-              <tulpar-button-ng type="submit" severity="primary">
-                <span slot="start"><lucide-angular [img]="Mail" [size]="16"></lucide-angular></span>
-                Submit
-              </tulpar-button-ng>
+              <tulpar-button-ng type="submit" severity="primary" [icon]="Mail">Submit</tulpar-button-ng>
               <tulpar-button-ng type="reset" severity="secondary" variant="outlined">
                 Reset
               </tulpar-button-ng>
@@ -629,17 +621,102 @@ const PREMIUM_CODE = `<!-- Solid premium — gold marketing CTA -->
             <em>brightens</em> (gold.500 &rarr; .400 &rarr; .300) — intentionally distinct from
             <code class="inline-code">primary</code> (navy), which darkens on hover.
           </p>
-          <div class="preview">
-            <tulpar-button-ng severity="premium">
-              <span slot="start"><lucide-angular [img]="Crown" [size]="16"></lucide-angular></span>
-              Upgrade to Pro
-            </tulpar-button-ng>
-            <tulpar-button-ng severity="premium" variant="tonal">
-              <span slot="start"><lucide-angular [img]="Sparkles" [size]="16"></lucide-angular></span>
-              Get early access
-            </tulpar-button-ng>
+          <div class="preview preview--baseline">
+            <tulpar-button-ng severity="premium" [icon]="Crown">Upgrade to Pro</tulpar-button-ng>
+            <tulpar-button-ng severity="premium" variant="tonal" [icon]="Sparkles">Get early access</tulpar-button-ng>
+            <tulpar-button-ng severity="premium" size="lg" [icon]="Crown" [iconSize]="24">Go Pro</tulpar-button-ng>
           </div>
           <pre class="code"><code>{{ premiumCode }}</code></pre>
+        </section>
+
+        <!-- ── 17. [icon] input — Lucide convenience API ────────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">17. [icon] input — Lucide convenience API (v0.3.1)</h2>
+          <p class="section-desc">
+            Pass any <code class="inline-code">LucideIconData</code> value via
+            <code class="inline-code">[icon]</code>. The wrapper renders it inside
+            <code class="inline-code">slot="start"</code> at the correct size for the button's
+            <code class="inline-code">size</code>. Use <code class="inline-code">[iconSize]</code>
+            to override. Auto icon-only kicks in when no projected text exists. Expose icons as
+            <code class="inline-code">protected readonly</code> class properties so the template
+            can reference them.
+          </p>
+          <div class="preview preview--baseline">
+            <tulpar-button-ng severity="success" [icon]="Check">Save</tulpar-button-ng>
+            <tulpar-button-ng severity="premium" size="lg" [icon]="Crown" [iconSize]="24">Go Pro</tulpar-button-ng>
+            <tulpar-button-ng severity="danger" [icon]="Trash2" ariaLabel="Delete"></tulpar-button-ng>
+            <tulpar-button-ng [icon]="Check" iconPosition="top" size="lg">Confirm</tulpar-button-ng>
+          </div>
+          <pre class="code"><code>{{ iconPropCode }}</code></pre>
+        </section>
+
+        <!-- ── 18. Tooltip ───────────────────────────────────────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">18. Tooltip (v0.3.1)</h2>
+          <p class="section-desc">
+            Pass a string to <code class="inline-code">tooltip</code> to show an inline tooltip on
+            hover and focus. Especially useful for icon-only buttons where the label is visually
+            hidden. Tooltip appears below the button, 150 ms fade.
+          </p>
+          <div class="preview preview--baseline">
+            <!-- Tooltip on icon-only button -->
+            <tulpar-button-ng [icon]="Settings" tooltip="Open settings" ariaLabel="Open settings"></tulpar-button-ng>
+            <!-- Tooltip on a labelled button -->
+            <tulpar-button-ng severity="danger" [icon]="Trash2" tooltip="Permanently delete this item">
+              Delete
+            </tulpar-button-ng>
+            <!-- Tooltip on an anchor -->
+            <tulpar-button-ng
+              href="https://example.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              tooltip="Opens in a new tab"
+            >
+              Visit Example
+            </tulpar-button-ng>
+          </div>
+          <pre class="code"><code>{{ tooltipCode }}</code></pre>
+        </section>
+
+        <!-- ── 19. Escape hatch — non-Lucide icon libraries ──────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">19. Escape hatch — non-Lucide icon libraries</h2>
+          <p class="section-desc">
+            The <code class="inline-code">[icon]</code> input is Lucide-optimised
+            (<code class="inline-code">lucide-angular</code> component with
+            <code class="inline-code">[size]</code> auto-set). For Heroicons, Tabler, Material, or
+            custom SVG, project via <code class="inline-code">&lt;span slot="start"&gt;</code> — the
+            slot pattern remains fully supported. Multi-icon layouts also require slots since
+            <code class="inline-code">[icon]</code> supports a single leading icon only.
+          </p>
+          <div class="preview preview--baseline">
+            <!-- Custom icon via slot (simulated with inline SVG) -->
+            <tulpar-button-ng severity="primary">
+              <span slot="start">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M12 5v14M5 12l7 7 7-7" />
+                </svg>
+              </span>
+              Save with custom icon
+            </tulpar-button-ng>
+            <!-- Multi-icon via slots -->
+            <tulpar-button-ng severity="secondary" variant="outlined">
+              <span slot="start"><lucide-angular [img]="ArrowLeft" [size]="16"></lucide-angular></span>
+              Navigate
+              <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+            </tulpar-button-ng>
+          </div>
+          <pre class="code"><code>{{ slotEscapeHatchCode }}</code></pre>
         </section>
 
       </main>
@@ -902,6 +979,9 @@ export class App {
   formCode = FORM_CODE;
   buttonGroupCode = BUTTON_GROUP_CODE;
   premiumCode = PREMIUM_CODE;
+  iconPropCode = ICON_PROP_CODE;
+  tooltipCode = TOOLTIP_CODE;
+  slotEscapeHatchCode = SLOT_ESCAPE_HATCH_CODE;
 
   toggleDark(): void {
     const next = !this.isDark();
