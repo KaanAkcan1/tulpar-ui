@@ -44,3 +44,14 @@ export const KeyboardNavigation: Story = {
     </tulpar-button-group>
   `,
 };
+
+export const StackedGroup: Story = {
+  render: () => html`
+    <p>Stacked layout — use ArrowUp / ArrowDown to navigate.</p>
+    <tulpar-button-group stacked>
+      <tulpar-button variant="outlined">Edit profile</tulpar-button>
+      <tulpar-button variant="outlined">Account settings</tulpar-button>
+      <tulpar-button variant="outlined">Sign out</tulpar-button>
+    </tulpar-button-group>
+  `,
+};
