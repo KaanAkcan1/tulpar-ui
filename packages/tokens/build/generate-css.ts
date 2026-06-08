@@ -7,6 +7,15 @@ import { tulparLight, tulparDark } from "../src/brand/tulpar";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const distDir = resolve(__dirname, "../dist/css");
 
+/**
+ * Convert a camelCase identifier to kebab-case for use as a CSS custom
+ * property segment. Pure digits or single-word lowercase keys pass through
+ * unchanged. `onColor` → `on-color`, `subtleHover` → `subtle-hover`.
+ */
+function kebab(segment: string): string {
+  return segment.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+}
+
 export function flattenTokens(
   obj: Record<string, unknown>,
   prefix: string,
@@ -18,7 +27,7 @@ export function flattenTokens(
     if (value !== null && typeof value === "object") {
       Object.assign(result, flattenTokens(value as Record<string, unknown>, prefix, newPath));
     } else {
-      const cssVar = `--${prefix}-${newPath.join("-")}`;
+      const cssVar = `--${prefix}-${newPath.map(kebab).join("-")}`;
       result[cssVar] = String(value);
     }
   }
