@@ -107,4 +107,21 @@ describe("<tulpar-button-group>", () => {
       expect(document.activeElement).to.equal(buttons[0]); // unchanged
     });
   });
+
+  it("ignores nested tulpar-button descendants (only direct children)", async () => {
+    const el = await fixture<TulparButtonGroup>(html`
+      <tulpar-button-group>
+        <tulpar-button>A</tulpar-button>
+        <div>
+          <tulpar-button>Nested</tulpar-button>
+        </div>
+        <tulpar-button>B</tulpar-button>
+      </tulpar-button-group>
+    `);
+    await el.updateComplete;
+    const direct = el.querySelectorAll(":scope > tulpar-button");
+    expect(direct.length).to.equal(2);
+    const nested = el.querySelector("div tulpar-button")!;
+    expect(nested.hasAttribute("data-group-position")).to.be.false;
+  });
 });

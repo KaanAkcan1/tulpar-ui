@@ -29,7 +29,7 @@ export class TulparButtonGroup extends LitElement {
   }
 
   private _buttons(): HTMLElement[] {
-    return Array.from(this.querySelectorAll("tulpar-button"));
+    return Array.from(this.querySelectorAll(":scope > tulpar-button"));
   }
 
   private _initializeTabindex(): void {
