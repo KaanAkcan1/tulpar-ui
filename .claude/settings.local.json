@@ -53,7 +53,23 @@
       "Bash(pnpm build *)",
       "Bash(pnpm test *)",
       "Bash(pnpm format *)",
-      "Bash(pnpm --filter @tulpar-ui/vue test)"
+      "Bash(pnpm --filter @tulpar-ui/vue test)",
+      "Bash(pnpm exec *)",
+      "Bash(pnpm --filter playground-vue exec tsc --version)",
+      "Bash(pnpm --filter playground-vue build)",
+      "Bash(git reset *)",
+      "Bash(gh repo *)",
+      "PowerShell(gh repo view nextlevelbuilder/ui-ux-pro-max-skill 2>&1)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "PowerShell(npm --version)",
+      "PowerShell(node --version)",
+      "PowerShell(python --version)",
+      "PowerShell(py --version 2>&1)",
+      "PowerShell(python3 --version 2>&1)",
+      "PowerShell(npm install -g uipro-cli 2>&1)",
+      "PowerShell(uipro --version 2>&1)",
+      "PowerShell(uipro --help 2>&1)"
     ]
   }
 }
