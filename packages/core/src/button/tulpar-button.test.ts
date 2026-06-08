@@ -70,14 +70,14 @@ describe("<tulpar-button>", () => {
   });
 
   describe("color override", () => {
-    it("sets --_btn-color-default to primitive when color is set", async () => {
+    it("sets --_btn-color-default to primitive .700 when color is set", async () => {
       const el = await fixture<TulparButton>(html`<tulpar-button color="gold">X</tulpar-button>`);
       await el.updateComplete;
       const inline = el.style.getPropertyValue("--_btn-color-default");
-      expect(inline).to.contain("tulpar-primitive-color-gold-600");
+      expect(inline).to.contain("tulpar-primitive-color-gold-700");
     });
 
-    it("uses stone-900 onColor for light families (yellow, lime, gold)", async () => {
+    it("uses stone-900 onColor for light-luminance families (yellow, lime)", async () => {
       const el = await fixture<TulparButton>(html`<tulpar-button color="yellow">X</tulpar-button>`);
       await el.updateComplete;
       expect(el.style.getPropertyValue("--_btn-color-on")).to.contain(

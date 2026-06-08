@@ -51,12 +51,14 @@ export type ButtonColor =
 
 /**
  * For `color` override, on-color (foreground) is chosen per family.
- * Families with light .600 stops use stone.900 (dark) for AA contrast;
- * others use stone.50 (light).
+ * Color override now uses the .700 stop (matching severity defaults for
+ * WCAG AA contrast with white text). Light-luminance families (yellow,
+ * lime) still need dark text even at .700. All other families work with
+ * white text.
  */
 const ON_COLOR_MAP: Record<ButtonColor, string> = {
   navy: "var(--tulpar-primitive-color-stone-50)",
-  gold: "var(--tulpar-primitive-color-stone-900)",
+  gold: "var(--tulpar-primitive-color-stone-50)",
   stone: "var(--tulpar-primitive-color-stone-50)",
   slate: "var(--tulpar-primitive-color-stone-50)",
   red: "var(--tulpar-primitive-color-stone-50)",
@@ -186,9 +188,9 @@ export class TulparButton extends LitElement {
       return;
     }
     const c = this.color;
-    this.style.setProperty("--_btn-color-default", `var(--tulpar-primitive-color-${c}-600)`);
-    this.style.setProperty("--_btn-color-hover", `var(--tulpar-primitive-color-${c}-700)`);
-    this.style.setProperty("--_btn-color-active", `var(--tulpar-primitive-color-${c}-800)`);
+    this.style.setProperty("--_btn-color-default", `var(--tulpar-primitive-color-${c}-700)`);
+    this.style.setProperty("--_btn-color-hover", `var(--tulpar-primitive-color-${c}-800)`);
+    this.style.setProperty("--_btn-color-active", `var(--tulpar-primitive-color-${c}-900)`);
     this.style.setProperty("--_btn-color-disabled", `var(--tulpar-primitive-color-${c}-300)`);
     this.style.setProperty("--_btn-color-on", ON_COLOR_MAP[c]);
     this.style.setProperty("--_btn-color-subtle", `var(--tulpar-primitive-color-${c}-50)`);

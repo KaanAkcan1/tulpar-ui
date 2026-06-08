@@ -14,32 +14,32 @@ describe("tulparLight", () => {
     expect(tulparLight.color.text.muted).toBe("#78716c");
   });
 
-  it("uses navy.600 as brand default (shifted from navy.700 in v0.2)", () => {
-    expect(tulparLight.color.brand.default).toBe("#133a66"); // navy.600
-    expect(tulparLight.color.brand.hover).toBe("#0a2540"); // navy.700
-    expect(tulparLight.color.brand.active).toBe("#061a30"); // navy.800
+  it("uses navy.700 as brand default (WCAG AA contrast with white text)", () => {
+    expect(tulparLight.color.brand.default).toBe("#0a2540"); // navy.700
+    expect(tulparLight.color.brand.hover).toBe("#061a30"); // navy.800
+    expect(tulparLight.color.brand.active).toBe("#03101f"); // navy.900
     expect(tulparLight.color.brand.onColor).toBe("#fafaf9");
   });
 
-  it("uses red/green/amber .600 for danger/success/warn (default), .700 hover, .800 active", () => {
-    expect(tulparLight.color.danger.default).toBe("#dc2626");
-    expect(tulparLight.color.danger.hover).toBe("#b91c1c");
-    expect(tulparLight.color.success.default).toBe("#16a34a");
-    expect(tulparLight.color.warn.default).toBe("#d97706");
+  it("uses .700 default / .800 hover / .900 active for danger/success/warn (AA contrast)", () => {
+    expect(tulparLight.color.danger.default).toBe("#b91c1c"); // red.700
+    expect(tulparLight.color.danger.hover).toBe("#991b1b"); // red.800
+    expect(tulparLight.color.success.default).toBe("#15803d"); // green.700
+    expect(tulparLight.color.warn.default).toBe("#b45309"); // amber.700
   });
 
-  it("provides info (blue.600), help (purple.600), contrast (stone.900) — new in v0.3", () => {
-    expect(tulparLight.color.info.default).toBe("#2563eb");
-    expect(tulparLight.color.info.hover).toBe("#1d4ed8");
-    expect(tulparLight.color.help.default).toBe("#9333ea");
-    expect(tulparLight.color.help.hover).toBe("#7e22ce");
+  it("provides info (blue.700), help (purple.700), contrast (stone.900) — new in v0.3", () => {
+    expect(tulparLight.color.info.default).toBe("#1d4ed8"); // blue.700
+    expect(tulparLight.color.info.hover).toBe("#1e40af"); // blue.800
+    expect(tulparLight.color.help.default).toBe("#7e22ce"); // purple.700
+    expect(tulparLight.color.help.hover).toBe("#6b21a8"); // purple.800
     expect(tulparLight.color.contrast.default).toBe("#1c1917"); // stone.900
     expect(tulparLight.color.contrast.hover).toBe("#292524"); // stone.800
   });
 
-  it("uses stone.600 for neutral (secondary) — shifted from stone.200 in v0.2", () => {
-    expect(tulparLight.color.neutral.default).toBe("#57534e");
-    expect(tulparLight.color.neutral.hover).toBe("#44403c");
+  it("uses stone.700 for neutral (secondary) — AA contrast with white", () => {
+    expect(tulparLight.color.neutral.default).toBe("#44403c");
+    expect(tulparLight.color.neutral.hover).toBe("#292524");
   });
 
   it("uses navy@40% as focus ring", () => {
