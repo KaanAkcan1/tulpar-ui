@@ -1,4 +1,9 @@
-import { css } from "lit";
+import { css, unsafeCSS } from "lit";
+import { FALLBACKS } from "@tulpar-ui/tokens/fallbacks";
+
+const FB_BORDER = unsafeCSS(FALLBACKS.borderDefault);
+const FB_TEXT_PRIMARY = unsafeCSS(FALLBACKS.textPrimary);
+const FB_TEXT_INVERSE = unsafeCSS(FALLBACKS.textInverse);
 
 export const buttonStyles = css`
   /* ============================================================
@@ -24,7 +29,7 @@ export const buttonStyles = css`
 
     /* Default separator color — variant rules override (solid uses
        rgba on white text; link uses transparent). */
-    --_btn-separator: var(--tulpar-color-border-default, #e7e5e4);
+    --_btn-separator: var(--tulpar-color-border-default, ${FB_BORDER});
   }
 
   :host([block]) {
@@ -216,7 +221,7 @@ export const buttonStyles = css`
     --_btn-bg: transparent;
     --_btn-fg: var(--_btn-color-hover);
     --_btn-border: var(--_btn-color-default);
-    --_btn-separator: var(--tulpar-color-border-default, #e7e5e4);
+    --_btn-separator: var(--tulpar-color-border-default, ${FB_BORDER});
   }
   :host([variant="outlined"]) .btn:hover {
     --_btn-bg: var(--_btn-color-subtle);
@@ -231,7 +236,7 @@ export const buttonStyles = css`
     --_btn-bg: var(--_btn-color-subtle);
     --_btn-fg: var(--_btn-color-hover);
     --_btn-border: transparent;
-    --_btn-separator: var(--tulpar-color-border-default, #e7e5e4);
+    --_btn-separator: var(--tulpar-color-border-default, ${FB_BORDER});
   }
   :host([variant="tonal"]) .btn:hover {
     --_btn-bg: var(--_btn-color-subtle-hover);
@@ -242,7 +247,7 @@ export const buttonStyles = css`
     --_btn-bg: transparent;
     --_btn-fg: var(--_btn-color-hover);
     --_btn-border: transparent;
-    --_btn-separator: var(--tulpar-color-border-default, #e7e5e4);
+    --_btn-separator: var(--tulpar-color-border-default, ${FB_BORDER});
   }
   :host([variant="ghost"]) .btn:hover {
     --_btn-bg: var(--_btn-color-subtle);
@@ -506,8 +511,8 @@ export const buttonStyles = css`
     top: calc(100% + 8px);
     left: 50%;
     transform: translateX(-50%);
-    background: var(--tulpar-color-text-primary, #1c1917);
-    color: var(--tulpar-color-text-inverse, #fafaf9);
+    background: var(--tulpar-color-text-primary, ${FB_TEXT_PRIMARY});
+    color: var(--tulpar-color-text-inverse, ${FB_TEXT_INVERSE});
     font-family: var(--tulpar-font-family-ui, system-ui);
     font-size: 12px;
     font-weight: 500;
