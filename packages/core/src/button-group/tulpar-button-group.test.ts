@@ -87,9 +87,7 @@ describe("<tulpar-button-group>", () => {
       await el.updateComplete;
       const buttons = el.querySelectorAll("tulpar-button");
       buttons[0].focus();
-      buttons[0].dispatchEvent(
-        new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }),
-      );
+      buttons[0].dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
       await el.updateComplete;
       expect(document.activeElement).to.equal(buttons[1]);
     });
@@ -104,9 +102,7 @@ describe("<tulpar-button-group>", () => {
       await el.updateComplete;
       const buttons = el.querySelectorAll("tulpar-button");
       buttons[0].focus();
-      buttons[0].dispatchEvent(
-        new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }),
-      );
+      buttons[0].dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
       await el.updateComplete;
       expect(document.activeElement).to.equal(buttons[0]); // unchanged
     });

@@ -19,11 +19,27 @@ export type ButtonLoadingPosition = "start" | "center" | "end";
 export type ButtonType = "button" | "submit" | "reset";
 export type ButtonJustify = "start" | "center" | "end" | "between";
 export type ButtonColor =
-  | "navy" | "gold" | "stone" | "slate"
-  | "red" | "orange" | "amber" | "yellow"
-  | "lime" | "green" | "emerald" | "teal"
-  | "cyan" | "sky" | "blue" | "indigo"
-  | "violet" | "purple" | "fuchsia" | "pink" | "rose";
+  | "navy"
+  | "gold"
+  | "stone"
+  | "slate"
+  | "red"
+  | "orange"
+  | "amber"
+  | "yellow"
+  | "lime"
+  | "green"
+  | "emerald"
+  | "teal"
+  | "cyan"
+  | "sky"
+  | "blue"
+  | "indigo"
+  | "violet"
+  | "purple"
+  | "fuchsia"
+  | "pink"
+  | "rose";
 
 interface Props {
   severity?: ButtonSeverity;

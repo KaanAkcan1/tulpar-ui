@@ -63,9 +63,7 @@ describe("<tulpar-button>", () => {
     it("accepts all 5 variants", async () => {
       const variants = ["solid", "outlined", "tonal", "ghost", "link"] as const;
       for (const v of variants) {
-        const el = await fixture<TulparButton>(
-          html`<tulpar-button variant=${v}>X</tulpar-button>`,
-        );
+        const el = await fixture<TulparButton>(html`<tulpar-button variant=${v}>X</tulpar-button>`);
         expect(el.variant).to.equal(v);
       }
     });
@@ -73,18 +71,14 @@ describe("<tulpar-button>", () => {
 
   describe("color override", () => {
     it("sets --_btn-color-default to primitive when color is set", async () => {
-      const el = await fixture<TulparButton>(
-        html`<tulpar-button color="gold">X</tulpar-button>`,
-      );
+      const el = await fixture<TulparButton>(html`<tulpar-button color="gold">X</tulpar-button>`);
       await el.updateComplete;
       const inline = el.style.getPropertyValue("--_btn-color-default");
       expect(inline).to.contain("tulpar-primitive-color-gold-600");
     });
 
     it("uses stone-900 onColor for light families (yellow, lime, gold)", async () => {
-      const el = await fixture<TulparButton>(
-        html`<tulpar-button color="yellow">X</tulpar-button>`,
-      );
+      const el = await fixture<TulparButton>(html`<tulpar-button color="yellow">X</tulpar-button>`);
       await el.updateComplete;
       expect(el.style.getPropertyValue("--_btn-color-on")).to.contain(
         "tulpar-primitive-color-stone-900",
@@ -92,9 +86,7 @@ describe("<tulpar-button>", () => {
     });
 
     it("uses stone-50 onColor for dark families (purple, navy, red)", async () => {
-      const el = await fixture<TulparButton>(
-        html`<tulpar-button color="purple">X</tulpar-button>`,
-      );
+      const el = await fixture<TulparButton>(html`<tulpar-button color="purple">X</tulpar-button>`);
       await el.updateComplete;
       expect(el.style.getPropertyValue("--_btn-color-on")).to.contain(
         "tulpar-primitive-color-stone-50",
@@ -102,9 +94,7 @@ describe("<tulpar-button>", () => {
     });
 
     it("removes the color override when color attribute is unset", async () => {
-      const el = await fixture<TulparButton>(
-        html`<tulpar-button color="purple">X</tulpar-button>`,
-      );
+      const el = await fixture<TulparButton>(html`<tulpar-button color="purple">X</tulpar-button>`);
       await el.updateComplete;
       expect(el.style.getPropertyValue("--_btn-color-default")).to.not.equal("");
       el.removeAttribute("color");
@@ -115,9 +105,7 @@ describe("<tulpar-button>", () => {
 
   describe("shape", () => {
     it("reflects shape attribute (default | round | circle)", async () => {
-      const el = await fixture<TulparButton>(
-        html`<tulpar-button shape="round">X</tulpar-button>`,
-      );
+      const el = await fixture<TulparButton>(html`<tulpar-button shape="round">X</tulpar-button>`);
       expect(el.shape).to.equal("round");
     });
 
@@ -138,9 +126,7 @@ describe("<tulpar-button>", () => {
 
   describe("disabled state", () => {
     it("reflects the disabled attribute and suppresses clicks", async () => {
-      const el = await fixture<TulparButton>(
-        html`<tulpar-button disabled>X</tulpar-button>`,
-      );
+      const el = await fixture<TulparButton>(html`<tulpar-button disabled>X</tulpar-button>`);
       expect(el.disabled).to.be.true;
       let clicked = false;
       el.addEventListener("click", () => {
@@ -151,9 +137,7 @@ describe("<tulpar-button>", () => {
     });
 
     it("data-disabled styles WITHOUT suppressing clicks", async () => {
-      const el = await fixture<TulparButton>(
-        html`<tulpar-button data-disabled>X</tulpar-button>`,
-      );
+      const el = await fixture<TulparButton>(html`<tulpar-button data-disabled>X</tulpar-button>`);
       expect(el.hasAttribute("data-disabled")).to.be.true;
       let clicked = false;
       el.addEventListener("click", () => {
@@ -168,9 +152,7 @@ describe("<tulpar-button>", () => {
     it("reflects loading + sets aria-busy", async () => {
       const el = await fixture<TulparButton>(html`<tulpar-button loading>X</tulpar-button>`);
       expect(el.hasAttribute("loading")).to.be.true;
-      expect(
-        el.shadowRoot!.querySelector("button")!.getAttribute("aria-busy"),
-      ).to.equal("true");
+      expect(el.shadowRoot!.querySelector("button")!.getAttribute("aria-busy")).to.equal("true");
     });
 
     it("renders the spinner element", async () => {
@@ -210,9 +192,7 @@ describe("<tulpar-button>", () => {
           Save
         </tulpar-button>
       `);
-      const slot = el.shadowRoot!.querySelector(
-        'slot[name="loading-icon"]',
-      ) as HTMLSlotElement;
+      const slot = el.shadowRoot!.querySelector('slot[name="loading-icon"]') as HTMLSlotElement;
       const assigned = slot.assignedElements();
       expect(assigned[0].hasAttribute("data-custom-spinner")).to.be.true;
     });
@@ -264,9 +244,7 @@ describe("<tulpar-button>", () => {
     });
 
     it("renders .separator elements in the shadow DOM", async () => {
-      const el = await fixture<TulparButton>(
-        html`<tulpar-button icon-separator>X</tulpar-button>`,
-      );
+      const el = await fixture<TulparButton>(html`<tulpar-button icon-separator>X</tulpar-button>`);
       const separators = el.shadowRoot!.querySelectorAll(".separator");
       expect(separators.length).to.equal(2); // start + end
     });
@@ -274,16 +252,12 @@ describe("<tulpar-button>", () => {
 
   describe("modifiers", () => {
     it("reflects raised boolean", async () => {
-      const el = await fixture<TulparButton>(
-        html`<tulpar-button raised>X</tulpar-button>`,
-      );
+      const el = await fixture<TulparButton>(html`<tulpar-button raised>X</tulpar-button>`);
       expect(el.hasAttribute("raised")).to.be.true;
     });
 
     it("reflects block boolean", async () => {
-      const el = await fixture<TulparButton>(
-        html`<tulpar-button block>X</tulpar-button>`,
-      );
+      const el = await fixture<TulparButton>(html`<tulpar-button block>X</tulpar-button>`);
       expect(el.hasAttribute("block")).to.be.true;
     });
 

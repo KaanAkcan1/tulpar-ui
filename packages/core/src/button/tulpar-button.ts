@@ -157,14 +157,8 @@ export class TulparButton extends LitElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
-    if (
-      (this.iconOnly || this.shape === "circle") &&
-      !this.getAttribute("aria-label")
-    ) {
-      console.warn(
-        "[tulpar-button] icon-only/circle buttons require an aria-label",
-        this,
-      );
+    if ((this.iconOnly || this.shape === "circle") && !this.getAttribute("aria-label")) {
+      console.warn("[tulpar-button] icon-only/circle buttons require an aria-label", this);
     }
     this._applyColorOverride();
   }
@@ -192,31 +186,13 @@ export class TulparButton extends LitElement {
       return;
     }
     const c = this.color;
-    this.style.setProperty(
-      "--_btn-color-default",
-      `var(--tulpar-primitive-color-${c}-600)`,
-    );
-    this.style.setProperty(
-      "--_btn-color-hover",
-      `var(--tulpar-primitive-color-${c}-700)`,
-    );
-    this.style.setProperty(
-      "--_btn-color-active",
-      `var(--tulpar-primitive-color-${c}-800)`,
-    );
-    this.style.setProperty(
-      "--_btn-color-disabled",
-      `var(--tulpar-primitive-color-${c}-300)`,
-    );
+    this.style.setProperty("--_btn-color-default", `var(--tulpar-primitive-color-${c}-600)`);
+    this.style.setProperty("--_btn-color-hover", `var(--tulpar-primitive-color-${c}-700)`);
+    this.style.setProperty("--_btn-color-active", `var(--tulpar-primitive-color-${c}-800)`);
+    this.style.setProperty("--_btn-color-disabled", `var(--tulpar-primitive-color-${c}-300)`);
     this.style.setProperty("--_btn-color-on", ON_COLOR_MAP[c]);
-    this.style.setProperty(
-      "--_btn-color-subtle",
-      `var(--tulpar-primitive-color-${c}-50)`,
-    );
-    this.style.setProperty(
-      "--_btn-color-subtle-hover",
-      `var(--tulpar-primitive-color-${c}-100)`,
-    );
+    this.style.setProperty("--_btn-color-subtle", `var(--tulpar-primitive-color-${c}-50)`);
+    this.style.setProperty("--_btn-color-subtle-hover", `var(--tulpar-primitive-color-${c}-100)`);
   }
 
   private _handleClick = (e: Event): void => {

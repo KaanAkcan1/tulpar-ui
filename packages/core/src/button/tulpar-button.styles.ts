@@ -277,23 +277,42 @@ export const buttonStyles = css`
    * Modifiers — raised, justify, icon-position
    * ============================================================ */
   :host([raised]) .btn {
-    box-shadow: var(--tulpar-button-shadow-raised, var(--tulpar-shadow-md, 0 1px 3px rgba(10, 37, 64, 0.08), 0 8px 24px rgba(10, 37, 64, 0.06)));
+    box-shadow: var(
+      --tulpar-button-shadow-raised,
+      var(--tulpar-shadow-md, 0 1px 3px rgba(10, 37, 64, 0.08), 0 8px 24px rgba(10, 37, 64, 0.06))
+    );
   }
 
-  :host([justify="start"]) .btn { justify-content: flex-start; }
-  :host([justify="end"]) .btn { justify-content: flex-end; }
-  :host([justify="center"]) .btn { justify-content: center; }
-  :host([justify="between"]) .btn { justify-content: space-between; }
+  :host([justify="start"]) .btn {
+    justify-content: flex-start;
+  }
+  :host([justify="end"]) .btn {
+    justify-content: flex-end;
+  }
+  :host([justify="center"]) .btn {
+    justify-content: center;
+  }
+  :host([justify="between"]) .btn {
+    justify-content: space-between;
+  }
 
-  :host([icon-position="start"]) .btn { flex-direction: row; }
-  :host([icon-position="end"]) .btn { flex-direction: row-reverse; }
+  :host([icon-position="start"]) .btn {
+    flex-direction: row;
+  }
+  :host([icon-position="end"]) .btn {
+    flex-direction: row-reverse;
+  }
   :host([icon-position="top"]) .btn,
   :host([icon-position="bottom"]) .btn {
     height: auto;
     padding: var(--_btn-padding-x);
   }
-  :host([icon-position="top"]) .btn { flex-direction: column; }
-  :host([icon-position="bottom"]) .btn { flex-direction: column-reverse; }
+  :host([icon-position="top"]) .btn {
+    flex-direction: column;
+  }
+  :host([icon-position="bottom"]) .btn {
+    flex-direction: column-reverse;
+  }
 
   /* ============================================================
    * Icon separator
@@ -303,7 +322,9 @@ export const buttonStyles = css`
     background: var(--tulpar-button-separator-color, var(--_btn-separator));
     flex-shrink: 0;
   }
-  :host([icon-separator]) .separator { display: block; }
+  :host([icon-separator]) .separator {
+    display: block;
+  }
 
   :host(:not([icon-position])) .separator,
   :host([icon-position="start"]) .separator,
@@ -335,7 +356,7 @@ export const buttonStyles = css`
    * ============================================================ */
   .btn:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px var(--tulpar-color-focus-ring, rgba(10, 37, 64, 0.40));
+    box-shadow: 0 0 0 3px var(--tulpar-color-focus-ring, rgba(10, 37, 64, 0.4));
   }
 
   /* ============================================================
@@ -393,30 +414,46 @@ export const buttonStyles = css`
   }
 
   /* Loading — start: spinner takes start slot's position, hide start slot */
-  :host([loading][loading-position="start"]) .start { display: none; }
+  :host([loading][loading-position="start"]) .start {
+    display: none;
+  }
   :host([loading][loading-position="start"]) .spinner {
     display: inline-flex;
     order: -1;
   }
 
   /* Loading — end: spinner takes end slot's position, hide end slot */
-  :host([loading][loading-position="end"]) .end { display: none; }
+  :host([loading][loading-position="end"]) .end {
+    display: none;
+  }
   :host([loading][loading-position="end"]) .spinner {
     display: inline-flex;
     order: 99;
   }
 
   /* Loading label */
-  .loading-label-text { display: none; }
-  :host([loading][loading-label]) .label-text { display: none; }
-  :host([loading][loading-label]) .loading-label-text { display: inline; }
+  .loading-label-text {
+    display: none;
+  }
+  :host([loading][loading-label]) .label-text {
+    display: none;
+  }
+  :host([loading][loading-label]) .loading-label-text {
+    display: inline;
+  }
 
   @keyframes tulpar-spin {
-    to { transform: rotate(360deg); }
+    to {
+      transform: rotate(360deg);
+    }
   }
   @media (prefers-reduced-motion: reduce) {
-    .spinner .default-spinner { animation-duration: 1500ms; }
-    .btn { transition: none; }
+    .spinner .default-spinner {
+      animation-duration: 1500ms;
+    }
+    .btn {
+      transition: none;
+    }
   }
 
   /* ============================================================

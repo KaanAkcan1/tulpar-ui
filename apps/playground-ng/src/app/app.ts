@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
-import { TulparButtonComponent } from "@tulpar-ui/angular";
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { TulparButtonComponent } from '@tulpar-ui/angular';
 
 @Component({
-  selector: "app-root",
+  selector: 'app-root',
   standalone: true,
   imports: [TulparButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -10,7 +10,7 @@ import { TulparButtonComponent } from "@tulpar-ui/angular";
     <h1>Tulpar UI — Angular Playground (v0.3)</h1>
 
     <button (click)="toggleDark()">
-      Toggle dark mode (current: {{ isDark() ? "dark" : "light" }})
+      Toggle dark mode (current: {{ isDark() ? 'dark' : 'light' }})
     </button>
 
     <section>
@@ -62,7 +62,9 @@ import { TulparButtonComponent } from "@tulpar-ui/angular";
       <form (submit)="onSubmit($event)">
         <input name="email" type="email" placeholder="Email" />
         <tulpar-button-ng type="submit">Submit</tulpar-button-ng>
-        <tulpar-button-ng type="reset" severity="secondary" variant="outlined">Reset</tulpar-button-ng>
+        <tulpar-button-ng type="reset" severity="secondary" variant="outlined"
+          >Reset</tulpar-button-ng
+        >
       </form>
       @if (submittedEmail()) {
         <p>Submitted: {{ submittedEmail() }}</p>
@@ -104,13 +106,13 @@ export class App {
   toggleDark(): void {
     const next = !this.isDark();
     this.isDark.set(next);
-    document.documentElement.classList.toggle("dark", next);
+    document.documentElement.classList.toggle('dark', next);
   }
 
   onSubmit(event: Event): void {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
     const fd = new FormData(form);
-    this.submittedEmail.set(String(fd.get("email") ?? ""));
+    this.submittedEmail.set(String(fd.get('email') ?? ''));
   }
 }

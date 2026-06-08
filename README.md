@@ -38,6 +38,8 @@ pnpm test
 
 ## Status
 
-v0.2 — Design system redesign (Navy + Gold + warm Stone, 233 color primitives).
+v0.3 — Button API expansion (severity + variant + composable modifiers + 21-family color override + icon-position/separator + stacked ButtonGroup).
 
-See [v0.2 spec](docs/superpowers/specs/2026-06-08-tulpar-ui-v0.2-design-system-redesign.md) and [v0.2 plan](docs/superpowers/plans/2026-06-08-tulpar-ui-v0.2-design-system-redesign-implementation.md).
+See [v0.3 spec](docs/superpowers/specs/2026-06-08-tulpar-ui-v0.3-button-api-expansion-design.md) and [v0.3 plan](docs/superpowers/plans/2026-06-08-tulpar-ui-v0.3-button-api-expansion-implementation.md).
+
+Previous versions: [v0.2](docs/superpowers/specs/2026-06-08-tulpar-ui-v0.2-design-system-redesign.md), [v0.1](docs/superpowers/specs/2026-06-05-tulpar-ui-v0.1-button-design.md).

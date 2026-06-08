@@ -21,9 +21,7 @@ function onSubmit(event: Event) {
 <template>
   <h1>Tulpar UI — Vue Playground (v0.3)</h1>
 
-  <button @click="toggleDark">
-    Toggle dark mode (current: {{ isDark ? "dark" : "light" }})
-  </button>
+  <button @click="toggleDark">Toggle dark mode (current: {{ isDark ? "dark" : "light" }})</button>
 
   <section>
     <h2>Severities × Solid variant</h2>
