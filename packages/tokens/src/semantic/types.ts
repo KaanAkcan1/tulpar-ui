@@ -22,7 +22,10 @@ export interface ColorTokens {
   brand: VariantColorTokens;
   danger: VariantColorTokens;
   success: VariantColorTokens;
-  warning: VariantColorTokens;
+  warn: VariantColorTokens;
+  info: VariantColorTokens;
+  help: VariantColorTokens;
+  contrast: VariantColorTokens;
   neutral: VariantColorTokens;
   focusRing: string;
 }
