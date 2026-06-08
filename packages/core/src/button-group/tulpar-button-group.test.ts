@@ -108,6 +108,20 @@ describe("<tulpar-button-group>", () => {
     });
   });
 
+  it("focusing the host delegates to the inner shadow button", async () => {
+    const el = await fixture<TulparButtonGroup>(html`
+      <tulpar-button-group>
+        <tulpar-button>A</tulpar-button>
+        <tulpar-button>B</tulpar-button>
+      </tulpar-button-group>
+    `);
+    await el.updateComplete;
+    const host = el.querySelector("tulpar-button") as HTMLElement;
+    host.focus();
+    const innerBtn = host.shadowRoot!.querySelector("button") as HTMLElement;
+    expect(host.shadowRoot!.activeElement).to.equal(innerBtn);
+  });
+
   it("ignores nested tulpar-button descendants (only direct children)", async () => {
     const el = await fixture<TulparButtonGroup>(html`
       <tulpar-button-group>

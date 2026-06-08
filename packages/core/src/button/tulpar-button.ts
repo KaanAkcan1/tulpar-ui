@@ -83,6 +83,10 @@ const ON_COLOR_MAP: Record<ButtonColor, string> = {
 };
 
 export class TulparButton extends LitElement {
+  static override shadowRootOptions: ShadowRootInit = {
+    ...LitElement.shadowRootOptions,
+    delegatesFocus: true,
+  };
   static override styles = buttonStyles;
   static formAssociated = true;
   private _internals: ElementInternals;
