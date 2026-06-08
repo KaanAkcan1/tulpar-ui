@@ -1,5 +1,5 @@
 import { LitElement, html, nothing } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { property } from "lit/decorators.js";
 import { buttonStyles } from "./tulpar-button.styles";
 
 export type ButtonSeverity =
@@ -81,7 +81,6 @@ const ON_COLOR_MAP: Record<ButtonColor, string> = {
   rose: "var(--tulpar-primitive-color-stone-50)",
 };
 
-@customElement("tulpar-button")
 export class TulparButton extends LitElement {
   static override styles = buttonStyles;
   static formAssociated = true;
@@ -321,4 +320,8 @@ declare global {
   interface HTMLElementTagNameMap {
     "tulpar-button": TulparButton;
   }
+}
+
+if (!customElements.get("tulpar-button")) {
+  customElements.define("tulpar-button", TulparButton);
 }
