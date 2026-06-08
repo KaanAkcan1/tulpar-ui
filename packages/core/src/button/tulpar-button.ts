@@ -159,6 +159,17 @@ export class TulparButton extends LitElement {
   value?: string;
 
   // --- Tooltip ---
+  /**
+   * Simple inline string tooltip.
+   *
+   * Limitations:
+   * - Clipped by ancestors with `overflow: hidden`.
+   * - Uses a fixed z-index (100); may be obscured by modals/drawers.
+   * - No ESC dismiss, no hover delay, no viewport-edge collision detection.
+   *
+   * For production needs, use a dedicated tooltip component (planned v0.5, built
+   * on the Popover API + CSS Anchor Positioning).
+   */
   @property({ type: String, reflect: true })
   tooltip?: string;
 
