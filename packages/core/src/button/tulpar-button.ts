@@ -165,15 +165,22 @@ export class TulparButton extends LitElement {
   constructor() {
     super();
     this._internals = this.attachInternals();
-    this.addEventListener("click", this._handleClick);
   }
 
   override connectedCallback(): void {
     super.connectedCallback();
+    this.addEventListener("click", this._handleClick, { capture: true });
     if ((this.iconOnly || this.shape === "circle") && !this.getAttribute("aria-label")) {
       warnDev("[tulpar-button] icon-only/circle buttons require an aria-label", this);
     }
     this._applyColorOverride();
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this.removeEventListener("click", this._handleClick, {
+      capture: true,
+    } as EventListenerOptions);
   }
 
   override updated(changed: Map<string, unknown>): void {
