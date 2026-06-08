@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll } from "vitest";
 import { mount } from "@vue/test-utils";
+import { h } from "vue";
 import TulparButton from "./TulparButton.vue";
 
 describe("TulparButton", () => {
@@ -14,12 +15,12 @@ describe("TulparButton", () => {
 
   it("renders inner tulpar-button element with given variant", () => {
     const wrapper = mount(TulparButton, {
-      props: { variant: "danger" },
+      props: { variant: "outlined" },
       slots: { default: "Delete" },
     });
     const inner = wrapper.find("tulpar-button");
     expect(inner.exists()).toBe(true);
-    expect(inner.attributes("variant")).toBe("danger");
+    expect(inner.attributes("variant")).toBe("outlined");
   });
 
   it("emits click event when underlying element is clicked", async () => {
@@ -45,5 +46,24 @@ describe("TulparButton", () => {
     expect(inner.attributes("variant")).toBe("outlined");
     expect(inner.attributes("shape")).toBe("round");
     expect(inner.attributes("loading-label")).toBe("Saving…");
+  });
+
+  it("autoIconOnly is true when icon is provided and no default-slot text", () => {
+    const FakeIcon = { render: () => h("span", { class: "icon" }, "✓") };
+    const wrapper = mount(TulparButton, {
+      props: { icon: FakeIcon },
+    });
+    const inner = wrapper.find("tulpar-button");
+    expect(inner.attributes("icon-only")).toBeDefined();
+  });
+
+  it("autoIconOnly is false when default slot has meaningful content", () => {
+    const FakeIcon = { render: () => h("span", { class: "icon" }, "✓") };
+    const wrapper = mount(TulparButton, {
+      props: { icon: FakeIcon },
+      slots: { default: "Save" },
+    });
+    const inner = wrapper.find("tulpar-button");
+    expect(inner.attributes("icon-only")).toBeUndefined();
   });
 });
