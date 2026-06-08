@@ -326,8 +326,8 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
       <section class="doc-section">
         <h2 class="section-title">2. Variant</h2>
         <p class="section-desc">
-          Five rendering styles. All examples use <code class="inline-code">severity="primary"</code
-          >.
+          Five rendering styles. All examples use
+          <code class="inline-code">severity="primary"</code>.
         </p>
         <div class="preview">
           <TulparButton variant="solid">Solid</TulparButton>
@@ -344,8 +344,7 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
         <h2 class="section-title">3. Size</h2>
         <p class="section-desc">
           Seven sizes from <code class="inline-code">xs</code> to
-          <code class="inline-code">3xl</code>. Default is
-          <code class="inline-code">md</code>.
+          <code class="inline-code">3xl</code>. Default is <code class="inline-code">md</code>.
         </p>
         <div class="preview preview--baseline">
           <TulparButton size="xs">Extra Small</TulparButton>
@@ -433,7 +432,13 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
           <!-- Auto icon-only + circle shape -->
           <TulparButton severity="success" :icon="Save" shape="circle" aria-label="Save" />
           <!-- Explicit iconOnly still works -->
-          <TulparButton severity="premium" :icon-only="true" shape="round" :icon="Crown" aria-label="Premium" />
+          <TulparButton
+            severity="premium"
+            :icon-only="true"
+            shape="round"
+            :icon="Crown"
+            aria-label="Premium"
+          />
         </div>
         <pre class="code"><code>{{ iconOnlyCode }}</code></pre>
       </section>
@@ -446,7 +451,8 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
           <code class="inline-code">start</code>, <code class="inline-code">end</code>,
           <code class="inline-code">top</code>, <code class="inline-code">bottom</code>. The
           <code class="inline-code">:icon</code> prop always renders in the start slot; for
-          <code class="inline-code">icon-position="end"</code> use <code class="inline-code">&#60;span slot="end"&#62;</code>.
+          <code class="inline-code">icon-position="end"</code> use
+          <code class="inline-code">&#60;span slot="end"&#62;</code>.
         </p>
         <div class="preview preview--baseline">
           <TulparButton :icon="Check" icon-position="start" size="lg">Confirm</TulparButton>
@@ -468,7 +474,9 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
           icon and label. Works across all variants.
         </p>
         <div class="preview">
-          <TulparButton variant="outlined" :icon-separator="true" :icon="Download">Download</TulparButton>
+          <TulparButton variant="outlined" :icon-separator="true" :icon="Download"
+            >Download</TulparButton
+          >
           <TulparButton variant="tonal" :icon-separator="true" :icon="ArrowLeft">
             Navigate
             <span slot="end"><ArrowRight :size="16" /></span>
@@ -509,9 +517,8 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
         <h2 class="section-title">11. Loading states</h2>
         <p class="section-desc">
           The <code class="inline-code">loading</code> prop disables interaction and shows a
-          spinner. Control spinner position with
-          <code class="inline-code">loading-position</code>. Provide a
-          <code class="inline-code">loading-label</code> for status announcements. Use
+          spinner. Control spinner position with <code class="inline-code">loading-position</code>.
+          Provide a <code class="inline-code">loading-label</code> for status announcements. Use
           <code class="inline-code">slot="loading-icon"</code> to swap the spinner with a custom
           icon.
         </p>
@@ -580,12 +587,7 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
         </p>
         <div class="preview preview--col">
           <form class="demo-form" @submit="onSubmit">
-            <input
-              class="demo-input"
-              name="email"
-              type="email"
-              placeholder="your@email.com"
-            />
+            <input class="demo-input" name="email" type="email" placeholder="your@email.com" />
             <TulparButton type="submit" severity="primary" :icon="Mail">Submit</TulparButton>
             <TulparButton type="reset" severity="secondary" variant="outlined">
               Reset
@@ -602,10 +604,10 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
       <section class="doc-section">
         <h2 class="section-title">15. Button Group — horizontal + stacked</h2>
         <p class="section-desc">
-          <code class="inline-code">&#60;tulpar-button-group&#62;</code> manages roving
-          tabindex and keyboard navigation. Horizontal: <kbd>ArrowLeft</kbd> /
-          <kbd>ArrowRight</kbd>. Stacked (add <code class="inline-code">stacked</code> attr):
-          <kbd>ArrowUp</kbd> / <kbd>ArrowDown</kbd>. Both: <kbd>Home</kbd> / <kbd>End</kbd>.
+          <code class="inline-code">&#60;tulpar-button-group&#62;</code> manages roving tabindex and
+          keyboard navigation. Horizontal: <kbd>ArrowLeft</kbd> / <kbd>ArrowRight</kbd>. Stacked
+          (add <code class="inline-code">stacked</code> attr): <kbd>ArrowUp</kbd> /
+          <kbd>ArrowDown</kbd>. Both: <kbd>Home</kbd> / <kbd>End</kbd>.
         </p>
         <div class="preview preview--col">
           <div>
@@ -639,8 +641,12 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
         </p>
         <div class="preview preview--baseline">
           <TulparButton severity="premium" :icon="Crown">Upgrade to Pro</TulparButton>
-          <TulparButton severity="premium" variant="tonal" :icon="Sparkles">Get early access</TulparButton>
-          <TulparButton severity="premium" size="lg" :icon="Crown" :icon-size="24">Go Pro</TulparButton>
+          <TulparButton severity="premium" variant="tonal" :icon="Sparkles"
+            >Get early access</TulparButton
+          >
+          <TulparButton severity="premium" size="lg" :icon="Crown" :icon-size="24"
+            >Go Pro</TulparButton
+          >
         </div>
         <pre class="code"><code>{{ premiumCode }}</code></pre>
       </section>
@@ -657,7 +663,9 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
         </p>
         <div class="preview preview--baseline">
           <TulparButton severity="success" :icon="Check">Save</TulparButton>
-          <TulparButton severity="premium" size="lg" :icon="Crown" :icon-size="24">Go Pro</TulparButton>
+          <TulparButton severity="premium" size="lg" :icon="Crown" :icon-size="24"
+            >Go Pro</TulparButton
+          >
           <TulparButton severity="danger" :icon="Trash2" aria-label="Delete" />
           <TulparButton :icon="Check" icon-position="top" size="lg">Confirm</TulparButton>
         </div>
@@ -699,8 +707,8 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
         <h2 class="section-title">19. Escape hatch — non-Lucide icon libraries</h2>
         <p class="section-desc">
           The <code class="inline-code">:icon</code> prop is Lucide-optimised (passes
-          <code class="inline-code">:size</code> automatically). For Heroicons, Tabler, Material,
-          or custom SVG, project your icon directly via
+          <code class="inline-code">:size</code> automatically). For Heroicons, Tabler, Material, or
+          custom SVG, project your icon directly via
           <code class="inline-code">&#60;span slot="start"&#62;</code> — the slot pattern still
           works as the underlying Web Component escape hatch. Multi-icon layouts (two icons) also
           require the slot pattern, since <code class="inline-code">:icon</code> supports a single

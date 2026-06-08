@@ -1,5 +1,4 @@
 import {
-  AfterContentInit,
   ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
@@ -10,6 +9,7 @@ import {
   output,
   signal,
 } from "@angular/core";
+import type { AfterContentInit } from "@angular/core";
 import { LucideAngularModule, type LucideIconData } from "lucide-angular";
 
 import "@tulpar-ui/core/button";
@@ -144,9 +144,7 @@ export class TulparButtonComponent implements AfterContentInit {
   private readonly hasText = signal(false);
 
   /** Effective icon size — explicit override wins over per-size default. */
-  effectiveIconSize = computed(
-    () => this.iconSize() ?? ICON_SIZE_BY_BUTTON_SIZE[this.size()],
-  );
+  effectiveIconSize = computed(() => this.iconSize() ?? ICON_SIZE_BY_BUTTON_SIZE[this.size()]);
 
   /** Auto icon-only when `icon` is set AND no projected text exists. */
   autoIconOnly = computed(() => Boolean(this.icon()) && !this.hasText());

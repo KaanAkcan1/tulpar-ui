@@ -288,7 +288,6 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Escape hatch: non-Lucide libraries (Heroico
       </header>
 
       <main class="main">
-
         <!-- ── 1. Severity ─────────────────────────────────────────────────── -->
         <section class="doc-section">
           <h2 class="section-title">1. Severity</h2>
@@ -314,7 +313,8 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Escape hatch: non-Lucide libraries (Heroico
         <section class="doc-section">
           <h2 class="section-title">2. Variant</h2>
           <p class="section-desc">
-            Five rendering styles. All examples use <code class="inline-code">severity="primary"</code>.
+            Five rendering styles. All examples use
+            <code class="inline-code">severity="primary"</code>.
           </p>
           <div class="preview">
             <tulpar-button-ng variant="solid">Solid</tulpar-button-ng>
@@ -393,12 +393,16 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Escape hatch: non-Lucide libraries (Heroico
             <!-- Trailing icon via slot -->
             <tulpar-button-ng severity="primary">
               Continue
-              <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+              <span slot="end"
+                ><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular
+              ></span>
             </tulpar-button-ng>
             <!-- Both: [icon] for start, slot for end -->
             <tulpar-button-ng severity="primary" [icon]="Check">
               Save and continue
-              <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+              <span slot="end"
+                ><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular
+              ></span>
             </tulpar-button-ng>
           </div>
           <pre class="code"><code>{{ iconsCode }}</code></pre>
@@ -414,12 +418,31 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Escape hatch: non-Lucide libraries (Heroico
           </p>
           <div class="preview preview--baseline">
             <!-- Auto icon-only -->
-            <tulpar-button-ng severity="danger" [icon]="Trash2" ariaLabel="Delete item"></tulpar-button-ng>
-            <tulpar-button-ng severity="secondary" [icon]="Settings" ariaLabel="Settings"></tulpar-button-ng>
+            <tulpar-button-ng
+              severity="danger"
+              [icon]="Trash2"
+              ariaLabel="Delete item"
+            ></tulpar-button-ng>
+            <tulpar-button-ng
+              severity="secondary"
+              [icon]="Settings"
+              ariaLabel="Settings"
+            ></tulpar-button-ng>
             <!-- Auto icon-only + circle shape -->
-            <tulpar-button-ng severity="success" [icon]="Save" shape="circle" ariaLabel="Save"></tulpar-button-ng>
+            <tulpar-button-ng
+              severity="success"
+              [icon]="Save"
+              shape="circle"
+              ariaLabel="Save"
+            ></tulpar-button-ng>
             <!-- Explicit iconOnly still works -->
-            <tulpar-button-ng severity="premium" [iconOnly]="true" shape="round" [icon]="Crown" ariaLabel="Premium"></tulpar-button-ng>
+            <tulpar-button-ng
+              severity="premium"
+              [iconOnly]="true"
+              shape="round"
+              [icon]="Crown"
+              ariaLabel="Premium"
+            ></tulpar-button-ng>
           </div>
           <pre class="code"><code>{{ iconOnlyCode }}</code></pre>
         </section>
@@ -436,13 +459,17 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Escape hatch: non-Lucide libraries (Heroico
             <code class="inline-code">&lt;span slot="end"&gt;</code>.
           </p>
           <div class="preview preview--baseline">
-            <tulpar-button-ng [icon]="Check" iconPosition="start" size="lg">Confirm</tulpar-button-ng>
+            <tulpar-button-ng [icon]="Check" iconPosition="start" size="lg"
+              >Confirm</tulpar-button-ng
+            >
             <tulpar-button-ng iconPosition="end" size="lg">
               Confirm
               <span slot="end"><lucide-angular [img]="Check" [size]="18"></lucide-angular></span>
             </tulpar-button-ng>
             <tulpar-button-ng [icon]="Check" iconPosition="top" size="lg">Confirm</tulpar-button-ng>
-            <tulpar-button-ng [icon]="Check" iconPosition="bottom" size="lg">Confirm</tulpar-button-ng>
+            <tulpar-button-ng [icon]="Check" iconPosition="bottom" size="lg"
+              >Confirm</tulpar-button-ng
+            >
           </div>
           <pre class="code"><code>{{ iconPositionCode }}</code></pre>
         </section>
@@ -455,14 +482,20 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Escape hatch: non-Lucide libraries (Heroico
             icon and label. Works across all variants.
           </p>
           <div class="preview">
-            <tulpar-button-ng variant="outlined" [iconSeparator]="true" [icon]="Download">Download</tulpar-button-ng>
+            <tulpar-button-ng variant="outlined" [iconSeparator]="true" [icon]="Download"
+              >Download</tulpar-button-ng
+            >
             <tulpar-button-ng variant="tonal" [iconSeparator]="true" [icon]="ArrowLeft">
               Navigate
-              <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+              <span slot="end"
+                ><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular
+              ></span>
             </tulpar-button-ng>
             <tulpar-button-ng variant="solid" [iconSeparator]="true">
               Next
-              <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+              <span slot="end"
+                ><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular
+              ></span>
             </tulpar-button-ng>
           </div>
           <pre class="code"><code>{{ iconSeparatorCode }}</code></pre>
@@ -474,18 +507,22 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Escape hatch: non-Lucide libraries (Heroico
           <p class="section-desc">
             <code class="inline-code">raised</code> adds a drop shadow.
             <code class="inline-code">block</code> stretches to full container width.
-            <code class="inline-code">justify</code> controls internal content alignment
-            (start / center / end / between).
+            <code class="inline-code">justify</code> controls internal content alignment (start /
+            center / end / between).
           </p>
           <div class="preview preview--col">
             <div class="preview-row">
               <tulpar-button-ng [raised]="true">Raised Solid</tulpar-button-ng>
-              <tulpar-button-ng [raised]="true" variant="outlined">Raised Outlined</tulpar-button-ng>
+              <tulpar-button-ng [raised]="true" variant="outlined"
+                >Raised Outlined</tulpar-button-ng
+              >
             </div>
             <tulpar-button-ng [block]="true">Block Button</tulpar-button-ng>
             <tulpar-button-ng [block]="true" justify="between" [icon]="Mail">
               Send Email
-              <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+              <span slot="end"
+                ><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular
+              ></span>
             </tulpar-button-ng>
           </div>
           <pre class="code"><code>{{ modifiersCode }}</code></pre>
@@ -547,7 +584,9 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Escape hatch: non-Lucide libraries (Heroico
           </p>
           <div class="preview">
             <tulpar-button-ng href="https://example.com" target="_blank" rel="noopener noreferrer">
-              <span slot="start"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+              <span slot="start"
+                ><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular
+              ></span>
               Visit Example
             </tulpar-button-ng>
             <tulpar-button-ng href="/dashboard" severity="secondary" variant="outlined">
@@ -568,7 +607,9 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Escape hatch: non-Lucide libraries (Heroico
           <div class="preview preview--col">
             <form class="demo-form" (submit)="onSubmit($event)">
               <input class="demo-input" name="email" type="email" placeholder="your@email.com" />
-              <tulpar-button-ng type="submit" severity="primary" [icon]="Mail">Submit</tulpar-button-ng>
+              <tulpar-button-ng type="submit" severity="primary" [icon]="Mail"
+                >Submit</tulpar-button-ng
+              >
               <tulpar-button-ng type="reset" severity="secondary" variant="outlined">
                 Reset
               </tulpar-button-ng>
@@ -586,9 +627,9 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Escape hatch: non-Lucide libraries (Heroico
         <section class="doc-section">
           <h2 class="section-title">15. Button Group — horizontal + stacked</h2>
           <p class="section-desc">
-            <code class="inline-code">&lt;tulpar-button-group&gt;</code> manages roving tabindex
-            and keyboard navigation. Horizontal: <kbd>ArrowLeft</kbd> / <kbd>ArrowRight</kbd>.
-            Stacked (add <code class="inline-code">stacked</code> attr): <kbd>ArrowUp</kbd> /
+            <code class="inline-code">&lt;tulpar-button-group&gt;</code> manages roving tabindex and
+            keyboard navigation. Horizontal: <kbd>ArrowLeft</kbd> / <kbd>ArrowRight</kbd>. Stacked
+            (add <code class="inline-code">stacked</code> attr): <kbd>ArrowUp</kbd> /
             <kbd>ArrowDown</kbd>. Both: <kbd>Home</kbd> / <kbd>End</kbd>.
           </p>
           <div class="preview preview--col">
@@ -623,8 +664,12 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Escape hatch: non-Lucide libraries (Heroico
           </p>
           <div class="preview preview--baseline">
             <tulpar-button-ng severity="premium" [icon]="Crown">Upgrade to Pro</tulpar-button-ng>
-            <tulpar-button-ng severity="premium" variant="tonal" [icon]="Sparkles">Get early access</tulpar-button-ng>
-            <tulpar-button-ng severity="premium" size="lg" [icon]="Crown" [iconSize]="24">Go Pro</tulpar-button-ng>
+            <tulpar-button-ng severity="premium" variant="tonal" [icon]="Sparkles"
+              >Get early access</tulpar-button-ng
+            >
+            <tulpar-button-ng severity="premium" size="lg" [icon]="Crown" [iconSize]="24"
+              >Go Pro</tulpar-button-ng
+            >
           </div>
           <pre class="code"><code>{{ premiumCode }}</code></pre>
         </section>
@@ -638,13 +683,19 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Escape hatch: non-Lucide libraries (Heroico
             <code class="inline-code">slot="start"</code> at the correct size for the button's
             <code class="inline-code">size</code>. Use <code class="inline-code">[iconSize]</code>
             to override. Auto icon-only kicks in when no projected text exists. Expose icons as
-            <code class="inline-code">protected readonly</code> class properties so the template
-            can reference them.
+            <code class="inline-code">protected readonly</code> class properties so the template can
+            reference them.
           </p>
           <div class="preview preview--baseline">
             <tulpar-button-ng severity="success" [icon]="Check">Save</tulpar-button-ng>
-            <tulpar-button-ng severity="premium" size="lg" [icon]="Crown" [iconSize]="24">Go Pro</tulpar-button-ng>
-            <tulpar-button-ng severity="danger" [icon]="Trash2" ariaLabel="Delete"></tulpar-button-ng>
+            <tulpar-button-ng severity="premium" size="lg" [icon]="Crown" [iconSize]="24"
+              >Go Pro</tulpar-button-ng
+            >
+            <tulpar-button-ng
+              severity="danger"
+              [icon]="Trash2"
+              ariaLabel="Delete"
+            ></tulpar-button-ng>
             <tulpar-button-ng [icon]="Check" iconPosition="top" size="lg">Confirm</tulpar-button-ng>
           </div>
           <pre class="code"><code>{{ iconPropCode }}</code></pre>
@@ -660,9 +711,17 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Escape hatch: non-Lucide libraries (Heroico
           </p>
           <div class="preview preview--baseline">
             <!-- Tooltip on icon-only button -->
-            <tulpar-button-ng [icon]="Settings" tooltip="Open settings" ariaLabel="Open settings"></tulpar-button-ng>
+            <tulpar-button-ng
+              [icon]="Settings"
+              tooltip="Open settings"
+              ariaLabel="Open settings"
+            ></tulpar-button-ng>
             <!-- Tooltip on a labelled button -->
-            <tulpar-button-ng severity="danger" [icon]="Trash2" tooltip="Permanently delete this item">
+            <tulpar-button-ng
+              severity="danger"
+              [icon]="Trash2"
+              tooltip="Permanently delete this item"
+            >
               Delete
             </tulpar-button-ng>
             <!-- Tooltip on an anchor -->
@@ -682,11 +741,14 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Escape hatch: non-Lucide libraries (Heroico
         <section class="doc-section">
           <h2 class="section-title">19. Escape hatch — non-Lucide icon libraries</h2>
           <p class="section-desc">
-            The <code class="inline-code">[icon]</code> input is Lucide-optimised
-            (<code class="inline-code">lucide-angular</code> component with
-            <code class="inline-code">[size]</code> auto-set). For Heroicons, Tabler, Material, or
-            custom SVG, project via <code class="inline-code">&lt;span slot="start"&gt;</code> — the
-            slot pattern remains fully supported. Multi-icon layouts also require slots since
+            The <code class="inline-code">[icon]</code> input is Lucide-optimised (<code
+              class="inline-code"
+              >lucide-angular</code
+            >
+            component with <code class="inline-code">[size]</code> auto-set). For Heroicons, Tabler,
+            Material, or custom SVG, project via
+            <code class="inline-code">&lt;span slot="start"&gt;</code> — the slot pattern remains
+            fully supported. Multi-icon layouts also require slots since
             <code class="inline-code">[icon]</code> supports a single leading icon only.
           </p>
           <div class="preview preview--baseline">
@@ -711,14 +773,17 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Escape hatch: non-Lucide libraries (Heroico
             </tulpar-button-ng>
             <!-- Multi-icon via slots -->
             <tulpar-button-ng severity="secondary" variant="outlined">
-              <span slot="start"><lucide-angular [img]="ArrowLeft" [size]="16"></lucide-angular></span>
+              <span slot="start"
+                ><lucide-angular [img]="ArrowLeft" [size]="16"></lucide-angular
+              ></span>
               Navigate
-              <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+              <span slot="end"
+                ><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular
+              ></span>
             </tulpar-button-ng>
           </div>
           <pre class="code"><code>{{ slotEscapeHatchCode }}</code></pre>
         </section>
-
       </main>
     </div>
   `,
@@ -931,8 +996,12 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Escape hatch: non-Lucide libraries (Heroico
       }
 
       @keyframes spin {
-        from { transform: rotate(0deg); }
-        to   { transform: rotate(360deg); }
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
       }
 
       .spin-icon {
