@@ -69,7 +69,26 @@
       "PowerShell(python3 --version 2>&1)",
       "PowerShell(npm install -g uipro-cli 2>&1)",
       "PowerShell(uipro --version 2>&1)",
-      "PowerShell(uipro --help 2>&1)"
+      "PowerShell(uipro --help 2>&1)",
+      "Bash(pnpm --filter @tulpar-ui/tokens test --run color.test)",
+      "Bash(pnpm --filter @tulpar-ui/tokens exec vitest run color.test)",
+      "Bash(pnpm --filter @tulpar-ui/tokens exec vitest run misc.test)",
+      "Bash(pnpm --filter @tulpar-ui/tokens test --run)",
+      "Bash(Select-String -Pattern \"dark|light|typography|color|misc|generate|passed|failed\")",
+      "Bash(git -C \"C:\\\\Source\\\\Kaan\\\\tulpar-ui\" add packages/core/src/button/tulpar-button.styles.ts)",
+      "Bash(git -C \"C:\\\\Source\\\\Kaan\\\\tulpar-ui\" commit -m \"feat\\(core\\)!: button CSS uses --tulpar-font-family-ui \\(was --body\\)\")",
+      "Bash(git -C \"C:\\\\Source\\\\Kaan\\\\tulpar-ui\" add apps/docs/.storybook/preview-head.html apps/playground-ng/src/index.html apps/playground-ng/src/styles.css apps/playground-vue/index.html apps/playground-vue/src/App.vue)",
+      "Bash(git -C \"C:\\\\Source\\\\Kaan\\\\tulpar-ui\" commit -m \"feat\\(consumers\\)!: load Source Serif/Sans/JetBrains Mono + rename ui font var\")",
+      "Bash(git -C \"C:\\\\Source\\\\Kaan\\\\tulpar-ui\" log --oneline 3b9dec4..HEAD)",
+      "Bash(pnpm --filter docs build-storybook)",
+      "WebFetch(domain:mui.com)",
+      "WebFetch(domain:ant.design)",
+      "WebFetch(domain:mantine.dev)",
+      "WebFetch(domain:www.chakra-ui.com)",
+      "WebFetch(domain:carbondesignsystem.com)",
+      "WebFetch(domain:react.carbondesignsystem.com)",
+      "WebSearch",
+      "WebFetch(domain:primeng.org)"
     ]
   }
 }
