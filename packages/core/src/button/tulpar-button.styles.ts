@@ -482,9 +482,14 @@ export const buttonStyles = css`
   :host([icon-only]) .separator {
     display: none;
   }
-  /* icon-only does NOT hide the default slot — consumer may put their icon
-     there or in start/end. The label-text wrapper still renders empty when
-     no text is provided. */
+  /* Hide the empty label/end wrappers in icon-only so their inner
+     whitespace text nodes don't add a few pixels and offset the icon.
+     Convention: icon-only buttons place their icon in the start slot
+     (the Vue wrapper's :icon prop does this automatically). */
+  :host([icon-only]) .label,
+  :host([icon-only]) .end {
+    display: none;
+  }
 
   /* ============================================================
    * Tooltip (string-only, hover/focus reveal, fixed-below position)

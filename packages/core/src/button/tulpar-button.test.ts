@@ -238,6 +238,18 @@ describe("<tulpar-button>", () => {
       const btn = el.shadowRoot!.querySelector(".btn") as HTMLElement;
       expect(getComputedStyle(btn).gap).to.equal("0px");
     });
+
+    it("hides empty .label and .end wrappers so the lone icon is truly centered", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button icon-only aria-label="Add"
+          ><span slot="start">+</span></tulpar-button
+        >`,
+      );
+      const label = el.shadowRoot!.querySelector(".label") as HTMLElement;
+      const end = el.shadowRoot!.querySelector(".end") as HTMLElement;
+      expect(getComputedStyle(label).display).to.equal("none");
+      expect(getComputedStyle(end).display).to.equal("none");
+    });
   });
 
   describe("icon-position layout", () => {
