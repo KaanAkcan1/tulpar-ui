@@ -1,6 +1,7 @@
 import { LitElement, html, nothing } from "lit";
 import { property } from "lit/decorators.js";
 import { buttonStyles } from "./tulpar-button.styles";
+import { warnDev } from "../_internal/warn-dev";
 
 export type ButtonSeverity =
   | "primary"
@@ -170,7 +171,7 @@ export class TulparButton extends LitElement {
   override connectedCallback(): void {
     super.connectedCallback();
     if ((this.iconOnly || this.shape === "circle") && !this.getAttribute("aria-label")) {
-      console.warn("[tulpar-button] icon-only/circle buttons require an aria-label", this);
+      warnDev("[tulpar-button] icon-only/circle buttons require an aria-label", this);
     }
     this._applyColorOverride();
   }
