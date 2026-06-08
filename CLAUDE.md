@@ -72,8 +72,8 @@ pnpm format:check                           # Prettier check
 pnpm --filter @tulpar-ui/tokens build
 pnpm --filter @tulpar-ui/core test
 pnpm --filter docs storybook                # localhost:6006
-pnpm --filter playground-ng start           # localhost:4200
-pnpm --filter playground-vue dev            # localhost:5173
+pnpm --filter playground-ng start           # localhost:4310
+pnpm --filter playground-vue dev            # localhost:5273
 
 # Release flow
 pnpm changeset                              # create a changeset for pending changes
