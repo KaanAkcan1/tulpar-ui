@@ -14,6 +14,8 @@ class TestField extends FormFieldBase {
         <input id="control"
           .value=${this.value}
           aria-required=${this._ariaRequiredAttr()}
+          aria-invalid=${this._ariaInvalidAttr()}
+          aria-describedby=${this._ariaDescribedBy() ?? nothing}
           aria-label=${ariaLabel ?? nothing}
           @input=${(e: InputEvent) => {
             this.value = (e.target as HTMLInputElement).value;
@@ -251,5 +253,30 @@ describe("FormFieldBase visual variants", () => {
     `);
     // resolver collapses to 'top'
     expect(el.shadowRoot!.querySelector("[data-label-position='top']")).to.not.equal(null);
+  });
+});
+
+describe("FormFieldBase ARIA wiring", () => {
+  it("links the control to the message row via aria-describedby", async () => {
+    const el = await fixture<TestField>(testHtml`
+      <test-form-field helper-text="hint"></test-form-field>
+    `);
+    const input = el.shadowRoot!.querySelector("#control")!;
+    const describedBy = input.getAttribute("aria-describedby");
+    expect(describedBy).to.match(/tulpar-msg-/);
+    expect(el.shadowRoot!.querySelector(`#${describedBy}`)).to.not.equal(null);
+  });
+
+  it("sets aria-invalid=true when invalid", async () => {
+    const el = await fixture<TestField>(testHtml`<test-form-field invalid></test-form-field>`);
+    expect(el.shadowRoot!.querySelector("#control")?.getAttribute("aria-invalid")).to.equal("true");
+  });
+
+  it("injects aria-label on the control when label-position=none + label is set", async () => {
+    const el = await fixture<TestField>(testHtml`
+      <test-form-field label="Search" label-position="none"></test-form-field>
+    `);
+    const input = el.shadowRoot!.querySelector("#control")!;
+    expect(input.getAttribute("aria-label")).to.equal("Search");
   });
 });

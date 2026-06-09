@@ -64,6 +64,9 @@ export abstract class FormFieldBase extends LitElement {
   @property({ type: Boolean, attribute: 'suffix-interactive', reflect: true })
   suffixInteractive = false;
 
+  private static _idCounter = 0;
+  protected _msgId = `tulpar-msg-${++FormFieldBase._idCounter}`;
+
   constructor() {
     super();
     this._internals = this.attachInternals();
@@ -95,6 +98,15 @@ export abstract class FormFieldBase extends LitElement {
     return this.required ? 'true' : 'false';
   }
 
+  protected _ariaInvalidAttr() {
+    return this.invalid ? 'true' : 'false';
+  }
+
+  protected _ariaDescribedBy() {
+    const hasMessage = !this.noMessageSpace && (this.helperText || this.errorText || this.warnText);
+    return hasMessage ? this._msgId : undefined;
+  }
+
   protected _renderMessageText(): TemplateResult | typeof nothing {
     let text: string | undefined;
     let role: 'alert' | 'status' | undefined;
@@ -112,7 +124,7 @@ export abstract class FormFieldBase extends LitElement {
       kind = 'helper';
     }
     return text
-      ? html`<span class="field-message" data-kind=${kind} role=${role ?? nothing}>${text}</span>`
+      ? html`<span id=${this._msgId} class="field-message" data-kind=${kind} role=${role ?? nothing}>${text}</span>`
       : nothing;
   }
 
