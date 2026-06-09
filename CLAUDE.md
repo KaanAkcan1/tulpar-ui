@@ -68,12 +68,25 @@ pnpm lint                                   # ESLint
 pnpm format                                 # Prettier write
 pnpm format:check                           # Prettier check
 
+# Dev loop (recommended) — full topological build first, then runs every
+# workspace package in watch mode in parallel with the playground.
+# Edit any package source → its dist rebuilds → Angular/Vite dev server
+# picks up the dist change and reloads. No more stale dist.
+#
+# Angular note: dev:ng also runs `ng cache clean` during predev — Angular CLI's
+# .angular/cache doesn't reliably invalidate when symlinked workspace package
+# dist changes, so we wipe it on every dev start. Requires the previous dev
+# server to be stopped first (otherwise the cache db is locked).
+pnpm dev:ng                                 # tokens + core + angular wrappers + playground-ng (localhost:4310)
+pnpm dev:vue                                # tokens + core + vue wrappers + playground-vue (localhost:5273)
+pnpm dev:storybook                          # tokens + core + Storybook (localhost:6006)
+
 # Per-package
 pnpm --filter @tulpar-ui/tokens build
 pnpm --filter @tulpar-ui/core test
 pnpm --filter docs storybook                # localhost:6006
-pnpm --filter playground-ng start           # localhost:4310
-pnpm --filter playground-vue dev            # localhost:5273
+pnpm --filter playground-ng start           # localhost:4310 (no watch loop — uses last built dist)
+pnpm --filter playground-vue dev            # localhost:5273 (no watch loop — uses last built dist)
 
 # Release flow
 pnpm changeset                              # create a changeset for pending changes

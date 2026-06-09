@@ -144,7 +144,12 @@
       "Bash(curl -sI -o /dev/null -w \"HTTP %{http_code}\\\\n\" https://tulpar-ui-vue.pages.dev)",
       "WebFetch(domain:tulpar-ui-docs.pages.dev)",
       "WebFetch(domain:tulpar-ui-vue.pages.dev)",
-      "PowerShell(pnpm --filter @tulpar-ui/core test)"
+      "PowerShell(pnpm --filter @tulpar-ui/core test)",
+      "Bash(git check-ignore *)",
+      "PowerShell(Get-NetTCPConnection -LocalPort 4310 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force; \"Killed PID $_\" })",
+      "PowerShell($conns = Get-NetTCPConnection -LocalPort 4310 -ErrorAction SilentlyContinue | Where-Object { $_.OwningProcess -ne 0 }; if \\($conns\\) { \"Still in use by PID\\(s\\): $\\($conns.OwningProcess -join ','\\)\" } else { \"Port 4310 is free\" })",
+      "Bash(pnpm run *)",
+      "Bash(pnpm --filter playground-ng exec ng cache clean)"
     ],
     "additionalDirectories": [
       "\\tmp"

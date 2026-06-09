@@ -26,6 +26,7 @@
   ],
   "scripts": {
     "build": "vite build",
+    "dev": "vite build --watch",
     "test": "wtr",
     "test:watch": "wtr --watch"
   },

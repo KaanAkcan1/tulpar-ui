@@ -28,6 +28,8 @@
     "build": "vite build && tsx build/generate-css.ts",
     "build:css": "tsx build/generate-css.ts",
     "build:fallbacks": "tsx build/generate-fallbacks.ts",
+    "predev": "pnpm run build:fallbacks && pnpm run build:css",
+    "dev": "vite build --watch",
     "test": "vitest run",
     "test:watch": "vitest"
   },

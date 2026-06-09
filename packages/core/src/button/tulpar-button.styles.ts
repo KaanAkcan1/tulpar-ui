@@ -12,6 +12,7 @@ export const buttonStyles = css`
   :host {
     display: inline-flex;
     position: relative; /* anchor for absolutely-positioned tooltip */
+    cursor: pointer;
 
     /* Default severity (primary) — color stops feed the variant rules below.
        Severity selectors below override these. JS color attribute overrides

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "predev": "pnpm --filter @tulpar-ui/tokens build",
+    "dev": "node copy-tokens.mjs && storybook dev -p 6006",
     "storybook": "node copy-tokens.mjs && storybook dev -p 6006",
     "build-storybook": "node copy-tokens.mjs && storybook build"
   },

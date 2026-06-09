@@ -18,6 +18,7 @@
   ],
   "scripts": {
     "build": "ng-packagr -p ng-package.json -c tsconfig.json",
+    "dev": "ng-packagr -p ng-package.json -c tsconfig.json --watch",
     "test": "vitest run"
   },
   "peerDependencies": {
