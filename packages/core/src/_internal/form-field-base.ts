@@ -1,5 +1,5 @@
 import { LitElement, html, nothing, type TemplateResult } from "lit";
-import { property } from "lit/decorators.js";
+import { property, state } from "lit/decorators.js";
 import { formFieldBaseStyles } from "./form-field-base.styles";
 import { resolveLabelPosition } from "./label-position-resolver";
 
@@ -67,9 +67,26 @@ export abstract class FormFieldBase extends LitElement {
   private static _idCounter = 0;
   protected _msgId = `tulpar-msg-${++FormFieldBase._idCounter}`;
 
+  private _liveAnnouncementTimer?: number;
+  @state() private _liveAnnouncement = "";
+
   constructor() {
     super();
     this._internals = this.attachInternals();
+  }
+
+  override updated(changed: Map<string, unknown>) {
+    super.updated(changed);
+    if (changed.has("validating")) {
+      if (this._liveAnnouncementTimer) clearTimeout(this._liveAnnouncementTimer);
+      if (this.validating) {
+        this._liveAnnouncementTimer = window.setTimeout(() => {
+          this._liveAnnouncement = "Checking…";
+        }, 150);
+      } else {
+        this._liveAnnouncement = "";
+      }
+    }
   }
 
   protected _hasLabelSlotContent(): boolean {
@@ -133,6 +150,10 @@ export abstract class FormFieldBase extends LitElement {
     return html`<div class="field-message-row">${this._renderMessageText()}</div>`;
   }
 
+  protected _renderValidatingLiveRegion(): TemplateResult {
+    return html`<span class="field-validating-live" role="status" aria-live="polite">${this._liveAnnouncement}</span>`;
+  }
+
   protected _renderStatusIcon(): TemplateResult | typeof nothing {
     // Precedence: validating > invalid > warn
     let kind: 'validating' | 'invalid' | 'warn' | undefined;
@@ -189,6 +210,15 @@ export abstract class FormFieldBase extends LitElement {
     return v !== undefined && v !== null && v !== "";
   }
 
+  /** True when size is the most compact tier — used to hide action buttons that cannot meet touch target minimums. */
+  protected _isXs(): boolean {
+    return this.size === "xs";
+  }
+
+  protected _ariaBusyAttr() {
+    return this.validating ? "true" : undefined;
+  }
+
   protected _resolvedLabelPosition(): LabelPosition {
     return resolveLabelPosition({
       requested: this.labelPosition,
@@ -221,6 +251,7 @@ export abstract class FormFieldBase extends LitElement {
           ? html`<label class="field-label field-label--${pos}" part="label" for="control">${this._renderLabelContent()}</label>`
           : nothing}
         ${this._renderMessageRow()}
+        ${this._renderValidatingLiveRegion()}
       </div>
     `;
   }

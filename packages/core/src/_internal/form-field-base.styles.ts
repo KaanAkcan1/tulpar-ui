@@ -228,4 +228,35 @@ export const formFieldBaseStyles = css`
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
+  .field-validating-live {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+
+  .field-status-icon {
+    transition: opacity 150ms ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .field-status-icon,
+    .field-label--float,
+    .field-label--float-in,
+    .field-label--float-on {
+      transition: none !important;
+    }
+    .field-status-icon--spin {
+      animation: none;
+      opacity: 0.7;
+    }
+    :host([data-mask-rejected]) {
+      animation: none !important;
+    }
+  }
 `;

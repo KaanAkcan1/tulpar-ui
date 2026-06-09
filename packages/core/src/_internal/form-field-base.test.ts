@@ -15,6 +15,7 @@ class TestField extends FormFieldBase {
           .value=${this.value}
           aria-required=${this._ariaRequiredAttr()}
           aria-invalid=${this._ariaInvalidAttr()}
+          aria-busy=${(this as unknown as { _ariaBusyAttr(): string | undefined })._ariaBusyAttr() ?? nothing}
           aria-describedby=${this._ariaDescribedBy() ?? nothing}
           aria-label=${ariaLabel ?? nothing}
           @input=${(e: InputEvent) => {
@@ -278,5 +279,32 @@ describe("FormFieldBase ARIA wiring", () => {
     `);
     const input = el.shadowRoot!.querySelector("#control")!;
     expect(input.getAttribute("aria-label")).to.equal("Search");
+  });
+});
+
+describe("FormFieldBase accessibility hardening", () => {
+  it("sets aria-busy=true on the control when validating", async () => {
+    const el = await fixture<TestField>(testHtml`<test-form-field validating></test-form-field>`);
+    expect(el.shadowRoot!.querySelector("#control")?.getAttribute("aria-busy")).to.equal("true");
+  });
+
+  it("renders a polite live region with 'Checking…' when validating transitions to true", async () => {
+    const el = await fixture<TestField>(testHtml`<test-form-field></test-form-field>`);
+    el.validating = true;
+    await el.updateComplete;
+    // Wait for the debounced announcement
+    await new Promise((r) => setTimeout(r, 200));
+    const live = el.shadowRoot!.querySelector(".field-validating-live");
+    expect(live?.getAttribute("role")).to.equal("status");
+    expect(live?.getAttribute("aria-live")).to.equal("polite");
+    expect(live?.textContent?.trim()).to.equal("Checking…");
+  });
+
+  it("status icons share a transition class for crossfade swap", async () => {
+    const el = await fixture<TestField>(testHtml`<test-form-field invalid></test-form-field>`);
+    const icon = el.shadowRoot!.querySelector(".field-status-icon");
+    const cs = getComputedStyle(icon!);
+    // Verify CSS opacity transition is present
+    expect(cs.transitionProperty).to.contain("opacity");
   });
 });
