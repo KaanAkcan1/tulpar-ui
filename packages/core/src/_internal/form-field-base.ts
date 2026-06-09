@@ -57,6 +57,13 @@ export abstract class FormFieldBase extends LitElement {
   @property({ type: Boolean, reflect: true }) warn = false;
   @property({ type: Boolean, reflect: true }) validating = false;
 
+  // --- Prefix/Suffix ---
+  @property({ type: Boolean, attribute: 'prefix-interactive', reflect: true })
+  prefixInteractive = false;
+
+  @property({ type: Boolean, attribute: 'suffix-interactive', reflect: true })
+  suffixInteractive = false;
+
   constructor() {
     super();
     this._internals = this.attachInternals();
@@ -154,6 +161,14 @@ export abstract class FormFieldBase extends LitElement {
     return html`
       <span class="field-status-zone" aria-hidden="true">${this._renderStatusIcon()}</span>
     `;
+  }
+
+  protected _renderPrefixSlot(): TemplateResult {
+    return html`<span class="field-prefix-host"><slot name="prefix"></slot></span>`;
+  }
+
+  protected _renderSuffixSlot(): TemplateResult {
+    return html`<span class="field-suffix-host"><slot name="suffix"></slot></span>`;
   }
 
   protected _resolvedLabelPosition(): LabelPosition {

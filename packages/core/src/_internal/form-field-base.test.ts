@@ -10,6 +10,7 @@ class TestField extends FormFieldBase {
   protected override renderControl() {
     return html`
       <div class="control-row">
+        ${(this as unknown as { _renderPrefixSlot(): unknown })._renderPrefixSlot()}
         <input
           id="control"
           aria-required=${this._ariaRequiredAttr()}
@@ -20,6 +21,7 @@ class TestField extends FormFieldBase {
           }}
         />
         ${(this as unknown as { _renderStatusZone(): unknown })._renderStatusZone()}
+        ${(this as unknown as { _renderSuffixSlot(): unknown })._renderSuffixSlot()}
       </div>
     `;
   }
@@ -188,5 +190,34 @@ describe("FormFieldBase status icon zone", () => {
     const el = await fixture<TestField>(testHtml`<test-form-field invalid></test-form-field>`);
     const zone = el.shadowRoot!.querySelector(".field-status-zone");
     expect(zone?.getAttribute("aria-hidden")).to.equal("true");
+  });
+});
+
+describe("FormFieldBase prefix/suffix slots", () => {
+  it("renders content in prefix slot", async () => {
+    const el = await fixture<TestField>(testHtml`
+      <test-form-field>
+        <span slot="prefix">$</span>
+      </test-form-field>
+    `);
+    const slot = el.shadowRoot!.querySelector<HTMLSlotElement>("slot[name='prefix']")!;
+    expect(slot.assignedElements()[0].textContent).to.equal("$");
+  });
+
+  it("prefix slot has pointer-events:none by default", async () => {
+    const el = await fixture<TestField>(testHtml`
+      <test-form-field><span slot="prefix">x</span></test-form-field>
+    `);
+    const host = el.shadowRoot!.querySelector(".field-prefix-host")!;
+    const cs = getComputedStyle(host);
+    expect(cs.pointerEvents).to.equal("none");
+  });
+
+  it("prefix-interactive opts the prefix slot into pointer-events:auto", async () => {
+    const el = await fixture<TestField>(testHtml`
+      <test-form-field prefix-interactive><span slot="prefix">x</span></test-form-field>
+    `);
+    const host = el.shadowRoot!.querySelector(".field-prefix-host")!;
+    expect(getComputedStyle(host).pointerEvents).to.equal("auto");
   });
 });

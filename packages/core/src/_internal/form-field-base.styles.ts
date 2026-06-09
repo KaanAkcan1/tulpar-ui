@@ -80,4 +80,18 @@ export const formFieldBaseStyles = css`
   @keyframes tulpar-input-spinner {
     to { transform: rotate(360deg); }
   }
+
+  .field-prefix-host, .field-suffix-host {
+    display: inline-flex;
+    align-items: center;
+    pointer-events: none;
+    padding: 0 0.25rem;
+  }
+
+  :host([prefix-interactive]) .field-prefix-host {
+    pointer-events: auto;
+  }
+  :host([suffix-interactive]) .field-suffix-host {
+    pointer-events: auto;
+  }
 `;
