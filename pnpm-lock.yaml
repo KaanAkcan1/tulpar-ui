@@ -178,6 +178,13 @@ importers:
         version: 3.3.4(typescript@6.0.3)
 
   packages/angular:
+    dependencies:
+      '@tulpar-ui/core':
+        specifier: workspace:*
+        version: link:../core
+      '@tulpar-ui/tokens':
+        specifier: workspace:*
+        version: link:../tokens
     devDependencies:
       '@analogjs/vite-plugin-angular':
         specifier: ^2.6.0
@@ -203,15 +210,9 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^22.0.0
         version: 22.0.0(@angular/common@22.0.0)(@angular/compiler@22.0.0)(@angular/core@22.0.0)(@angular/platform-browser@22.0.0)
-      '@tulpar-ui/core':
-        specifier: workspace:*
-        version: link:../core
       happy-dom:
         specifier: ^20.0.0
         version: 20.10.2
-      lucide-angular:
-        specifier: '>=0.500.0'
-        version: 1.0.0(@angular/common@22.0.0)(@angular/core@22.0.0)
       ng-packagr:
         specifier: ^22.0.0
         version: 22.0.0(@angular/compiler-cli@22.0.0)(tslib@2.8.1)(typescript@6.0.3)
@@ -9587,6 +9588,7 @@ packages:
       '@angular/common': 22.0.0(@angular/core@22.0.0)(rxjs@7.8.2)
       '@angular/core': 22.0.0(@angular/compiler@22.0.0)(rxjs@7.8.2)(zone.js@0.15.1)
       tslib: 2.8.1
+    dev: false
 
   /lucide-vue-next@1.0.0(vue@3.5.35):
     resolution: {integrity: sha512-V6SPvx1IHTj/UY+FrIYWV5faISsPSb8BnWSFDxAtezWKvWc9ZZ40PDrdu1/Qb5vg4lHWr1hs1BAMGVGm6V1Xdg==}
