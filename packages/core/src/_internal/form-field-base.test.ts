@@ -110,3 +110,47 @@ describe("FormFieldBase necessity indicator", () => {
     expect(el.shadowRoot!.querySelector("#control")?.getAttribute("aria-required")).to.equal("true");
   });
 });
+
+describe("FormFieldBase message row", () => {
+  it("reserves the message row even when no helper/error/warn text is set", async () => {
+    const el = await fixture<TestField>(testHtml`<test-form-field></test-form-field>`);
+    const row = el.shadowRoot!.querySelector(".field-message-row");
+    expect(row).to.not.equal(null);
+  });
+
+  it("removes the message row when no-message-space is set", async () => {
+    const el = await fixture<TestField>(testHtml`<test-form-field no-message-space></test-form-field>`);
+    expect(el.shadowRoot!.querySelector(".field-message-row")).to.equal(null);
+  });
+
+  it("renders helper text when only helperText is set", async () => {
+    const el = await fixture<TestField>(testHtml`<test-form-field helper-text="Pick a strong password"></test-form-field>`);
+    const msg = el.shadowRoot!.querySelector(".field-message");
+    expect(msg?.textContent).to.equal("Pick a strong password");
+  });
+
+  it("error-text replaces helper-text when invalid", async () => {
+    const el = await fixture<TestField>(testHtml`
+      <test-form-field helper-text="helper" error-text="bad input" invalid></test-form-field>
+    `);
+    const msg = el.shadowRoot!.querySelector(".field-message");
+    expect(msg?.textContent).to.equal("bad input");
+    expect(msg?.getAttribute("role")).to.equal("alert");
+  });
+
+  it("warn-text shows when warn + not invalid", async () => {
+    const el = await fixture<TestField>(testHtml`
+      <test-form-field helper-text="h" warn-text="careful" warn></test-form-field>
+    `);
+    const msg = el.shadowRoot!.querySelector(".field-message");
+    expect(msg?.textContent).to.equal("careful");
+    expect(msg?.getAttribute("role")).to.equal("status");
+  });
+
+  it("invalid wins over warn", async () => {
+    const el = await fixture<TestField>(testHtml`
+      <test-form-field warn-text="careful" error-text="bad" invalid warn></test-form-field>
+    `);
+    expect(el.shadowRoot!.querySelector(".field-message")?.textContent).to.equal("bad");
+  });
+});

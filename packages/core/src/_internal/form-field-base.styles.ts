@@ -30,4 +30,25 @@ export const formFieldBaseStyles = css`
     color: var(--tulpar-input-message-helper, #57534e);
     font-weight: normal;
   }
+
+  .field-message-row {
+    min-height: var(--tulpar-input-message-row-height, 1.25rem);
+    margin-top: 0.25rem;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    line-height: 1.25rem;
+  }
+
+  .field-message {
+    color: var(--tulpar-input-message-helper, #57534e);
+  }
+
+  .field-message[data-kind='error'] {
+    color: var(--tulpar-input-message-error, #b91c1c);
+  }
+
+  .field-message[data-kind='warn'] {
+    color: var(--tulpar-input-message-warn, #b45309);
+  }
 `;

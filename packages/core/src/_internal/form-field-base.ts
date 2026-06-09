@@ -46,6 +46,16 @@ export abstract class FormFieldBase extends LitElement {
   @property({ type: String, attribute: 'necessity-indicator' })
   necessityIndicator: NecessityIndicator = 'icon';
 
+  // --- Message row ---
+  @property({ type: String, attribute: 'helper-text' }) helperText?: string;
+  @property({ type: String, attribute: 'error-text' }) errorText?: string;
+  @property({ type: String, attribute: 'warn-text' }) warnText?: string;
+  @property({ type: Boolean, attribute: 'no-message-space', reflect: true }) noMessageSpace = false;
+
+  // --- Status ---
+  @property({ type: Boolean, reflect: true }) invalid = false;
+  @property({ type: Boolean, reflect: true }) warn = false;
+
   constructor() {
     super();
     this._internals = this.attachInternals();
@@ -77,6 +87,32 @@ export abstract class FormFieldBase extends LitElement {
     return this.required ? 'true' : 'false';
   }
 
+  protected _renderMessageText(): TemplateResult | typeof nothing {
+    let text: string | undefined;
+    let role: 'alert' | 'status' | undefined;
+    let kind: 'error' | 'warn' | 'helper' | undefined;
+    if (this.invalid && this.errorText) {
+      text = this.errorText;
+      role = 'alert';
+      kind = 'error';
+    } else if (this.warn && this.warnText) {
+      text = this.warnText;
+      role = 'status';
+      kind = 'warn';
+    } else if (this.helperText) {
+      text = this.helperText;
+      kind = 'helper';
+    }
+    return text
+      ? html`<span class="field-message" data-kind=${kind} role=${role ?? nothing}>${text}</span>`
+      : nothing;
+  }
+
+  protected _renderMessageRow(): TemplateResult | typeof nothing {
+    if (this.noMessageSpace) return nothing;
+    return html`<div class="field-message-row">${this._renderMessageText()}</div>`;
+  }
+
   protected _resolvedLabelPosition(): LabelPosition {
     return resolveLabelPosition({
       requested: this.labelPosition,
@@ -101,6 +137,7 @@ export abstract class FormFieldBase extends LitElement {
           ? html`<label class="field-label" part="label" for="control">${this._renderLabelContent()}</label>`
           : nothing}
         ${this.renderControl()}
+        ${this._renderMessageRow()}
       </div>
     `;
   }
