@@ -126,4 +126,106 @@ export const formFieldBaseStyles = css`
     --field-resolved-padding-y: var(--tulpar-input-size-xl-padding-y, 0.625rem);
     --field-resolved-font-size: var(--tulpar-input-size-xl-font-size, 1.125rem);
   }
+
+  /* ── Variant: control-row shell ─────────────────────────────────────── */
+
+  .control-row {
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+    min-height: var(--field-resolved-height);
+    padding: var(--field-resolved-padding-y) var(--field-resolved-padding-x);
+    font-size: var(--field-resolved-font-size);
+    background: var(--tulpar-input-bg-default, #fff);
+    color: var(--tulpar-input-text-default, #1c1917);
+    border: 1px solid var(--tulpar-input-border-default, #e7e5e4);
+    border-radius: var(--tulpar-input-radius, 0.375rem);
+    position: relative;
+  }
+
+  :host([variant='filled']) .control-row {
+    background: var(--tulpar-input-bg-readonly, #fafaf9);
+    border-color: transparent;
+  }
+
+  :host([variant='underlined']) .control-row {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--tulpar-input-border-default, #e7e5e4);
+    border-radius: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  :host([variant='ghost']) .control-row {
+    background: transparent;
+    border-color: transparent;
+  }
+
+  :host([variant='ghost']) .control-row:focus-within {
+    outline: 2px solid var(--tulpar-input-border-focus, #133a66);
+    outline-offset: -1px;
+  }
+
+  /* ── Float label common ──────────────────────────────────────────────── */
+
+  .field-label--float,
+  .field-label--float-in,
+  .field-label--float-on {
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .field-label--float {
+    top: 50%;
+    left: var(--field-resolved-padding-x);
+    transform: translateY(-50%);
+    color: var(--tulpar-input-text-placeholder, #a8a29e);
+    background: transparent;
+    transition: transform 150ms ease, top 150ms ease, font-size 150ms ease;
+  }
+
+  [data-label-position='float'] .control-row:focus-within ~ .field-label--float,
+  [data-label-position='float'][data-has-value] .field-label--float {
+    top: 0;
+    transform: translateY(-50%) scale(0.85);
+    background: var(--tulpar-input-label-float-bg, #fff);
+    padding: 0 0.25rem;
+    color: var(--tulpar-input-label-default, #44403c);
+  }
+
+  [data-label-position='float-in'] .field-label--float-in {
+    top: 50%;
+    left: var(--field-resolved-padding-x);
+    transform: translateY(-50%);
+  }
+
+  [data-label-position='float-in'] .control-row:focus-within ~ .field-label--float-in,
+  [data-label-position='float-in'][data-has-value] .field-label--float-in {
+    top: 0.25rem;
+    transform: none;
+    font-size: 0.7rem;
+    color: var(--tulpar-input-label-default, #44403c);
+  }
+
+  [data-label-position='float-on'] .field-label--float-on {
+    top: 0;
+    left: var(--field-resolved-padding-x);
+    transform: translateY(-50%);
+    background: var(--tulpar-input-label-float-bg, #fff);
+    padding: 0 0.25rem;
+    font-size: 0.75rem;
+    color: var(--tulpar-input-label-default, #44403c);
+  }
+
+  /* Truncation for long labels in float modes (full text preserved for screen readers
+     via the <label> element; only visual rendering ellipsizes). */
+  .field-label--float,
+  .field-label--float-in,
+  .field-label--float-on {
+    max-width: calc(80% - var(--field-resolved-padding-x));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 `;

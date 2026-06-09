@@ -1,4 +1,4 @@
-import { LitElement, html } from "lit";
+import { LitElement, html, nothing } from "lit";
 import { property } from "lit/decorators.js";
 import { expect, fixture, html as testHtml } from "@open-wc/testing";
 import { FormFieldBase } from "./form-field-base";
@@ -7,14 +7,14 @@ import { FormFieldBase } from "./form-field-base";
 class TestField extends FormFieldBase {
   @property({ type: String }) value = "";
 
-  protected override renderControl() {
+  protected override renderControl(ariaLabel?: string) {
     return html`
       <div class="control-row">
         ${(this as unknown as { _renderPrefixSlot(): unknown })._renderPrefixSlot()}
-        <input
-          id="control"
-          aria-required=${this._ariaRequiredAttr()}
+        <input id="control"
           .value=${this.value}
+          aria-required=${this._ariaRequiredAttr()}
+          aria-label=${ariaLabel ?? nothing}
           @input=${(e: InputEvent) => {
             this.value = (e.target as HTMLInputElement).value;
             this._internals.setFormValue(this.value);
@@ -229,5 +229,27 @@ describe("FormFieldBase size scaling", () => {
     // size=lg should map to lg height token. The computed style resolves to the fallback when the token is not set.
     const heightValue = cs.getPropertyValue("--field-resolved-height").trim();
     expect(heightValue).to.equal("2.75rem");
+  });
+});
+
+describe("FormFieldBase visual variants", () => {
+  it("uses bordered shell for variant=outlined", async () => {
+    const el = await fixture<TestField>(testHtml`<test-form-field variant="outlined"></test-form-field>`);
+    expect(el.getAttribute("variant")).to.equal("outlined");
+  });
+
+  it("renders float label inside the control row when label-position=float", async () => {
+    const el = await fixture<TestField>(testHtml`
+      <test-form-field label="Email" label-position="float"></test-form-field>
+    `);
+    expect(el.shadowRoot!.querySelector("[data-label-position='float'] .field-label--float")).to.not.equal(null);
+  });
+
+  it("falls back float → top for variant=ghost", async () => {
+    const el = await fixture<TestField>(testHtml`
+      <test-form-field label="Email" label-position="float" variant="ghost"></test-form-field>
+    `);
+    // resolver collapses to 'top'
+    expect(el.shadowRoot!.querySelector("[data-label-position='top']")).to.not.equal(null);
   });
 });

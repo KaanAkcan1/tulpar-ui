@@ -171,6 +171,12 @@ export abstract class FormFieldBase extends LitElement {
     return html`<span class="field-suffix-host"><slot name="suffix"></slot></span>`;
   }
 
+  protected _hasValue(): boolean {
+    // Subclasses with non-string value should override.
+    const v = (this as unknown as { value?: unknown }).value;
+    return v !== undefined && v !== null && v !== "";
+  }
+
   protected _resolvedLabelPosition(): LabelPosition {
     return resolveLabelPosition({
       requested: this.labelPosition,
@@ -184,17 +190,24 @@ export abstract class FormFieldBase extends LitElement {
    * Subclasses implement the actual control (the underlying <input>,
    * <textarea>, or composite UI).
    */
-  protected abstract renderControl(): TemplateResult;
+  protected abstract renderControl(ariaLabel?: string): TemplateResult;
 
   protected override render() {
     const pos = this._resolvedLabelPosition();
     const showTopLabel = pos === "top";
+    const isFloat = pos === "float" || pos === "float-in" || pos === "float-on";
+    const ariaLabel = pos === "none" ? this.label : undefined;
+    const hasValue = this._hasValue();
+
     return html`
-      <div class="field-shell" data-label-position=${pos}>
+      <div class="field-shell" data-label-position=${pos} data-has-value=${hasValue ? "" : nothing}>
         ${showTopLabel
           ? html`<label class="field-label" part="label" for="control">${this._renderLabelContent()}</label>`
           : nothing}
-        ${this.renderControl()}
+        ${this.renderControl(ariaLabel)}
+        ${isFloat
+          ? html`<label class="field-label field-label--${pos}" part="label" for="control">${this._renderLabelContent()}</label>`
+          : nothing}
         ${this._renderMessageRow()}
       </div>
     `;
