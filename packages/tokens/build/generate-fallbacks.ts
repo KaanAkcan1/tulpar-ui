@@ -8,6 +8,28 @@ export interface FallbackValues {
   textPrimary: string;
   textInverse: string;
   bgSurface: string;
+  inputBgDefault: string;
+  inputBgDisabled: string;
+  inputBgReadonly: string;
+  inputBorderDefault: string;
+  inputBorderHover: string;
+  inputBorderFocus: string;
+  inputBorderInvalid: string;
+  inputBorderWarn: string;
+  inputTextDefault: string;
+  inputTextDisabled: string;
+  inputTextReadonly: string;
+  inputTextPlaceholder: string;
+  inputLabelDefault: string;
+  inputLabelRequired: string;
+  inputLabelFloatBg: string;
+  inputMessageHelper: string;
+  inputMessageError: string;
+  inputMessageWarn: string;
+  inputIconDefault: string;
+  inputIconInvalid: string;
+  inputIconWarn: string;
+  inputIconValidating: string;
 }
 
 export function buildFallbacks(): FallbackValues {
@@ -16,6 +38,28 @@ export function buildFallbacks(): FallbackValues {
     textPrimary: primitiveColor.stone[900],
     textInverse: primitiveColor.stone[50],
     bgSurface: primitiveColor.white,
+    inputBgDefault: primitiveColor.white,
+    inputBgDisabled: primitiveColor.stone[100],
+    inputBgReadonly: primitiveColor.stone[50],
+    inputBorderDefault: primitiveColor.stone[200],
+    inputBorderHover: primitiveColor.stone[400],
+    inputBorderFocus: primitiveColor.navy[600],
+    inputBorderInvalid: primitiveColor.red[700],
+    inputBorderWarn: primitiveColor.amber[700],
+    inputTextDefault: primitiveColor.stone[900],
+    inputTextDisabled: primitiveColor.stone[400],
+    inputTextReadonly: primitiveColor.stone[700],
+    inputTextPlaceholder: primitiveColor.stone[400],
+    inputLabelDefault: primitiveColor.stone[700],
+    inputLabelRequired: primitiveColor.red[700],
+    inputLabelFloatBg: primitiveColor.white,
+    inputMessageHelper: primitiveColor.stone[600],
+    inputMessageError: primitiveColor.red[700],
+    inputMessageWarn: primitiveColor.amber[700],
+    inputIconDefault: primitiveColor.stone[500],
+    inputIconInvalid: primitiveColor.red[700],
+    inputIconWarn: primitiveColor.amber[700],
+    inputIconValidating: primitiveColor.navy[600],
   };
 }
 
