@@ -3,13 +3,13 @@ import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
+  afterRenderEffect,
   computed,
-  inject,
   input,
   output,
   signal,
+  viewChild,
 } from "@angular/core";
-import type { AfterContentInit } from "@angular/core";
 import { LucideAngularModule, type LucideIconData } from "lucide-angular";
 
 import "@tulpar-ui/core/button";
@@ -55,6 +55,7 @@ const ICON_SIZE_BY_BUTTON_SIZE: Record<ButtonSize, number> = {
   imports: [LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  styles: [":host { display: contents; }"],
   template: `
     <tulpar-button
       [attr.severity]="severity()"
@@ -79,6 +80,8 @@ const ICON_SIZE_BY_BUTTON_SIZE: Record<ButtonSize, number> = {
       [attr.rel]="rel() ?? null"
       [attr.aria-label]="ariaLabel() ?? null"
       [attr.tooltip]="tooltip() ?? null"
+      [attr.name]="name() ?? null"
+      [attr.value]="value() ?? null"
       (click)="clicked.emit($event)"
     >
       @if (icon()) {
@@ -87,13 +90,13 @@ const ICON_SIZE_BY_BUTTON_SIZE: Record<ButtonSize, number> = {
         </span>
       }
       <ng-content select="[slot=start]" />
-      <ng-content />
+      <span #contentWrapper><ng-content /></span>
       <ng-content select="[slot=end]" />
       <ng-content select="[slot=loading-icon]" />
     </tulpar-button>
   `,
 })
-export class TulparButtonComponent implements AfterContentInit {
+export class TulparButtonComponent {
   severity = input<ButtonSeverity>("primary");
   variant = input<ButtonVariant>("solid");
   color = input<ButtonColor | undefined>(undefined);
@@ -116,6 +119,8 @@ export class TulparButtonComponent implements AfterContentInit {
   rel = input<string | undefined>(undefined);
   ariaLabel = input<string | undefined>(undefined);
   tooltip = input<string | undefined>(undefined);
+  name = input<string | undefined>(undefined);
+  value = input<string | undefined>(undefined);
   /** Lucide icon data (e.g. `Check`, `ArrowRight`) imported from `lucide-angular`. */
   icon = input<LucideIconData | undefined>(undefined);
   /** Optional override for icon size; defaults to button's size-scale value. */
@@ -123,7 +128,7 @@ export class TulparButtonComponent implements AfterContentInit {
 
   clicked = output<MouseEvent>();
 
-  private readonly hostRef = inject(ElementRef<HTMLElement>);
+  private readonly contentWrapper = viewChild<ElementRef<HTMLElement>>("contentWrapper");
   private readonly hasText = signal(false);
 
   /** Effective icon size — explicit override wins over per-size default. */
@@ -132,10 +137,12 @@ export class TulparButtonComponent implements AfterContentInit {
   /** Auto icon-only when `icon` is set AND no projected text exists. */
   autoIconOnly = computed(() => Boolean(this.icon()) && !this.hasText());
 
-  ngAfterContentInit(): void {
-    // Detect projected text content. The host element's textContent reflects
-    // light-DOM children (post-projection). Whitespace-only counts as empty.
-    const text = (this.hostRef.nativeElement.textContent ?? "").trim();
-    this.hasText.set(text.length > 0);
+  constructor() {
+    afterRenderEffect(() => {
+      const el = this.contentWrapper()?.nativeElement;
+      if (!el) return;
+      const trimmed = (el.textContent ?? "").trim();
+      this.hasText.set(trimmed.length > 0);
+    });
   }
 }
