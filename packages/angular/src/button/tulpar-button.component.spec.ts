@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { TestBed } from "@angular/core/testing";
-import { Component, signal } from "@angular/core";
+import { Component, input, signal } from "@angular/core";
 import { TulparButtonComponent } from "./tulpar-button.component";
 
 @Component({
@@ -73,5 +73,60 @@ describe("TulparButtonComponent (TestBed)", () => {
     fixture.detectChanges();
     const cmp = fixture.debugElement.children[0].componentInstance as TulparButtonComponent;
     expect(cmp.effectiveIconSize()).toBe(32);
+  });
+
+  it("renders a generic component class passed via the icon input", async () => {
+    @Component({
+      selector: "test-icon",
+      standalone: true,
+      template: `<span data-testid="test-icon-rendered" [attr.data-size]="size()"></span>`,
+    })
+    class TestIcon {
+      size = input<number | undefined>(undefined);
+    }
+
+    @Component({
+      standalone: true,
+      imports: [TulparButtonComponent],
+      template: `<tulpar-button-ng [icon]="iconCmp" size="lg">Save</tulpar-button-ng>`,
+    })
+    class HostWithIcon {
+      readonly iconCmp = TestIcon;
+    }
+
+    TestBed.configureTestingModule({ imports: [HostWithIcon] });
+    const fixture = TestBed.createComponent(HostWithIcon);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const rendered = fixture.nativeElement.querySelector(
+      '[data-testid="test-icon-rendered"]',
+    ) as HTMLElement | null;
+    expect(rendered).toBeTruthy();
+    expect(rendered!.getAttribute("data-size")).toBe("18");
+  });
+
+  it("renders projected content into slot=start when icon input is omitted", () => {
+    @Component({
+      standalone: true,
+      imports: [TulparButtonComponent],
+      template: `
+        <tulpar-button-ng>
+          <span slot="start" data-testid="projected-start">START</span>
+          Save
+        </tulpar-button-ng>
+      `,
+    })
+    class HostWithSlot {}
+
+    TestBed.configureTestingModule({ imports: [HostWithSlot] });
+    const fixture = TestBed.createComponent(HostWithSlot);
+    fixture.detectChanges();
+
+    const projected = fixture.nativeElement.querySelector(
+      '[data-testid="projected-start"]',
+    ) as HTMLElement | null;
+    expect(projected).toBeTruthy();
+    expect(projected!.getAttribute("slot")).toBe("start");
   });
 });
