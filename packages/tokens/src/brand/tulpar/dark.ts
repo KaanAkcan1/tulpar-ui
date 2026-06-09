@@ -2,6 +2,7 @@ import { primitiveColor as c } from "../../primitive/color";
 import { primitiveTypography } from "../../primitive/typography";
 import { primitiveTransition } from "../../primitive/transition";
 import type { SemanticTokens } from "../../semantic/types";
+import { tulparLight } from "./light";
 
 export const tulparDark: SemanticTokens = {
   color: {
@@ -127,5 +128,45 @@ export const tulparDark: SemanticTokens = {
 
   transition: {
     default: `all ${primitiveTransition.duration.fast} ${primitiveTransition.easing.standard}`,
+  },
+
+  input: {
+    bg: {
+      default: c.stone[900],
+      disabled: c.stone[800],
+      readonly: c.stone[800],
+    },
+    border: {
+      default: c.stone[700],
+      hover: c.stone[600],
+      focus: c.navy[400],
+      invalid: c.red[400],
+      warn: c.amber[300],
+    },
+    text: {
+      default: c.stone[50],
+      disabled: c.stone[600],
+      readonly: c.stone[300],
+      placeholder: c.stone[500],
+    },
+    label: {
+      default: c.stone[300],
+      required: c.red[400],
+      float: { bg: c.stone[900] },
+    },
+    message: {
+      helper: c.stone[300],
+      error: c.red[400],
+      warn: c.amber[300],
+    },
+    icon: {
+      default: c.stone[400],
+      invalid: c.red[400],
+      warn: c.amber[300],
+      validating: c.navy[400],
+    },
+    radius: "0.375rem",
+    size: tulparLight.input.size,
+    messageRowHeight: "1.25rem",
   },
 };
