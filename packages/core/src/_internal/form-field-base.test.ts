@@ -9,6 +9,7 @@ class TestField extends FormFieldBase {
 
   protected override renderControl() {
     return html`<input
+      id="control"
       .value=${this.value}
       @input=${(e: InputEvent) => {
         this.value = (e.target as HTMLInputElement).value;
@@ -43,5 +44,31 @@ describe("FormFieldBase skeleton", () => {
     field["_internals"].setFormValue("hello");
     const fd = new FormData(form);
     expect(fd.get("myfield")).to.equal("hello");
+  });
+});
+
+describe("FormFieldBase label", () => {
+  it("renders label from attribute", async () => {
+    const el = await fixture<TestField>(testHtml`<test-form-field label="Email"></test-form-field>`);
+    const labelEl = el.shadowRoot!.querySelector(".field-label");
+    expect(labelEl?.textContent?.trim()).to.equal("Email");
+  });
+
+  it("renders label from slot, overriding attribute", async () => {
+    const el = await fixture<TestField>(testHtml`
+      <test-form-field label="ignored">
+        <span slot="label">Slot Label</span>
+      </test-form-field>
+    `);
+    const slottedNodes = el.shadowRoot!
+      .querySelector<HTMLSlotElement>("slot[name='label']")!
+      .assignedElements();
+    expect(slottedNodes[0].textContent).to.equal("Slot Label");
+  });
+
+  it("hides label row when no label is provided", async () => {
+    const el = await fixture<TestField>(testHtml`<test-form-field></test-form-field>`);
+    const labelEl = el.shadowRoot!.querySelector(".field-label");
+    expect(labelEl).to.equal(null);
   });
 });

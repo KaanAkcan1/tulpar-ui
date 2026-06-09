@@ -12,4 +12,12 @@ export const formFieldBaseStyles = css`
     pointer-events: none;
     cursor: not-allowed;
   }
+
+  .field-label {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--tulpar-input-label-default, #44403c);
+    margin-bottom: 0.25rem;
+    line-height: 1.25;
+  }
 `;

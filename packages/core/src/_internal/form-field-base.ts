@@ -1,4 +1,4 @@
-import { LitElement, html, type TemplateResult } from "lit";
+import { LitElement, html, nothing, type TemplateResult } from "lit";
 import { property } from "lit/decorators.js";
 import { formFieldBaseStyles } from "./form-field-base.styles";
 
@@ -35,9 +35,16 @@ export abstract class FormFieldBase extends LitElement {
   @property({ type: Boolean, reflect: true }) disabled = false;
   @property({ type: Boolean, reflect: true }) readonly = false;
 
+  // --- Label ---
+  @property({ type: String }) label?: string;
+
   constructor() {
     super();
     this._internals = this.attachInternals();
+  }
+
+  protected _hasLabelSlotContent(): boolean {
+    return Array.from(this.children).some((c) => c.slot === "label");
   }
 
   /**
@@ -47,8 +54,17 @@ export abstract class FormFieldBase extends LitElement {
   protected abstract renderControl(): TemplateResult;
 
   protected override render() {
+    const hasSlot = this._hasLabelSlotContent();
+    const hasLabel = hasSlot || !!this.label;
     return html`
       <div class="field-shell">
+        ${hasLabel
+          ? html`
+              <label class="field-label" part="label" for="control">
+                <slot name="label">${this.label}</slot>
+              </label>
+            `
+          : nothing}
         ${this.renderControl()}
       </div>
     `;
