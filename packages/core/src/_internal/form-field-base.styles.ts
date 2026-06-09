@@ -51,4 +51,33 @@ export const formFieldBaseStyles = css`
   .field-message[data-kind='warn'] {
     color: var(--tulpar-input-message-warn, #b45309);
   }
+
+  .field-status-zone {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 0.25rem;
+    transition: opacity 150ms ease-out;
+  }
+
+  .field-status-zone:empty {
+    display: none;
+  }
+
+  .field-status-icon[data-kind='invalid'] {
+    color: var(--tulpar-input-icon-invalid, #b91c1c);
+  }
+  .field-status-icon[data-kind='warn'] {
+    color: var(--tulpar-input-icon-warn, #d97706);
+  }
+  .field-status-icon[data-kind='validating'] {
+    color: var(--tulpar-input-icon-validating, #133a66);
+  }
+
+  .field-status-icon--spin {
+    animation: tulpar-input-spinner 800ms linear infinite;
+  }
+
+  @keyframes tulpar-input-spinner {
+    to { transform: rotate(360deg); }
+  }
 `;

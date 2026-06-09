@@ -8,15 +8,20 @@ class TestField extends FormFieldBase {
   @property({ type: String }) value = "";
 
   protected override renderControl() {
-    return html`<input
-      id="control"
-      aria-required=${this._ariaRequiredAttr()}
-      .value=${this.value}
-      @input=${(e: InputEvent) => {
-        this.value = (e.target as HTMLInputElement).value;
-        this._internals.setFormValue(this.value);
-      }}
-    />`;
+    return html`
+      <div class="control-row">
+        <input
+          id="control"
+          aria-required=${this._ariaRequiredAttr()}
+          .value=${this.value}
+          @input=${(e: InputEvent) => {
+            this.value = (e.target as HTMLInputElement).value;
+            this._internals.setFormValue(this.value);
+          }}
+        />
+        ${(this as unknown as { _renderStatusZone(): unknown })._renderStatusZone()}
+      </div>
+    `;
   }
 }
 if (!customElements.get("test-form-field")) {
@@ -152,5 +157,36 @@ describe("FormFieldBase message row", () => {
       <test-form-field warn-text="careful" error-text="bad" invalid warn></test-form-field>
     `);
     expect(el.shadowRoot!.querySelector(".field-message")?.textContent).to.equal("bad");
+  });
+});
+
+describe("FormFieldBase status icon zone", () => {
+  it("renders no status icon when no status is active", async () => {
+    const el = await fixture<TestField>(testHtml`<test-form-field></test-form-field>`);
+    const zone = el.shadowRoot!.querySelector(".field-status-zone");
+    // Zone may be in DOM but should be empty (no icon children)
+    expect(zone?.children.length ?? 0).to.equal(0);
+  });
+
+  it("shows exclamation icon when invalid", async () => {
+    const el = await fixture<TestField>(testHtml`<test-form-field invalid></test-form-field>`);
+    expect(el.shadowRoot!.querySelector(".field-status-icon[data-kind='invalid']")).to.not.equal(null);
+  });
+
+  it("shows triangle icon when warn (not invalid)", async () => {
+    const el = await fixture<TestField>(testHtml`<test-form-field warn></test-form-field>`);
+    expect(el.shadowRoot!.querySelector(".field-status-icon[data-kind='warn']")).to.not.equal(null);
+  });
+
+  it("shows spinner when validating (overrides invalid+warn icons)", async () => {
+    const el = await fixture<TestField>(testHtml`<test-form-field invalid warn validating></test-form-field>`);
+    expect(el.shadowRoot!.querySelector(".field-status-icon[data-kind='validating']")).to.not.equal(null);
+    expect(el.shadowRoot!.querySelector(".field-status-icon[data-kind='invalid']")).to.equal(null);
+  });
+
+  it("status icon zone is aria-hidden (message row carries semantic)", async () => {
+    const el = await fixture<TestField>(testHtml`<test-form-field invalid></test-form-field>`);
+    const zone = el.shadowRoot!.querySelector(".field-status-zone");
+    expect(zone?.getAttribute("aria-hidden")).to.equal("true");
   });
 });

@@ -55,6 +55,7 @@ export abstract class FormFieldBase extends LitElement {
   // --- Status ---
   @property({ type: Boolean, reflect: true }) invalid = false;
   @property({ type: Boolean, reflect: true }) warn = false;
+  @property({ type: Boolean, reflect: true }) validating = false;
 
   constructor() {
     super();
@@ -111,6 +112,48 @@ export abstract class FormFieldBase extends LitElement {
   protected _renderMessageRow(): TemplateResult | typeof nothing {
     if (this.noMessageSpace) return nothing;
     return html`<div class="field-message-row">${this._renderMessageText()}</div>`;
+  }
+
+  protected _renderStatusIcon(): TemplateResult | typeof nothing {
+    // Precedence: validating > invalid > warn
+    let kind: 'validating' | 'invalid' | 'warn' | undefined;
+    if (this.validating) kind = 'validating';
+    else if (this.invalid) kind = 'invalid';
+    else if (this.warn) kind = 'warn';
+
+    if (!kind) return nothing;
+
+    switch (kind) {
+      case 'validating':
+        // CSS-based rotation (not SVG SMIL) so prefers-reduced-motion @media query disables it.
+        return html`<span class="field-status-icon field-status-icon--spin" data-kind="validating">
+          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2" fill="none" stroke-dasharray="36" stroke-dashoffset="9" />
+          </svg>
+        </span>`;
+      case 'invalid':
+        return html`<span class="field-status-icon" data-kind="invalid">
+          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" fill="currentColor" />
+            <path d="M12 6 v8" stroke="white" stroke-width="2" stroke-linecap="round" />
+            <circle cx="12" cy="17" r="1.25" fill="white" />
+          </svg>
+        </span>`;
+      case 'warn':
+        return html`<span class="field-status-icon" data-kind="warn">
+          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3 L22 20 L2 20 Z" fill="currentColor" />
+            <path d="M12 10 v5" stroke="white" stroke-width="2" stroke-linecap="round" />
+            <circle cx="12" cy="17.5" r="0.9" fill="white" />
+          </svg>
+        </span>`;
+    }
+  }
+
+  protected _renderStatusZone(): TemplateResult {
+    return html`
+      <span class="field-status-zone" aria-hidden="true">${this._renderStatusIcon()}</span>
+    `;
   }
 
   protected _resolvedLabelPosition(): LabelPosition {
