@@ -1,6 +1,7 @@
 import { LitElement, html, nothing, type TemplateResult } from "lit";
 import { property } from "lit/decorators.js";
 import { formFieldBaseStyles } from "./form-field-base.styles";
+import { resolveLabelPosition } from "./label-position-resolver";
 
 export type FieldSize = "xs" | "sm" | "md" | "lg" | "xl";
 export type FieldVariant = "outlined" | "filled" | "underlined" | "ghost";
@@ -37,6 +38,8 @@ export abstract class FormFieldBase extends LitElement {
 
   // --- Label ---
   @property({ type: String }) label?: string;
+  @property({ type: String, attribute: 'label-position', reflect: true })
+  labelPosition?: LabelPosition;
 
   constructor() {
     super();
@@ -47,6 +50,15 @@ export abstract class FormFieldBase extends LitElement {
     return Array.from(this.children).some((c) => c.slot === "label");
   }
 
+  protected _resolvedLabelPosition(): LabelPosition {
+    return resolveLabelPosition({
+      requested: this.labelPosition,
+      hasLabel: this._hasLabelSlotContent() || !!this.label,
+      variant: this.variant,
+      size: this.size,
+    });
+  }
+
   /**
    * Subclasses implement the actual control (the underlying <input>,
    * <textarea>, or composite UI).
@@ -54,16 +66,14 @@ export abstract class FormFieldBase extends LitElement {
   protected abstract renderControl(): TemplateResult;
 
   protected override render() {
-    const hasSlot = this._hasLabelSlotContent();
-    const hasLabel = hasSlot || !!this.label;
+    const pos = this._resolvedLabelPosition();
+    const showTopLabel = pos === "top";
     return html`
-      <div class="field-shell">
-        ${hasLabel
-          ? html`
-              <label class="field-label" part="label" for="control">
-                <slot name="label">${this.label}</slot>
-              </label>
-            `
+      <div class="field-shell" data-label-position=${pos}>
+        ${showTopLabel
+          ? html`<label class="field-label" part="label" for="control">
+              <slot name="label">${this.label}</slot>
+            </label>`
           : nothing}
         ${this.renderControl()}
       </div>
