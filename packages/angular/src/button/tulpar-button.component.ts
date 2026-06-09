@@ -14,46 +14,29 @@ import { LucideAngularModule, type LucideIconData } from "lucide-angular";
 
 import "@tulpar-ui/core/button";
 
-export type ButtonSeverity =
-  | "primary"
-  | "secondary"
-  | "info"
-  | "success"
-  | "warn"
-  | "help"
-  | "danger"
-  | "contrast"
-  | "premium";
+import type {
+  ButtonSeverity,
+  ButtonVariant,
+  ButtonSize,
+  ButtonShape,
+  ButtonIconPosition,
+  ButtonLoadingPosition,
+  ButtonType,
+  ButtonJustify,
+  ButtonColor,
+} from "@tulpar-ui/core";
 
-export type ButtonVariant = "solid" | "outlined" | "tonal" | "ghost" | "link";
-export type ButtonSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
-export type ButtonShape = "default" | "round" | "circle";
-export type ButtonIconPosition = "start" | "end" | "top" | "bottom";
-export type ButtonLoadingPosition = "start" | "center" | "end";
-export type ButtonType = "button" | "submit" | "reset";
-export type ButtonJustify = "start" | "center" | "end" | "between";
-export type ButtonColor =
-  | "navy"
-  | "gold"
-  | "stone"
-  | "slate"
-  | "red"
-  | "orange"
-  | "amber"
-  | "yellow"
-  | "lime"
-  | "green"
-  | "emerald"
-  | "teal"
-  | "cyan"
-  | "sky"
-  | "blue"
-  | "indigo"
-  | "violet"
-  | "purple"
-  | "fuchsia"
-  | "pink"
-  | "rose";
+export type {
+  ButtonSeverity,
+  ButtonVariant,
+  ButtonSize,
+  ButtonShape,
+  ButtonIconPosition,
+  ButtonLoadingPosition,
+  ButtonType,
+  ButtonJustify,
+  ButtonColor,
+};
 
 /** Default icon size per button size — matches the token scale. */
 const ICON_SIZE_BY_BUTTON_SIZE: Record<ButtonSize, number> = {
