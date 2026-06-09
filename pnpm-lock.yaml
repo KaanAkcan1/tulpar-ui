@@ -225,6 +225,9 @@ importers:
 
   packages/core:
     dependencies:
+      '@tulpar-ui/tokens':
+        specifier: workspace:*
+        version: link:../tokens
       lit:
         specifier: ^3.1.0
         version: 3.3.3
@@ -232,9 +235,6 @@ importers:
       '@open-wc/testing':
         specifier: ^4.0.0
         version: 4.0.0
-      '@tulpar-ui/tokens':
-        specifier: workspace:*
-        version: link:../tokens
       '@types/mocha':
         specifier: ^10.0.6
         version: 10.0.10
