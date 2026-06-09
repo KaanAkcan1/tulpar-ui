@@ -5,10 +5,10 @@
   "type": "module",
   "main": "./dist/fesm2022/tulpar-ui-angular.mjs",
   "module": "./dist/fesm2022/tulpar-ui-angular.mjs",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/types/tulpar-ui-angular.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/types/tulpar-ui-angular.d.ts",
       "import": "./dist/fesm2022/tulpar-ui-angular.mjs"
     }
   },
