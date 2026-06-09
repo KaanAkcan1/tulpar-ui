@@ -1,6 +1,7 @@
 import { fixture, html, expect } from "@open-wc/testing";
 import "./tulpar-button";
 import type { TulparButton } from "./tulpar-button";
+import { buttonStyles } from "./tulpar-button.styles";
 
 describe("public type exports", () => {
   it("re-exports all button type unions from index", async () => {
@@ -74,6 +75,34 @@ describe("<tulpar-button>", () => {
         const el = await fixture<TulparButton>(html`<tulpar-button variant=${v}>X</tulpar-button>`);
         expect(el.variant).to.equal(v);
       }
+    });
+
+    describe("hover/active scoping (regression: link variant bg leak)", () => {
+      // The default-solid hover/active --_btn-bg rule must NOT be unscoped —
+      // a descendant selector that matches every host leaks the brand hover
+      // color into other variants. For outlined/tonal/ghost it's masked by
+      // their own bg overrides, but link only sets --_btn-fg on hover, so
+      // the leak makes bg AND text resolve to the same color → invisible
+      // text against a brand-colored pill.
+      const stripComments = (s: string) => s.replace(/\/\*[\s\S]*?\*\//g, "");
+      const css = stripComments(buttonStyles.cssText);
+
+      it("scopes default hover bg rule via :host(:not([variant])) + solid", () => {
+        expect(css).to.match(/:host\(:not\(\[variant\]\)\)\s+\.btn:hover/);
+        expect(css).to.match(/:host\(\[variant="solid"\]\)\s+\.btn:hover/);
+      });
+
+      it("scopes default active bg rule via :host(:not([variant])) + solid", () => {
+        expect(css).to.match(/:host\(:not\(\[variant\]\)\)\s+\.btn:active/);
+        expect(css).to.match(/:host\(\[variant="solid"\]\)\s+\.btn:active/);
+      });
+
+      it("never uses unscoped `:host .btn:hover` / `:host .btn:active`", () => {
+        // Anchored: forbid the bare `:host ` (space + .btn) form; the scoped
+        // `:host(...)` forms remain allowed because they're followed by `(`.
+        expect(css).to.not.match(/:host\s+\.btn:hover/);
+        expect(css).to.not.match(/:host\s+\.btn:active/);
+      });
     });
   });
 

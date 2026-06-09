@@ -207,11 +207,14 @@ export const buttonStyles = css`
     --_btn-fg: var(--_btn-color-on);
     --_btn-border: transparent;
   }
-  :host .btn:hover,
+  /* Scoped to default (no variant) + explicit solid only — an unscoped
+     :host .btn:hover would leak --_btn-bg into other variants whose own
+     :hover rule does not reset bg (notably link → invisible-text pill). */
+  :host(:not([variant])) .btn:hover,
   :host([variant="solid"]) .btn:hover {
     --_btn-bg: var(--_btn-color-hover);
   }
-  :host .btn:active,
+  :host(:not([variant])) .btn:active,
   :host([variant="solid"]) .btn:active {
     --_btn-bg: var(--_btn-color-active);
   }
