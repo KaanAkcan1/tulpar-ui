@@ -1,6 +1,6 @@
 {
   "name": "@tulpar-ui/core",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Lit Web Components for Tulpar UI",
   "type": "module",
   "main": "./dist/index.js",

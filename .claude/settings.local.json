@@ -149,7 +149,10 @@
       "PowerShell(Get-NetTCPConnection -LocalPort 4310 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force; \"Killed PID $_\" })",
       "PowerShell($conns = Get-NetTCPConnection -LocalPort 4310 -ErrorAction SilentlyContinue | Where-Object { $_.OwningProcess -ne 0 }; if \\($conns\\) { \"Still in use by PID\\(s\\): $\\($conns.OwningProcess -join ','\\)\" } else { \"Port 4310 is free\" })",
       "Bash(pnpm run *)",
-      "Bash(pnpm --filter playground-ng exec ng cache clean)"
+      "Bash(pnpm --filter playground-ng exec ng cache clean)",
+      "PowerShell(pnpm version-packages)",
+      "PowerShell(git restore packages/angular/package.json packages/core/package.json packages/tokens/package.json packages/vue/package.json .changeset/fix-link-variant-hover-bg-leak.md .changeset/v0.4-enterprise-hardening.md)",
+      "Read(//c/Source/Kaan/tulpar-ui/.changeset/**)"
     ],
     "additionalDirectories": [
       "\\tmp"
