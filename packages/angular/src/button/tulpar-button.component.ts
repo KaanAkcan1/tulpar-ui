@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
+  Type,
   afterRenderEffect,
   computed,
   input,
@@ -10,7 +11,7 @@ import {
   viewChild,
 } from "@angular/core";
 import type { ElementRef } from "@angular/core";
-import { LucideAngularModule, type LucideIconData } from "lucide-angular";
+import { NgComponentOutlet } from "@angular/common";
 
 import "@tulpar-ui/core/button";
 
@@ -52,7 +53,7 @@ const ICON_SIZE_BY_BUTTON_SIZE: Record<ButtonSize, number> = {
 @Component({
   selector: "tulpar-button-ng",
   standalone: true,
-  imports: [LucideAngularModule],
+  imports: [NgComponentOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   styles: [":host { display: contents; }"],
@@ -84,9 +85,11 @@ const ICON_SIZE_BY_BUTTON_SIZE: Record<ButtonSize, number> = {
       [attr.value]="value() ?? null"
       (click)="clicked.emit($event)"
     >
-      @if (icon()) {
+      @if (icon(); as iconCmp) {
         <span slot="start">
-          <lucide-angular [img]="icon()" [size]="effectiveIconSize()"></lucide-angular>
+          <ng-container
+            *ngComponentOutlet="iconCmp; inputs: { size: effectiveIconSize() }"
+          />
         </span>
       }
       <ng-content select="[slot=start]" />
@@ -121,8 +124,12 @@ export class TulparButtonComponent {
   tooltip = input<string | undefined>(undefined);
   name = input<string | undefined>(undefined);
   value = input<string | undefined>(undefined);
-  /** Lucide icon data (e.g. `Check`, `ArrowRight`) imported from `lucide-angular`. */
-  icon = input<LucideIconData | undefined>(undefined);
+  /**
+   * Optional Angular component class to render in the start slot.
+   * Receives `size` input (defaults to the per-size scale value).
+   * Consumers may instead project content into `slot="start"` directly.
+   */
+  icon = input<Type<unknown> | undefined>(undefined);
   /** Optional override for icon size; defaults to button's size-scale value. */
   iconSize = input<number | undefined>(undefined);
 
