@@ -1,49 +1,18 @@
 <script setup lang="ts">
-import { computed, useSlots, type Component } from "vue";
+import { computed, useSlots, Comment, type Component } from "vue";
 import "@tulpar-ui/core/button";
+import type {
+  ButtonSeverity,
+  ButtonVariant,
+  ButtonSize,
+  ButtonShape,
+  ButtonIconPosition,
+  ButtonLoadingPosition,
+  ButtonType,
+  ButtonJustify,
+  ButtonColor,
+} from "@tulpar-ui/core";
 
-export type ButtonSeverity =
-  | "primary"
-  | "secondary"
-  | "info"
-  | "success"
-  | "warn"
-  | "help"
-  | "danger"
-  | "contrast"
-  | "premium";
-
-export type ButtonVariant = "solid" | "outlined" | "tonal" | "ghost" | "link";
-export type ButtonSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
-export type ButtonShape = "default" | "round" | "circle";
-export type ButtonIconPosition = "start" | "end" | "top" | "bottom";
-export type ButtonLoadingPosition = "start" | "center" | "end";
-export type ButtonType = "button" | "submit" | "reset";
-export type ButtonJustify = "start" | "center" | "end" | "between";
-export type ButtonColor =
-  | "navy"
-  | "gold"
-  | "stone"
-  | "slate"
-  | "red"
-  | "orange"
-  | "amber"
-  | "yellow"
-  | "lime"
-  | "green"
-  | "emerald"
-  | "teal"
-  | "cyan"
-  | "sky"
-  | "blue"
-  | "indigo"
-  | "violet"
-  | "purple"
-  | "fuchsia"
-  | "pink"
-  | "rose";
-
-/** Default icon size per button size — matches the token scale. */
 const ICON_SIZE_BY_BUTTON_SIZE: Record<ButtonSize, number> = {
   xs: 12,
   sm: 14,
@@ -77,75 +46,88 @@ interface Props {
   rel?: string;
   ariaLabel?: string;
   tooltip?: string;
-  /** Lucide-vue-next component (or any Vue component accepting :size) */
+  name?: string;
+  value?: string;
   icon?: Component;
-  /** Optional override for icon size; defaults to button's size-scale value. */
   iconSize?: number;
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  severity: "primary",
-  variant: "solid",
-  shape: "default",
-  size: "md",
-  type: "button",
-  raised: false,
-  block: false,
-  justify: "center",
-  disabled: false,
-  dataDisabled: false,
-  loading: false,
-  loadingPosition: "center",
-  iconOnly: false,
-  iconPosition: "start",
-  iconSeparator: false,
-});
+const {
+  severity = "primary",
+  variant = "solid",
+  color,
+  shape = "default",
+  size = "md",
+  type = "button",
+  raised = false,
+  block = false,
+  justify = "center",
+  disabled = false,
+  dataDisabled = false,
+  loading = false,
+  loadingLabel,
+  loadingPosition = "center",
+  iconOnly = false,
+  iconPosition = "start",
+  iconSeparator = false,
+  href,
+  target,
+  rel,
+  ariaLabel,
+  tooltip,
+  name,
+  value,
+  icon,
+  iconSize,
+} = defineProps<Props>();
 
-const emit = defineEmits<{
-  click: [event: MouseEvent];
-}>();
-
+const emit = defineEmits<{ click: [event: MouseEvent] }>();
 const slots = useSlots();
 
-/** Auto icon-only when an `icon` is set AND no default-slot content was passed. */
-const autoIconOnly = computed(() => Boolean(props.icon) && !slots.default);
+const autoIconOnly = computed(() => {
+  if (!icon) return false;
+  const slot = slots.default?.();
+  if (!slot || slot.length === 0) return true;
+  return !slot.some(
+    (vnode) =>
+      vnode.type !== Comment &&
+      !(typeof vnode.children === "string" && !vnode.children.trim()),
+  );
+});
 
-/** Effective icon size: explicit `iconSize` overrides per-size default. */
-const effectiveIconSize = computed(() => props.iconSize ?? ICON_SIZE_BY_BUTTON_SIZE[props.size]);
+const effectiveIconSize = computed(() => iconSize ?? ICON_SIZE_BY_BUTTON_SIZE[size]);
 </script>
 
 <template>
   <tulpar-button
-    :severity="props.severity"
-    :variant="props.variant"
-    :color="props.color ?? null"
-    :shape="props.shape"
-    :size="props.size"
-    :type="props.type"
-    :raised="props.raised || null"
-    :block="props.block || null"
-    :justify="props.justify"
-    :disabled="props.disabled || null"
-    :data-disabled="props.dataDisabled || null"
-    :loading="props.loading || null"
-    :loading-label="props.loadingLabel ?? null"
-    :loading-position="props.loadingPosition"
-    :icon-only="props.iconOnly || autoIconOnly || null"
-    :icon-position="props.iconPosition"
-    :icon-separator="props.iconSeparator || null"
-    :href="props.href ?? null"
-    :target="props.target ?? null"
-    :rel="props.rel ?? null"
-    :aria-label="props.ariaLabel ?? null"
-    :tooltip="props.tooltip ?? null"
+    :severity="severity"
+    :variant="variant"
+    :color="color ?? null"
+    :shape="shape"
+    :size="size"
+    :type="type"
+    :raised="raised || null"
+    :block="block || null"
+    :justify="justify"
+    :disabled="disabled || null"
+    :data-disabled="dataDisabled || null"
+    :loading="loading || null"
+    :loading-label="loadingLabel ?? null"
+    :loading-position="loadingPosition"
+    :icon-only="iconOnly || autoIconOnly || null"
+    :icon-position="iconPosition"
+    :icon-separator="iconSeparator || null"
+    :href="href ?? null"
+    :target="target ?? null"
+    :rel="rel ?? null"
+    :aria-label="ariaLabel ?? null"
+    :tooltip="tooltip ?? null"
+    :name="name ?? null"
+    :value="value ?? null"
     @click="(e: MouseEvent) => emit('click', e)"
   >
-    <!--
-      :icon prop renders inside <span slot="start">.
-      For non-Lucide libraries, consumers still use <span slot="start"> directly.
-    -->
-    <span v-if="props.icon" slot="start">
-      <component :is="props.icon" :size="effectiveIconSize" />
+    <span v-if="icon" slot="start">
+      <component :is="icon" :size="effectiveIconSize" />
     </span>
     <slot name="start" />
     <slot />
