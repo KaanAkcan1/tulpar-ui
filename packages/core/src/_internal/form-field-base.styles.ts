@@ -94,4 +94,36 @@ export const formFieldBaseStyles = css`
   :host([suffix-interactive]) .field-suffix-host {
     pointer-events: auto;
   }
+
+  :host {
+    --field-resolved-height: var(--tulpar-input-size-md-height, 2.25rem);
+    --field-resolved-padding-x: var(--tulpar-input-size-md-padding-x, 0.75rem);
+    --field-resolved-padding-y: var(--tulpar-input-size-md-padding-y, 0.375rem);
+    --field-resolved-font-size: var(--tulpar-input-size-md-font-size, 0.875rem);
+  }
+
+  :host([size='xs']) {
+    --field-resolved-height: var(--tulpar-input-size-xs-height, 1.5rem);
+    --field-resolved-padding-x: var(--tulpar-input-size-xs-padding-x, 0.5rem);
+    --field-resolved-padding-y: var(--tulpar-input-size-xs-padding-y, 0.125rem);
+    --field-resolved-font-size: var(--tulpar-input-size-xs-font-size, 0.75rem);
+  }
+  :host([size='sm']) {
+    --field-resolved-height: var(--tulpar-input-size-sm-height, 1.75rem);
+    --field-resolved-padding-x: var(--tulpar-input-size-sm-padding-x, 0.625rem);
+    --field-resolved-padding-y: var(--tulpar-input-size-sm-padding-y, 0.25rem);
+    --field-resolved-font-size: var(--tulpar-input-size-sm-font-size, 0.875rem);
+  }
+  :host([size='lg']) {
+    --field-resolved-height: var(--tulpar-input-size-lg-height, 2.75rem);
+    --field-resolved-padding-x: var(--tulpar-input-size-lg-padding-x, 0.875rem);
+    --field-resolved-padding-y: var(--tulpar-input-size-lg-padding-y, 0.5rem);
+    --field-resolved-font-size: var(--tulpar-input-size-lg-font-size, 1rem);
+  }
+  :host([size='xl']) {
+    --field-resolved-height: var(--tulpar-input-size-xl-height, 3.25rem);
+    --field-resolved-padding-x: var(--tulpar-input-size-xl-padding-x, 1rem);
+    --field-resolved-padding-y: var(--tulpar-input-size-xl-padding-y, 0.625rem);
+    --field-resolved-font-size: var(--tulpar-input-size-xl-font-size, 1.125rem);
+  }
 `;

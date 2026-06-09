@@ -221,3 +221,13 @@ describe("FormFieldBase prefix/suffix slots", () => {
     expect(getComputedStyle(host).pointerEvents).to.equal("auto");
   });
 });
+
+describe("FormFieldBase size scaling", () => {
+  it("exposes size-driven CSS custom properties on the host", async () => {
+    const el = await fixture<TestField>(testHtml`<test-form-field size="lg"></test-form-field>`);
+    const cs = getComputedStyle(el);
+    // size=lg should map to lg height token. The computed style resolves to the fallback when the token is not set.
+    const heightValue = cs.getPropertyValue("--field-resolved-height").trim();
+    expect(heightValue).to.equal("2.75rem");
+  });
+});
