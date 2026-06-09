@@ -176,6 +176,9 @@ importers:
 
   packages/angular:
     devDependencies:
+      '@analogjs/vite-plugin-angular':
+        specifier: ^2.6.0
+        version: 2.6.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(vite@8.0.16)
       '@analogjs/vitest-angular':
         specifier: ^2.6.0
         version: 2.6.0(@analogjs/vite-plugin-angular@2.6.0)(@angular-devkit/architect@0.2003.27)(@angular-devkit/schematics@20.3.27)(vitest@3.2.6)
@@ -209,6 +212,9 @@ importers:
       ng-packagr:
         specifier: ^22.0.0
         version: 22.0.0(@angular/compiler-cli@22.0.0)(tslib@2.8.1)(typescript@6.0.3)
+      vite:
+        specifier: ^8.0.0
+        version: 8.0.16(@types/node@24.13.1)
       vitest:
         specifier: ^3.0.0
         version: 3.2.6(happy-dom@14.12.3)
@@ -429,7 +435,7 @@ packages:
       '@jridgewell/trace-mapping': 0.3.31
     dev: true
 
-  /@analogjs/vite-plugin-angular@2.6.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0):
+  /@analogjs/vite-plugin-angular@2.6.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(vite@8.0.16):
     resolution: {integrity: sha512-fPo2RgkJxLijIe9o+VSrUmfzZDEXVqXX5a86vpj/cAuuY62Of02g6G6QrqHtIkDFSUdEK8cbY/8zAiZlXW0/Hw==}
     peerDependencies:
       '@angular-devkit/build-angular': ^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0 || ^21.0.0 || ^22.0.0
@@ -448,6 +454,7 @@ packages:
       oxc-parser: 0.121.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)
       tinyglobby: 0.2.17
       ts-morph: 21.0.1
+      vite: 8.0.16(@types/node@24.13.1)
     transitivePeerDependencies:
       - '@emnapi/core'
       - '@emnapi/runtime'
@@ -465,7 +472,7 @@ packages:
       zone.js:
         optional: true
     dependencies:
-      '@analogjs/vite-plugin-angular': 2.6.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)
+      '@analogjs/vite-plugin-angular': 2.6.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(vite@8.0.16)
       '@angular-devkit/architect': 0.2003.27
       '@angular-devkit/schematics': 20.3.27
       vitest: 3.2.6(happy-dom@14.12.3)

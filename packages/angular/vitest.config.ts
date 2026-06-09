@@ -1,8 +1,12 @@
+import angular from "@analogjs/vite-plugin-angular";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+  plugins: [angular()],
   test: {
-    environment: "happy-dom",
     globals: true,
+    setupFiles: ["./vitest.setup.ts"],
+    environment: "happy-dom",
+    include: ["src/**/*.spec.ts"],
   },
 });
