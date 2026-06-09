@@ -20,4 +20,14 @@ export const formFieldBaseStyles = css`
     margin-bottom: 0.25rem;
     line-height: 1.25;
   }
+
+  .field-required-marker {
+    color: var(--tulpar-input-label-required, #dc2626);
+    margin-left: 0.125rem;
+  }
+
+  .field-necessity-text {
+    color: var(--tulpar-input-message-helper, #57534e);
+    font-weight: normal;
+  }
 `;

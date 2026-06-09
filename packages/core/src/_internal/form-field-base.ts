@@ -41,6 +41,11 @@ export abstract class FormFieldBase extends LitElement {
   @property({ type: String, attribute: 'label-position', reflect: true })
   labelPosition?: LabelPosition;
 
+  // --- Necessity ---
+  @property({ type: Boolean, reflect: true }) required = false;
+  @property({ type: String, attribute: 'necessity-indicator' })
+  necessityIndicator: NecessityIndicator = 'icon';
+
   constructor() {
     super();
     this._internals = this.attachInternals();
@@ -48,6 +53,28 @@ export abstract class FormFieldBase extends LitElement {
 
   protected _hasLabelSlotContent(): boolean {
     return Array.from(this.children).some((c) => c.slot === "label");
+  }
+
+  protected _renderLabelContent(): TemplateResult {
+    const ind = this.necessityIndicator;
+    const req = this.required;
+    if (ind === 'none') {
+      return html`<slot name="label">${this.label}</slot>`;
+    }
+    if (ind === 'icon') {
+      return html`
+        <slot name="label">${this.label}</slot>${req
+          ? html`<span class="field-required-marker" aria-hidden="true">*</span>`
+          : nothing}
+      `;
+    }
+    // label mode
+    const suffix = req ? '(required)' : '(optional)';
+    return html`<slot name="label">${this.label}</slot> <span class="field-necessity-text">${suffix}</span>`;
+  }
+
+  protected _ariaRequiredAttr() {
+    return this.required ? 'true' : 'false';
   }
 
   protected _resolvedLabelPosition(): LabelPosition {
@@ -71,9 +98,7 @@ export abstract class FormFieldBase extends LitElement {
     return html`
       <div class="field-shell" data-label-position=${pos}>
         ${showTopLabel
-          ? html`<label class="field-label" part="label" for="control">
-              <slot name="label">${this.label}</slot>
-            </label>`
+          ? html`<label class="field-label" part="label" for="control">${this._renderLabelContent()}</label>`
           : nothing}
         ${this.renderControl()}
       </div>

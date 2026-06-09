@@ -10,6 +10,7 @@ class TestField extends FormFieldBase {
   protected override renderControl() {
     return html`<input
       id="control"
+      aria-required=${this._ariaRequiredAttr()}
       .value=${this.value}
       @input=${(e: InputEvent) => {
         this.value = (e.target as HTMLInputElement).value;
@@ -70,5 +71,42 @@ describe("FormFieldBase label", () => {
     const el = await fixture<TestField>(testHtml`<test-form-field></test-form-field>`);
     const labelEl = el.shadowRoot!.querySelector(".field-label");
     expect(labelEl).to.equal(null);
+  });
+});
+
+describe("FormFieldBase necessity indicator", () => {
+  it("appends asterisk after label when required + indicator=icon", async () => {
+    const el = await fixture<TestField>(testHtml`
+      <test-form-field label="Email" required></test-form-field>
+    `);
+    const required = el.shadowRoot!.querySelector(".field-required-marker");
+    expect(required?.textContent?.trim()).to.equal("*");
+    expect(required?.getAttribute("aria-hidden")).to.equal("true");
+  });
+
+  it("renders '(required)' suffix when indicator=label + required", async () => {
+    const el = await fixture<TestField>(testHtml`
+      <test-form-field label="Email" required necessity-indicator="label"></test-form-field>
+    `);
+    expect(el.shadowRoot!.textContent).to.match(/Email\s*\(required\)/);
+  });
+
+  it("renders '(optional)' suffix when indicator=label + not required", async () => {
+    const el = await fixture<TestField>(testHtml`
+      <test-form-field label="Phone" necessity-indicator="label"></test-form-field>
+    `);
+    expect(el.shadowRoot!.textContent).to.match(/Phone\s*\(optional\)/);
+  });
+
+  it("renders no marker when indicator=none", async () => {
+    const el = await fixture<TestField>(testHtml`
+      <test-form-field label="Email" required necessity-indicator="none"></test-form-field>
+    `);
+    expect(el.shadowRoot!.querySelector(".field-required-marker")).to.equal(null);
+  });
+
+  it("sets aria-required when required", async () => {
+    const el = await fixture<TestField>(testHtml`<test-form-field required></test-form-field>`);
+    expect(el.shadowRoot!.querySelector("#control")?.getAttribute("aria-required")).to.equal("true");
   });
 });
