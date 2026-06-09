@@ -1,35 +1,77 @@
-// Side-effect import: registers Angular's JIT compiler so injectable services
-// from lucide-angular (LucideIconConfig etc.) can be processed when the
-// component file is loaded.
-import "@angular/compiler";
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
+import { TestBed } from "@angular/core/testing";
+import { Component, signal } from "@angular/core";
 import { TulparButtonComponent } from "./tulpar-button.component";
 
-/**
- * Smoke tests at the class level — verify exports + decorator metadata.
- * Instance creation requires a full Angular test environment (TestBed +
- * platform-browser-dynamic) because the component now declares
- * `LucideAngularModule` in `imports` and injects `ElementRef`. The real
- * integration is verified through the workspace build (ng-packagr emits
- * the FESM bundle with full Angular compilation) and the playground app.
- */
-describe("TulparButtonComponent (smoke)", () => {
-  it("is exported as a class", () => {
-    expect(typeof TulparButtonComponent).toBe("function");
-    expect(TulparButtonComponent.name).toBe("TulparButtonComponent");
+@Component({
+  standalone: true,
+  imports: [TulparButtonComponent],
+  template: `
+    <tulpar-button-ng
+      [severity]="sev()"
+      [variant]="variant()"
+      [size]="size()"
+      [disabled]="disabled()"
+      [iconSize]="iconSize()"
+      (clicked)="onClick($event)"
+    >{{ label() }}</tulpar-button-ng>
+  `,
+})
+class Host {
+  sev = signal<"primary" | "danger">("primary");
+  variant = signal<"solid" | "outlined">("solid");
+  size = signal<"md" | "lg">("md");
+  disabled = signal(false);
+  iconSize = signal<number | undefined>(undefined);
+  label = signal("Save");
+  lastClick: MouseEvent | null = null;
+  onClick(e: MouseEvent) {
+    this.lastClick = e;
+  }
+}
+
+describe("TulparButtonComponent (TestBed)", () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({ imports: [Host] });
   });
 
-  it("carries Angular component metadata (@Component decorator applied)", () => {
-    // ɵcmp is the compiled-output identifier set by the Angular compiler.
-    // Its presence proves the class is a real standalone component.
-    const metadata = (TulparButtonComponent as unknown as { ɵcmp?: unknown }).ɵcmp;
-    expect(metadata).toBeDefined();
+  it("creates and renders the inner tulpar-button", () => {
+    const fixture = TestBed.createComponent(Host);
+    fixture.detectChanges();
+    const inner = fixture.nativeElement.querySelector("tulpar-button");
+    expect(inner).toBeTruthy();
   });
 
-  it("declares its component selector as 'tulpar-button-ng'", () => {
-    // Standalone components expose their selectors via ɵcmp.selectors.
-    const cmp = (TulparButtonComponent as unknown as { ɵcmp: { selectors: string[][] } }).ɵcmp;
-    const selectors = cmp.selectors.flat();
-    expect(selectors).toContain("tulpar-button-ng");
+  it("reflects severity to the inner element", () => {
+    const fixture = TestBed.createComponent(Host);
+    fixture.componentInstance.sev.set("danger");
+    fixture.detectChanges();
+    const inner = fixture.nativeElement.querySelector("tulpar-button") as HTMLElement;
+    expect(inner.getAttribute("severity")).toBe("danger");
+  });
+
+  it("emits click via the `clicked` output", () => {
+    const fixture = TestBed.createComponent(Host);
+    fixture.detectChanges();
+    const inner = fixture.nativeElement.querySelector("tulpar-button") as HTMLElement;
+    inner.click();
+    expect(fixture.componentInstance.lastClick).toBeInstanceOf(MouseEvent);
+  });
+
+  it("effectiveIconSize defaults to size-scale value", () => {
+    const fixture = TestBed.createComponent(Host);
+    fixture.componentInstance.size.set("lg");
+    fixture.detectChanges();
+    const cmp = fixture.debugElement.children[0].componentInstance as TulparButtonComponent;
+    expect(cmp.effectiveIconSize()).toBe(18);
+  });
+
+  it("effectiveIconSize uses explicit iconSize override", () => {
+    const fixture = TestBed.createComponent(Host);
+    fixture.componentInstance.size.set("md");
+    fixture.componentInstance.iconSize.set(32);
+    fixture.detectChanges();
+    const cmp = fixture.debugElement.children[0].componentInstance as TulparButtonComponent;
+    expect(cmp.effectiveIconSize()).toBe(32);
   });
 });

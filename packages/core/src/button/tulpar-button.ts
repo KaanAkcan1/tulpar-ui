@@ -1,6 +1,7 @@
-import { LitElement, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { LitElement, html, nothing } from "lit";
+import { property } from "lit/decorators.js";
 import { buttonStyles } from "./tulpar-button.styles";
+import { warnDev } from "../_internal/warn-dev";
 
 export type ButtonSeverity =
   | "primary"
@@ -81,8 +82,11 @@ const ON_COLOR_MAP: Record<ButtonColor, string> = {
   rose: "var(--tulpar-primitive-color-stone-50)",
 };
 
-@customElement("tulpar-button")
 export class TulparButton extends LitElement {
+  static override shadowRootOptions: ShadowRootInit = {
+    ...LitElement.shadowRootOptions,
+    delegatesFocus: true,
+  };
   static override styles = buttonStyles;
   static formAssociated = true;
   private _internals: ElementInternals;
@@ -152,22 +156,46 @@ export class TulparButton extends LitElement {
   @property({ type: String, reflect: true })
   type: ButtonType = "button";
 
+  @property({ type: String, reflect: true })
+  name?: string;
+
+  @property({ type: String, reflect: true })
+  value?: string;
+
   // --- Tooltip ---
+  /**
+   * Simple inline string tooltip.
+   *
+   * Limitations:
+   * - Clipped by ancestors with `overflow: hidden`.
+   * - Uses a fixed z-index (100); may be obscured by modals/drawers.
+   * - No ESC dismiss, no hover delay, no viewport-edge collision detection.
+   *
+   * For production needs, use a dedicated tooltip component (planned v0.5, built
+   * on the Popover API + CSS Anchor Positioning).
+   */
   @property({ type: String, reflect: true })
   tooltip?: string;
 
   constructor() {
     super();
     this._internals = this.attachInternals();
-    this.addEventListener("click", this._handleClick);
   }
 
   override connectedCallback(): void {
     super.connectedCallback();
+    this.addEventListener("click", this._handleClick, { capture: true });
     if ((this.iconOnly || this.shape === "circle") && !this.getAttribute("aria-label")) {
-      console.warn("[tulpar-button] icon-only/circle buttons require an aria-label", this);
+      warnDev("[tulpar-button] icon-only/circle buttons require an aria-label", this);
     }
     this._applyColorOverride();
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this.removeEventListener("click", this._handleClick, {
+      capture: true,
+    } as EventListenerOptions);
   }
 
   override updated(changed: Map<string, unknown>): void {
@@ -212,8 +240,18 @@ export class TulparButton extends LitElement {
     const form = this._internals.form;
     if (!form) return;
     if (this.type === "submit") {
+      e.preventDefault();
+      // Chromium rejects FACEs as `requestSubmit` submitters ("not a submit
+      // button"), so we can't pass `this`. Instead, push our value into
+      // FormData via ElementInternals.setFormValue right before submit, then
+      // clear it after so we don't contribute to submits driven by another
+      // button. The `name` attribute is read by the browser as the FormData
+      // key during form participation.
+      this._internals.setFormValue(this.value ?? null);
       form.requestSubmit();
+      this._internals.setFormValue(null);
     } else if (this.type === "reset") {
+      e.preventDefault();
       form.reset();
     }
   };
@@ -228,7 +266,7 @@ export class TulparButton extends LitElement {
     return html`
       <button
         class="btn"
-        type=${this.type}
+        type="button"
         ?disabled=${this.disabled}
         aria-busy=${this.loading ? "true" : "false"}
         aria-describedby=${this.tooltip ? "tulpar-btn-tooltip" : ""}
@@ -242,9 +280,9 @@ export class TulparButton extends LitElement {
     return html`
       <a
         class="btn"
-        href=${this.disabled ? "javascript:void(0)" : (this.href ?? "")}
-        target=${this.target ?? ""}
-        rel=${this.rel ?? ""}
+        href=${this.disabled ? nothing : (this.href ?? nothing)}
+        target=${this.target ?? nothing}
+        rel=${this.rel ?? nothing}
         aria-disabled=${this.disabled ? "true" : "false"}
         aria-busy=${this.loading ? "true" : "false"}
         aria-describedby=${this.tooltip ? "tulpar-btn-tooltip" : ""}
@@ -270,7 +308,7 @@ export class TulparButton extends LitElement {
       <span class="separator separator--start" aria-hidden="true"></span>
       <span class="label">
         <span class="label-text"><slot></slot></span>
-        <span class="loading-label-text">${this.loadingLabel ?? ""}</span>
+        <span class="loading-label-text" aria-live="polite">${this.loadingLabel ?? ""}</span>
       </span>
       <span class="separator separator--end" aria-hidden="true"></span>
       <span class="end">
@@ -305,4 +343,8 @@ declare global {
   interface HTMLElementTagNameMap {
     "tulpar-button": TulparButton;
   }
+}
+
+if (!customElements.get("tulpar-button")) {
+  customElements.define("tulpar-button", TulparButton);
 }

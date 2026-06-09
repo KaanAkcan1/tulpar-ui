@@ -2,6 +2,13 @@ import { fixture, html, expect } from "@open-wc/testing";
 import "./tulpar-button";
 import type { TulparButton } from "./tulpar-button";
 
+describe("public type exports", () => {
+  it("re-exports all button type unions from index", async () => {
+    const mod = await import("./index");
+    expect(mod.TulparButton).to.exist;
+  });
+});
+
 describe("<tulpar-button>", () => {
   describe("defaults", () => {
     it("renders with default severity=primary, variant=solid, size=md", async () => {
@@ -150,6 +157,14 @@ describe("<tulpar-button>", () => {
   });
 
   describe("loading state", () => {
+    it("loading-label-text has aria-live=polite for SR announcement", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button loading loading-label="Saving">X</tulpar-button>`,
+      );
+      const live = el.shadowRoot!.querySelector(".loading-label-text") as HTMLElement;
+      expect(live.getAttribute("aria-live")).to.equal("polite");
+    });
+
     it("reflects loading + sets aria-busy", async () => {
       const el = await fixture<TulparButton>(html`<tulpar-button loading>X</tulpar-button>`);
       expect(el.hasAttribute("loading")).to.be.true;
@@ -344,6 +359,15 @@ describe("<tulpar-button>", () => {
     });
   });
 
+  describe("focus ring", () => {
+    it("uses outline + outline-offset (not box-shadow) for focus-visible", async () => {
+      const { buttonStyles } = await import("./tulpar-button.styles");
+      const cssText = (buttonStyles as { cssText: string }).cssText;
+      expect(cssText).to.include("outline-offset");
+      expect(cssText).to.include("forced-colors");
+    });
+  });
+
   describe("tooltip", () => {
     it("renders a tooltip span when tooltip attribute is set", async () => {
       const el = await fixture<TulparButton>(
@@ -399,6 +423,14 @@ describe("<tulpar-button>", () => {
       expect(link!.getAttribute("aria-disabled")).to.equal("true");
       expect(link!.getAttribute("tabindex")).to.equal("-1");
     });
+
+    it("disabled anchor has no href attribute (CSP-safe)", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button href="/x" disabled>X</tulpar-button>`,
+      );
+      const a = el.shadowRoot!.querySelector("a")!;
+      expect(a.hasAttribute("href")).to.be.false;
+    });
   });
 
   describe("form integration", () => {
@@ -451,6 +483,54 @@ describe("<tulpar-button>", () => {
       btn.shadowRoot!.querySelector("button")!.click();
       await new Promise((r) => setTimeout(r, 0));
       expect(submitted).to.be.false;
+    });
+
+    it("dispatches exactly one submit event per click", async () => {
+      let count = 0;
+      const form = await fixture<HTMLFormElement>(html`
+        <form
+          @submit=${(e: Event) => {
+            e.preventDefault();
+            count++;
+          }}
+        >
+          <tulpar-button type="submit">Save</tulpar-button>
+        </form>
+      `);
+      const btn = form.querySelector("tulpar-button") as TulparButton;
+      btn.shadowRoot!.querySelector("button")!.click();
+      await new Promise((r) => setTimeout(r, 0));
+      expect(count).to.equal(1);
+    });
+  });
+
+  describe("form value parity", () => {
+    it("carries name/value into FormData on submit", async () => {
+      let captured: FormData | null = null;
+      const form = await fixture<HTMLFormElement>(html`
+        <form
+          @submit=${(e: Event) => {
+            e.preventDefault();
+            captured = new FormData(e.target as HTMLFormElement);
+          }}
+        >
+          <tulpar-button type="submit" name="action" value="save">Save</tulpar-button>
+        </form>
+      `);
+      const btn = form.querySelector("tulpar-button") as TulparButton;
+      btn.shadowRoot!.querySelector("button")!.click();
+      await new Promise((r) => setTimeout(r, 0));
+      expect(captured).to.not.be.null;
+      expect(captured!.get("action")).to.equal("save");
+    });
+
+    it("reflects value attribute changes back to the property", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button name="x" value="initial">A</tulpar-button>`,
+      );
+      el.value = "updated";
+      await el.updateComplete;
+      expect(el.value).to.equal("updated");
     });
   });
 });

@@ -5,9 +5,12 @@ import dts from "vite-plugin-dts";
 export default defineConfig({
   build: {
     lib: {
-      entry: resolve(__dirname, "src/index.ts"),
+      entry: {
+        index: resolve(__dirname, "src/index.ts"),
+        fallbacks: resolve(__dirname, "src/fallbacks.ts"),
+      },
       formats: ["es"],
-      fileName: () => "index.js",
+      fileName: (_format, entryName) => `${entryName}.js`,
     },
     outDir: "dist",
     sourcemap: true,

@@ -1,36 +1,63 @@
 import { LitElement, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { property } from "lit/decorators.js";
 import { buttonGroupStyles } from "./tulpar-button-group.styles";
 
-@customElement("tulpar-button-group")
 export class TulparButtonGroup extends LitElement {
   static override styles = buttonGroupStyles;
 
   @property({ type: Boolean, reflect: true })
   stacked = false;
 
+  private _internals: ElementInternals;
+  private _observer?: MutationObserver;
+  /** @internal Test probe — do not use in production code. */
+  __role?: string;
+  /** @internal Test probe — do not use in production code. */
+  __orientation?: string;
+
+  constructor() {
+    super();
+    this._internals = this.attachInternals();
+    this._internals.role = "toolbar";
+    this.__role = "toolbar";
+    this._setOrientation();
+  }
+
   override connectedCallback(): void {
     super.connectedCallback();
     this.addEventListener("keydown", this._handleKeydown);
-    queueMicrotask(() => {
-      this._initializeTabindex();
-      this._positionChildren();
-    });
+    this._observer = new MutationObserver(() => this._sync());
+    this._observer.observe(this, { childList: true });
+    this._sync();
   }
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     this.removeEventListener("keydown", this._handleKeydown);
+    this._observer?.disconnect();
+    this._observer = undefined;
   }
 
   override updated(changed: Map<string, unknown>): void {
     if (changed.has("stacked")) {
-      this._positionChildren();
+      this._sync();
+      this._setOrientation();
     }
   }
 
+  private _setOrientation(): void {
+    const orientation = this.stacked ? "vertical" : "horizontal";
+    this._internals.ariaOrientation = orientation;
+    this.__orientation = orientation;
+  }
+
+  private _sync(): void {
+    this._initializeTabindex();
+    this._positionChildren();
+  }
+
   private _buttons(): HTMLElement[] {
-    return Array.from(this.querySelectorAll("tulpar-button"));
+    return Array.from(this.querySelectorAll(":scope > tulpar-button"));
   }
 
   private _initializeTabindex(): void {
@@ -94,7 +121,7 @@ export class TulparButtonGroup extends LitElement {
   };
 
   override render() {
-    return html`<div class="group" role="group"><slot></slot></div>`;
+    return html`<div class="group"><slot></slot></div>`;
   }
 }
 
@@ -102,4 +129,8 @@ declare global {
   interface HTMLElementTagNameMap {
     "tulpar-button-group": TulparButtonGroup;
   }
+}
+
+if (!customElements.get("tulpar-button-group")) {
+  customElements.define("tulpar-button-group", TulparButtonGroup);
 }
