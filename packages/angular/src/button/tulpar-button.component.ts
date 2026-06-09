@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
-  ElementRef,
   afterRenderEffect,
   computed,
   input,
@@ -10,6 +9,7 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
+import type { ElementRef } from "@angular/core";
 import { LucideAngularModule, type LucideIconData } from "lucide-angular";
 
 import "@tulpar-ui/core/button";
