@@ -112,7 +112,42 @@
       "Bash(tee c:/tmp/brainstorm/dev.log)",
       "Bash(grep -q \"ready in\" c:/tmp/brainstorm/dev.log)",
       "Bash(node verify_shape.mjs)",
-      "PowerShell(pnpm lint 2>&1)"
+      "PowerShell(pnpm lint 2>&1)",
+      "Bash(git checkout *)",
+      "Bash(git push *)",
+      "Bash(git -C \"C:\\\\Source\\\\Kaan\\\\tulpar-ui\" branch --show-current)",
+      "Bash(node -e \"console.log\\(JSON.stringify\\({haveProcess: typeof process, nodeEnv: process.env.NODE_ENV}\\)\\)\")",
+      "Bash(git -C \"C:\\\\Source\\\\Kaan\\\\tulpar-ui\" status)",
+      "Bash(git -C \"C:\\\\Source\\\\Kaan\\\\tulpar-ui\" add packages/core/src/_internal/warn-dev.ts packages/core/src/_internal/warn-dev.test.ts)",
+      "Bash(git -C \"C:\\\\Source\\\\Kaan\\\\tulpar-ui\" commit -m \"feat\\(core\\): add warn-dev helper \\(dev-only console.warn\\)\")",
+      "Bash(git -C \"C:\\\\Source\\\\Kaan\\\\tulpar-ui\" rev-parse HEAD)",
+      "Bash(pnpm --filter @tulpar-ui/tokens exec tsx build/generate-fallbacks.ts)",
+      "Bash(git merge *)",
+      "Bash(pnpm wtr *)",
+      "Bash(cat > *)",
+      "Bash(pnpm view *)",
+      "Bash(git -C \"c:/Source/Kaan/tulpar-ui\" log --oneline -10)",
+      "Bash(pnpm list *)",
+      "Bash(pnpm --filter playground-ng exec ng build --configuration=development)",
+      "Bash(pnpm --filter playground-ng exec ng version)",
+      "Bash(where nvm *)",
+      "Bash(where fnm *)",
+      "Bash(where volta *)",
+      "Bash(where winget *)",
+      "Bash(winget search *)",
+      "Bash(winget install *)",
+      "Bash(pnpm --version)",
+      "Bash(pnpm --filter playground-ng start)",
+      "Bash(curl -sI -o /dev/null -w \"HTTP %{http_code}\\\\n\" https://tulpar-ui-docs.pages.dev)",
+      "Bash(curl -sI -o /dev/null -w \"HTTP %{http_code}\\\\n\" https://90890f8e.tulpar-ui-docs.pages.dev)",
+      "Bash(curl -sI -o /dev/null -w \"HTTP %{http_code}\\\\n\" https://tulpar-ui-ng.pages.dev)",
+      "Bash(curl -sI -o /dev/null -w \"HTTP %{http_code}\\\\n\" https://tulpar-ui-vue.pages.dev)",
+      "WebFetch(domain:tulpar-ui-docs.pages.dev)",
+      "WebFetch(domain:tulpar-ui-vue.pages.dev)",
+      "PowerShell(pnpm --filter @tulpar-ui/core test)"
+    ],
+    "additionalDirectories": [
+      "\\tmp"
     ]
   }
 }
