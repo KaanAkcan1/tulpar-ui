@@ -77,6 +77,7 @@ pnpm format:check                           # Prettier check
 # .angular/cache doesn't reliably invalidate when symlinked workspace package
 # dist changes, so we wipe it on every dev start. Requires the previous dev
 # server to be stopped first (otherwise the cache db is locked).
+pnpm dev                                    # ALL: tokens + core + wrappers + playground-ng + playground-vue + Storybook
 pnpm dev:ng                                 # tokens + core + angular wrappers + playground-ng (localhost:4310)
 pnpm dev:vue                                # tokens + core + vue wrappers + playground-vue (localhost:5273)
 pnpm dev:storybook                          # tokens + core + Storybook (localhost:6006)
