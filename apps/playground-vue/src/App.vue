@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { TulparButton } from "@tulpar-ui/vue";
+import { TulparButton, TulparTextInput, TulparTextarea, TulparNumberInput } from "@tulpar-ui/vue";
 import "@tulpar-ui/core/button-group";
 import {
   Check,
@@ -20,6 +20,12 @@ import {
 const isDark = ref(false);
 const submittedEmail = ref<string | null>(null);
 const dataDisabledClicked = ref(false);
+
+// ─── Input family demo refs ───────────────────────────────────────────────────
+const email = ref("");
+const phone = ref("");
+const bio = ref("");
+const amount = ref<number | null>(null);
 
 function toggleDark() {
   isDark.value = !isDark.value;
@@ -702,6 +708,91 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
         <pre class="code"><code>{{ tooltipCode }}</code></pre>
       </section>
 
+      <!-- ── 20. Input Family ─────────────────────────────────────────── -->
+      <section class="doc-section">
+        <h2 class="section-title">20. Input Family</h2>
+        <p class="section-desc">
+          Live demos for <code class="inline-code">TulparTextInput</code>,
+          <code class="inline-code">TulparTextarea</code>, and
+          <code class="inline-code">TulparNumberInput</code> Vue wrappers. Two-way binding via
+          <code class="inline-code">v-model</code>.
+        </p>
+
+        <h3 class="section-subtitle">TextInput — email + validation states</h3>
+        <div class="preview preview--col">
+          <TulparTextInput
+            label="Email"
+            type="email"
+            autocomplete="email"
+            helperText="We won't share your email"
+            v-model="email"
+          />
+          <p class="value-display">email = {{ email }}</p>
+        </div>
+
+        <h3 class="section-subtitle">TextInput — password (reveal toggle)</h3>
+        <div class="preview preview--col">
+          <TulparTextInput label="Password" type="password" autocomplete="current-password" />
+        </div>
+
+        <h3 class="section-subtitle">TextInput — search (auto icon + clearable)</h3>
+        <div class="preview preview--col">
+          <TulparTextInput
+            type="search"
+            placeholder="Search..."
+            label-position="none"
+            :no-message-space="true"
+          />
+        </div>
+
+        <h3 class="section-subtitle">TextInput — TR phone mask</h3>
+        <div class="preview preview--col">
+          <TulparTextInput
+            label="Phone"
+            mask="+\90 (999) 999 99 99"
+            v-model="phone"
+          />
+          <p class="value-display">phone = {{ phone }}</p>
+        </div>
+
+        <h3 class="section-subtitle">TextInput — statuses</h3>
+        <div class="preview preview--col">
+          <TulparTextInput label="Invalid" :invalid="true" error-text="Required field" />
+          <TulparTextInput label="Validating" :validating="true" helper-text="Checking..." />
+        </div>
+
+        <h3 class="section-subtitle">Textarea — autosize + counter</h3>
+        <div class="preview preview--col">
+          <TulparTextarea
+            label="Bio"
+            :show-count="true"
+            :max-length="200"
+            v-model="bio"
+          />
+          <p class="value-display">bio.length = {{ bio.length }}</p>
+        </div>
+
+        <h3 class="section-subtitle">NumberInput — TRY currency</h3>
+        <div class="preview preview--col">
+          <TulparNumberInput
+            label="Amount"
+            format-style="currency"
+            currency="TRY"
+            locale="tr-TR"
+            :min-fraction-digits="2"
+            :max-fraction-digits="2"
+            :min="0"
+            v-model="amount"
+          />
+          <p class="value-display">amount = {{ amount }}</p>
+        </div>
+
+        <h3 class="section-subtitle">NumberInput — integer-only + steppers</h3>
+        <div class="preview preview--col">
+          <TulparNumberInput label="Quantity" :integer-only="true" :min="0" :max="100" />
+        </div>
+      </section>
+
       <!-- ── 19. Escape hatch — non-Lucide icon libraries ──────────────── -->
       <section class="doc-section">
         <h2 class="section-title">19. Escape hatch — non-Lucide icon libraries</h2>
@@ -953,6 +1044,22 @@ body {
 
 /* ─── Feedback ─────────────────────────────────────────────────────────────── */
 .click-feedback {
+  font-size: 13px;
+  color: var(--tulpar-color-text-secondary, #57534e);
+}
+
+/* ─── Input family demo ────────────────────────────────────────────────────── */
+.section-subtitle {
+  margin: 24px 0 12px;
+  font-family: var(--tulpar-font-family-display, Georgia, serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--tulpar-color-text-primary, #1c1917);
+}
+
+.value-display {
+  margin: 8px 0 0;
+  font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
   font-size: 13px;
   color: var(--tulpar-color-text-secondary, #57534e);
 }
