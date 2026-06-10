@@ -1,5 +1,5 @@
 import { expect } from "@open-wc/testing";
-import { compileMask, tokenAccepts, tokenTransform, type MaskToken } from "./mask-engine";
+import { compileMask, tokenAccepts, tokenTransform, applyMask, extractRaw, type MaskToken } from "./mask-engine";
 
 describe("compileMask", () => {
   it("parses 9 as digit token", () => {
@@ -88,5 +88,38 @@ describe("tokenTransform", () => {
   it("letter preserves case", () => {
     expect(tokenTransform({ kind: "letter" }, "a")).to.equal("a");
     expect(tokenTransform({ kind: "letter" }, "A")).to.equal("A");
+  });
+});
+
+describe("applyMask (eager)", () => {
+  const tokens = compileMask("+\\90 (999) 999 99 99");
+  it("renders full template with _ when input is empty", () => {
+    expect(applyMask([], tokens, "_")).to.equal("+90 (___) ___ __ __");
+  });
+  it("renders partial input filling tokens left-to-right", () => {
+    expect(applyMask(["5", "3", "2"], tokens, "_")).to.equal("+90 (532) ___ __ __");
+  });
+  it("ignores extra chars beyond mask length", () => {
+    expect(
+      applyMask(["5", "3", "2", "1", "2", "3", "4", "5", "6", "7"], tokens, "_")
+    ).to.equal("+90 (532) 123 45 67");
+  });
+});
+
+describe("applyMask (lazy = empty slot char)", () => {
+  const tokens = compileMask("+\\90 (999) 999");
+  it("renders literals + single-space placeholders when empty + lazy", () => {
+    // Lazy mode: empty token slots render as a single space (preserves caret position UX).
+    expect(applyMask([], tokens, "")).to.equal("+90 (   )    ");
+  });
+});
+
+describe("extractRaw", () => {
+  const tokens = compileMask("+\\90 (999) 999 99 99");
+  it("strips literals and slot chars", () => {
+    expect(extractRaw("+90 (532) 123 45 67", tokens)).to.equal("5321234567");
+  });
+  it("returns empty when input is the template only", () => {
+    expect(extractRaw("+90 (___) ___ __ __", tokens)).to.equal("");
   });
 });

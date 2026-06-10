@@ -70,3 +70,47 @@ export function tokenTransform(token: MaskToken, ch: string): string {
   if (token.kind === "lower") return ch.toLowerCase();
   return ch;
 }
+
+/**
+ * Produces the display string from a raw character array.
+ *
+ * - `slotChar=""` → lazy mode (empty token slots render as a single space placeholder).
+ * - `slotChar` non-empty → eager mode (empty slots render the slot char).
+ */
+export function applyMask(rawChars: string[], tokens: MaskToken[], slotChar: string): string {
+  let out = "";
+  let r = 0;
+  for (const t of tokens) {
+    if (t.kind === "literal") {
+      out += t.literal;
+      continue;
+    }
+    if (r < rawChars.length) {
+      out += tokenTransform(t, rawChars[r]);
+      r++;
+    } else {
+      out += slotChar || " ";
+    }
+  }
+  return out;
+}
+
+/**
+ * Inverts applyMask: walks tokens positionally, extracting only token-slot
+ * characters that the token accepts (skipping literals). Unfilled slot chars
+ * (e.g. "_" or " ") are stripped — they are placeholders, not user data.
+ */
+export function extractRaw(display: string, tokens: MaskToken[]): string {
+  let out = "";
+  const len = Math.min(display.length, tokens.length);
+  for (let i = 0; i < len; i++) {
+    const t = tokens[i];
+    if (t.kind === "literal") continue;
+    const ch = display[i];
+    if (tokenAccepts(t, ch)) {
+      out += ch;
+    }
+    // unfilled slot chars (_, space) are silently skipped
+  }
+  return out;
+}
