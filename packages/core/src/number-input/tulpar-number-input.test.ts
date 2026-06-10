@@ -66,3 +66,61 @@ describe("<tulpar-number-input> baseline", () => {
     expect(input.value).to.equal("1.2M");
   });
 });
+
+describe("<tulpar-number-input> clamp on blur", () => {
+  function typeAndBlur(el: TulparNumberInput, text: string) {
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+    input.focus();
+    input.dispatchEvent(new Event("focus", { bubbles: true }));
+    input.value = text;
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.blur();
+    input.dispatchEvent(new Event("blur", { bubbles: true }));
+  }
+
+  it("clamps value below min on blur", async () => {
+    const el = await fixture<TulparNumberInput>(html`
+      <tulpar-number-input min="0" max="100"></tulpar-number-input>
+    `);
+    typeAndBlur(el, "-5");
+    await el.updateComplete;
+    expect(el.value).to.equal(0);
+  });
+
+  it("clamps value above max on blur", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input min="0" max="100"></tulpar-number-input>`);
+    typeAndBlur(el, "999");
+    await el.updateComplete;
+    expect(el.value).to.equal(100);
+  });
+
+  it("in-range value passes through unclamped", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input min="0" max="100"></tulpar-number-input>`);
+    typeAndBlur(el, "42");
+    await el.updateComplete;
+    expect(el.value).to.equal(42);
+  });
+
+  it("empty input → null when allow-empty (default)", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input min="0" .value=${5}></tulpar-number-input>`);
+    typeAndBlur(el, "");
+    await el.updateComplete;
+    expect(el.value).to.equal(null);
+  });
+
+  it("empty input → min when allow-empty=false", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input min="10" .allowEmpty=${false}></tulpar-number-input>`);
+    typeAndBlur(el, "");
+    await el.updateComplete;
+    expect(el.value).to.equal(10);
+  });
+
+  it("dispatches change event on blur", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input></tulpar-number-input>`);
+    let changed = false;
+    el.addEventListener("change", () => { changed = true; });
+    typeAndBlur(el, "7");
+    await el.updateComplete;
+    expect(changed).to.equal(true);
+  });
+});
