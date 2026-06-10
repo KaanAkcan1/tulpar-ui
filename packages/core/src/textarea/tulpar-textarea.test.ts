@@ -102,3 +102,82 @@ describe("<tulpar-textarea> resize attribute", () => {
     expect(getComputedStyle(ta).resize).to.equal("both");
   });
 });
+
+describe("<tulpar-textarea> show-count overlay", () => {
+  it("renders counter inside the control row when show-count", async () => {
+    const el = await fixture<TulparTextarea>(html`<tulpar-textarea show-count value="hi"></tulpar-textarea>`);
+    expect(el.shadowRoot!.querySelector(".field-textarea-counter")).to.not.equal(null);
+  });
+
+  it("counter shows X / Y when maxlength set", async () => {
+    const el = await fixture<TulparTextarea>(html`<tulpar-textarea show-count maxlength="100" value="hi"></tulpar-textarea>`);
+    expect(el.shadowRoot!.querySelector(".field-textarea-counter")?.textContent?.trim()).to.equal("2 / 100");
+  });
+
+  it("counter shows bare count without maxlength", async () => {
+    const el = await fixture<TulparTextarea>(html`<tulpar-textarea show-count value="abc"></tulpar-textarea>`);
+    expect(el.shadowRoot!.querySelector(".field-textarea-counter")?.textContent?.trim()).to.equal("3");
+  });
+
+  it("no counter when show-count is false", async () => {
+    const el = await fixture<TulparTextarea>(html`<tulpar-textarea value="hi"></tulpar-textarea>`);
+    expect(el.shadowRoot!.querySelector(".field-textarea-counter")).to.equal(null);
+  });
+});
+
+describe("<tulpar-textarea> corner actions (copy/paste)", () => {
+  let originalWriteText: typeof navigator.clipboard.writeText;
+  let originalReadText: typeof navigator.clipboard.readText;
+  let writeCalls: string[] = [];
+  let readReturn = "";
+
+  beforeEach(() => {
+    writeCalls = [];
+    originalWriteText = navigator.clipboard.writeText.bind(navigator.clipboard);
+    originalReadText = navigator.clipboard.readText.bind(navigator.clipboard);
+    navigator.clipboard.writeText = async (text: string) => { writeCalls.push(text); };
+    navigator.clipboard.readText = async () => readReturn;
+  });
+
+  afterEach(() => {
+    navigator.clipboard.writeText = originalWriteText;
+    navigator.clipboard.readText = originalReadText;
+  });
+
+  it("renders copy button in top-right action cluster when copyable", async () => {
+    const el = await fixture<TulparTextarea>(html`<tulpar-textarea copyable value="hi"></tulpar-textarea>`);
+    expect(el.shadowRoot!.querySelector(".field-textarea-actions .field-copy-btn")).to.not.equal(null);
+  });
+
+  it("renders paste button when pastable", async () => {
+    const el = await fixture<TulparTextarea>(html`<tulpar-textarea pastable></tulpar-textarea>`);
+    expect(el.shadowRoot!.querySelector(".field-textarea-actions .field-paste-btn")).to.not.equal(null);
+  });
+
+  it("auto-hides actions at size=xs", async () => {
+    const el = await fixture<TulparTextarea>(html`<tulpar-textarea copyable pastable value="hi" size="xs"></tulpar-textarea>`);
+    expect(el.shadowRoot!.querySelector(".field-copy-btn")).to.equal(null);
+    expect(el.shadowRoot!.querySelector(".field-paste-btn")).to.equal(null);
+  });
+
+  it("copy writes value to clipboard", async () => {
+    const el = await fixture<TulparTextarea>(html`<tulpar-textarea copyable value="hello world"></tulpar-textarea>`);
+    el.shadowRoot!.querySelector<HTMLButtonElement>(".field-copy-btn")!.click();
+    await new Promise((r) => setTimeout(r, 10));
+    expect(writeCalls).to.deep.equal(["hello world"]);
+  });
+
+  it("paste sets value from clipboard + resizes", async () => {
+    readReturn = "pasted text";
+    const el = await fixture<TulparTextarea>(html`<tulpar-textarea pastable></tulpar-textarea>`);
+    el.shadowRoot!.querySelector<HTMLButtonElement>(".field-paste-btn")!.click();
+    await new Promise((r) => setTimeout(r, 10));
+    await el.updateComplete;
+    expect(el.value).to.equal("pasted text");
+  });
+
+  it("status icon renders in the action cluster when validating", async () => {
+    const el = await fixture<TulparTextarea>(html`<tulpar-textarea validating copyable value="x"></tulpar-textarea>`);
+    expect(el.shadowRoot!.querySelector(".field-textarea-actions .field-status-icon")).to.not.equal(null);
+  });
+});
