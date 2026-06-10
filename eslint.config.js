@@ -51,4 +51,17 @@ export default [
       ],
     },
   },
+  {
+    files: ["packages/*/src/**/*.styles.ts"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "TemplateElement[value.raw=/--tulpar-primitive-/]",
+          message:
+            "Component styles must use semantic tokens (var(--tulpar-...)), never primitives (--tulpar-primitive-...). Bind primitives in the brand layer instead.",
+        },
+      ],
+    },
+  },
 ];
