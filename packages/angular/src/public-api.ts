@@ -19,3 +19,5 @@ export type {
   LabelPosition,
   NecessityIndicator,
 } from "./text-input/tulpar-text-input.component";
+
+export * from "./textarea/tulpar-textarea.component";
