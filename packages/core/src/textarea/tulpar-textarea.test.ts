@@ -45,3 +45,39 @@ describe("<tulpar-textarea> baseline", () => {
     expect(el.shadowRoot!.querySelector(".field-message")?.textContent).to.equal("Tell us about yourself");
   });
 });
+
+describe("<tulpar-textarea> autosize", () => {
+  it("autosize default on, min-rows=2, max-rows=6", async () => {
+    const el = await fixture<TulparTextarea>(html`<tulpar-textarea></tulpar-textarea>`);
+    expect(el.autosize).to.equal(true);
+    expect(el.minRows).to.equal(2);
+    expect(el.maxRows).to.equal(6);
+  });
+
+  it("grows height with content", async () => {
+    const el = await fixture<TulparTextarea>(html`<tulpar-textarea></tulpar-textarea>`);
+    const ta = el.shadowRoot!.querySelector<HTMLTextAreaElement>("textarea#control")!;
+    const initialHeight = ta.style.height;
+    ta.value = "line 1\nline 2\nline 3\nline 4";
+    ta.dispatchEvent(new Event("input", { bubbles: true }));
+    await el.updateComplete;
+    expect(ta.style.height).to.not.equal(initialHeight);
+  });
+
+  it("caps height at max-rows", async () => {
+    const el = await fixture<TulparTextarea>(html`<tulpar-textarea max-rows="3"></tulpar-textarea>`);
+    const ta = el.shadowRoot!.querySelector<HTMLTextAreaElement>("textarea#control")!;
+    ta.value = Array.from({ length: 20 }, (_, i) => `line ${i}`).join("\n");
+    ta.dispatchEvent(new Event("input", { bubbles: true }));
+    await el.updateComplete;
+    const heightPx = parseFloat(ta.style.height);
+    const lineHeight = parseFloat(getComputedStyle(ta).lineHeight) || 20;
+    expect(heightPx).to.be.at.most(3 * lineHeight + 1); // +1 tolerance
+    expect(ta.style.overflowY).to.equal("auto");
+  });
+
+  it("setting rows disables autosize", async () => {
+    const el = await fixture<TulparTextarea>(html`<tulpar-textarea rows="5"></tulpar-textarea>`);
+    expect(el.autosize).to.equal(false);
+  });
+});
