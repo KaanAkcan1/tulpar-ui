@@ -21,3 +21,5 @@ export type {
 } from "@tulpar-ui/core";
 
 export { default as TulparTextarea } from "./textarea/TulparTextarea.vue";
+
+export { default as TulparNumberInput } from "./number-input/TulparNumberInput.vue";
