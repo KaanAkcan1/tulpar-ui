@@ -45,7 +45,9 @@ export class TulparTextarea extends FormFieldBase {
 
   override firstUpdated() {
     if (this.rows !== undefined) this.autosize = false;
-    if (this.autosize) this._resize();
+    if (this.autosize) {
+      requestAnimationFrame(() => this._resize());
+    }
   }
 
   override updated(changed: Map<string, unknown>) {
@@ -61,7 +63,9 @@ export class TulparTextarea extends FormFieldBase {
   private _onInput = (e: Event) => {
     this.value = (e.target as HTMLTextAreaElement).value;
     this._internals.setFormValue(this.value);
-    if (this.autosize) this._resize();
+    if (this.autosize) {
+      requestAnimationFrame(() => this._resize());
+    }
   };
 
   private _resize() {
