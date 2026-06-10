@@ -16,6 +16,7 @@ export class TulparTextInput extends FormFieldBase {
   @property({ type: Number, attribute: "maxlength" }) maxLength?: number;
   @property({ type: Number, attribute: "minlength" }) minLength?: number;
   @property({ type: String }) pattern?: string;
+  @property({ type: Boolean, reflect: true }) clearable = false;
 
   protected override firstUpdated() {
     this._maybeWarnAutocomplete();
@@ -49,6 +50,7 @@ export class TulparTextInput extends FormFieldBase {
           @input=${this._onInput}
         />
         ${this._renderStatusZone()}
+        ${this._renderClearButton()}
         ${this._renderSuffixSlot()}
       </div>
     `;
@@ -67,6 +69,34 @@ export class TulparTextInput extends FormFieldBase {
     this.value = (e.target as HTMLInputElement).value;
     this._internals.setFormValue(this.value);
   };
+
+  private _onClear = () => {
+    this.value = "";
+    this._internals.setFormValue("");
+    this.dispatchEvent(new Event("change", { bubbles: true }));
+    this.requestUpdate();
+    // re-focus the underlying input
+    queueMicrotask(() => {
+      this.shadowRoot?.querySelector<HTMLInputElement>("#control")?.focus();
+    });
+  };
+
+  private _renderClearButton(): TemplateResult | typeof nothing {
+    // Auto-hide at xs (cannot meet 44pt touch target — see spec §4.6 xs constraints).
+    if (this._isXs() || !this.clearable || this.disabled || this.readonly || this.value === "") return nothing;
+    return html`
+      <button
+        type="button"
+        class="field-clear-btn"
+        aria-label="Clear value"
+        @click=${this._onClear}
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 6 L18 18 M18 6 L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" />
+        </svg>
+      </button>
+    `;
+  }
 }
 
 if (!customElements.get("tulpar-text-input")) {

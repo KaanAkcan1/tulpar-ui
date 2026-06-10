@@ -15,4 +15,21 @@ export const textInputStyles = css`
   .field-input::placeholder {
     color: var(--tulpar-input-text-placeholder, #a8a29e);
   }
+
+  .field-clear-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 0.125rem;
+    margin-left: 0.25rem;
+    cursor: pointer;
+    color: var(--tulpar-input-icon-default, #78716c);
+    border-radius: 999px;
+  }
+
+  .field-clear-btn:hover {
+    background: var(--tulpar-input-bg-readonly, #fafaf9);
+  }
 `;

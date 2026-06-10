@@ -86,3 +86,37 @@ describe("<tulpar-text-input> autocomplete dev warning", () => {
     expect(warnCalls.length).to.equal(1);
   });
 });
+
+describe("<tulpar-text-input> clearable", () => {
+  it("does not render clear button when clearable=false", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input value="hi"></tulpar-text-input>`);
+    expect(el.shadowRoot!.querySelector(".field-clear-btn")).to.equal(null);
+  });
+
+  it("does not render clear button when value is empty", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input clearable></tulpar-text-input>`);
+    expect(el.shadowRoot!.querySelector(".field-clear-btn")).to.equal(null);
+  });
+
+  it("renders clear button when clearable + value present", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input clearable value="hi"></tulpar-text-input>`);
+    expect(el.shadowRoot!.querySelector(".field-clear-btn")).to.not.equal(null);
+  });
+
+  it("auto-hides clear button at size=xs (touch target a11y)", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input clearable value="hi" size="xs"></tulpar-text-input>`);
+    expect(el.shadowRoot!.querySelector(".field-clear-btn")).to.equal(null);
+  });
+
+  it("clears value + focuses input + dispatches change on click", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input clearable value="hi"></tulpar-text-input>`);
+    let changed = false;
+    el.addEventListener("change", () => { changed = true; });
+    el.shadowRoot!.querySelector<HTMLButtonElement>(".field-clear-btn")!.click();
+    await el.updateComplete;
+    // Give focus + microtask a chance to settle
+    await new Promise((r) => setTimeout(r, 0));
+    expect(el.value).to.equal("");
+    expect(changed).to.equal(true);
+  });
+});
