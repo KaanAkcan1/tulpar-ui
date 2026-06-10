@@ -1,6 +1,6 @@
-{
+﻿{
   "name": "@tulpar-ui/vue",
-  "version": "0.1.1",
+  "version": "0.4.0",
   "description": "Vue 3 wrappers for Tulpar UI Web Components",
   "type": "module",
   "main": "./dist/index.js",
