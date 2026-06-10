@@ -3,6 +3,7 @@ import { property, state } from "lit/decorators.js";
 import { FormFieldBase } from "../_internal/form-field-base";
 import { textInputStyles } from "./tulpar-text-input.styles";
 import { warnDev } from "../_internal/warn-dev";
+import { MaskController, type MaskHost } from "../_internal/mask-engine";
 
 export type TextInputType = "text" | "email" | "url" | "tel" | "search" | "password";
 
@@ -25,6 +26,36 @@ export class TulparTextInput extends FormFieldBase {
   @state() private _copyConfirm = false;
   @state() private _pasteConfirm = false;
 
+  // --- Mask ---
+  @property({ type: String }) mask?: string;
+  @property({ type: String, attribute: "mask-emit" }) maskEmit: "masked" | "raw" = "masked";
+  @property({ type: String, attribute: "mask-display" }) maskDisplay: "eager" | "lazy" = "eager";
+  @property({ type: String, attribute: "mask-slot-char" }) maskSlotChar = "_";
+
+  @state() private _rawValue = "";
+  private _maskCtl?: MaskController;
+
+  /** Raw (literal-stripped) value. Always available regardless of mask-emit. */
+  get rawValue(): string {
+    return this._rawValue;
+  }
+
+  /** @internal */
+  _maskSetValue(v: string) {
+    this.value = v;
+    this._internals.setFormValue(v);
+  }
+
+  /** @internal */
+  _maskSetRaw(v: string) {
+    this._rawValue = v;
+  }
+
+  /** @internal */
+  _maskGetRaw(): string {
+    return this._rawValue;
+  }
+
   constructor() {
     super();
     // Create custom accessor for clearable to track when it's explicitly set
@@ -44,6 +75,25 @@ export class TulparTextInput extends FormFieldBase {
       enumerable: true,
       configurable: true
     });
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this._initMask();
+  }
+
+  override updated(changed: Map<string, unknown>) {
+    super.updated(changed);
+    if (changed.has("mask")) this._initMask();
+  }
+
+  private _initMask() {
+    if (!this.mask) {
+      this._maskCtl = undefined;
+      return;
+    }
+    this._maskCtl = new MaskController(new _MaskHostAdapter(this));
+    this._maskCtl.compile();
   }
 
   protected override firstUpdated() {
@@ -94,6 +144,7 @@ export class TulparTextInput extends FormFieldBase {
 
   protected override renderControl(ariaLabel?: string): TemplateResult {
     const effectiveType = this.type === "password" && this._passwordRevealed ? "text" : this.type;
+    const displayValue = this._maskCtl ? this._maskCtl.displayString() : this.value;
     return html`
       <div class="control-row">
         ${this._renderPrefixSlot()}
@@ -101,7 +152,7 @@ export class TulparTextInput extends FormFieldBase {
           id="control"
           class="field-input"
           .type=${effectiveType}
-          .value=${this.value}
+          .value=${displayValue}
           placeholder=${this.placeholder ?? nothing}
           autocomplete=${this.autocomplete ?? nothing}
           maxlength=${this.maxLength ?? nothing}
@@ -114,6 +165,8 @@ export class TulparTextInput extends FormFieldBase {
           aria-busy=${this._ariaBusyAttr() ?? nothing}
           aria-describedby=${this._ariaDescribedBy() ?? nothing}
           aria-label=${ariaLabel ?? nothing}
+          @beforeinput=${this._onBeforeInput}
+          @paste=${this._onPasteEvent}
           @input=${this._onInput}
         />
         ${this._renderStatusZone()}
@@ -146,8 +199,28 @@ export class TulparTextInput extends FormFieldBase {
   }
 
   private _onInput = (e: Event) => {
+    if (this._maskCtl) return; // mask path handles value via beforeinput
     this.value = (e.target as HTMLInputElement).value;
     this._internals.setFormValue(this.value);
+  };
+
+  private _onBeforeInput = (e: InputEvent) => {
+    if (!this._maskCtl) return; // no mask — let native input flow (handled by @input)
+    e.preventDefault();
+    if (e.inputType === "deleteContentBackward") {
+      this._maskCtl.backspace();
+      return;
+    }
+    if (e.inputType === "insertText" && e.data) {
+      for (const ch of e.data) this._maskCtl.acceptChar(ch);
+    }
+  };
+
+  private _onPasteEvent = (e: ClipboardEvent) => {
+    if (!this._maskCtl) return;
+    e.preventDefault();
+    const text = e.clipboardData?.getData("text/plain") ?? "";
+    this._maskCtl.applyPaste(text);
   };
 
   private _onClear = () => {
@@ -174,8 +247,12 @@ export class TulparTextInput extends FormFieldBase {
   private _onPaste = async () => {
     try {
       const text = await navigator.clipboard.readText();
-      this.value = text;
-      this._internals.setFormValue(text);
+      if (this._maskCtl) {
+        this._maskCtl.applyPaste(text);
+      } else {
+        this.value = text;
+        this._internals.setFormValue(text);
+      }
       this.dispatchEvent(new Event("change", { bubbles: true }));
       this._pasteConfirm = true;
       setTimeout(() => { this._pasteConfirm = false; }, 1500);
@@ -278,6 +355,32 @@ export class TulparTextInput extends FormFieldBase {
         <span class="field-counter" data-at-limit=${atLimit ? "true" : "false"}>${counterText}</span>
       </div>
     `;
+  }
+}
+
+/**
+ * Module-private adapter — bridges MaskController's MaskHost interface
+ * to TulparTextInput's internal methods.
+ */
+class _MaskHostAdapter implements MaskHost {
+  constructor(private el: TulparTextInput) {}
+
+  get value() { return this.el.value; }
+  set value(v: string) { this.el._maskSetValue(v); }
+
+  get rawValue() { return this.el._maskGetRaw(); }
+  set rawValue(v: string) { this.el._maskSetRaw(v); }
+
+  get mask() { return this.el.mask ?? ""; }
+  get maskEmit() { return this.el.maskEmit; }
+  get maskDisplay() { return this.el.maskDisplay; }
+  get maskSlotChar() { return this.el.maskSlotChar; }
+
+  requestUpdate() { this.el.requestUpdate(); }
+  dispatchEvent(e: Event) { return this.el.dispatchEvent(e); }
+  markRejected() {
+    this.el.setAttribute("data-mask-rejected", "");
+    setTimeout(() => this.el.removeAttribute("data-mask-rejected"), 200);
   }
 }
 

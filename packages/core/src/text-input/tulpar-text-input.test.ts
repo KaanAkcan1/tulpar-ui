@@ -259,3 +259,97 @@ describe("<tulpar-text-input> copyable + pastable", () => {
     expect(el.value).to.equal("pasted");
   });
 });
+
+describe("<tulpar-text-input> mask integration", () => {
+  it("formats input as masked display when mask is set", async () => {
+    const el = await fixture<TulparTextInput>(html`
+      <tulpar-text-input mask="999-999"></tulpar-text-input>
+    `);
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+    input.dispatchEvent(new InputEvent("beforeinput", { data: "5", inputType: "insertText", cancelable: true, bubbles: true }));
+    await el.updateComplete;
+    expect(input.value).to.equal("5__-___");
+    expect(el.rawValue).to.equal("5");
+  });
+
+  it("emits masked value to the form by default", async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form><tulpar-text-input name="code" mask="99-99"></tulpar-text-input></form>
+    `);
+    const el = form.querySelector<TulparTextInput>("tulpar-text-input")!;
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+    for (const ch of ["1", "2", "3", "4"]) {
+      input.dispatchEvent(new InputEvent("beforeinput", { data: ch, inputType: "insertText", cancelable: true, bubbles: true }));
+    }
+    await el.updateComplete;
+    expect(el.value).to.equal("12-34");
+    expect(new FormData(form).get("code")).to.equal("12-34");
+  });
+
+  it("emits raw value when mask-emit=raw", async () => {
+    const el = await fixture<TulparTextInput>(html`
+      <tulpar-text-input mask="999" mask-emit="raw"></tulpar-text-input>
+    `);
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+    input.dispatchEvent(new InputEvent("beforeinput", { data: "1", inputType: "insertText", cancelable: true, bubbles: true }));
+    await el.updateComplete;
+    expect(el.value).to.equal("1");
+    expect(el.rawValue).to.equal("1");
+  });
+
+  it("rejects letter at digit slot + sets data-mask-rejected", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input mask="999"></tulpar-text-input>`);
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+    input.dispatchEvent(new InputEvent("beforeinput", { data: "a", inputType: "insertText", cancelable: true, bubbles: true }));
+    expect(el.hasAttribute("data-mask-rejected")).to.equal(true);
+    expect(el.rawValue).to.equal("");
+  });
+
+  it("backspace removes the last raw char", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input mask="99-99"></tulpar-text-input>`);
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+    for (const ch of ["1", "2", "3"]) {
+      input.dispatchEvent(new InputEvent("beforeinput", { data: ch, inputType: "insertText", cancelable: true, bubbles: true }));
+    }
+    await el.updateComplete;
+    expect(el.rawValue).to.equal("123");
+    input.dispatchEvent(new InputEvent("beforeinput", { inputType: "deleteContentBackward", cancelable: true, bubbles: true }));
+    await el.updateComplete;
+    expect(el.rawValue).to.equal("12");
+  });
+
+  it("paste cleanses + fills tokens left-to-right", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input mask="999"></tulpar-text-input>`);
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+    const dt = new DataTransfer();
+    dt.setData("text/plain", "abc12d3xyz");
+    input.dispatchEvent(new ClipboardEvent("paste", { clipboardData: dt, bubbles: true, cancelable: true }));
+    await el.updateComplete;
+    expect(el.rawValue).to.equal("123");
+  });
+
+  it("lazy display mode shows literals only when empty", async () => {
+    const el = await fixture<TulparTextInput>(html`
+      <tulpar-text-input mask="99-99" mask-display="lazy"></tulpar-text-input>
+    `);
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+    expect(input.value).to.equal("  -  ");
+  });
+
+  it("custom mask-slot-char renders in the eager template", async () => {
+    const el = await fixture<TulparTextInput>(html`
+      <tulpar-text-input mask="99" mask-slot-char="·"></tulpar-text-input>
+    `);
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+    expect(input.value).to.equal("··");
+  });
+
+  it("rawValue is available even when mask-emit=masked", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input mask="99-99"></tulpar-text-input>`);
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+    input.dispatchEvent(new InputEvent("beforeinput", { data: "7", inputType: "insertText", cancelable: true, bubbles: true }));
+    await el.updateComplete;
+    expect(el.value).to.equal("7_-__");
+    expect(el.rawValue).to.equal("7");
+  });
+});
