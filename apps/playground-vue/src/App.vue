@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { TulparButton, TulparTextInput, TulparTextarea, TulparNumberInput } from "@tulpar-ui/vue";
+import { ref, computed } from "vue";
+import { TulparButton } from "@tulpar-ui/vue";
 import "@tulpar-ui/core/button-group";
 import {
   Check,
@@ -16,16 +16,26 @@ import {
   Sparkles,
   Loader2,
 } from "lucide-vue-next";
+import TextInputDemo from "./components/TextInputDemo.vue";
+import TextareaDemo from "./components/TextareaDemo.vue";
+import NumberInputDemo from "./components/NumberInputDemo.vue";
 
 const isDark = ref(false);
 const submittedEmail = ref<string | null>(null);
 const dataDisabledClicked = ref(false);
 
-// ─── Input family demo refs ───────────────────────────────────────────────────
-const email = ref("");
-const phone = ref("");
-const bio = ref("");
-const amount = ref<number | null>(null);
+// ─── Top-level component switcher ─────────────────────────────────────────────
+const activeComponent = ref<"button" | "text-input" | "textarea" | "number-input">("button");
+
+const componentTitle = computed(() => {
+  const map: Record<string, string> = {
+    "button": "Button — full feature reference",
+    "text-input": "TextInput — full feature reference",
+    "textarea": "Textarea — full feature reference",
+    "number-input": "NumberInput — full feature reference",
+  };
+  return map[activeComponent.value] ?? "Tulpar UI";
+});
 
 function toggleDark() {
   isDark.value = !isDark.value;
@@ -291,22 +301,51 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
     <header class="page-header">
       <div class="header-inner">
         <div class="header-text">
-          <p class="eyebrow">Tulpar UI · Vue · v0.3.1</p>
-          <h1 class="page-title">Button — full feature reference</h1>
+          <p class="eyebrow">Tulpar UI · Vue · v0.5</p>
+          <h1 class="page-title">{{ componentTitle }}</h1>
           <p class="page-lede">
-            Live previews and copy-paste code for every Button capability. Most examples use the
-            <code class="inline-code">:icon</code> prop (v0.3.1) for Lucide icons. The
-            <code class="inline-code">&#60;span slot="..."&#62;</code> pattern remains supported as
-            a fallback for non-Lucide libraries.
+            Live previews and copy-paste code for every capability. Use the nav below to switch components.
           </p>
         </div>
         <button class="theme-toggle" @click="toggleDark">
           {{ isDark ? "☀ Light" : "☾ Dark" }}
         </button>
       </div>
+
+      <!-- ── Top nav ──────────────────────────────────────────────────────────── -->
+      <nav class="top-nav">
+        <button
+          class="nav-btn"
+          :class="{ active: activeComponent === 'button' }"
+          @click="activeComponent = 'button'"
+        >Button</button>
+        <button
+          class="nav-btn"
+          :class="{ active: activeComponent === 'text-input' }"
+          @click="activeComponent = 'text-input'"
+        >TextInput</button>
+        <button
+          class="nav-btn"
+          :class="{ active: activeComponent === 'textarea' }"
+          @click="activeComponent = 'textarea'"
+        >Textarea</button>
+        <button
+          class="nav-btn"
+          :class="{ active: activeComponent === 'number-input' }"
+          @click="activeComponent = 'number-input'"
+        >NumberInput</button>
+      </nav>
     </header>
 
     <main class="main">
+      <!-- ── Input family demo pages ──────────────────────────────────────────── -->
+      <TextInputDemo v-if="activeComponent === 'text-input'" />
+      <TextareaDemo v-if="activeComponent === 'textarea'" />
+      <NumberInputDemo v-if="activeComponent === 'number-input'" />
+
+      <!-- ── Button demo ──────────────────────────────────────────────────────── -->
+      <template v-if="activeComponent === 'button'">
+
       <!-- ── 1. Severity ──────────────────────────────────────────────────── -->
       <section class="doc-section">
         <h2 class="section-title">1. Severity</h2>
@@ -708,91 +747,6 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
         <pre class="code"><code>{{ tooltipCode }}</code></pre>
       </section>
 
-      <!-- ── 20. Input Family ─────────────────────────────────────────── -->
-      <section class="doc-section">
-        <h2 class="section-title">20. Input Family</h2>
-        <p class="section-desc">
-          Live demos for <code class="inline-code">TulparTextInput</code>,
-          <code class="inline-code">TulparTextarea</code>, and
-          <code class="inline-code">TulparNumberInput</code> Vue wrappers. Two-way binding via
-          <code class="inline-code">v-model</code>.
-        </p>
-
-        <h3 class="section-subtitle">TextInput — email + validation states</h3>
-        <div class="preview preview--col">
-          <TulparTextInput
-            label="Email"
-            type="email"
-            autocomplete="email"
-            helperText="We won't share your email"
-            v-model="email"
-          />
-          <p class="value-display">email = {{ email }}</p>
-        </div>
-
-        <h3 class="section-subtitle">TextInput — password (reveal toggle)</h3>
-        <div class="preview preview--col">
-          <TulparTextInput label="Password" type="password" autocomplete="current-password" />
-        </div>
-
-        <h3 class="section-subtitle">TextInput — search (auto icon + clearable)</h3>
-        <div class="preview preview--col">
-          <TulparTextInput
-            type="search"
-            placeholder="Search..."
-            label-position="none"
-            :no-message-space="true"
-          />
-        </div>
-
-        <h3 class="section-subtitle">TextInput — TR phone mask</h3>
-        <div class="preview preview--col">
-          <TulparTextInput
-            label="Phone"
-            mask="+\90 (999) 999 99 99"
-            v-model="phone"
-          />
-          <p class="value-display">phone = {{ phone }}</p>
-        </div>
-
-        <h3 class="section-subtitle">TextInput — statuses</h3>
-        <div class="preview preview--col">
-          <TulparTextInput label="Invalid" :invalid="true" error-text="Required field" />
-          <TulparTextInput label="Validating" :validating="true" helper-text="Checking..." />
-        </div>
-
-        <h3 class="section-subtitle">Textarea — autosize + counter</h3>
-        <div class="preview preview--col">
-          <TulparTextarea
-            label="Bio"
-            :show-count="true"
-            :max-length="200"
-            v-model="bio"
-          />
-          <p class="value-display">bio.length = {{ bio.length }}</p>
-        </div>
-
-        <h3 class="section-subtitle">NumberInput — TRY currency</h3>
-        <div class="preview preview--col">
-          <TulparNumberInput
-            label="Amount"
-            format-style="currency"
-            currency="TRY"
-            locale="tr-TR"
-            :min-fraction-digits="2"
-            :max-fraction-digits="2"
-            :min="0"
-            v-model="amount"
-          />
-          <p class="value-display">amount = {{ amount }}</p>
-        </div>
-
-        <h3 class="section-subtitle">NumberInput — integer-only + steppers</h3>
-        <div class="preview preview--col">
-          <TulparNumberInput label="Quantity" :integer-only="true" :min="0" :max="100" />
-        </div>
-      </section>
-
       <!-- ── 19. Escape hatch — non-Lucide icon libraries ──────────────── -->
       <section class="doc-section">
         <h2 class="section-title">19. Escape hatch — non-Lucide icon libraries</h2>
@@ -835,6 +789,9 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
         </div>
         <pre class="code"><code>{{ slotEscapeHatchCode }}</code></pre>
       </section>
+
+      </template>
+      <!-- end v-if button -->
     </main>
   </div>
 </template>
@@ -916,6 +873,39 @@ body {
 
 .theme-toggle:hover {
   background: var(--tulpar-color-bg-subtle, #f5f5f4);
+}
+
+/* ─── Top nav ──────────────────────────────────────────────────────────────── */
+.top-nav {
+  max-width: 920px;
+  margin: 24px auto 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.nav-btn {
+  padding: 8px 20px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--tulpar-color-text-secondary, #57534e);
+  font-family: var(--tulpar-font-family-ui, system-ui, sans-serif);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+
+.nav-btn:hover {
+  background: var(--tulpar-color-bg-subtle, #f5f5f4);
+  color: var(--tulpar-color-text-primary, #1c1917);
+}
+
+.nav-btn.active {
+  background: var(--tulpar-color-brand-default, #2563eb);
+  border-color: var(--tulpar-color-brand-default, #2563eb);
+  color: #ffffff;
 }
 
 /* ─── Main content ─────────────────────────────────────────────────────────── */
@@ -1044,22 +1034,6 @@ body {
 
 /* ─── Feedback ─────────────────────────────────────────────────────────────── */
 .click-feedback {
-  font-size: 13px;
-  color: var(--tulpar-color-text-secondary, #57534e);
-}
-
-/* ─── Input family demo ────────────────────────────────────────────────────── */
-.section-subtitle {
-  margin: 24px 0 12px;
-  font-family: var(--tulpar-font-family-display, Georgia, serif);
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--tulpar-color-text-primary, #1c1917);
-}
-
-.value-display {
-  margin: 8px 0 0;
-  font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
   font-size: 13px;
   color: var(--tulpar-color-text-secondary, #57534e);
 }
