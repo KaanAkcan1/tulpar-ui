@@ -1,4 +1,4 @@
-import { LitElement, html, nothing } from "lit";
+import { html, nothing } from "lit";
 import { property } from "lit/decorators.js";
 import { expect, fixture, html as testHtml } from "@open-wc/testing";
 import { FormFieldBase } from "./form-field-base";

@@ -1,5 +1,5 @@
 import { expect } from "@open-wc/testing";
-import { compileMask, tokenAccepts, tokenTransform, applyMask, extractRaw, type MaskToken, MaskController, type MaskHost } from "./mask-engine";
+import { compileMask, tokenAccepts, tokenTransform, applyMask, extractRaw, MaskController, type MaskHost } from "./mask-engine";
 
 describe("compileMask", () => {
   it("parses 9 as digit token", () => {

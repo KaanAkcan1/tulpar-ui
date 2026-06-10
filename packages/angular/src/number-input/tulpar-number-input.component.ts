@@ -1,9 +1,10 @@
+import type {
+  ElementRef} from "@angular/core";
 import {
   ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   effect,
-  ElementRef,
   input,
   output,
   viewChild,

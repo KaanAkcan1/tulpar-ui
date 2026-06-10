@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
-  Type,
   afterRenderEffect,
   computed,
   input,
@@ -10,7 +9,8 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
-import type { ElementRef } from "@angular/core";
+import type { ElementRef ,
+  Type} from "@angular/core";
 import { NgComponentOutlet } from "@angular/common";
 
 import "@tulpar-ui/core/button";
