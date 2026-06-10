@@ -14,6 +14,8 @@ export class TulparTextarea extends FormFieldBase {
   @property({ type: Number, attribute: "min-rows" }) minRows = 2;
   @property({ type: Number, attribute: "max-rows" }) maxRows = 6;
   @property({ type: Number }) rows?: number;
+  @property({ type: String, reflect: true })
+  resize: "none" | "both" | "horizontal" | "vertical" = "vertical";
 
   protected override _hasValue(): boolean {
     return this.value !== "";

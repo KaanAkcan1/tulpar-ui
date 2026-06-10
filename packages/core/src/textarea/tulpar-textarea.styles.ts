@@ -21,4 +21,20 @@ export const textareaStyles = css`
   .field-textarea::placeholder {
     color: var(--tulpar-input-text-placeholder, #a8a29e);
   }
+
+  :host([resize='none']) .field-textarea {
+    resize: none;
+  }
+
+  :host([resize='both']) .field-textarea {
+    resize: both;
+  }
+
+  :host([resize='horizontal']) .field-textarea {
+    resize: horizontal;
+  }
+
+  :host([resize='vertical']) .field-textarea {
+    resize: vertical;
+  }
 `;

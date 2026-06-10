@@ -81,3 +81,24 @@ describe("<tulpar-textarea> autosize", () => {
     expect(el.autosize).to.equal(false);
   });
 });
+
+describe("<tulpar-textarea> resize attribute", () => {
+  it("default resize=vertical", async () => {
+    const el = await fixture<TulparTextarea>(html`<tulpar-textarea></tulpar-textarea>`);
+    expect(el.resize).to.equal("vertical");
+    const ta = el.shadowRoot!.querySelector<HTMLTextAreaElement>("textarea#control")!;
+    expect(getComputedStyle(ta).resize).to.equal("vertical");
+  });
+
+  it("setting resize=none applies CSS resize:none", async () => {
+    const el = await fixture<TulparTextarea>(html`<tulpar-textarea resize="none"></tulpar-textarea>`);
+    const ta = el.shadowRoot!.querySelector<HTMLTextAreaElement>("textarea#control")!;
+    expect(getComputedStyle(ta).resize).to.equal("none");
+  });
+
+  it("setting resize=both applies CSS resize:both", async () => {
+    const el = await fixture<TulparTextarea>(html`<tulpar-textarea resize="both"></tulpar-textarea>`);
+    const ta = el.shadowRoot!.querySelector<HTMLTextAreaElement>("textarea#control")!;
+    expect(getComputedStyle(ta).resize).to.equal("both");
+  });
+});
