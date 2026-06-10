@@ -32,4 +32,14 @@ export const textInputStyles = css`
   .field-clear-btn:hover {
     background: var(--tulpar-input-bg-readonly, #fafaf9);
   }
+
+  .field-counter {
+    margin-left: auto;
+    color: var(--tulpar-input-message-helper, #57534e);
+    font-size: 0.75rem;
+  }
+
+  .field-counter[data-at-limit='true'] {
+    color: var(--tulpar-input-message-error, #b91c1c);
+  }
 `;

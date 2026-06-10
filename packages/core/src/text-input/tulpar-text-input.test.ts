@@ -120,3 +120,26 @@ describe("<tulpar-text-input> clearable", () => {
     expect(changed).to.equal(true);
   });
 });
+
+describe("<tulpar-text-input> show-count", () => {
+  it("shows current length when show-count and no maxlength", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input show-count value="abc"></tulpar-text-input>`);
+    expect(el.shadowRoot!.querySelector(".field-counter")?.textContent?.trim()).to.equal("3");
+  });
+
+  it("shows X / Y when show-count and maxlength set", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input show-count maxlength="10" value="abc"></tulpar-text-input>`);
+    expect(el.shadowRoot!.querySelector(".field-counter")?.textContent?.trim()).to.equal("3 / 10");
+  });
+
+  it("switches counter to error color when at maxlength", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input show-count maxlength="3" value="abc"></tulpar-text-input>`);
+    const counter = el.shadowRoot!.querySelector<HTMLElement>(".field-counter")!;
+    expect(counter.dataset.atLimit).to.equal("true");
+  });
+
+  it("does not render counter when show-count is false", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input value="abc"></tulpar-text-input>`);
+    expect(el.shadowRoot!.querySelector(".field-counter")).to.equal(null);
+  });
+});

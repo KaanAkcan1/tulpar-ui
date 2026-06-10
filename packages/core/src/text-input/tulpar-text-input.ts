@@ -17,6 +17,7 @@ export class TulparTextInput extends FormFieldBase {
   @property({ type: Number, attribute: "minlength" }) minLength?: number;
   @property({ type: String }) pattern?: string;
   @property({ type: Boolean, reflect: true }) clearable = false;
+  @property({ type: Boolean, attribute: "show-count" }) showCount = false;
 
   protected override firstUpdated() {
     this._maybeWarnAutocomplete();
@@ -95,6 +96,23 @@ export class TulparTextInput extends FormFieldBase {
           <path d="M6 6 L18 18 M18 6 L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" />
         </svg>
       </button>
+    `;
+  }
+
+  protected override _renderMessageRow(): TemplateResult | typeof nothing {
+    if (this.noMessageSpace) return nothing;
+    if (!this.showCount) return super._renderMessageRow();
+
+    const len = this.value.length;
+    const counterText = this.maxLength ? `${len} / ${this.maxLength}` : `${len}`;
+    const atLimit = this.maxLength !== undefined && len >= this.maxLength;
+
+    // Compose: include both the base message text AND the counter in the same row.
+    return html`
+      <div class="field-message-row">
+        ${this._renderMessageText()}
+        <span class="field-counter" data-at-limit=${atLimit ? "true" : "false"}>${counterText}</span>
+      </div>
     `;
   }
 }
