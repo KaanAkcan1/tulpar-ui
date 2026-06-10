@@ -205,14 +205,18 @@ export const formFieldBaseStyles = css`
     margin-top: 1.125rem;
   }
 
-  .field-label--float {
+  /* Resting state shared by float and float-in: when the field is empty and
+     unfocused, both look identical — a placeholder-colored label centered in
+     the field. They diverge only in WHERE the label goes on focus/value. */
+  .field-label--float,
+  .field-label--float-in {
     top: 50%;
     left: var(--field-resolved-padding-x);
     transform: translateY(-50%);
     transform-origin: left center;
     color: var(--tulpar-input-text-placeholder, #a8a29e);
     background: transparent;
-    transition: transform 150ms ease, top 150ms ease, font-size 150ms ease;
+    transition: transform 150ms ease, top 150ms ease, font-size 150ms ease, color 150ms ease;
   }
 
   [data-label-position='float'] .control-row:focus-within ~ .field-label--float,
@@ -220,12 +224,6 @@ export const formFieldBaseStyles = css`
     top: -0.125rem;
     transform: translateY(-100%) scale(0.85);
     color: var(--tulpar-input-label-default, #44403c);
-  }
-
-  [data-label-position='float-in'] .field-label--float-in {
-    top: 50%;
-    left: var(--field-resolved-padding-x);
-    transform: translateY(-50%);
   }
 
   [data-label-position='float-in'] .control-row:focus-within ~ .field-label--float-in,

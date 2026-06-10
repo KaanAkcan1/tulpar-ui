@@ -363,3 +363,22 @@ describe("FormFieldBase float (over) vs float-on distinction", () => {
     expect(label.getBoundingClientRect().bottom).to.be.at.most(row.getBoundingClientRect().top + 1);
   });
 });
+
+describe("FormFieldBase float-in resting visual parity with float", () => {
+  it("resting float-in label uses the same (placeholder) color as resting float", async () => {
+    const wrapper = await fixture<HTMLDivElement>(testHtml`
+      <div>
+        <test-form-field label="A" label-position="float"></test-form-field>
+        <test-form-field label="B" label-position="float-in"></test-form-field>
+      </div>
+    `);
+    const [overField, inField] = Array.from(wrapper.querySelectorAll<TestField>("test-form-field"));
+    await overField.updateComplete;
+    await inField.updateComplete;
+    const overLabel = overField.shadowRoot!.querySelector(".field-label--float")!;
+    const inLabel = inField.shadowRoot!.querySelector(".field-label--float-in")!;
+    expect(getComputedStyle(inLabel).color).to.equal(getComputedStyle(overLabel).color);
+    // And both must transition (smooth float animation), not snap.
+    expect(getComputedStyle(inLabel).transitionProperty).to.contain("top");
+  });
+});
