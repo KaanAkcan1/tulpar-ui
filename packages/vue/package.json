@@ -2,6 +2,7 @@
   "name": "@tulpar-ui/vue",
   "version": "0.5.0",
   "description": "Vue 3 wrappers for Tulpar UI Web Components",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -14,7 +15,8 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "vite build",

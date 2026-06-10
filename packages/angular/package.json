@@ -2,6 +2,7 @@
   "name": "@tulpar-ui/angular",
   "version": "0.5.0",
   "description": "Angular wrappers for Tulpar UI Web Components",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/fesm2022/tulpar-ui-angular.mjs",
   "module": "./dist/fesm2022/tulpar-ui-angular.mjs",
@@ -14,7 +15,8 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "ng-packagr -p ng-package.json -c tsconfig.json",
