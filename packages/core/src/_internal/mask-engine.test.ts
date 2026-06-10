@@ -1,5 +1,5 @@
 import { expect } from "@open-wc/testing";
-import { compileMask, tokenAccepts, tokenTransform, applyMask, extractRaw, type MaskToken } from "./mask-engine";
+import { compileMask, tokenAccepts, tokenTransform, applyMask, extractRaw, type MaskToken, MaskController, type MaskHost } from "./mask-engine";
 
 describe("compileMask", () => {
   it("parses 9 as digit token", () => {
@@ -121,5 +121,129 @@ describe("extractRaw", () => {
   });
   it("returns empty when input is the template only", () => {
     expect(extractRaw("+90 (___) ___ __ __", tokens)).to.equal("");
+  });
+});
+
+class TestHost implements MaskHost {
+  value = "";
+  rawValue = "";
+  mask = "";
+  maskEmit: "masked" | "raw" = "masked";
+  maskDisplay: "eager" | "lazy" = "eager";
+  maskSlotChar = "_";
+  updateCount = 0;
+  rejected = false;
+  requestUpdate() { this.updateCount++; }
+  dispatchEvent(_e: Event) { return true; }
+  markRejected() { this.rejected = true; }
+}
+
+describe("MaskController accept/reject", () => {
+  it("accepts a digit at a digit token slot", () => {
+    const host = new TestHost();
+    host.mask = "999";
+    const ctl = new MaskController(host);
+    ctl.compile();
+    ctl.acceptChar("5");
+    ctl.acceptChar("3");
+    ctl.acceptChar("2");
+    expect(host.rawValue).to.equal("532");
+    expect(host.value).to.equal("532");
+  });
+
+  it("rejects a letter at a digit token slot + flags rejected", () => {
+    const host = new TestHost();
+    host.mask = "999";
+    const ctl = new MaskController(host);
+    ctl.compile();
+    ctl.acceptChar("a");
+    expect(host.rawValue).to.equal("");
+    expect(host.rejected).to.equal(true);
+  });
+
+  it("auto-uppercases A token input", () => {
+    const host = new TestHost();
+    host.mask = "AAA";
+    const ctl = new MaskController(host);
+    ctl.compile();
+    ctl.acceptChar("a");
+    ctl.acceptChar("b");
+    ctl.acceptChar("c");
+    expect(host.rawValue).to.equal("ABC");
+  });
+
+  it("rejects input when mask is full", () => {
+    const host = new TestHost();
+    host.mask = "99";
+    const ctl = new MaskController(host);
+    ctl.compile();
+    ctl.acceptChar("1");
+    ctl.acceptChar("2");
+    host.rejected = false;
+    ctl.acceptChar("3");
+    expect(host.rawValue).to.equal("12");
+    expect(host.rejected).to.equal(true);
+  });
+
+  it("emits masked value with literals when maskEmit=masked", () => {
+    const host = new TestHost();
+    host.mask = "99-99";
+    const ctl = new MaskController(host);
+    ctl.compile();
+    ctl.acceptChar("1");
+    ctl.acceptChar("2");
+    expect(host.value).to.equal("12-__");
+  });
+
+  it("emits raw value when maskEmit=raw", () => {
+    const host = new TestHost();
+    host.mask = "99-99";
+    host.maskEmit = "raw";
+    const ctl = new MaskController(host);
+    ctl.compile();
+    ctl.acceptChar("1");
+    ctl.acceptChar("2");
+    expect(host.value).to.equal("12");
+  });
+});
+
+describe("MaskController paste + backspace", () => {
+  it("applyPaste cleanses and fills tokens left-to-right", () => {
+    const host = new TestHost();
+    host.mask = "999";
+    const ctl = new MaskController(host);
+    ctl.compile();
+    ctl.applyPaste("abc12d3xyz");
+    expect(host.rawValue).to.equal("123");
+  });
+
+  it("backspace removes the last raw char and reflows display", () => {
+    const host = new TestHost();
+    host.mask = "99-99";
+    const ctl = new MaskController(host);
+    ctl.compile();
+    ctl.applyPaste("1234");
+    expect(host.value).to.equal("12-34");
+    ctl.backspace();
+    expect(host.rawValue).to.equal("123");
+    expect(host.value).to.equal("12-3_");
+  });
+
+  it("displayString renders eager template with slot chars", () => {
+    const host = new TestHost();
+    host.mask = "99-99";
+    const ctl = new MaskController(host);
+    ctl.compile();
+    ctl.acceptChar("7");
+    expect(ctl.displayString()).to.equal("7_-__");
+  });
+
+  it("displayString renders lazy with spaces when maskDisplay=lazy", () => {
+    const host = new TestHost();
+    host.mask = "99-99";
+    host.maskDisplay = "lazy";
+    const ctl = new MaskController(host);
+    ctl.compile();
+    expect(ctl.displayString()).to.equal("  -  ");
   });
 });
