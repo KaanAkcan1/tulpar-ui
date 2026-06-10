@@ -9,6 +9,8 @@ export type TextInputType = "text" | "email" | "url" | "tel" | "search" | "passw
 export class TulparTextInput extends FormFieldBase {
   static override styles = [FormFieldBase.styles, textInputStyles];
 
+  private _clearableExplicitValue: boolean | undefined = undefined;
+
   @property({ type: String, reflect: true }) type: TextInputType = "text";
   @property({ type: String }) value = "";
   @property({ type: String }) placeholder?: string;
@@ -16,17 +18,76 @@ export class TulparTextInput extends FormFieldBase {
   @property({ type: Number, attribute: "maxlength" }) maxLength?: number;
   @property({ type: Number, attribute: "minlength" }) minLength?: number;
   @property({ type: String }) pattern?: string;
-  @property({ type: Boolean, reflect: true }) clearable = false;
+  @property({ type: Boolean, reflect: true, noAccessor: true }) clearable = false;
   @property({ type: Boolean, attribute: "show-count" }) showCount = false;
   @property({ type: Boolean, attribute: "no-reveal-toggle" }) noRevealToggle = false;
   @state() private _passwordRevealed = false;
 
+  constructor() {
+    super();
+    // Create custom accessor for clearable to track when it's explicitly set
+    Object.defineProperty(this, 'clearable', {
+      get() {
+        return this._clearableExplicitValue !== undefined ? this._clearableExplicitValue : false;
+      },
+      set(value: boolean) {
+        this._clearableExplicitValue = value;
+        // Reflect to attribute
+        if (value) {
+          this.setAttribute('clearable', '');
+        } else {
+          this.removeAttribute('clearable');
+        }
+      },
+      enumerable: true,
+      configurable: true
+    });
+  }
+
   protected override firstUpdated() {
     this._maybeWarnAutocomplete();
+    // Check if clearable was set via attribute
+    if (this.hasAttribute("clearable")) {
+      this._clearableExplicitValue = true;
+    }
   }
 
   protected override _hasValue(): boolean {
     return this.value !== "";
+  }
+
+  private get _effectiveClearable(): boolean {
+    // If explicitly set via attribute or property, use that value
+    if (this._clearableExplicitValue !== undefined) {
+      return this._clearableExplicitValue;
+    }
+    // Otherwise, for search type, default to true
+    if (this.type === "search") {
+      return true;
+    }
+    // For other types, use false
+    return false;
+  }
+
+  protected override _renderPrefixSlot(): TemplateResult {
+    // When type=search and user has not provided a prefix, inject the search icon.
+    const hasUserPrefix = this._hasUserPrefixSlot();
+    const showSearchIcon = this.type === "search" && !hasUserPrefix;
+
+    if (showSearchIcon) {
+      return html`
+        <span class="field-prefix-host">
+          <span class="field-search-icon" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none"/>
+              <path d="M16 16 L22 22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </span>
+      `;
+    }
+    // Default behavior: render the prefix slot from light DOM
+    return html`<span class="field-prefix-host"><slot name="prefix"></slot></span>`;
   }
 
   protected override renderControl(ariaLabel?: string): TemplateResult {
@@ -68,6 +129,16 @@ export class TulparTextInput extends FormFieldBase {
         `[tulpar] <tulpar-text-input type="${this.type}"> has no 'autocomplete' attribute. Set one (e.g. autocomplete="current-password") to improve security and browser autofill UX.`,
       );
     }
+  }
+
+  private _hasUserPrefixSlot(): boolean {
+    // Check if there are any light DOM children with slot="prefix"
+    for (let i = 0; i < this.children.length; i++) {
+      if (this.children[i].slot === "prefix") {
+        return true;
+      }
+    }
+    return false;
   }
 
   private _onInput = (e: Event) => {
@@ -112,7 +183,7 @@ export class TulparTextInput extends FormFieldBase {
 
   private _renderClearButton(): TemplateResult | typeof nothing {
     // Auto-hide at xs (cannot meet 44pt touch target — see spec §4.6 xs constraints).
-    if (this._isXs() || !this.clearable || this.disabled || this.readonly || this.value === "") return nothing;
+    if (this._isXs() || !this._effectiveClearable || this.disabled || this.readonly || this.value === "") return nothing;
     return html`
       <button
         type="button"

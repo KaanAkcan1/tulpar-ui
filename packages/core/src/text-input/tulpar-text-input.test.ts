@@ -172,3 +172,28 @@ describe("<tulpar-text-input> password reveal toggle", () => {
     expect(btn.getAttribute("aria-label")).to.equal("Hide password");
   });
 });
+
+describe("<tulpar-text-input> search auto-enrichment", () => {
+  it("auto-renders search icon in prefix when type=search and no user prefix slot", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input type="search"></tulpar-text-input>`);
+    expect(el.shadowRoot!.querySelector(".field-search-icon")).to.not.equal(null);
+  });
+
+  it("user prefix slot wins over auto search icon", async () => {
+    const el = await fixture<TulparTextInput>(html`
+      <tulpar-text-input type="search"><span slot="prefix">X</span></tulpar-text-input>
+    `);
+    // Auto icon should NOT render because user slot has content
+    expect(el.shadowRoot!.querySelector(".field-search-icon")).to.equal(null);
+  });
+
+  it("implicit clearable=true when type=search", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input type="search" value="hi"></tulpar-text-input>`);
+    expect(el.shadowRoot!.querySelector(".field-clear-btn")).to.not.equal(null);
+  });
+
+  it("explicit clearable=false overrides the implicit", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input type="search" value="hi" .clearable=${false}></tulpar-text-input>`);
+    expect(el.shadowRoot!.querySelector(".field-clear-btn")).to.equal(null);
+  });
+});

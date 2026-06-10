@@ -59,4 +59,10 @@ export const textInputStyles = css`
   .field-counter[data-at-limit='true'] {
     color: var(--tulpar-input-message-error, #b91c1c);
   }
+
+  .field-search-icon {
+    display: inline-flex;
+    align-items: center;
+    color: var(--tulpar-input-icon-default, #78716c);
+  }
 `;
