@@ -1,5 +1,5 @@
 import { html, type TemplateResult, nothing } from "lit";
-import { property } from "lit/decorators.js";
+import { property, state } from "lit/decorators.js";
 import { FormFieldBase } from "../_internal/form-field-base";
 import { textInputStyles } from "./tulpar-text-input.styles";
 import { warnDev } from "../_internal/warn-dev";
@@ -18,6 +18,8 @@ export class TulparTextInput extends FormFieldBase {
   @property({ type: String }) pattern?: string;
   @property({ type: Boolean, reflect: true }) clearable = false;
   @property({ type: Boolean, attribute: "show-count" }) showCount = false;
+  @property({ type: Boolean, attribute: "no-reveal-toggle" }) noRevealToggle = false;
+  @state() private _passwordRevealed = false;
 
   protected override firstUpdated() {
     this._maybeWarnAutocomplete();
@@ -28,13 +30,14 @@ export class TulparTextInput extends FormFieldBase {
   }
 
   protected override renderControl(ariaLabel?: string): TemplateResult {
+    const effectiveType = this.type === "password" && this._passwordRevealed ? "text" : this.type;
     return html`
       <div class="control-row">
         ${this._renderPrefixSlot()}
         <input
           id="control"
           class="field-input"
-          .type=${this.type}
+          .type=${effectiveType}
           .value=${this.value}
           placeholder=${this.placeholder ?? nothing}
           autocomplete=${this.autocomplete ?? nothing}
@@ -51,6 +54,7 @@ export class TulparTextInput extends FormFieldBase {
           @input=${this._onInput}
         />
         ${this._renderStatusZone()}
+        ${this._renderRevealButton()}
         ${this._renderClearButton()}
         ${this._renderSuffixSlot()}
       </div>
@@ -81,6 +85,30 @@ export class TulparTextInput extends FormFieldBase {
       this.shadowRoot?.querySelector<HTMLInputElement>("#control")?.focus();
     });
   };
+
+  private _renderRevealButton(): TemplateResult | typeof nothing {
+    // Auto-hide at xs (cannot meet 44pt touch target — see spec §4.6 xs constraints).
+    if (this._isXs() || this.type !== "password" || this.noRevealToggle) return nothing;
+    const revealed = this._passwordRevealed;
+    return html`
+      <button
+        type="button"
+        class="field-reveal-btn"
+        aria-label=${revealed ? "Hide password" : "Show password"}
+        @click=${() => { this._passwordRevealed = !this._passwordRevealed; }}
+      >
+        ${revealed
+          ? html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M1 12 C5 6, 11 4, 12 4 S19 6, 23 12 C19 18, 13 20, 12 20 S5 18, 1 12 Z" stroke="currentColor" stroke-width="2" fill="none"/>
+              <path d="M3 3 L21 21" stroke="currentColor" stroke-width="2"/>
+            </svg>`
+          : html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M1 12 C5 6, 11 4, 12 4 S19 6, 23 12 C19 18, 13 20, 12 20 S5 18, 1 12 Z" stroke="currentColor" stroke-width="2" fill="none"/>
+              <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>`}
+      </button>
+    `;
+  }
 
   private _renderClearButton(): TemplateResult | typeof nothing {
     // Auto-hide at xs (cannot meet 44pt touch target — see spec §4.6 xs constraints).

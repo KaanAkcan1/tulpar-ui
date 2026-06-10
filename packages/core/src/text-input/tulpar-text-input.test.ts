@@ -143,3 +143,32 @@ describe("<tulpar-text-input> show-count", () => {
     expect(el.shadowRoot!.querySelector(".field-counter")).to.equal(null);
   });
 });
+
+describe("<tulpar-text-input> password reveal toggle", () => {
+  it("auto-renders reveal toggle when type=password", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input type="password" autocomplete="current-password"></tulpar-text-input>`);
+    expect(el.shadowRoot!.querySelector(".field-reveal-btn")).to.not.equal(null);
+  });
+
+  it("does not render reveal toggle when no-reveal-toggle is set", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input type="password" no-reveal-toggle autocomplete="current-password"></tulpar-text-input>`);
+    expect(el.shadowRoot!.querySelector(".field-reveal-btn")).to.equal(null);
+  });
+
+  it("auto-hides reveal toggle at size=xs (touch target a11y)", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input type="password" size="xs" autocomplete="current-password"></tulpar-text-input>`);
+    expect(el.shadowRoot!.querySelector(".field-reveal-btn")).to.equal(null);
+  });
+
+  it("clicking reveal toggles input type and aria-label", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input type="password" autocomplete="current-password"></tulpar-text-input>`);
+    const btn = el.shadowRoot!.querySelector<HTMLButtonElement>(".field-reveal-btn")!;
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+    expect(input.type).to.equal("password");
+    expect(btn.getAttribute("aria-label")).to.equal("Show password");
+    btn.click();
+    await el.updateComplete;
+    expect(input.type).to.equal("text");
+    expect(btn.getAttribute("aria-label")).to.equal("Hide password");
+  });
+});
