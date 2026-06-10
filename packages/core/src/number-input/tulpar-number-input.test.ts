@@ -207,3 +207,55 @@ describe("<tulpar-number-input> steppers", () => {
     expect(el.value).to.equal(valueAtLeave); // no further ticks
   });
 });
+
+describe("<tulpar-number-input> keyboard", () => {
+  function key(el: TulparNumberInput, opts: KeyboardEventInit) {
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+    input.dispatchEvent(new KeyboardEvent("keydown", { ...opts, bubbles: true, cancelable: true }));
+  }
+
+  it("ArrowUp adds step; ArrowDown subtracts step", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input .value=${5} step="1"></tulpar-number-input>`);
+    key(el, { key: "ArrowUp" });
+    await el.updateComplete;
+    expect(el.value).to.equal(6);
+    key(el, { key: "ArrowDown" });
+    await el.updateComplete;
+    expect(el.value).to.equal(5);
+  });
+
+  it("Shift+ArrowUp multiplies step by 10", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input .value=${5} step="1"></tulpar-number-input>`);
+    key(el, { key: "ArrowUp", shiftKey: true });
+    await el.updateComplete;
+    expect(el.value).to.equal(15);
+  });
+
+  it("Ctrl+ArrowUp multiplies step by 100", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input .value=${5} step="1"></tulpar-number-input>`);
+    key(el, { key: "ArrowUp", ctrlKey: true });
+    await el.updateComplete;
+    expect(el.value).to.equal(105);
+  });
+
+  it("Home jumps to min", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input .value=${50} min="0"></tulpar-number-input>`);
+    key(el, { key: "Home" });
+    await el.updateComplete;
+    expect(el.value).to.equal(0);
+  });
+
+  it("End jumps to max", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input .value=${5} max="99"></tulpar-number-input>`);
+    key(el, { key: "End" });
+    await el.updateComplete;
+    expect(el.value).to.equal(99);
+  });
+
+  it("arrow stepping respects clamp bounds", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input .value=${99} max="100" step="5"></tulpar-number-input>`);
+    key(el, { key: "ArrowUp" });
+    await el.updateComplete;
+    expect(el.value).to.equal(100); // clamped, not 104
+  });
+});

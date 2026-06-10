@@ -85,6 +85,7 @@ export class TulparNumberInput extends FormFieldBase {
           @focus=${this._onFocus}
           @blur=${this._onBlur}
           @input=${this._onInput}
+          @keydown=${this._onKeydown}
           @wheel=${this._onWheel}
         />
         ${this._renderStatusZone()}
@@ -118,10 +119,13 @@ export class TulparNumberInput extends FormFieldBase {
     this._stopHold();
   }
 
-  private _stepBy(direction: 1 | -1) {
+  private _stepBy(direction: 1 | -1, multiplier = 1) {
     const cur = this.value ?? this.min ?? 0;
-    const next = this._clamp(cur + direction * this.step);
+    const next = this._clamp(cur + direction * this.step * multiplier);
     this.value = next;
+    if (this._focused) {
+      this._typingBuffer = String(next);
+    }
     this._internals.setFormValue(String(next));
     this.dispatchEvent(new Event("change", { bubbles: true }));
   }
@@ -153,6 +157,30 @@ export class TulparNumberInput extends FormFieldBase {
       </div>
     `;
   }
+
+  private _onKeydown = (e: KeyboardEvent) => {
+    let multiplier = 1;
+    if (e.shiftKey) multiplier = 10;
+    else if (e.ctrlKey || e.metaKey) multiplier = 100;
+
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      this._stepBy(1, multiplier);
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      this._stepBy(-1, multiplier);
+    } else if (e.key === "Home" && this.min !== undefined) {
+      e.preventDefault();
+      this.value = this.min;
+      this._internals.setFormValue(String(this.min));
+      this.dispatchEvent(new Event("change", { bubbles: true }));
+    } else if (e.key === "End" && this.max !== undefined) {
+      e.preventDefault();
+      this.value = this.max;
+      this._internals.setFormValue(String(this.max));
+      this.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+  };
 
   private _onWheel = (e: WheelEvent) => {
     // Mouse-wheel increment disabled by design (a11y / accidental-edit hazard;
