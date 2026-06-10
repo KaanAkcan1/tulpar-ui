@@ -347,3 +347,19 @@ describe("FormFieldBase float label positioning", () => {
     expect(Math.abs(labelCenter - rr.top)).to.be.at.most(2);
   });
 });
+
+describe("FormFieldBase float (over) vs float-on distinction", () => {
+  it("float label rises fully ABOVE the control row when the field has value (PrimeNG 'over')", async () => {
+    const wrapper = await fixture<HTMLDivElement>(testHtml`
+      <div style="padding-top: 150px;">
+        <test-form-field label="Email" label-position="float" value="filled"></test-form-field>
+      </div>
+    `);
+    const field = wrapper.querySelector<TestField>("test-form-field")!;
+    await field.updateComplete;
+    const label = field.shadowRoot!.querySelector(".field-label--float")!;
+    const row = field.shadowRoot!.querySelector(".control-row")!;
+    // Entire label above the top border — NOT straddling it (that's float-on's job).
+    expect(label.getBoundingClientRect().bottom).to.be.at.most(row.getBoundingClientRect().top + 1);
+  });
+});

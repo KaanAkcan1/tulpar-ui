@@ -197,10 +197,19 @@ export const formFieldBaseStyles = css`
     color: transparent;
   }
 
+  /* float ("over"): the floated label rests fully ABOVE the input's top
+     border (PrimeNG FloatLabel "over"). Reserve its vertical space up front
+     so the rest→float transition causes zero layout shift, and so the label
+     never overlaps content above the field. */
+  [data-label-position='float'] .field-control-wrap {
+    margin-top: 1.125rem;
+  }
+
   .field-label--float {
     top: 50%;
     left: var(--field-resolved-padding-x);
     transform: translateY(-50%);
+    transform-origin: left center;
     color: var(--tulpar-input-text-placeholder, #a8a29e);
     background: transparent;
     transition: transform 150ms ease, top 150ms ease, font-size 150ms ease;
@@ -208,10 +217,8 @@ export const formFieldBaseStyles = css`
 
   [data-label-position='float'] .control-row:focus-within ~ .field-label--float,
   [data-label-position='float'][data-has-value] .field-label--float {
-    top: 0;
-    transform: translateY(-50%) scale(0.85);
-    background: var(--tulpar-input-label-float-bg, #fff);
-    padding: 0 0.25rem;
+    top: -0.125rem;
+    transform: translateY(-100%) scale(0.85);
     color: var(--tulpar-input-label-default, #44403c);
   }
 
