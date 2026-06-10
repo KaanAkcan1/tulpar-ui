@@ -1,6 +1,6 @@
 {
   "name": "@tulpar-ui/core",
-  "version": "0.1.1",
+  "version": "0.5.0",
   "description": "Lit Web Components for Tulpar UI",
   "type": "module",
   "main": "./dist/index.js",
@@ -18,6 +18,18 @@
     "./button-group": {
       "types": "./dist/button-group/index.d.ts",
       "import": "./dist/button-group/index.js"
+    },
+    "./text-input": {
+      "types": "./dist/text-input/index.d.ts",
+      "import": "./dist/text-input/index.js"
+    },
+    "./textarea": {
+      "types": "./dist/textarea/index.d.ts",
+      "import": "./dist/textarea/index.js"
+    },
+    "./number-input": {
+      "types": "./dist/number-input/index.d.ts",
+      "import": "./dist/number-input/index.js"
     }
   },
   "files": [

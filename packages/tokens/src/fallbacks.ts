@@ -3,7 +3,29 @@ export const FALLBACKS = {
   "borderDefault": "#e7e5e4",
   "textPrimary": "#1c1917",
   "textInverse": "#fafaf9",
-  "bgSurface": "#ffffff"
+  "bgSurface": "#ffffff",
+  "inputBgDefault": "#ffffff",
+  "inputBgDisabled": "#f5f5f4",
+  "inputBgReadonly": "#fafaf9",
+  "inputBorderDefault": "#e7e5e4",
+  "inputBorderHover": "#a8a29e",
+  "inputBorderFocus": "#133a66",
+  "inputBorderInvalid": "#b91c1c",
+  "inputBorderWarn": "#b45309",
+  "inputTextDefault": "#1c1917",
+  "inputTextDisabled": "#a8a29e",
+  "inputTextReadonly": "#44403c",
+  "inputTextPlaceholder": "#a8a29e",
+  "inputLabelDefault": "#44403c",
+  "inputLabelRequired": "#b91c1c",
+  "inputLabelFloatBg": "#ffffff",
+  "inputMessageHelper": "#57534e",
+  "inputMessageError": "#b91c1c",
+  "inputMessageWarn": "#b45309",
+  "inputIconDefault": "#78716c",
+  "inputIconInvalid": "#b91c1c",
+  "inputIconWarn": "#b45309",
+  "inputIconValidating": "#133a66"
 } as const;
 
 export type FallbackKey = keyof typeof FALLBACKS;

@@ -38,4 +38,14 @@ describe("tulparDark", () => {
     expect(tulparDark.button.size.md.height).toBe("40px");
     expect(tulparDark.button.borderRadius).toBe("4px");
   });
+
+  describe("tulparDark.input", () => {
+    it("uses dark surface for bg.default", () => {
+      expect(tulparDark.input.bg.default).toBe(tulparDark.color.bg.surface);
+    });
+
+    it("inverts label float background to match surface (so notched outline cuts through cleanly)", () => {
+      expect(tulparDark.input.label.float.bg).toBe(tulparDark.color.bg.surface);
+    });
+  });
 });

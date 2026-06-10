@@ -5,7 +5,9 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { TulparButtonComponent } from '@tulpar-ui/angular';
+import {
+  TulparButtonComponent,
+} from '@tulpar-ui/angular';
 import '@tulpar-ui/core/button-group';
 import {
   LucideAngularModule,
@@ -23,6 +25,9 @@ import {
   Sparkles,
   Loader2,
 } from 'lucide-angular';
+import { TextInputDemoComponent } from './demos/text-input-demo.component';
+import { TextareaDemoComponent } from './demos/textarea-demo.component';
+import { NumberInputDemoComponent } from './demos/number-input-demo.component';
 
 // ─── Demo icon component for Pattern 2 (named-component [icon] prop) ──
 @Component({
@@ -334,7 +339,10 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [TulparButtonComponent, LucideAngularModule, AppCheckIcon],
+  // AppCheckIcon is intentionally NOT in imports: its selector never appears in
+  // this template — it is rendered dynamically via NgComponentOutlet inside the
+  // button wrapper ([icon] class-reference binding).
+  imports: [TulparButtonComponent, LucideAngularModule, TextInputDemoComponent, TextareaDemoComponent, NumberInputDemoComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -343,23 +351,55 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
       <header class="page-header">
         <div class="header-inner">
           <div class="header-text">
-            <p class="eyebrow">Tulpar UI · Angular · v0.3.1</p>
-            <h1 class="page-title">Button — full feature reference</h1>
+            <p class="eyebrow">Tulpar UI · Angular · v0.5</p>
+            <h1 class="page-title">{{ componentTitle() }}</h1>
             <p class="page-lede">
-              Live previews and copy-paste code for every Button capability. Icons are projected via
-              <code class="inline-code">&lt;lucide-angular slot="start"&gt;</code> /
-              <code class="inline-code">slot="end"</code>. The
-              <code class="inline-code">[icon]</code> input also accepts an Angular component class
-              (see section 17 for the named-component pattern).
+              Live previews and copy-paste code for every capability. Use the nav below to switch components.
             </p>
           </div>
           <button class="theme-toggle" (click)="toggleDark()">
             {{ isDark() ? '☀ Light' : '☾ Dark' }}
           </button>
         </div>
+
+        <!-- ── Top nav ──────────────────────────────────────────────────────── -->
+        <nav class="top-nav">
+          <button
+            class="nav-btn"
+            [class.active]="activeComponent() === 'button'"
+            (click)="activeComponent.set('button')"
+          >Button</button>
+          <button
+            class="nav-btn"
+            [class.active]="activeComponent() === 'text-input'"
+            (click)="activeComponent.set('text-input')"
+          >TextInput</button>
+          <button
+            class="nav-btn"
+            [class.active]="activeComponent() === 'textarea'"
+            (click)="activeComponent.set('textarea')"
+          >Textarea</button>
+          <button
+            class="nav-btn"
+            [class.active]="activeComponent() === 'number-input'"
+            (click)="activeComponent.set('number-input')"
+          >NumberInput</button>
+        </nav>
       </header>
 
       <main class="main">
+        <!-- ── Input family demo pages ──────────────────────────────────────── -->
+        @if (activeComponent() === 'text-input') {
+          <app-text-input-demo></app-text-input-demo>
+        }
+        @if (activeComponent() === 'textarea') {
+          <app-textarea-demo></app-textarea-demo>
+        }
+        @if (activeComponent() === 'number-input') {
+          <app-number-input-demo></app-number-input-demo>
+        }
+
+        @if (activeComponent() === 'button') {
         <!-- ── 1. Severity ─────────────────────────────────────────────────── -->
         <section class="doc-section">
           <h2 class="section-title">1. Severity</h2>
@@ -867,6 +907,7 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
           </div>
           <pre class="code"><code>{{ slotEscapeHatchCode }}</code></pre>
         </section>
+        } <!-- end @if button -->
       </main>
     </div>
   `,
@@ -942,6 +983,38 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
 
       .theme-toggle:hover {
         background: var(--tulpar-color-bg-subtle, #f5f5f4);
+      }
+
+      .top-nav {
+        max-width: 920px;
+        margin: 24px auto 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+
+      .nav-btn {
+        padding: 8px 20px;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--tulpar-color-text-secondary, #57534e);
+        font-family: var(--tulpar-font-family-ui, system-ui, sans-serif);
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.1s, color 0.1s;
+      }
+
+      .nav-btn:hover {
+        background: var(--tulpar-color-bg-subtle, #f5f5f4);
+        color: var(--tulpar-color-text-primary, #1c1917);
+      }
+
+      .nav-btn.active {
+        background: var(--tulpar-color-brand-default, #2563eb);
+        border-color: var(--tulpar-color-brand-default, #2563eb);
+        color: #ffffff;
       }
 
       .main {
@@ -1067,6 +1140,21 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
         color: var(--tulpar-color-text-secondary, #57534e);
       }
 
+      .section-subtitle {
+        margin: 24px 0 12px;
+        font-family: var(--tulpar-font-family-display, Georgia, serif);
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--tulpar-color-text-primary, #1c1917);
+      }
+
+      .value-display {
+        margin: 8px 0 0;
+        font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+        font-size: 13px;
+        color: var(--tulpar-color-text-secondary, #57534e);
+      }
+
       kbd {
         display: inline-block;
         padding: 1px 5px;
@@ -1098,6 +1186,19 @@ export class App {
   isDark = signal(false);
   submittedEmail = signal<string | null>(null);
   dataDisabledClicked = signal(false);
+
+  // ─── Top-level component switcher ─────────────────────────────────────────
+  activeComponent = signal<'button' | 'text-input' | 'textarea' | 'number-input'>('button');
+
+  componentTitle = (() => {
+    const map: Record<string, string> = {
+      'button': 'Button — full feature reference',
+      'text-input': 'TextInput — full feature reference',
+      'textarea': 'Textarea — full feature reference',
+      'number-input': 'NumberInput — full feature reference',
+    };
+    return () => map[this.activeComponent()] ?? 'Tulpar UI';
+  })();
 
   // ─── Lucide icon references ────────────────────────────────────────────────
   protected readonly Check = Check;

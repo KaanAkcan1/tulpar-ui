@@ -129,4 +129,50 @@ export const tulparLight: SemanticTokens = {
   transition: {
     default: `all ${primitiveTransition.duration.fast} ${primitiveTransition.easing.standard}`,
   },
+
+  input: {
+    bg: {
+      default: c.white,
+      disabled: c.stone[100],
+      readonly: c.stone[50],
+    },
+    border: {
+      default: c.stone[200],
+      hover: c.stone[400],
+      focus: c.navy[600],
+      invalid: c.red[700],
+      warn: c.amber[700],
+    },
+    text: {
+      default: c.stone[900],
+      disabled: c.stone[400],
+      readonly: c.stone[700],
+      placeholder: c.stone[400],
+    },
+    label: {
+      default: c.stone[700],
+      required: c.red[700],
+      float: { bg: c.white },
+    },
+    message: {
+      helper: c.stone[600],
+      error: c.red[700],
+      warn: c.amber[700],
+    },
+    icon: {
+      default: c.stone[500],
+      invalid: c.red[700],
+      warn: c.amber[700],
+      validating: c.navy[600],
+    },
+    radius: "0.375rem",
+    size: {
+      xs: { height: "1.5rem",  paddingX: "0.5rem",   paddingY: "0.125rem", fontSize: primitiveTypography.fontSize.xs },
+      sm: { height: "1.75rem", paddingX: "0.625rem", paddingY: "0.25rem",  fontSize: primitiveTypography.fontSize.sm },
+      md: { height: "2.25rem", paddingX: "0.75rem",  paddingY: "0.375rem", fontSize: primitiveTypography.fontSize.sm },
+      lg: { height: "2.75rem", paddingX: "0.875rem", paddingY: "0.5rem",   fontSize: primitiveTypography.fontSize.md },
+      xl: { height: "3.25rem", paddingX: "1rem",     paddingY: "0.625rem", fontSize: primitiveTypography.fontSize.lg },
+    },
+    messageRowHeight: "1.25rem",
+  },
 };

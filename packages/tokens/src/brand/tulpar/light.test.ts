@@ -69,3 +69,21 @@ describe("tulparLight", () => {
     expect(tulparLight.font.family.mono).toContain("JetBrains Mono");
   });
 });
+
+describe("tulparLight.input", () => {
+  it("uses surface bg + neutral border for default state", () => {
+    expect(tulparLight.input.bg.default).toBe(tulparLight.color.bg.surface);
+    expect(tulparLight.input.border.default).toBe(tulparLight.color.border.default);
+  });
+
+  it("uses danger / warn colors for invalid + warn states", () => {
+    expect(tulparLight.input.border.invalid).toBe(tulparLight.color.danger.default);
+    expect(tulparLight.input.border.warn).toBe(tulparLight.color.warn.default);
+    expect(tulparLight.input.message.error).toBe(tulparLight.color.danger.default);
+    expect(tulparLight.input.message.warn).toBe(tulparLight.color.warn.default);
+  });
+
+  it("ships 5 size tiers (xs..xl)", () => {
+    expect(Object.keys(tulparLight.input.size)).toEqual(["xs", "sm", "md", "lg", "xl"]);
+  });
+});

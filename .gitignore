@@ -37,3 +37,6 @@ out-tsc/
 # Env
 .env
 .env.local
+
+# Vite config bundling temp files (created while vite is running)
+vite.config.ts.timestamp-*.mjs

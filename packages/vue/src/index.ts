@@ -10,3 +10,16 @@ export type {
   ButtonJustify,
   ButtonColor,
 } from "@tulpar-ui/core";
+
+export { default as TulparTextInput } from "./text-input/TulparTextInput.vue";
+export type {
+  TextInputType,
+  FieldSize,
+  FieldVariant,
+  LabelPosition,
+  NecessityIndicator,
+} from "@tulpar-ui/core";
+
+export { default as TulparTextarea } from "./textarea/TulparTextarea.vue";
+
+export { default as TulparNumberInput } from "./number-input/TulparNumberInput.vue";
