@@ -15,6 +15,11 @@ export class TulparNumberInput extends FormFieldBase {
   @property({ type: Boolean, attribute: "allow-empty" }) allowEmpty = true;
   @property({ type: Boolean, attribute: "integer-only", reflect: true }) integerOnly = false;
 
+  // Steppers
+  @property({ type: Boolean, attribute: "hide-steppers", reflect: true }) hideSteppers = false;
+  @property({ type: Number, attribute: "step-hold-delay" }) stepHoldDelay = 500;
+  @property({ type: Number, attribute: "step-hold-interval" }) stepHoldInterval = 50;
+
   // Format — shorthand attribute layer
   @property({ type: String, attribute: "format-style" })
   formatStyle: "decimal" | "currency" | "percent" = "decimal";
@@ -83,7 +88,68 @@ export class TulparNumberInput extends FormFieldBase {
           @wheel=${this._onWheel}
         />
         ${this._renderStatusZone()}
+        ${this._renderSteppers()}
         ${this._renderSuffixSlot()}
+      </div>
+    `;
+  }
+
+  // --- Stepper hold logic ---
+
+  private _holdTimer?: number;
+  private _holdInterval?: number;
+
+  private _startHold(direction: 1 | -1) {
+    this._stepBy(direction);
+    this._holdTimer = window.setTimeout(() => {
+      this._holdInterval = window.setInterval(() => this._stepBy(direction), this.stepHoldInterval);
+    }, this.stepHoldDelay);
+  }
+
+  private _stopHold = () => {
+    if (this._holdTimer) clearTimeout(this._holdTimer);
+    if (this._holdInterval) clearInterval(this._holdInterval);
+    this._holdTimer = undefined;
+    this._holdInterval = undefined;
+  };
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this._stopHold();
+  }
+
+  private _stepBy(direction: 1 | -1) {
+    const cur = this.value ?? this.min ?? 0;
+    const next = this._clamp(cur + direction * this.step);
+    this.value = next;
+    this._internals.setFormValue(String(next));
+    this.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  private _renderSteppers(): TemplateResult | typeof nothing {
+    // Auto-hide at xs (cannot meet 44pt touch target — see spec §4.6 xs constraints).
+    if (this._isXs() || this.hideSteppers) return nothing;
+    const atMax = this.value !== null && this.max !== undefined && this.value >= this.max;
+    const atMin = this.value !== null && this.min !== undefined && this.value <= this.min;
+    const disabled = this.disabled || this.readonly;
+    return html`
+      <div class="field-steppers">
+        <button type="button" class="stepper-inc" aria-label="Increment" tabindex="-1"
+          ?disabled=${disabled || atMax}
+          @pointerdown=${() => this._startHold(1)}
+          @pointerup=${this._stopHold}
+          @pointerleave=${this._stopHold}
+          @pointercancel=${this._stopHold}>
+          <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 5 L5 1 L9 5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        </button>
+        <button type="button" class="stepper-dec" aria-label="Decrement" tabindex="-1"
+          ?disabled=${disabled || atMin}
+          @pointerdown=${() => this._startHold(-1)}
+          @pointerup=${this._stopHold}
+          @pointerleave=${this._stopHold}
+          @pointercancel=${this._stopHold}>
+          <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1 L5 5 L9 1" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        </button>
       </div>
     `;
   }

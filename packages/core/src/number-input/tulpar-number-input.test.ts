@@ -124,3 +124,86 @@ describe("<tulpar-number-input> clamp on blur", () => {
     expect(changed).to.equal(true);
   });
 });
+
+describe("<tulpar-number-input> steppers", () => {
+  it("renders increment + decrement buttons by default", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input></tulpar-number-input>`);
+    expect(el.shadowRoot!.querySelector(".field-steppers .stepper-inc")).to.not.equal(null);
+    expect(el.shadowRoot!.querySelector(".field-steppers .stepper-dec")).to.not.equal(null);
+  });
+
+  it("hides steppers when hide-steppers is set", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input hide-steppers></tulpar-number-input>`);
+    expect(el.shadowRoot!.querySelector(".field-steppers")).to.equal(null);
+  });
+
+  it("auto-hides steppers at size=xs", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input size="xs"></tulpar-number-input>`);
+    expect(el.shadowRoot!.querySelector(".field-steppers")).to.equal(null);
+  });
+
+  it("increments by step on pointerdown+pointerup", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input .value=${5} step="2"></tulpar-number-input>`);
+    const btn = el.shadowRoot!.querySelector<HTMLButtonElement>(".stepper-inc")!;
+    btn.dispatchEvent(new PointerEvent("pointerdown"));
+    btn.dispatchEvent(new PointerEvent("pointerup"));
+    await el.updateComplete;
+    expect(el.value).to.equal(7);
+  });
+
+  it("decrements by step", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input .value=${5} step="1"></tulpar-number-input>`);
+    const btn = el.shadowRoot!.querySelector<HTMLButtonElement>(".stepper-dec")!;
+    btn.dispatchEvent(new PointerEvent("pointerdown"));
+    btn.dispatchEvent(new PointerEvent("pointerup"));
+    await el.updateComplete;
+    expect(el.value).to.equal(4);
+  });
+
+  it("steps from min (or 0) when value is null", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input min="10"></tulpar-number-input>`);
+    const btn = el.shadowRoot!.querySelector<HTMLButtonElement>(".stepper-inc")!;
+    btn.dispatchEvent(new PointerEvent("pointerdown"));
+    btn.dispatchEvent(new PointerEvent("pointerup"));
+    await el.updateComplete;
+    expect(el.value).to.equal(11); // min(10) + step(1)
+  });
+
+  it("disables increment when value === max", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input .value=${10} max="10"></tulpar-number-input>`);
+    const incBtn = el.shadowRoot!.querySelector<HTMLButtonElement>(".stepper-inc")!;
+    expect(incBtn.disabled).to.equal(true);
+  });
+
+  it("disables decrement when value === min", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input .value=${0} min="0"></tulpar-number-input>`);
+    const decBtn = el.shadowRoot!.querySelector<HTMLButtonElement>(".stepper-dec")!;
+    expect(decBtn.disabled).to.equal(true);
+  });
+
+  it("long-press repeats after step-hold-delay at step-hold-interval", async () => {
+    const el = await fixture<TulparNumberInput>(html`
+      <tulpar-number-input .value=${0} step="1" step-hold-delay="50" step-hold-interval="20"></tulpar-number-input>
+    `);
+    const btn = el.shadowRoot!.querySelector<HTMLButtonElement>(".stepper-inc")!;
+    btn.dispatchEvent(new PointerEvent("pointerdown"));
+    await new Promise((r) => setTimeout(r, 150));
+    btn.dispatchEvent(new PointerEvent("pointerup"));
+    await el.updateComplete;
+    // Initial press (+1) + at least 3 acceleration ticks (50ms delay then 20ms intervals over ~100ms)
+    expect(el.value).to.be.greaterThan(3);
+  });
+
+  it("stops repeating on pointerleave", async () => {
+    const el = await fixture<TulparNumberInput>(html`
+      <tulpar-number-input .value=${0} step="1" step-hold-delay="30" step-hold-interval="20"></tulpar-number-input>
+    `);
+    const btn = el.shadowRoot!.querySelector<HTMLButtonElement>(".stepper-inc")!;
+    btn.dispatchEvent(new PointerEvent("pointerdown"));
+    await new Promise((r) => setTimeout(r, 80));
+    btn.dispatchEvent(new PointerEvent("pointerleave"));
+    const valueAtLeave = el.value;
+    await new Promise((r) => setTimeout(r, 80));
+    expect(el.value).to.equal(valueAtLeave); // no further ticks
+  });
+});
