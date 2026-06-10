@@ -1,6 +1,6 @@
 import { expect, fixture, html } from "@open-wc/testing";
 import "./tulpar-text-input";
-import type { TulparTextInput } from "./tulpar-text-input";
+import type { TulparTextInput, TextInputType } from "./tulpar-text-input";
 
 describe("<tulpar-text-input> baseline", () => {
   it("registers the element", () => {
@@ -31,4 +31,15 @@ describe("<tulpar-text-input> baseline", () => {
     await el.updateComplete;
     expect(new FormData(form).get("email")).to.equal("user@example.com");
   });
+});
+
+describe("<tulpar-text-input> type variants", () => {
+  const cases: TextInputType[] = ["text", "email", "url", "tel", "search", "password"];
+  for (const t of cases) {
+    it(`forwards type=${t} to the underlying input`, async () => {
+      const el = await fixture<TulparTextInput>(html`<tulpar-text-input type=${t}></tulpar-text-input>`);
+      const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+      expect(input.type).to.equal(t);
+    });
+  }
 });
