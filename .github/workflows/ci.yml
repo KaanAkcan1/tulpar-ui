@@ -36,3 +36,6 @@ jobs:
         run: pnpm --filter @tulpar-ui/core exec playwright install --with-deps chromium
 
       - run: pnpm test
+
+      - name: Changeset status (informational)
+        run: pnpm exec changeset status --since=origin/main || echo "::warning::No changeset found - add one with 'pnpm changeset' if this PR changes published packages"
