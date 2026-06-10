@@ -1,4 +1,4 @@
-import { LitElement, html, nothing, type TemplateResult } from "lit";
+import { LitElement, html, nothing, type CSSResultGroup, type TemplateResult } from "lit";
 import { property, state } from "lit/decorators.js";
 import { formFieldBaseStyles } from "./form-field-base.styles";
 import { resolveLabelPosition } from "./label-position-resolver";
@@ -20,7 +20,10 @@ export type NecessityIndicator = "icon" | "label" | "none";
  * (<tulpar-text-input>, <tulpar-textarea>, <tulpar-number-input>).
  */
 export abstract class FormFieldBase extends LitElement {
-  static override styles = formFieldBaseStyles;
+  // Explicit CSSResultGroup annotation: without it TS narrows the static type
+  // to the single CSSResult, making subclasses' `[FormFieldBase.styles, own]`
+  // arrays a static-side incompatibility (TS2417).
+  static override styles: CSSResultGroup = formFieldBaseStyles;
   static formAssociated = true;
 
   protected _internals: ElementInternals;
