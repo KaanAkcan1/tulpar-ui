@@ -159,6 +159,14 @@ export class TulparNumberInput extends FormFieldBase {
   }
 
   private _onKeydown = (e: KeyboardEvent) => {
+    // Reject decimal separators when in integer-only mode
+    if (this.integerOnly && (e.key === "." || e.key === ",")) {
+      e.preventDefault();
+      this.setAttribute("data-mask-rejected", "");
+      setTimeout(() => this.removeAttribute("data-mask-rejected"), 200);
+      return;
+    }
+
     let multiplier = 1;
     if (e.shiftKey) multiplier = 10;
     else if (e.ctrlKey || e.metaKey) multiplier = 100;

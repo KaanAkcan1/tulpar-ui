@@ -259,3 +259,43 @@ describe("<tulpar-number-input> keyboard", () => {
     expect(el.value).to.equal(100); // clamped, not 104
   });
 });
+
+describe("<tulpar-number-input> integer-only", () => {
+  it("rejects decimal point key + adds data-mask-rejected", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input integer-only></tulpar-number-input>`);
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+    const ev = new KeyboardEvent("keydown", { key: ".", bubbles: true, cancelable: true });
+    input.dispatchEvent(ev);
+    expect(ev.defaultPrevented).to.equal(true);
+    expect(el.hasAttribute("data-mask-rejected")).to.equal(true);
+  });
+
+  it("rejects comma decimal separator too", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input integer-only></tulpar-number-input>`);
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+    const ev = new KeyboardEvent("keydown", { key: ",", bubbles: true, cancelable: true });
+    input.dispatchEvent(ev);
+    expect(ev.defaultPrevented).to.equal(true);
+  });
+
+  it("allows decimal keys when integer-only is off", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input></tulpar-number-input>`);
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+    const ev = new KeyboardEvent("keydown", { key: ".", bubbles: true, cancelable: true });
+    input.dispatchEvent(ev);
+    expect(ev.defaultPrevented).to.equal(false);
+  });
+
+  it("formats with no fraction digits when integer-only", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input integer-only locale="en-US" .value=${1234.5}></tulpar-number-input>`);
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+    expect(input.value).to.not.contain(".5");
+    expect(input.value).to.not.contain(",5");
+  });
+
+  it("uses numeric inputmode when integer-only", async () => {
+    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input integer-only></tulpar-number-input>`);
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+    expect(input.getAttribute("inputmode")).to.equal("numeric");
+  });
+});

@@ -44,4 +44,20 @@ export const numberInputStyles = css`
     opacity: 0.4;
     cursor: not-allowed;
   }
+
+  :host([data-mask-rejected]) {
+    animation: tulpar-number-shake 200ms;
+  }
+
+  @keyframes tulpar-number-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :host([data-mask-rejected]) {
+      animation: none;
+    }
+  }
 `;
