@@ -65,4 +65,38 @@ export const textInputStyles = css`
     align-items: center;
     color: var(--tulpar-input-icon-default, #78716c);
   }
+
+  .field-copy-btn,
+  .field-paste-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 0.125rem;
+    margin-left: 0.25rem;
+    cursor: pointer;
+    color: var(--tulpar-input-icon-default, #78716c);
+    border-radius: 999px;
+  }
+
+  .field-copy-btn:hover,
+  .field-paste-btn:hover:not([disabled]) {
+    background: var(--tulpar-input-bg-readonly, #fafaf9);
+  }
+
+  .field-paste-btn[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  :host([data-mask-rejected]) {
+    animation: tulpar-input-shake 200ms;
+  }
+
+  @keyframes tulpar-input-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
+  }
 `;

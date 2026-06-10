@@ -64,6 +64,10 @@ export abstract class FormFieldBase extends LitElement {
   @property({ type: Boolean, attribute: 'suffix-interactive', reflect: true })
   suffixInteractive = false;
 
+  // --- Copy/Paste ---
+  @property({ type: Boolean, reflect: true }) copyable = false;
+  @property({ type: Boolean, reflect: true }) pastable = false;
+
   private static _idCounter = 0;
   protected _msgId = `tulpar-msg-${++FormFieldBase._idCounter}`;
 

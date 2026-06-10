@@ -22,6 +22,8 @@ export class TulparTextInput extends FormFieldBase {
   @property({ type: Boolean, attribute: "show-count" }) showCount = false;
   @property({ type: Boolean, attribute: "no-reveal-toggle" }) noRevealToggle = false;
   @state() private _passwordRevealed = false;
+  @state() private _copyConfirm = false;
+  @state() private _pasteConfirm = false;
 
   constructor() {
     super();
@@ -116,6 +118,8 @@ export class TulparTextInput extends FormFieldBase {
         />
         ${this._renderStatusZone()}
         ${this._renderRevealButton()}
+        ${this._renderPasteButton()}
+        ${this._renderCopyButton()}
         ${this._renderClearButton()}
         ${this._renderSuffixSlot()}
       </div>
@@ -157,6 +161,31 @@ export class TulparTextInput extends FormFieldBase {
     });
   };
 
+  private _onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(this.value);
+      this._copyConfirm = true;
+      setTimeout(() => { this._copyConfirm = false; }, 1500);
+    } catch {
+      // permissions denied — silent
+    }
+  };
+
+  private _onPaste = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      this.value = text;
+      this._internals.setFormValue(text);
+      this.dispatchEvent(new Event("change", { bubbles: true }));
+      this._pasteConfirm = true;
+      setTimeout(() => { this._pasteConfirm = false; }, 1500);
+    } catch {
+      // Permission denied or empty — emit data-mask-rejected for shake feedback.
+      this.setAttribute("data-mask-rejected", "");
+      setTimeout(() => this.removeAttribute("data-mask-rejected"), 200);
+    }
+  };
+
   private _renderRevealButton(): TemplateResult | typeof nothing {
     // Auto-hide at xs (cannot meet 44pt touch target — see spec §4.6 xs constraints).
     if (this._isXs() || this.type !== "password" || this.noRevealToggle) return nothing;
@@ -194,6 +223,42 @@ export class TulparTextInput extends FormFieldBase {
         <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M6 6 L18 18 M18 6 L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" />
         </svg>
+      </button>
+    `;
+  }
+
+  private _renderCopyButton(): TemplateResult | typeof nothing {
+    // Auto-hide at xs (cannot meet 44pt touch target).
+    if (this._isXs() || !this.copyable || this.disabled) return nothing;
+    return html`
+      <button
+        type="button"
+        class="field-copy-btn"
+        aria-label=${this._copyConfirm ? "Copied" : "Copy value"}
+        @click=${this._onCopy}
+      >
+        ${this._copyConfirm
+          ? html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13 l4 4 L19 7" stroke="currentColor" stroke-width="2" fill="none"/></svg>`
+          : html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none"/><rect x="4" y="4" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none"/></svg>`}
+      </button>
+    `;
+  }
+
+  private _renderPasteButton(): TemplateResult | typeof nothing {
+    // Auto-hide at xs (cannot meet 44pt touch target).
+    if (this._isXs() || !this.pastable) return nothing;
+    const inert = this.disabled || this.readonly;
+    return html`
+      <button
+        type="button"
+        class="field-paste-btn"
+        aria-label=${this._pasteConfirm ? "Pasted" : "Paste from clipboard"}
+        ?disabled=${inert}
+        @click=${this._onPaste}
+      >
+        ${this._pasteConfirm
+          ? html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13 l4 4 L19 7" stroke="currentColor" stroke-width="2" fill="none"/></svg>`
+          : html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 v14 M6 10 l6 6 l6 -6" stroke="currentColor" stroke-width="2" fill="none"/></svg>`}
       </button>
     `;
   }

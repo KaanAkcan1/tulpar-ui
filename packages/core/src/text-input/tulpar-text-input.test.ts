@@ -197,3 +197,65 @@ describe("<tulpar-text-input> search auto-enrichment", () => {
     expect(el.shadowRoot!.querySelector(".field-clear-btn")).to.equal(null);
   });
 });
+
+describe("<tulpar-text-input> copyable + pastable", () => {
+  // Manual stubbing of navigator.clipboard methods
+  let originalWriteText: typeof navigator.clipboard.writeText;
+  let originalReadText: typeof navigator.clipboard.readText;
+  let writeCalls: string[] = [];
+  let readReturn: string | Promise<string> = "";
+
+  beforeEach(() => {
+    writeCalls = [];
+    originalWriteText = navigator.clipboard.writeText.bind(navigator.clipboard);
+    originalReadText = navigator.clipboard.readText.bind(navigator.clipboard);
+    navigator.clipboard.writeText = async (text: string) => { writeCalls.push(text); };
+    navigator.clipboard.readText = async () => {
+      if (readReturn instanceof Promise) return readReturn;
+      return readReturn;
+    };
+  });
+
+  afterEach(() => {
+    navigator.clipboard.writeText = originalWriteText;
+    navigator.clipboard.readText = originalReadText;
+  });
+
+  it("renders copy button when copyable", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input copyable value="hello"></tulpar-text-input>`);
+    expect(el.shadowRoot!.querySelector(".field-copy-btn")).to.not.equal(null);
+  });
+
+  it("renders paste button when pastable", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input pastable></tulpar-text-input>`);
+    expect(el.shadowRoot!.querySelector(".field-paste-btn")).to.not.equal(null);
+  });
+
+  it("paste button is inert when readonly", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input pastable readonly></tulpar-text-input>`);
+    const btn = el.shadowRoot!.querySelector<HTMLButtonElement>(".field-paste-btn")!;
+    expect(btn.hasAttribute("disabled")).to.equal(true);
+  });
+
+  it("auto-hides copy + paste at size=xs", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input copyable pastable value="hi" size="xs"></tulpar-text-input>`);
+    expect(el.shadowRoot!.querySelector(".field-copy-btn")).to.equal(null);
+    expect(el.shadowRoot!.querySelector(".field-paste-btn")).to.equal(null);
+  });
+
+  it("clicking copy calls clipboard.writeText with current value", async () => {
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input copyable value="hello"></tulpar-text-input>`);
+    el.shadowRoot!.querySelector<HTMLButtonElement>(".field-copy-btn")!.click();
+    await new Promise((r) => setTimeout(r, 10));
+    expect(writeCalls).to.deep.equal(["hello"]);
+  });
+
+  it("clicking paste sets value from clipboard.readText", async () => {
+    readReturn = "pasted";
+    const el = await fixture<TulparTextInput>(html`<tulpar-text-input pastable></tulpar-text-input>`);
+    el.shadowRoot!.querySelector<HTMLButtonElement>(".field-paste-btn")!.click();
+    await new Promise((r) => setTimeout(r, 10));
+    await el.updateComplete;
+    expect(el.value).to.equal("pasted");
+  });
+});
