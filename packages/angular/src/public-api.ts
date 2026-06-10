@@ -21,3 +21,5 @@ export type {
 } from "./text-input/tulpar-text-input.component";
 
 export * from "./textarea/tulpar-textarea.component";
+
+export * from "./number-input/tulpar-number-input.component";
