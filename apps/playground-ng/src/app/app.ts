@@ -339,7 +339,10 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [TulparButtonComponent, TulparTextInputComponent, TulparTextareaComponent, TulparNumberInputComponent, LucideAngularModule, AppCheckIcon],
+  // AppCheckIcon is intentionally NOT in imports: its selector never appears in
+  // this template — it is rendered dynamically via NgComponentOutlet inside the
+  // button wrapper ([icon] class-reference binding).
+  imports: [TulparButtonComponent, TulparTextInputComponent, TulparTextareaComponent, TulparNumberInputComponent, LucideAngularModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
