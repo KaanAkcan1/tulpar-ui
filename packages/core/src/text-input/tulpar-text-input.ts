@@ -2,6 +2,7 @@ import { html, type TemplateResult, nothing } from "lit";
 import { property } from "lit/decorators.js";
 import { FormFieldBase } from "../_internal/form-field-base";
 import { textInputStyles } from "./tulpar-text-input.styles";
+import { warnDev } from "../_internal/warn-dev";
 
 export type TextInputType = "text" | "email" | "url" | "tel" | "search" | "password";
 
@@ -15,6 +16,10 @@ export class TulparTextInput extends FormFieldBase {
   @property({ type: Number, attribute: "maxlength" }) maxLength?: number;
   @property({ type: Number, attribute: "minlength" }) minLength?: number;
   @property({ type: String }) pattern?: string;
+
+  protected override firstUpdated() {
+    this._maybeWarnAutocomplete();
+  }
 
   protected override _hasValue(): boolean {
     return this.value !== "";
@@ -47,6 +52,15 @@ export class TulparTextInput extends FormFieldBase {
         ${this._renderSuffixSlot()}
       </div>
     `;
+  }
+
+  private _maybeWarnAutocomplete() {
+    const sensitive = ["email", "password", "tel"] as const;
+    if ((sensitive as readonly string[]).includes(this.type) && !this.autocomplete) {
+      warnDev(
+        `[tulpar] <tulpar-text-input type="${this.type}"> has no 'autocomplete' attribute. Set one (e.g. autocomplete="current-password") to improve security and browser autofill UX.`,
+      );
+    }
   }
 
   private _onInput = (e: Event) => {

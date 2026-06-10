@@ -43,3 +43,46 @@ describe("<tulpar-text-input> type variants", () => {
     });
   }
 });
+
+describe("<tulpar-text-input> autocomplete dev warning", () => {
+  let originalWarn: typeof console.warn;
+  let warnCalls: { args: unknown[] }[] = [];
+
+  beforeEach(() => {
+    warnCalls = [];
+    originalWarn = console.warn;
+    console.warn = (...args: unknown[]) => {
+      warnCalls.push({ args });
+    };
+  });
+
+  afterEach(() => {
+    console.warn = originalWarn;
+  });
+
+  it("warns when type=password but autocomplete is unset", async () => {
+    await fixture<TulparTextInput>(html`<tulpar-text-input type="password"></tulpar-text-input>`);
+    expect(warnCalls.length).to.equal(1);
+    expect(String(warnCalls[0].args[0])).to.match(/autocomplete/i);
+  });
+
+  it("does not warn when autocomplete is set", async () => {
+    await fixture<TulparTextInput>(html`
+      <tulpar-text-input type="password" autocomplete="current-password"></tulpar-text-input>
+    `);
+    expect(warnCalls.length).to.equal(0);
+  });
+
+  it("does not warn for non-sensitive type=text", async () => {
+    await fixture<TulparTextInput>(html`<tulpar-text-input></tulpar-text-input>`);
+    expect(warnCalls.length).to.equal(0);
+  });
+
+  it("warns for type=email + type=tel when autocomplete is unset", async () => {
+    await fixture<TulparTextInput>(html`<tulpar-text-input type="email"></tulpar-text-input>`);
+    expect(warnCalls.length).to.equal(1);
+    warnCalls = [];
+    await fixture<TulparTextInput>(html`<tulpar-text-input type="tel"></tulpar-text-input>`);
+    expect(warnCalls.length).to.equal(1);
+  });
+});
