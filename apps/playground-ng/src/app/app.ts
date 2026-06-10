@@ -5,7 +5,12 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { TulparButtonComponent } from '@tulpar-ui/angular';
+import {
+  TulparButtonComponent,
+  TulparTextInputComponent,
+  TulparTextareaComponent,
+  TulparNumberInputComponent,
+} from '@tulpar-ui/angular';
 import '@tulpar-ui/core/button-group';
 import {
   LucideAngularModule,
@@ -334,7 +339,7 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [TulparButtonComponent, LucideAngularModule, AppCheckIcon],
+  imports: [TulparButtonComponent, TulparTextInputComponent, TulparTextareaComponent, TulparNumberInputComponent, LucideAngularModule, AppCheckIcon],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -824,6 +829,113 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
           <pre class="code"><code>{{ tooltipCode }}</code></pre>
         </section>
 
+        <!-- ── 20. Input Family ───────────────────────────────────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">20. Input Family</h2>
+          <p class="section-desc">
+            Live demos for <code class="inline-code">TextInput</code>,
+            <code class="inline-code">Textarea</code>, and
+            <code class="inline-code">NumberInput</code> Angular wrappers. Signal-driven two-way
+            binding via <code class="inline-code">[value]</code> +
+            <code class="inline-code">(valueChange)</code>.
+          </p>
+
+          <h3 class="section-subtitle">TextInput — email + validation states</h3>
+          <div class="preview preview--col">
+            <tulpar-text-input-ng
+              label="Email"
+              type="email"
+              autocomplete="email"
+              helperText="We won't share your email"
+              [value]="email()"
+              (valueChange)="email.set($event)"
+            ></tulpar-text-input-ng>
+            <p class="value-display">email() = {{ email() }}</p>
+          </div>
+
+          <h3 class="section-subtitle">TextInput — password (reveal toggle)</h3>
+          <div class="preview preview--col">
+            <tulpar-text-input-ng
+              label="Password"
+              type="password"
+              autocomplete="current-password"
+            ></tulpar-text-input-ng>
+          </div>
+
+          <h3 class="section-subtitle">TextInput — search (auto icon + clearable)</h3>
+          <div class="preview preview--col">
+            <tulpar-text-input-ng
+              type="search"
+              placeholder="Search..."
+              labelPosition="none"
+              [noMessageSpace]="true"
+            ></tulpar-text-input-ng>
+          </div>
+
+          <h3 class="section-subtitle">TextInput — TR phone mask</h3>
+          <div class="preview preview--col">
+            <tulpar-text-input-ng
+              label="Phone"
+              mask="+\\90 (999) 999 99 99"
+              [value]="phone()"
+              (valueChange)="phone.set($event)"
+            ></tulpar-text-input-ng>
+            <p class="value-display">phone() = {{ phone() }}</p>
+          </div>
+
+          <h3 class="section-subtitle">TextInput — statuses</h3>
+          <div class="preview preview--col">
+            <tulpar-text-input-ng
+              label="Invalid"
+              [invalid]="true"
+              errorText="Required field"
+            ></tulpar-text-input-ng>
+            <tulpar-text-input-ng
+              label="Validating"
+              [validating]="true"
+              helperText="Checking..."
+            ></tulpar-text-input-ng>
+          </div>
+
+          <h3 class="section-subtitle">Textarea — autosize + counter</h3>
+          <div class="preview preview--col">
+            <tulpar-textarea-ng
+              label="Bio"
+              [showCount]="true"
+              [maxLength]="200"
+              [value]="bio()"
+              (valueChange)="bio.set($event)"
+            ></tulpar-textarea-ng>
+            <p class="value-display">bio() length = {{ bio().length }}</p>
+          </div>
+
+          <h3 class="section-subtitle">NumberInput — TRY currency</h3>
+          <div class="preview preview--col">
+            <tulpar-number-input-ng
+              label="Amount"
+              formatStyle="currency"
+              currency="TRY"
+              locale="tr-TR"
+              [minFractionDigits]="2"
+              [maxFractionDigits]="2"
+              [min]="0"
+              [value]="amount()"
+              (valueChange)="amount.set($event)"
+            ></tulpar-number-input-ng>
+            <p class="value-display">amount() = {{ amount() }}</p>
+          </div>
+
+          <h3 class="section-subtitle">NumberInput — integer-only + steppers</h3>
+          <div class="preview preview--col">
+            <tulpar-number-input-ng
+              label="Quantity"
+              [integerOnly]="true"
+              [min]="0"
+              [max]="100"
+            ></tulpar-number-input-ng>
+          </div>
+        </section>
+
         <!-- ── 19. Non-Lucide icon libraries ─────────────────────────────── -->
         <section class="doc-section">
           <h2 class="section-title">19. Non-Lucide icon libraries</h2>
@@ -1067,6 +1179,21 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
         color: var(--tulpar-color-text-secondary, #57534e);
       }
 
+      .section-subtitle {
+        margin: 24px 0 12px;
+        font-family: var(--tulpar-font-family-display, Georgia, serif);
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--tulpar-color-text-primary, #1c1917);
+      }
+
+      .value-display {
+        margin: 8px 0 0;
+        font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+        font-size: 13px;
+        color: var(--tulpar-color-text-secondary, #57534e);
+      }
+
       kbd {
         display: inline-block;
         padding: 1px 5px;
@@ -1098,6 +1225,12 @@ export class App {
   isDark = signal(false);
   submittedEmail = signal<string | null>(null);
   dataDisabledClicked = signal(false);
+
+  // ─── Input family demo signals ─────────────────────────────────────────────
+  email = signal('');
+  phone = signal('');
+  bio = signal('');
+  amount = signal<number | null>(null);
 
   // ─── Lucide icon references ────────────────────────────────────────────────
   protected readonly Check = Check;
