@@ -17,6 +17,10 @@ export default defineConfig({
     },
     outDir: "dist",
     sourcemap: true,
+    // Watch mode must not wipe dist between rebuilds — downstream watchers
+    // (angular/vue wrappers, playgrounds) read these files mid-rebuild and
+    // hit TS2307/ENOENT until the rewrite completes.
+    emptyOutDir: !process.argv.includes("--watch"),
     rollupOptions: {
       external: ["lit", "lit/decorators.js"],
     },
