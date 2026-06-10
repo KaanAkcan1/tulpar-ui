@@ -285,9 +285,7 @@ describe("<tulpar-button>", () => {
 
     it("hides empty .label and .end wrappers so the lone icon is truly centered", async () => {
       const el = await fixture<TulparButton>(
-        html`<tulpar-button icon-only aria-label="Add"
-          ><span slot="start">+</span></tulpar-button
-        >`,
+        html`<tulpar-button icon-only aria-label="Add"><span slot="start">+</span></tulpar-button>`,
       );
       const label = el.shadowRoot!.querySelector(".label") as HTMLElement;
       const end = el.shadowRoot!.querySelector(".end") as HTMLElement;
@@ -326,9 +324,7 @@ describe("<tulpar-button>", () => {
 
     it("only shows separator on the side with a slotted icon", async () => {
       const startOnly = await fixture<TulparButton>(
-        html`<tulpar-button icon-separator
-          ><span slot="start">i</span>Label</tulpar-button
-        >`,
+        html`<tulpar-button icon-separator><span slot="start">i</span>Label</tulpar-button>`,
       );
       const startSep = startOnly.shadowRoot!.querySelector(".separator--start")!;
       const endSep = startOnly.shadowRoot!.querySelector(".separator--end")!;
@@ -338,21 +334,21 @@ describe("<tulpar-button>", () => {
       const endOnly = await fixture<TulparButton>(
         html`<tulpar-button icon-separator>Label<span slot="end">i</span></tulpar-button>`,
       );
-      expect(getComputedStyle(endOnly.shadowRoot!.querySelector(".separator--start")!).display).to.equal(
-        "none",
-      );
-      expect(getComputedStyle(endOnly.shadowRoot!.querySelector(".separator--end")!).display).to.equal(
-        "block",
-      );
+      expect(
+        getComputedStyle(endOnly.shadowRoot!.querySelector(".separator--start")!).display,
+      ).to.equal("none");
+      expect(
+        getComputedStyle(endOnly.shadowRoot!.querySelector(".separator--end")!).display,
+      ).to.equal("block");
 
       const both = await fixture<TulparButton>(
         html`<tulpar-button icon-separator
           ><span slot="start">a</span>Label<span slot="end">b</span></tulpar-button
         >`,
       );
-      expect(getComputedStyle(both.shadowRoot!.querySelector(".separator--start")!).display).to.equal(
-        "block",
-      );
+      expect(
+        getComputedStyle(both.shadowRoot!.querySelector(".separator--start")!).display,
+      ).to.equal("block");
       expect(getComputedStyle(both.shadowRoot!.querySelector(".separator--end")!).display).to.equal(
         "block",
       );
@@ -360,9 +356,9 @@ describe("<tulpar-button>", () => {
       const none = await fixture<TulparButton>(
         html`<tulpar-button icon-separator>Label</tulpar-button>`,
       );
-      expect(getComputedStyle(none.shadowRoot!.querySelector(".separator--start")!).display).to.equal(
-        "none",
-      );
+      expect(
+        getComputedStyle(none.shadowRoot!.querySelector(".separator--start")!).display,
+      ).to.equal("none");
       expect(getComputedStyle(none.shadowRoot!.querySelector(".separator--end")!).display).to.equal(
         "none",
       );

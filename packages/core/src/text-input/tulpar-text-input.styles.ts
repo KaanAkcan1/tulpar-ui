@@ -56,7 +56,7 @@ export const textInputStyles = css`
     font-size: 0.75rem;
   }
 
-  .field-counter[data-at-limit='true'] {
+  .field-counter[data-at-limit="true"] {
     color: var(--tulpar-input-message-error, #b91c1c);
   }
 
@@ -95,8 +95,15 @@ export const textInputStyles = css`
   }
 
   @keyframes tulpar-input-shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-3px); }
-    75% { transform: translateX(3px); }
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-3px);
+    }
+    75% {
+      transform: translateX(3px);
+    }
   }
 `;

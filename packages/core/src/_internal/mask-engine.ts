@@ -1,11 +1,4 @@
-export type MaskTokenKind =
-  | "upper"
-  | "lower"
-  | "letter"
-  | "digit"
-  | "special"
-  | "any"
-  | "literal";
+export type MaskTokenKind = "upper" | "lower" | "letter" | "digit" | "special" | "any" | "literal";
 
 export type MaskToken =
   | { kind: Exclude<MaskTokenKind, "literal"> }
@@ -147,7 +140,10 @@ export class MaskController {
     for (let i = 0; i < this._tokens.length; i++) {
       const t = this._tokens[i];
       if (t.kind === "literal") continue;
-      if (r >= raw.length) { nextTokenIndex = i; break; }
+      if (r >= raw.length) {
+        nextTokenIndex = i;
+        break;
+      }
       r++;
     }
     if (nextTokenIndex === -1) {
@@ -180,7 +176,8 @@ export class MaskController {
     let tokenIdx = 0;
     for (let i = 0; i < text.length; i++) {
       // advance past literal tokens
-      while (tokenIdx < this._tokens.length && this._tokens[tokenIdx].kind === "literal") tokenIdx++;
+      while (tokenIdx < this._tokens.length && this._tokens[tokenIdx].kind === "literal")
+        tokenIdx++;
       if (tokenIdx >= this._tokens.length) break;
       const t = this._tokens[tokenIdx];
       const ch = text[i];
@@ -200,9 +197,10 @@ export class MaskController {
 
   private _setRaw(raw: string) {
     this.host.rawValue = raw;
-    this.host.value = this.host.maskEmit === "raw"
-      ? raw
-      : applyMask(Array.from(raw), this._tokens, this.host.maskSlotChar);
+    this.host.value =
+      this.host.maskEmit === "raw"
+        ? raw
+        : applyMask(Array.from(raw), this._tokens, this.host.maskSlotChar);
     this.host.requestUpdate();
   }
 }

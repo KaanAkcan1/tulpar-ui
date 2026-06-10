@@ -41,19 +41,19 @@ export abstract class FormFieldBase extends LitElement {
 
   // --- Label ---
   @property({ type: String }) label?: string;
-  @property({ type: String, attribute: 'label-position', reflect: true })
+  @property({ type: String, attribute: "label-position", reflect: true })
   labelPosition?: LabelPosition;
 
   // --- Necessity ---
   @property({ type: Boolean, reflect: true }) required = false;
-  @property({ type: String, attribute: 'necessity-indicator' })
-  necessityIndicator: NecessityIndicator = 'icon';
+  @property({ type: String, attribute: "necessity-indicator" })
+  necessityIndicator: NecessityIndicator = "icon";
 
   // --- Message row ---
-  @property({ type: String, attribute: 'helper-text' }) helperText?: string;
-  @property({ type: String, attribute: 'error-text' }) errorText?: string;
-  @property({ type: String, attribute: 'warn-text' }) warnText?: string;
-  @property({ type: Boolean, attribute: 'no-message-space', reflect: true }) noMessageSpace = false;
+  @property({ type: String, attribute: "helper-text" }) helperText?: string;
+  @property({ type: String, attribute: "error-text" }) errorText?: string;
+  @property({ type: String, attribute: "warn-text" }) warnText?: string;
+  @property({ type: Boolean, attribute: "no-message-space", reflect: true }) noMessageSpace = false;
 
   // --- Status ---
   @property({ type: Boolean, reflect: true }) invalid = false;
@@ -61,10 +61,10 @@ export abstract class FormFieldBase extends LitElement {
   @property({ type: Boolean, reflect: true }) validating = false;
 
   // --- Prefix/Suffix ---
-  @property({ type: Boolean, attribute: 'prefix-interactive', reflect: true })
+  @property({ type: Boolean, attribute: "prefix-interactive", reflect: true })
   prefixInteractive = false;
 
-  @property({ type: Boolean, attribute: 'suffix-interactive', reflect: true })
+  @property({ type: Boolean, attribute: "suffix-interactive", reflect: true })
   suffixInteractive = false;
 
   // --- Copy/Paste ---
@@ -103,10 +103,10 @@ export abstract class FormFieldBase extends LitElement {
   protected _renderLabelContent(): TemplateResult {
     const ind = this.necessityIndicator;
     const req = this.required;
-    if (ind === 'none') {
+    if (ind === "none") {
       return html`<slot name="label">${this.label}</slot>`;
     }
-    if (ind === 'icon') {
+    if (ind === "icon") {
       return html`
         <slot name="label">${this.label}</slot>${req
           ? html`<span class="field-required-marker" aria-hidden="true">*</span>`
@@ -114,16 +114,17 @@ export abstract class FormFieldBase extends LitElement {
       `;
     }
     // label mode
-    const suffix = req ? '(required)' : '(optional)';
-    return html`<slot name="label">${this.label}</slot> <span class="field-necessity-text">${suffix}</span>`;
+    const suffix = req ? "(required)" : "(optional)";
+    return html`<slot name="label">${this.label}</slot>
+      <span class="field-necessity-text">${suffix}</span>`;
   }
 
   protected _ariaRequiredAttr() {
-    return this.required ? 'true' : 'false';
+    return this.required ? "true" : "false";
   }
 
   protected _ariaInvalidAttr() {
-    return this.invalid ? 'true' : 'false';
+    return this.invalid ? "true" : "false";
   }
 
   protected _ariaDescribedBy() {
@@ -133,22 +134,24 @@ export abstract class FormFieldBase extends LitElement {
 
   protected _renderMessageText(): TemplateResult | typeof nothing {
     let text: string | undefined;
-    let role: 'alert' | 'status' | undefined;
-    let kind: 'error' | 'warn' | 'helper' | undefined;
+    let role: "alert" | "status" | undefined;
+    let kind: "error" | "warn" | "helper" | undefined;
     if (this.invalid && this.errorText) {
       text = this.errorText;
-      role = 'alert';
-      kind = 'error';
+      role = "alert";
+      kind = "error";
     } else if (this.warn && this.warnText) {
       text = this.warnText;
-      role = 'status';
-      kind = 'warn';
+      role = "status";
+      kind = "warn";
     } else if (this.helperText) {
       text = this.helperText;
-      kind = 'helper';
+      kind = "helper";
     }
     return text
-      ? html`<span id=${this._msgId} class="field-message" data-kind=${kind} role=${role ?? nothing}>${text}</span>`
+      ? html`<span id=${this._msgId} class="field-message" data-kind=${kind} role=${role ?? nothing}
+          >${text}</span
+        >`
       : nothing;
   }
 
@@ -158,27 +161,38 @@ export abstract class FormFieldBase extends LitElement {
   }
 
   protected _renderValidatingLiveRegion(): TemplateResult {
-    return html`<span class="field-validating-live" role="status" aria-live="polite">${this._liveAnnouncement}</span>`;
+    return html`<span class="field-validating-live" role="status" aria-live="polite"
+      >${this._liveAnnouncement}</span
+    >`;
   }
 
   protected _renderStatusIcon(): TemplateResult | typeof nothing {
     // Precedence: validating > invalid > warn
-    let kind: 'validating' | 'invalid' | 'warn' | undefined;
-    if (this.validating) kind = 'validating';
-    else if (this.invalid) kind = 'invalid';
-    else if (this.warn) kind = 'warn';
+    let kind: "validating" | "invalid" | "warn" | undefined;
+    if (this.validating) kind = "validating";
+    else if (this.invalid) kind = "invalid";
+    else if (this.warn) kind = "warn";
 
     if (!kind) return nothing;
 
     switch (kind) {
-      case 'validating':
+      case "validating":
         // CSS-based rotation (not SVG SMIL) so prefers-reduced-motion @media query disables it.
         return html`<span class="field-status-icon field-status-icon--spin" data-kind="validating">
           <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2" fill="none" stroke-dasharray="36" stroke-dashoffset="9" />
+            <circle
+              cx="12"
+              cy="12"
+              r="8"
+              stroke="currentColor"
+              stroke-width="2"
+              fill="none"
+              stroke-dasharray="36"
+              stroke-dashoffset="9"
+            />
           </svg>
         </span>`;
-      case 'invalid':
+      case "invalid":
         return html`<span class="field-status-icon" data-kind="invalid">
           <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
             <circle cx="12" cy="12" r="10" fill="currentColor" />
@@ -186,7 +200,7 @@ export abstract class FormFieldBase extends LitElement {
             <circle cx="12" cy="17" r="1.25" fill="white" />
           </svg>
         </span>`;
-      case 'warn':
+      case "warn":
         return html`<span class="field-status-icon" data-kind="warn">
           <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M12 3 L22 20 L2 20 Z" fill="currentColor" />
@@ -251,16 +265,19 @@ export abstract class FormFieldBase extends LitElement {
     return html`
       <div class="field-shell" data-label-position=${pos} data-has-value=${hasValue ? "" : nothing}>
         ${showTopLabel
-          ? html`<label class="field-label" part="label" for="control">${this._renderLabelContent()}</label>`
+          ? html`<label class="field-label" part="label" for="control"
+              >${this._renderLabelContent()}</label
+            >`
           : nothing}
         ${isFloat
           ? html`<div class="field-control-wrap">
               ${this.renderControl(ariaLabel)}
-              <label class="field-label field-label--${pos}" part="label" for="control">${this._renderLabelContent()}</label>
+              <label class="field-label field-label--${pos}" part="label" for="control"
+                >${this._renderLabelContent()}</label
+              >
             </div>`
           : this.renderControl(ariaLabel)}
-        ${this._renderMessageRow()}
-        ${this._renderValidatingLiveRegion()}
+        ${this._renderMessageRow()} ${this._renderValidatingLiveRegion()}
       </div>
     `;
   }

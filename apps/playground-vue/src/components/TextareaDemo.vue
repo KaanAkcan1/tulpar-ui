@@ -67,14 +67,18 @@ const sizesVariantsCode = `<TulparTextarea size="sm" variant="outlined" label="s
       class="sub-btn"
       :class="{ active: activeSection === 'all' }"
       @click="activeSection = 'all'"
-    >All</button>
+    >
+      All
+    </button>
     <button
       v-for="s in sections"
       :key="s.id"
       class="sub-btn"
       :class="{ active: activeSection === s.id }"
       @click="activeSection = s.id"
-    >{{ s.title }}</button>
+    >
+      {{ s.title }}
+    </button>
   </div>
 
   <!-- ── Basics ─────────────────────────────────────────────────────────────── -->
@@ -87,11 +91,7 @@ const sizesVariantsCode = `<TulparTextarea size="sm" variant="outlined" label="s
         helper-text="Tell us about yourself"
         placeholder="Start typing…"
       />
-      <TulparTextarea
-        label="Notes"
-        placeholder="Optional notes…"
-        :required="true"
-      />
+      <TulparTextarea label="Notes" placeholder="Optional notes…" :required="true" />
     </div>
     <pre class="code"><code>{{ basicsCode }}</code></pre>
   </section>
@@ -99,7 +99,10 @@ const sizesVariantsCode = `<TulparTextarea size="sm" variant="outlined" label="s
   <!-- ── Autosize ───────────────────────────────────────────────────────────── -->
   <section v-if="activeSection === 'all' || activeSection === 'autosize'" class="demo-section">
     <h3 class="demo-title">Autosize</h3>
-    <p class="demo-desc">Default grows from 2 to 6 rows. Customise min/max rows or disable entirely with a fixed row count.</p>
+    <p class="demo-desc">
+      Default grows from 2 to 6 rows. Customise min/max rows or disable entirely with a fixed row
+      count.
+    </p>
     <div class="preview preview--col">
       <TulparTextarea
         label="Autosize (default 2–6 rows)"
@@ -129,9 +132,27 @@ const sizesVariantsCode = `<TulparTextarea size="sm" variant="outlined" label="s
     <p class="demo-desc">Controls the CSS resize handle. Default is vertical.</p>
     <div class="preview preview--col">
       <TulparTextarea resize="none" label="None — no handle" placeholder="No resize handle" />
-      <TulparTextarea resize="both" label="Both directions" :autosize="false" :rows="3" placeholder="Drag corner" />
-      <TulparTextarea resize="horizontal" label="Horizontal only" :autosize="false" :rows="3" placeholder="Drag right edge" />
-      <TulparTextarea resize="vertical" label="Vertical only (default)" :autosize="false" :rows="3" placeholder="Drag bottom edge" />
+      <TulparTextarea
+        resize="both"
+        label="Both directions"
+        :autosize="false"
+        :rows="3"
+        placeholder="Drag corner"
+      />
+      <TulparTextarea
+        resize="horizontal"
+        label="Horizontal only"
+        :autosize="false"
+        :rows="3"
+        placeholder="Drag right edge"
+      />
+      <TulparTextarea
+        resize="vertical"
+        label="Vertical only (default)"
+        :autosize="false"
+        :rows="3"
+        placeholder="Drag bottom edge"
+      />
     </div>
     <pre class="code"><code>{{ resizeCode }}</code></pre>
   </section>
@@ -139,7 +160,9 @@ const sizesVariantsCode = `<TulparTextarea size="sm" variant="outlined" label="s
   <!-- ── Counter ────────────────────────────────────────────────────────────── -->
   <section v-if="activeSection === 'all' || activeSection === 'counter'" class="demo-section">
     <h3 class="demo-title">Character Counter</h3>
-    <p class="demo-desc">show-count with max-length renders a live character count overlay. Works alongside autosize.</p>
+    <p class="demo-desc">
+      show-count with max-length renders a live character count overlay. Works alongside autosize.
+    </p>
     <div class="preview preview--col">
       <TulparTextarea
         label="Post body"
@@ -156,18 +179,16 @@ const sizesVariantsCode = `<TulparTextarea size="sm" variant="outlined" label="s
   <!-- ── Actions ────────────────────────────────────────────────────────────── -->
   <section v-if="activeSection === 'all' || activeSection === 'actions'" class="demo-section">
     <h3 class="demo-title">Actions</h3>
-    <p class="demo-desc">copyable and pastable add icon buttons. Use copyable with prefilled values or readonly.</p>
+    <p class="demo-desc">
+      copyable and pastable add icon buttons. Use copyable with prefilled values or readonly.
+    </p>
     <div class="preview preview--col">
       <TulparTextarea
         label="Template (copyable)"
         :copyable="true"
         value="Dear {{name}}, thank you for reaching out. We will get back to you shortly."
       />
-      <TulparTextarea
-        label="Paste here"
-        :pastable="true"
-        placeholder="Click the paste icon…"
-      />
+      <TulparTextarea label="Paste here" :pastable="true" placeholder="Click the paste icon…" />
       <TulparTextarea
         label="Copyable + Pastable"
         :copyable="true"
@@ -206,13 +227,26 @@ const sizesVariantsCode = `<TulparTextarea size="sm" variant="outlined" label="s
   </section>
 
   <!-- ── Sizes & Variants ───────────────────────────────────────────────────── -->
-  <section v-if="activeSection === 'all' || activeSection === 'sizes-variants'" class="demo-section">
+  <section
+    v-if="activeSection === 'all' || activeSection === 'sizes-variants'"
+    class="demo-section"
+  >
     <h3 class="demo-title">Sizes &amp; Variants</h3>
     <p class="demo-desc">A selection of size + variant combos to show the matrix.</p>
     <div class="preview preview--col">
-      <TulparTextarea size="sm" variant="outlined" label="sm + outlined" placeholder="small outlined" />
+      <TulparTextarea
+        size="sm"
+        variant="outlined"
+        label="sm + outlined"
+        placeholder="small outlined"
+      />
       <TulparTextarea size="md" variant="filled" label="md + filled" placeholder="medium filled" />
-      <TulparTextarea size="lg" variant="underlined" label="lg + underlined" placeholder="large underlined" />
+      <TulparTextarea
+        size="lg"
+        variant="underlined"
+        label="lg + underlined"
+        placeholder="large underlined"
+      />
       <TulparTextarea size="sm" variant="ghost" label="sm + ghost" placeholder="small ghost" />
     </div>
     <pre class="code"><code>{{ sizesVariantsCode }}</code></pre>
@@ -238,7 +272,9 @@ const sizesVariantsCode = `<TulparTextarea size="sm" variant="outlined" label="s
   font-family: var(--tulpar-font-family-ui, system-ui, sans-serif);
   font-size: 13px;
   cursor: pointer;
-  transition: background 0.1s, color 0.1s;
+  transition:
+    background 0.1s,
+    color 0.1s;
 }
 
 .sub-btn:hover {

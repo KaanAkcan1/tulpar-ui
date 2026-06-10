@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { TulparNumberInputComponent } from '@tulpar-ui/angular';
 
 // ─── Code snippets ────────────────────────────────────────────────────────────
@@ -100,13 +95,17 @@ const SECTIONS = [
         class="sub-btn"
         [class.active]="activeSection() === 'all'"
         (click)="activeSection.set('all')"
-      >All</button>
+      >
+        All
+      </button>
       @for (s of sections; track s.id) {
         <button
           class="sub-btn"
           [class.active]="activeSection() === s.id"
           (click)="activeSection.set(s.id)"
-        >{{ s.title }}</button>
+        >
+          {{ s.title }}
+        </button>
       }
     </div>
 
@@ -135,7 +134,10 @@ const SECTIONS = [
     @if (activeSection() === 'all' || activeSection() === 'formatting') {
       <section class="demo-section">
         <h3 class="demo-title">Formatting</h3>
-        <p class="demo-desc">Currency (TRY/USD/EUR), percent (Intl ×100 semantics — value 0.125 displays as 12.5%), and grouping toggle.</p>
+        <p class="demo-desc">
+          Currency (TRY/USD/EUR), percent (Intl ×100 semantics — value 0.125 displays as 12.5%), and
+          grouping toggle.
+        </p>
         <div class="preview preview--col">
           <div class="preview-row">
             <tulpar-number-input-ng
@@ -203,7 +205,10 @@ const SECTIONS = [
     @if (activeSection() === 'all' || activeSection() === 'constraints') {
       <section class="demo-section">
         <h3 class="demo-title">Constraints</h3>
-        <p class="demo-desc">min/max clamp on blur. integer-only shakes on '.' press. allow-empty=false reverts to last valid value when left empty.</p>
+        <p class="demo-desc">
+          min/max clamp on blur. integer-only shakes on '.' press. allow-empty=false reverts to last
+          valid value when left empty.
+        </p>
         <div class="preview preview--col">
           <tulpar-number-input-ng
             label="Clamped (0–100)"
@@ -235,7 +240,10 @@ const SECTIONS = [
     @if (activeSection() === 'all' || activeSection() === 'steppers') {
       <section class="demo-section">
         <h3 class="demo-title">Steppers</h3>
-        <p class="demo-desc">Default steppers, hide-steppers, and long-press acceleration (stepHoldDelay + stepHoldInterval).</p>
+        <p class="demo-desc">
+          Default steppers, hide-steppers, and long-press acceleration (stepHoldDelay +
+          stepHoldInterval).
+        </p>
         <div class="preview preview--col">
           <tulpar-number-input-ng
             label="Default steppers"
@@ -293,11 +301,26 @@ const SECTIONS = [
     @if (activeSection() === 'all' || activeSection() === 'format-extras') {
       <section class="demo-section">
         <h3 class="demo-title">Format Extras — prefix &amp; suffix</h3>
-        <p class="demo-desc">formatPrefix and formatSuffix append static strings around the formatted value.</p>
+        <p class="demo-desc">
+          formatPrefix and formatSuffix append static strings around the formatted value.
+        </p>
         <div class="preview preview--col">
-          <tulpar-number-input-ng label="Prefix ~" formatPrefix="~" [value]="42"></tulpar-number-input-ng>
-          <tulpar-number-input-ng label="Suffix (adet)" formatSuffix=" adet" [value]="10"></tulpar-number-input-ng>
-          <tulpar-number-input-ng label="Combined" formatPrefix="~" formatSuffix=" adet" [value]="5"></tulpar-number-input-ng>
+          <tulpar-number-input-ng
+            label="Prefix ~"
+            formatPrefix="~"
+            [value]="42"
+          ></tulpar-number-input-ng>
+          <tulpar-number-input-ng
+            label="Suffix (adet)"
+            formatSuffix=" adet"
+            [value]="10"
+          ></tulpar-number-input-ng>
+          <tulpar-number-input-ng
+            label="Combined"
+            formatPrefix="~"
+            formatSuffix=" adet"
+            [value]="5"
+          ></tulpar-number-input-ng>
         </div>
         <pre class="code"><code>{{ formatExtrasCode }}</code></pre>
       </section>
@@ -308,8 +331,9 @@ const SECTIONS = [
       <section class="demo-section">
         <h3 class="demo-title">Advanced — formatOptions</h3>
         <p class="demo-desc">
-          <code class="inline-code">formatOptions</code> is a JS property on the WC (not an attribute).
-          The Angular wrapper's <code class="inline-code">effect()</code> pushes it onto the element ref automatically.
+          <code class="inline-code">formatOptions</code> is a JS property on the WC (not an
+          attribute). The Angular wrapper's <code class="inline-code">effect()</code> pushes it onto
+          the element ref automatically.
         </p>
         <div class="preview preview--col">
           <tulpar-number-input-ng
@@ -326,141 +350,147 @@ const SECTIONS = [
       </section>
     }
   `,
-  styles: [`
-    :host { display: block; }
+  styles: [
+    `
+      :host {
+        display: block;
+      }
 
-    .sub-menu {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      padding: 16px 0 24px;
-      border-bottom: 1px solid var(--tulpar-color-border-default, #e7e5e4);
-      margin-bottom: 32px;
-    }
+      .sub-menu {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 16px 0 24px;
+        border-bottom: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        margin-bottom: 32px;
+      }
 
-    .sub-btn {
-      padding: 6px 14px;
-      border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
-      border-radius: 20px;
-      background: var(--tulpar-color-bg-elevated, #ffffff);
-      color: var(--tulpar-color-text-secondary, #57534e);
-      font-family: var(--tulpar-font-family-ui, system-ui, sans-serif);
-      font-size: 13px;
-      cursor: pointer;
-      transition: background 0.1s, color 0.1s;
-    }
+      .sub-btn {
+        padding: 6px 14px;
+        border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        border-radius: 20px;
+        background: var(--tulpar-color-bg-elevated, #ffffff);
+        color: var(--tulpar-color-text-secondary, #57534e);
+        font-family: var(--tulpar-font-family-ui, system-ui, sans-serif);
+        font-size: 13px;
+        cursor: pointer;
+        transition:
+          background 0.1s,
+          color 0.1s;
+      }
 
-    .sub-btn:hover {
-      background: var(--tulpar-color-bg-subtle, #f5f5f4);
-      color: var(--tulpar-color-text-primary, #1c1917);
-    }
+      .sub-btn:hover {
+        background: var(--tulpar-color-bg-subtle, #f5f5f4);
+        color: var(--tulpar-color-text-primary, #1c1917);
+      }
 
-    .sub-btn.active {
-      background: var(--tulpar-color-brand-default, #2563eb);
-      border-color: var(--tulpar-color-brand-default, #2563eb);
-      color: #ffffff;
-    }
+      .sub-btn.active {
+        background: var(--tulpar-color-brand-default, #2563eb);
+        border-color: var(--tulpar-color-brand-default, #2563eb);
+        color: #ffffff;
+      }
 
-    .demo-section {
-      padding-bottom: 48px;
-      margin-bottom: 48px;
-      border-bottom: 1px solid var(--tulpar-color-border-default, #e7e5e4);
-    }
+      .demo-section {
+        padding-bottom: 48px;
+        margin-bottom: 48px;
+        border-bottom: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+      }
 
-    .demo-section:last-child {
-      border-bottom: none;
-    }
+      .demo-section:last-child {
+        border-bottom: none;
+      }
 
-    .demo-title {
-      margin: 0 0 8px;
-      font-family: var(--tulpar-font-family-display, Georgia, serif);
-      font-size: 22px;
-      font-weight: 600;
-      color: var(--tulpar-color-text-primary, #1c1917);
-    }
+      .demo-title {
+        margin: 0 0 8px;
+        font-family: var(--tulpar-font-family-display, Georgia, serif);
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--tulpar-color-text-primary, #1c1917);
+      }
 
-    .demo-desc {
-      margin: 0 0 20px;
-      font-size: 14px;
-      color: var(--tulpar-color-text-secondary, #57534e);
-      max-width: 620px;
-      line-height: 1.6;
-    }
+      .demo-desc {
+        margin: 0 0 20px;
+        font-size: 14px;
+        color: var(--tulpar-color-text-secondary, #57534e);
+        max-width: 620px;
+        line-height: 1.6;
+      }
 
-    .preview {
-      background: var(--tulpar-color-bg-subtle, #f5f5f4);
-      border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
-      border-bottom: none;
-      border-radius: 6px 6px 0 0;
-      padding: 24px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: flex-start;
-    }
+      .preview {
+        background: var(--tulpar-color-bg-subtle, #f5f5f4);
+        border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        border-bottom: none;
+        border-radius: 6px 6px 0 0;
+        padding: 24px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: flex-start;
+      }
 
-    .preview--col {
-      flex-direction: column;
-      align-items: stretch;
-    }
+      .preview--col {
+        flex-direction: column;
+        align-items: stretch;
+      }
 
-    .preview-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      align-items: flex-start;
-    }
+      .preview-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: flex-start;
+      }
 
-    .code {
-      margin: 0;
-      padding: 16px 20px;
-      background: var(--tulpar-color-bg-inverse, #1c1917);
-      border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
-      border-radius: 0 0 6px 6px;
-      overflow-x: auto;
-      font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-      font-size: 13px;
-      line-height: 1.55;
-      color: #e7e5e4;
-      white-space: pre;
-    }
+      .code {
+        margin: 0;
+        padding: 16px 20px;
+        background: var(--tulpar-color-bg-inverse, #1c1917);
+        border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        border-radius: 0 0 6px 6px;
+        overflow-x: auto;
+        font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.55;
+        color: #e7e5e4;
+        white-space: pre;
+      }
 
-    .value-display {
-      margin: 4px 0 0;
-      font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-      font-size: 12px;
-      color: var(--tulpar-color-text-secondary, #57534e);
-    }
+      .value-display {
+        margin: 4px 0 0;
+        font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+        font-size: 12px;
+        color: var(--tulpar-color-text-secondary, #57534e);
+      }
 
-    .inline-code {
-      font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-      font-size: 0.85em;
-      background: var(--tulpar-color-bg-subtle, #f5f5f4);
-      border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
-      border-radius: 3px;
-      padding: 1px 5px;
-      color: var(--tulpar-color-text-primary, #1c1917);
-    }
+      .inline-code {
+        font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+        font-size: 0.85em;
+        background: var(--tulpar-color-bg-subtle, #f5f5f4);
+        border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        border-radius: 3px;
+        padding: 1px 5px;
+        color: var(--tulpar-color-text-primary, #1c1917);
+      }
 
-    .key-list {
-      margin: 0 0 20px;
-      padding-left: 20px;
-      font-size: 13px;
-      color: var(--tulpar-color-text-secondary, #57534e);
-      line-height: 1.8;
-    }
+      .key-list {
+        margin: 0 0 20px;
+        padding-left: 20px;
+        font-size: 13px;
+        color: var(--tulpar-color-text-secondary, #57534e);
+        line-height: 1.8;
+      }
 
-    kbd {
-      display: inline-block;
-      padding: 1px 5px;
-      border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
-      border-radius: 3px;
-      font-family: 'JetBrains Mono', Consolas, monospace;
-      font-size: 11px;
-      background: var(--tulpar-color-bg-elevated, #ffffff);
-      color: var(--tulpar-color-text-primary, #1c1917);
-    }
-  `],
+      kbd {
+        display: inline-block;
+        padding: 1px 5px;
+        border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        border-radius: 3px;
+        font-family: 'JetBrains Mono', Consolas, monospace;
+        font-size: 11px;
+        background: var(--tulpar-color-bg-elevated, #ffffff);
+        color: var(--tulpar-color-text-primary, #1c1917);
+      }
+    `,
+  ],
 })
 export class NumberInputDemoComponent {
   readonly sections = SECTIONS;

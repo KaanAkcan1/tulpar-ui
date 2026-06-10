@@ -90,8 +90,7 @@ const autoIconOnly = computed(() => {
   if (!slot || slot.length === 0) return true;
   return !slot.some(
     (vnode) =>
-      vnode.type !== Comment &&
-      !(typeof vnode.children === "string" && !vnode.children.trim()),
+      vnode.type !== Comment && !(typeof vnode.children === "string" && !vnode.children.trim()),
   );
 });
 

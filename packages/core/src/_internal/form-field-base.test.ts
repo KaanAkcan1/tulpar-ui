@@ -11,11 +11,14 @@ class TestField extends FormFieldBase {
     return html`
       <div class="control-row">
         ${(this as unknown as { _renderPrefixSlot(): unknown })._renderPrefixSlot()}
-        <input id="control"
+        <input
+          id="control"
           .value=${this.value}
           aria-required=${this._ariaRequiredAttr()}
           aria-invalid=${this._ariaInvalidAttr()}
-          aria-busy=${(this as unknown as { _ariaBusyAttr(): string | undefined })._ariaBusyAttr() ?? nothing}
+          aria-busy=${(
+            this as unknown as { _ariaBusyAttr(): string | undefined }
+          )._ariaBusyAttr() ?? nothing}
           aria-describedby=${this._ariaDescribedBy() ?? nothing}
           aria-label=${ariaLabel ?? nothing}
           @input=${(e: InputEvent) => {
@@ -60,7 +63,9 @@ describe("FormFieldBase skeleton", () => {
 
 describe("FormFieldBase label", () => {
   it("renders label from attribute", async () => {
-    const el = await fixture<TestField>(testHtml`<test-form-field label="Email"></test-form-field>`);
+    const el = await fixture<TestField>(
+      testHtml`<test-form-field label="Email"></test-form-field>`,
+    );
     const labelEl = el.shadowRoot!.querySelector(".field-label");
     expect(labelEl?.textContent?.trim()).to.equal("Email");
   });
@@ -71,8 +76,8 @@ describe("FormFieldBase label", () => {
         <span slot="label">Slot Label</span>
       </test-form-field>
     `);
-    const slottedNodes = el.shadowRoot!
-      .querySelector<HTMLSlotElement>("slot[name='label']")!
+    const slottedNodes = el
+      .shadowRoot!.querySelector<HTMLSlotElement>("slot[name='label']")!
       .assignedElements();
     expect(slottedNodes[0].textContent).to.equal("Slot Label");
   });
@@ -117,7 +122,9 @@ describe("FormFieldBase necessity indicator", () => {
 
   it("sets aria-required when required", async () => {
     const el = await fixture<TestField>(testHtml`<test-form-field required></test-form-field>`);
-    expect(el.shadowRoot!.querySelector("#control")?.getAttribute("aria-required")).to.equal("true");
+    expect(el.shadowRoot!.querySelector("#control")?.getAttribute("aria-required")).to.equal(
+      "true",
+    );
   });
 });
 
@@ -129,12 +136,16 @@ describe("FormFieldBase message row", () => {
   });
 
   it("removes the message row when no-message-space is set", async () => {
-    const el = await fixture<TestField>(testHtml`<test-form-field no-message-space></test-form-field>`);
+    const el = await fixture<TestField>(
+      testHtml`<test-form-field no-message-space></test-form-field>`,
+    );
     expect(el.shadowRoot!.querySelector(".field-message-row")).to.equal(null);
   });
 
   it("renders helper text when only helperText is set", async () => {
-    const el = await fixture<TestField>(testHtml`<test-form-field helper-text="Pick a strong password"></test-form-field>`);
+    const el = await fixture<TestField>(
+      testHtml`<test-form-field helper-text="Pick a strong password"></test-form-field>`,
+    );
     const msg = el.shadowRoot!.querySelector(".field-message");
     expect(msg?.textContent).to.equal("Pick a strong password");
   });
@@ -175,7 +186,9 @@ describe("FormFieldBase status icon zone", () => {
 
   it("shows exclamation icon when invalid", async () => {
     const el = await fixture<TestField>(testHtml`<test-form-field invalid></test-form-field>`);
-    expect(el.shadowRoot!.querySelector(".field-status-icon[data-kind='invalid']")).to.not.equal(null);
+    expect(el.shadowRoot!.querySelector(".field-status-icon[data-kind='invalid']")).to.not.equal(
+      null,
+    );
   });
 
   it("shows triangle icon when warn (not invalid)", async () => {
@@ -184,8 +197,12 @@ describe("FormFieldBase status icon zone", () => {
   });
 
   it("shows spinner when validating (overrides invalid+warn icons)", async () => {
-    const el = await fixture<TestField>(testHtml`<test-form-field invalid warn validating></test-form-field>`);
-    expect(el.shadowRoot!.querySelector(".field-status-icon[data-kind='validating']")).to.not.equal(null);
+    const el = await fixture<TestField>(
+      testHtml`<test-form-field invalid warn validating></test-form-field>`,
+    );
+    expect(el.shadowRoot!.querySelector(".field-status-icon[data-kind='validating']")).to.not.equal(
+      null,
+    );
     expect(el.shadowRoot!.querySelector(".field-status-icon[data-kind='invalid']")).to.equal(null);
   });
 
@@ -237,7 +254,9 @@ describe("FormFieldBase size scaling", () => {
 
 describe("FormFieldBase visual variants", () => {
   it("uses bordered shell for variant=outlined", async () => {
-    const el = await fixture<TestField>(testHtml`<test-form-field variant="outlined"></test-form-field>`);
+    const el = await fixture<TestField>(
+      testHtml`<test-form-field variant="outlined"></test-form-field>`,
+    );
     expect(el.getAttribute("variant")).to.equal("outlined");
   });
 
@@ -245,7 +264,9 @@ describe("FormFieldBase visual variants", () => {
     const el = await fixture<TestField>(testHtml`
       <test-form-field label="Email" label-position="float"></test-form-field>
     `);
-    expect(el.shadowRoot!.querySelector("[data-label-position='float'] .field-label--float")).to.not.equal(null);
+    expect(
+      el.shadowRoot!.querySelector("[data-label-position='float'] .field-label--float"),
+    ).to.not.equal(null);
   });
 
   it("falls back float → top for variant=ghost", async () => {

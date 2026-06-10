@@ -39,6 +39,7 @@ pnpm test
 ## Browser baseline
 
 v0.4 targets:
+
 - Chromium ≥ 65
 - Firefox ≥ 78
 - **Safari ≥ 17** — required for reliable `delegatesFocus` on form-associated
@@ -55,7 +56,8 @@ Limitations:
 - No ESC dismiss, no hover delay, no viewport-edge collision detection.
 
 For production tooltips, wait for the dedicated component in v0.5 (Popover API
-+ CSS Anchor Positioning).
+
+- CSS Anchor Positioning).
 
 ## Angular wrapper transparency
 

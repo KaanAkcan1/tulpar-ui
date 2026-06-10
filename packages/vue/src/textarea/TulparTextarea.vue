@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import "@tulpar-ui/core/textarea";
-import type {
-  FieldSize,
-  FieldVariant,
-  LabelPosition,
-  NecessityIndicator,
-} from "@tulpar-ui/core";
+import type { FieldSize, FieldVariant, LabelPosition, NecessityIndicator } from "@tulpar-ui/core";
 
 interface Props {
   modelValue?: string;

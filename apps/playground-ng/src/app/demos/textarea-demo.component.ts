@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { TulparTextareaComponent } from '@tulpar-ui/angular';
 
 // ─── Code snippets ────────────────────────────────────────────────────────────
@@ -73,13 +68,17 @@ const SECTIONS = [
         class="sub-btn"
         [class.active]="activeSection() === 'all'"
         (click)="activeSection.set('all')"
-      >All</button>
+      >
+        All
+      </button>
       @for (s of sections; track s.id) {
         <button
           class="sub-btn"
           [class.active]="activeSection() === s.id"
           (click)="activeSection.set(s.id)"
-        >{{ s.title }}</button>
+        >
+          {{ s.title }}
+        </button>
       }
     </div>
 
@@ -108,7 +107,10 @@ const SECTIONS = [
     @if (activeSection() === 'all' || activeSection() === 'autosize') {
       <section class="demo-section">
         <h3 class="demo-title">Autosize</h3>
-        <p class="demo-desc">Default grows from 2 to 6 rows. Customise min/max rows or disable entirely with a fixed row count.</p>
+        <p class="demo-desc">
+          Default grows from 2 to 6 rows. Customise min/max rows or disable entirely with a fixed
+          row count.
+        </p>
         <div class="preview preview--col">
           <tulpar-textarea-ng
             label="Autosize (default 2–6 rows)"
@@ -139,10 +141,32 @@ const SECTIONS = [
         <h3 class="demo-title">Resize</h3>
         <p class="demo-desc">Controls the CSS resize handle. Default is vertical.</p>
         <div class="preview preview--col">
-          <tulpar-textarea-ng resize="none" label="None — no handle" placeholder="No resize handle"></tulpar-textarea-ng>
-          <tulpar-textarea-ng resize="both" label="Both directions" [autosize]="false" [rows]="3" placeholder="Drag corner"></tulpar-textarea-ng>
-          <tulpar-textarea-ng resize="horizontal" label="Horizontal only" [autosize]="false" [rows]="3" placeholder="Drag right edge"></tulpar-textarea-ng>
-          <tulpar-textarea-ng resize="vertical" label="Vertical only (default)" [autosize]="false" [rows]="3" placeholder="Drag bottom edge"></tulpar-textarea-ng>
+          <tulpar-textarea-ng
+            resize="none"
+            label="None — no handle"
+            placeholder="No resize handle"
+          ></tulpar-textarea-ng>
+          <tulpar-textarea-ng
+            resize="both"
+            label="Both directions"
+            [autosize]="false"
+            [rows]="3"
+            placeholder="Drag corner"
+          ></tulpar-textarea-ng>
+          <tulpar-textarea-ng
+            resize="horizontal"
+            label="Horizontal only"
+            [autosize]="false"
+            [rows]="3"
+            placeholder="Drag right edge"
+          ></tulpar-textarea-ng>
+          <tulpar-textarea-ng
+            resize="vertical"
+            label="Vertical only (default)"
+            [autosize]="false"
+            [rows]="3"
+            placeholder="Drag bottom edge"
+          ></tulpar-textarea-ng>
         </div>
         <pre class="code"><code>{{ resizeCode }}</code></pre>
       </section>
@@ -152,7 +176,10 @@ const SECTIONS = [
     @if (activeSection() === 'all' || activeSection() === 'counter') {
       <section class="demo-section">
         <h3 class="demo-title">Character Counter</h3>
-        <p class="demo-desc">show-count with maxLength renders a live character count overlay. Works alongside autosize.</p>
+        <p class="demo-desc">
+          show-count with maxLength renders a live character count overlay. Works alongside
+          autosize.
+        </p>
         <div class="preview preview--col">
           <tulpar-textarea-ng
             label="Post body"
@@ -172,12 +199,16 @@ const SECTIONS = [
     @if (activeSection() === 'all' || activeSection() === 'actions') {
       <section class="demo-section">
         <h3 class="demo-title">Actions</h3>
-        <p class="demo-desc">copyable and pastable add icon buttons. Use copyable with prefilled values or readonly.</p>
+        <p class="demo-desc">
+          copyable and pastable add icon buttons. Use copyable with prefilled values or readonly.
+        </p>
         <div class="preview preview--col">
           <tulpar-textarea-ng
             label="Template (copyable)"
             [copyable]="true"
-            value="Dear {{'{{'}}name{{'}}'}}, thank you for reaching out. We will get back to you shortly."
+            value="Dear {{
+              '{{'
+            }}name{{'}}'}}, thank you for reaching out. We will get back to you shortly."
           ></tulpar-textarea-ng>
           <tulpar-textarea-ng
             label="Paste here"
@@ -230,114 +261,140 @@ const SECTIONS = [
         <h3 class="demo-title">Sizes &amp; Variants</h3>
         <p class="demo-desc">A selection of size + variant combos to show the matrix.</p>
         <div class="preview preview--col">
-          <tulpar-textarea-ng size="sm" variant="outlined" label="sm + outlined" placeholder="small outlined"></tulpar-textarea-ng>
-          <tulpar-textarea-ng size="md" variant="filled" label="md + filled" placeholder="medium filled"></tulpar-textarea-ng>
-          <tulpar-textarea-ng size="lg" variant="underlined" label="lg + underlined" placeholder="large underlined"></tulpar-textarea-ng>
-          <tulpar-textarea-ng size="sm" variant="ghost" label="sm + ghost" placeholder="small ghost"></tulpar-textarea-ng>
+          <tulpar-textarea-ng
+            size="sm"
+            variant="outlined"
+            label="sm + outlined"
+            placeholder="small outlined"
+          ></tulpar-textarea-ng>
+          <tulpar-textarea-ng
+            size="md"
+            variant="filled"
+            label="md + filled"
+            placeholder="medium filled"
+          ></tulpar-textarea-ng>
+          <tulpar-textarea-ng
+            size="lg"
+            variant="underlined"
+            label="lg + underlined"
+            placeholder="large underlined"
+          ></tulpar-textarea-ng>
+          <tulpar-textarea-ng
+            size="sm"
+            variant="ghost"
+            label="sm + ghost"
+            placeholder="small ghost"
+          ></tulpar-textarea-ng>
         </div>
         <pre class="code"><code>{{ sizesVariantsCode }}</code></pre>
       </section>
     }
   `,
-  styles: [`
-    :host { display: block; }
+  styles: [
+    `
+      :host {
+        display: block;
+      }
 
-    .sub-menu {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      padding: 16px 0 24px;
-      border-bottom: 1px solid var(--tulpar-color-border-default, #e7e5e4);
-      margin-bottom: 32px;
-    }
+      .sub-menu {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 16px 0 24px;
+        border-bottom: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        margin-bottom: 32px;
+      }
 
-    .sub-btn {
-      padding: 6px 14px;
-      border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
-      border-radius: 20px;
-      background: var(--tulpar-color-bg-elevated, #ffffff);
-      color: var(--tulpar-color-text-secondary, #57534e);
-      font-family: var(--tulpar-font-family-ui, system-ui, sans-serif);
-      font-size: 13px;
-      cursor: pointer;
-      transition: background 0.1s, color 0.1s;
-    }
+      .sub-btn {
+        padding: 6px 14px;
+        border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        border-radius: 20px;
+        background: var(--tulpar-color-bg-elevated, #ffffff);
+        color: var(--tulpar-color-text-secondary, #57534e);
+        font-family: var(--tulpar-font-family-ui, system-ui, sans-serif);
+        font-size: 13px;
+        cursor: pointer;
+        transition:
+          background 0.1s,
+          color 0.1s;
+      }
 
-    .sub-btn:hover {
-      background: var(--tulpar-color-bg-subtle, #f5f5f4);
-      color: var(--tulpar-color-text-primary, #1c1917);
-    }
+      .sub-btn:hover {
+        background: var(--tulpar-color-bg-subtle, #f5f5f4);
+        color: var(--tulpar-color-text-primary, #1c1917);
+      }
 
-    .sub-btn.active {
-      background: var(--tulpar-color-brand-default, #2563eb);
-      border-color: var(--tulpar-color-brand-default, #2563eb);
-      color: #ffffff;
-    }
+      .sub-btn.active {
+        background: var(--tulpar-color-brand-default, #2563eb);
+        border-color: var(--tulpar-color-brand-default, #2563eb);
+        color: #ffffff;
+      }
 
-    .demo-section {
-      padding-bottom: 48px;
-      margin-bottom: 48px;
-      border-bottom: 1px solid var(--tulpar-color-border-default, #e7e5e4);
-    }
+      .demo-section {
+        padding-bottom: 48px;
+        margin-bottom: 48px;
+        border-bottom: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+      }
 
-    .demo-section:last-child {
-      border-bottom: none;
-    }
+      .demo-section:last-child {
+        border-bottom: none;
+      }
 
-    .demo-title {
-      margin: 0 0 8px;
-      font-family: var(--tulpar-font-family-display, Georgia, serif);
-      font-size: 22px;
-      font-weight: 600;
-      color: var(--tulpar-color-text-primary, #1c1917);
-    }
+      .demo-title {
+        margin: 0 0 8px;
+        font-family: var(--tulpar-font-family-display, Georgia, serif);
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--tulpar-color-text-primary, #1c1917);
+      }
 
-    .demo-desc {
-      margin: 0 0 20px;
-      font-size: 14px;
-      color: var(--tulpar-color-text-secondary, #57534e);
-      max-width: 620px;
-      line-height: 1.6;
-    }
+      .demo-desc {
+        margin: 0 0 20px;
+        font-size: 14px;
+        color: var(--tulpar-color-text-secondary, #57534e);
+        max-width: 620px;
+        line-height: 1.6;
+      }
 
-    .preview {
-      background: var(--tulpar-color-bg-subtle, #f5f5f4);
-      border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
-      border-bottom: none;
-      border-radius: 6px 6px 0 0;
-      padding: 24px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: flex-start;
-    }
+      .preview {
+        background: var(--tulpar-color-bg-subtle, #f5f5f4);
+        border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        border-bottom: none;
+        border-radius: 6px 6px 0 0;
+        padding: 24px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: flex-start;
+      }
 
-    .preview--col {
-      flex-direction: column;
-      align-items: stretch;
-    }
+      .preview--col {
+        flex-direction: column;
+        align-items: stretch;
+      }
 
-    .code {
-      margin: 0;
-      padding: 16px 20px;
-      background: var(--tulpar-color-bg-inverse, #1c1917);
-      border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
-      border-radius: 0 0 6px 6px;
-      overflow-x: auto;
-      font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-      font-size: 13px;
-      line-height: 1.55;
-      color: #e7e5e4;
-      white-space: pre;
-    }
+      .code {
+        margin: 0;
+        padding: 16px 20px;
+        background: var(--tulpar-color-bg-inverse, #1c1917);
+        border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        border-radius: 0 0 6px 6px;
+        overflow-x: auto;
+        font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.55;
+        color: #e7e5e4;
+        white-space: pre;
+      }
 
-    .value-display {
-      margin: 4px 0 0;
-      font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-      font-size: 12px;
-      color: var(--tulpar-color-text-secondary, #57534e);
-    }
-  `],
+      .value-display {
+        margin: 4px 0 0;
+        font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+        font-size: 12px;
+        color: var(--tulpar-color-text-secondary, #57534e);
+      }
+    `,
+  ],
 })
 export class TextareaDemoComponent {
   readonly sections = SECTIONS;

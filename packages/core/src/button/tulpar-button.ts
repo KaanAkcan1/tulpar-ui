@@ -323,7 +323,10 @@ export class TulparButton extends LitElement {
   }
 
   private _onStartSlotChange = (e: Event): void => {
-    this.toggleAttribute("data-has-start", TulparButton._slotHasContent(e.target as HTMLSlotElement));
+    this.toggleAttribute(
+      "data-has-start",
+      TulparButton._slotHasContent(e.target as HTMLSlotElement),
+    );
   };
 
   private _onEndSlotChange = (e: Event): void => {

@@ -29,9 +29,9 @@ const activeComponent = ref<"button" | "text-input" | "textarea" | "number-input
 
 const componentTitle = computed(() => {
   const map: Record<string, string> = {
-    "button": "Button — full feature reference",
+    button: "Button — full feature reference",
     "text-input": "TextInput — full feature reference",
-    "textarea": "Textarea — full feature reference",
+    textarea: "Textarea — full feature reference",
     "number-input": "NumberInput — full feature reference",
   };
   return map[activeComponent.value] ?? "Tulpar UI";
@@ -304,7 +304,8 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
           <p class="eyebrow">Tulpar UI · Vue · v0.5</p>
           <h1 class="page-title">{{ componentTitle }}</h1>
           <p class="page-lede">
-            Live previews and copy-paste code for every capability. Use the nav below to switch components.
+            Live previews and copy-paste code for every capability. Use the nav below to switch
+            components.
           </p>
         </div>
         <button class="theme-toggle" @click="toggleDark">
@@ -318,22 +319,30 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
           class="nav-btn"
           :class="{ active: activeComponent === 'button' }"
           @click="activeComponent = 'button'"
-        >Button</button>
+        >
+          Button
+        </button>
         <button
           class="nav-btn"
           :class="{ active: activeComponent === 'text-input' }"
           @click="activeComponent = 'text-input'"
-        >TextInput</button>
+        >
+          TextInput
+        </button>
         <button
           class="nav-btn"
           :class="{ active: activeComponent === 'textarea' }"
           @click="activeComponent = 'textarea'"
-        >Textarea</button>
+        >
+          Textarea
+        </button>
         <button
           class="nav-btn"
           :class="{ active: activeComponent === 'number-input' }"
           @click="activeComponent = 'number-input'"
-        >NumberInput</button>
+        >
+          NumberInput
+        </button>
       </nav>
     </header>
 
@@ -345,451 +354,451 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
 
       <!-- ── Button demo ──────────────────────────────────────────────────────── -->
       <template v-if="activeComponent === 'button'">
-
-      <!-- ── 1. Severity ──────────────────────────────────────────────────── -->
-      <section class="doc-section">
-        <h2 class="section-title">1. Severity</h2>
-        <p class="section-desc">
-          Nine semantic severity values covering the full intent palette. Default variant is
-          <code class="inline-code">solid</code>.
-        </p>
-        <div class="preview">
-          <TulparButton severity="primary">Primary</TulparButton>
-          <TulparButton severity="secondary">Secondary</TulparButton>
-          <TulparButton severity="info">Info</TulparButton>
-          <TulparButton severity="success">Success</TulparButton>
-          <TulparButton severity="warn">Warn</TulparButton>
-          <TulparButton severity="help">Help</TulparButton>
-          <TulparButton severity="danger">Danger</TulparButton>
-          <TulparButton severity="contrast">Contrast</TulparButton>
-          <TulparButton severity="premium">Premium</TulparButton>
-        </div>
-        <pre class="code"><code>{{ severityCode }}</code></pre>
-      </section>
-
-      <!-- ── 2. Variant ──────────────────────────────────────────────────── -->
-      <section class="doc-section">
-        <h2 class="section-title">2. Variant</h2>
-        <p class="section-desc">
-          Five rendering styles. All examples use
-          <code class="inline-code">severity="primary"</code>.
-        </p>
-        <div class="preview">
-          <TulparButton variant="solid">Solid</TulparButton>
-          <TulparButton variant="outlined">Outlined</TulparButton>
-          <TulparButton variant="tonal">Tonal</TulparButton>
-          <TulparButton variant="ghost">Ghost</TulparButton>
-          <TulparButton variant="link">Link</TulparButton>
-        </div>
-        <pre class="code"><code>{{ variantCode }}</code></pre>
-      </section>
-
-      <!-- ── 3. Size ─────────────────────────────────────────────────────── -->
-      <section class="doc-section">
-        <h2 class="section-title">3. Size</h2>
-        <p class="section-desc">
-          Seven sizes from <code class="inline-code">xs</code> to
-          <code class="inline-code">3xl</code>. Default is <code class="inline-code">md</code>.
-        </p>
-        <div class="preview preview--baseline">
-          <TulparButton size="xs">Extra Small</TulparButton>
-          <TulparButton size="sm">Small</TulparButton>
-          <TulparButton size="md">Medium</TulparButton>
-          <TulparButton size="lg">Large</TulparButton>
-          <TulparButton size="xl">Extra Large</TulparButton>
-          <TulparButton size="2xl">2XL</TulparButton>
-          <TulparButton size="3xl">3XL</TulparButton>
-        </div>
-        <pre class="code"><code>{{ sizeCode }}</code></pre>
-      </section>
-
-      <!-- ── 4. Color override ────────────────────────────────────────────── -->
-      <section class="doc-section">
-        <h2 class="section-title">4. Color override</h2>
-        <p class="section-desc">
-          The <code class="inline-code">color</code> prop overrides the severity's palette with any
-          design-system color. Severity remains as a DOM hint for accessibility semantics.
-        </p>
-        <div class="preview">
-          <TulparButton color="gold">Gold</TulparButton>
-          <TulparButton color="emerald">Emerald</TulparButton>
-          <TulparButton color="rose">Rose</TulparButton>
-          <TulparButton color="indigo">Indigo</TulparButton>
-          <TulparButton color="cyan" variant="outlined">Cyan Outlined</TulparButton>
-          <TulparButton color="purple" variant="tonal">Purple Tonal</TulparButton>
-        </div>
-        <pre class="code"><code>{{ colorCode }}</code></pre>
-      </section>
-
-      <!-- ── 5. Shape ────────────────────────────────────────────────────── -->
-      <section class="doc-section">
-        <h2 class="section-title">5. Shape</h2>
-        <p class="section-desc">
-          <code class="inline-code">default</code> (rectangle),
-          <code class="inline-code">round</code> (pill), and
-          <code class="inline-code">circle</code> (icon-only).
-        </p>
-        <div class="preview">
-          <TulparButton shape="default">Default</TulparButton>
-          <TulparButton shape="round">Round</TulparButton>
-          <TulparButton shape="circle" :icon="Plus" aria-label="Add item" />
-        </div>
-        <pre class="code"><code>{{ shapeCode }}</code></pre>
-      </section>
-
-      <!-- ── 6. Icons — leading, trailing, both ──────────────────────────── -->
-      <section class="doc-section">
-        <h2 class="section-title">6. Icons — leading, trailing, both</h2>
-        <p class="section-desc">
-          Use the <code class="inline-code">:icon</code> prop for Lucide icons — it renders into the
-          <code class="inline-code">slot="start"</code> automatically. For a trailing icon, use
-          <code class="inline-code">&#60;span slot="end"&#62;</code>. For multi-icon, combine both.
-        </p>
-        <div class="preview">
-          <!-- Leading icon via prop -->
-          <TulparButton severity="success" :icon="Check">Save</TulparButton>
-          <!-- Trailing icon via slot -->
-          <TulparButton severity="primary">
-            Continue
-            <span slot="end"><ArrowRight :size="16" /></span>
-          </TulparButton>
-          <!-- Both: prop for start, slot for end -->
-          <TulparButton severity="primary" :icon="Check">
-            Save and continue
-            <span slot="end"><ArrowRight :size="16" /></span>
-          </TulparButton>
-        </div>
-        <pre class="code"><code>{{ iconsCode }}</code></pre>
-      </section>
-
-      <!-- ── 7. Icon-only ────────────────────────────────────────────────── -->
-      <section class="doc-section">
-        <h2 class="section-title">7. Icon-only</h2>
-        <p class="section-desc">
-          When <code class="inline-code">:icon</code> is set and no text is in the default slot,
-          icon-only mode is applied <em>automatically</em> — no extra prop needed. Always include
-          <code class="inline-code">aria-label</code> for screen reader accessibility.
-        </p>
-        <div class="preview preview--baseline">
-          <!-- Auto icon-only -->
-          <TulparButton severity="danger" :icon="Trash2" aria-label="Delete item" />
-          <TulparButton severity="secondary" :icon="Settings" aria-label="Settings" />
-          <!-- Auto icon-only + circle shape -->
-          <TulparButton severity="success" :icon="Save" shape="circle" aria-label="Save" />
-          <!-- Explicit iconOnly still works -->
-          <TulparButton
-            severity="premium"
-            :icon-only="true"
-            shape="round"
-            :icon="Crown"
-            aria-label="Premium"
-          />
-        </div>
-        <pre class="code"><code>{{ iconOnlyCode }}</code></pre>
-      </section>
-
-      <!-- ── 8. Icon position ────────────────────────────────────────────── -->
-      <section class="doc-section">
-        <h2 class="section-title">8. Icon position</h2>
-        <p class="section-desc">
-          Control where the icon renders relative to the label:
-          <code class="inline-code">start</code>, <code class="inline-code">end</code>,
-          <code class="inline-code">top</code>, <code class="inline-code">bottom</code>. The
-          <code class="inline-code">:icon</code> prop always renders in the start slot; for
-          <code class="inline-code">icon-position="end"</code> use
-          <code class="inline-code">&#60;span slot="end"&#62;</code>.
-        </p>
-        <div class="preview preview--baseline">
-          <TulparButton :icon="Check" icon-position="start" size="lg">Confirm</TulparButton>
-          <TulparButton icon-position="end" size="lg">
-            Confirm
-            <span slot="end"><Check :size="18" /></span>
-          </TulparButton>
-          <TulparButton :icon="Check" icon-position="top" size="lg">Confirm</TulparButton>
-          <TulparButton :icon="Check" icon-position="bottom" size="lg">Confirm</TulparButton>
-        </div>
-        <pre class="code"><code>{{ iconPositionCode }}</code></pre>
-      </section>
-
-      <!-- ── 9. Icon separator ───────────────────────────────────────────── -->
-      <section class="doc-section">
-        <h2 class="section-title">9. Icon separator</h2>
-        <p class="section-desc">
-          The <code class="inline-code">icon-separator</code> prop draws a visual divider between
-          icon and label. Works across all variants.
-        </p>
-        <div class="preview">
-          <TulparButton variant="outlined" :icon-separator="true" :icon="Download"
-            >Download</TulparButton
-          >
-          <TulparButton variant="tonal" :icon-separator="true" :icon="ArrowLeft">
-            Navigate
-            <span slot="end"><ArrowRight :size="16" /></span>
-          </TulparButton>
-          <TulparButton variant="solid" :icon-separator="true">
-            Next
-            <span slot="end"><ArrowRight :size="16" /></span>
-          </TulparButton>
-        </div>
-        <pre class="code"><code>{{ iconSeparatorCode }}</code></pre>
-      </section>
-
-      <!-- ── 10. Modifiers ──────────────────────────────────────────────── -->
-      <section class="doc-section">
-        <h2 class="section-title">10. Modifiers — raised, block, justify</h2>
-        <p class="section-desc">
-          <code class="inline-code">raised</code> adds a drop shadow.
-          <code class="inline-code">block</code> stretches to full container width.
-          <code class="inline-code">justify</code> controls internal content alignment (start /
-          center / end / between).
-        </p>
-        <div class="preview preview--col">
-          <div class="preview-row">
-            <TulparButton :raised="true">Raised Solid</TulparButton>
-            <TulparButton :raised="true" variant="outlined">Raised Outlined</TulparButton>
-          </div>
-          <TulparButton :block="true">Block Button</TulparButton>
-          <TulparButton :block="true" justify="between" :icon="Mail">
-            Send Email
-            <span slot="end"><ArrowRight :size="16" /></span>
-          </TulparButton>
-        </div>
-        <pre class="code"><code>{{ modifiersCode }}</code></pre>
-      </section>
-
-      <!-- ── 11. Loading states ─────────────────────────────────────────── -->
-      <section class="doc-section">
-        <h2 class="section-title">11. Loading states</h2>
-        <p class="section-desc">
-          The <code class="inline-code">loading</code> prop disables interaction and shows a
-          spinner. Control spinner position with <code class="inline-code">loading-position</code>.
-          Provide a <code class="inline-code">loading-label</code> for status announcements. Use
-          <code class="inline-code">slot="loading-icon"</code> to swap the spinner with a custom
-          icon.
-        </p>
-        <div class="preview">
-          <TulparButton :loading="true">Save</TulparButton>
-          <TulparButton :loading="true" loading-position="start">Save</TulparButton>
-          <TulparButton :loading="true" loading-position="end">Save</TulparButton>
-          <TulparButton :loading="true" loading-label="Saving…">Save</TulparButton>
-          <TulparButton :loading="true" severity="success">
-            <span slot="loading-icon" class="spin-icon">
-              <Loader2 :size="16" />
-            </span>
-            Upload
-          </TulparButton>
-        </div>
-        <pre class="code"><code>{{ loadingCode }}</code></pre>
-      </section>
-
-      <!-- ── 12. Disabled vs data-disabled ─────────────────────────────── -->
-      <section class="doc-section">
-        <h2 class="section-title">12. Disabled vs data-disabled</h2>
-        <p class="section-desc">
-          <code class="inline-code">disabled</code> prevents all interaction.
-          <code class="inline-code">data-disabled</code> applies disabled styling but still fires
-          click events — useful when wrapping with a tooltip that explains why the action is
-          unavailable.
-        </p>
-        <div class="preview preview--baseline">
-          <TulparButton :disabled="true">Disabled</TulparButton>
-          <div title="You need edit permissions to perform this action">
-            <TulparButton :data-disabled="true" @click="onDataDisabledClick">
-              Restricted Action
-            </TulparButton>
-          </div>
-          <span v-if="dataDisabledClicked" class="click-feedback">Click received!</span>
-        </div>
-        <pre class="code"><code>{{ disabledCode }}</code></pre>
-      </section>
-
-      <!-- ── 13. Polymorphism ───────────────────────────────────────────── -->
-      <section class="doc-section">
-        <h2 class="section-title">13. Polymorphism — href renders &lt;a&gt;</h2>
-        <p class="section-desc">
-          Pass an <code class="inline-code">href</code> prop to render the button as an anchor
-          element. All ARIA and keyboard semantics are preserved.
-        </p>
-        <div class="preview">
-          <TulparButton href="https://example.com" target="_blank" rel="noopener noreferrer">
-            <span slot="start"><ArrowRight :size="16" /></span>
-            Visit Example
-          </TulparButton>
-          <TulparButton href="/dashboard" severity="secondary" variant="outlined">
-            Go to Dashboard
-          </TulparButton>
-        </div>
-        <pre class="code"><code>{{ polymorphismCode }}</code></pre>
-      </section>
-
-      <!-- ── 14. Form integration ───────────────────────────────────────── -->
-      <section class="doc-section">
-        <h2 class="section-title">14. Form integration</h2>
-        <p class="section-desc">
-          <code class="inline-code">type="submit"</code> and
-          <code class="inline-code">type="reset"</code> integrate with native HTML forms via
-          <code class="inline-code">formAssociated</code> internals — no extra wiring needed.
-        </p>
-        <div class="preview preview--col">
-          <form class="demo-form" @submit="onSubmit">
-            <input class="demo-input" name="email" type="email" placeholder="your@email.com" />
-            <TulparButton type="submit" severity="primary" :icon="Mail">Submit</TulparButton>
-            <TulparButton type="reset" severity="secondary" variant="outlined">
-              Reset
-            </TulparButton>
-          </form>
-          <p v-if="submittedEmail !== null" class="submit-feedback">
-            Submitted: <strong>{{ submittedEmail || "(empty)" }}</strong>
+        <!-- ── 1. Severity ──────────────────────────────────────────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">1. Severity</h2>
+          <p class="section-desc">
+            Nine semantic severity values covering the full intent palette. Default variant is
+            <code class="inline-code">solid</code>.
           </p>
-        </div>
-        <pre class="code"><code>{{ formCode }}</code></pre>
-      </section>
-
-      <!-- ── 15. Button Group ───────────────────────────────────────────── -->
-      <section class="doc-section">
-        <h2 class="section-title">15. Button Group — horizontal + stacked</h2>
-        <p class="section-desc">
-          <code class="inline-code">&#60;tulpar-button-group&#62;</code> manages roving tabindex and
-          keyboard navigation. Horizontal: <kbd>ArrowLeft</kbd> / <kbd>ArrowRight</kbd>. Stacked
-          (add <code class="inline-code">stacked</code> attr): <kbd>ArrowUp</kbd> /
-          <kbd>ArrowDown</kbd>. Both: <kbd>Home</kbd> / <kbd>End</kbd>.
-        </p>
-        <div class="preview preview--col">
-          <div>
-            <p class="preview-label">Horizontal</p>
-            <tulpar-button-group>
-              <tulpar-button severity="secondary" variant="outlined">Day</tulpar-button>
-              <tulpar-button severity="secondary" variant="outlined">Week</tulpar-button>
-              <tulpar-button severity="secondary" variant="outlined">Month</tulpar-button>
-            </tulpar-button-group>
+          <div class="preview">
+            <TulparButton severity="primary">Primary</TulparButton>
+            <TulparButton severity="secondary">Secondary</TulparButton>
+            <TulparButton severity="info">Info</TulparButton>
+            <TulparButton severity="success">Success</TulparButton>
+            <TulparButton severity="warn">Warn</TulparButton>
+            <TulparButton severity="help">Help</TulparButton>
+            <TulparButton severity="danger">Danger</TulparButton>
+            <TulparButton severity="contrast">Contrast</TulparButton>
+            <TulparButton severity="premium">Premium</TulparButton>
           </div>
-          <div>
-            <p class="preview-label">Stacked</p>
-            <tulpar-button-group stacked>
-              <tulpar-button severity="secondary" variant="ghost">Edit profile</tulpar-button>
-              <tulpar-button severity="secondary" variant="ghost">Settings</tulpar-button>
-              <tulpar-button severity="danger" variant="ghost">Sign out</tulpar-button>
-            </tulpar-button-group>
+          <pre class="code"><code>{{ severityCode }}</code></pre>
+        </section>
+
+        <!-- ── 2. Variant ──────────────────────────────────────────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">2. Variant</h2>
+          <p class="section-desc">
+            Five rendering styles. All examples use
+            <code class="inline-code">severity="primary"</code>.
+          </p>
+          <div class="preview">
+            <TulparButton variant="solid">Solid</TulparButton>
+            <TulparButton variant="outlined">Outlined</TulparButton>
+            <TulparButton variant="tonal">Tonal</TulparButton>
+            <TulparButton variant="ghost">Ghost</TulparButton>
+            <TulparButton variant="link">Link</TulparButton>
           </div>
-        </div>
-        <pre class="code"><code>{{ buttonGroupCode }}</code></pre>
-      </section>
+          <pre class="code"><code>{{ variantCode }}</code></pre>
+        </section>
 
-      <!-- ── 16. Premium CTA ───────────────────────────────────────────── -->
-      <section class="doc-section">
-        <h2 class="section-title">16. Premium CTA — the gold marketing example</h2>
-        <p class="section-desc">
-          <code class="inline-code">severity="premium"</code> is the gold accent for marketing
-          calls-to-action. Light theme: gold.500 background + dark text. Hover
-          <em>brightens</em> (gold.500 → .400 → .300) — intentionally distinct from
-          <code class="inline-code">primary</code> (navy), which darkens on hover.
-        </p>
-        <div class="preview preview--baseline">
-          <TulparButton severity="premium" :icon="Crown">Upgrade to Pro</TulparButton>
-          <TulparButton severity="premium" variant="tonal" :icon="Sparkles"
-            >Get early access</TulparButton
-          >
-          <TulparButton severity="premium" size="lg" :icon="Crown" :icon-size="24"
-            >Go Pro</TulparButton
-          >
-        </div>
-        <pre class="code"><code>{{ premiumCode }}</code></pre>
-      </section>
+        <!-- ── 3. Size ─────────────────────────────────────────────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">3. Size</h2>
+          <p class="section-desc">
+            Seven sizes from <code class="inline-code">xs</code> to
+            <code class="inline-code">3xl</code>. Default is <code class="inline-code">md</code>.
+          </p>
+          <div class="preview preview--baseline">
+            <TulparButton size="xs">Extra Small</TulparButton>
+            <TulparButton size="sm">Small</TulparButton>
+            <TulparButton size="md">Medium</TulparButton>
+            <TulparButton size="lg">Large</TulparButton>
+            <TulparButton size="xl">Extra Large</TulparButton>
+            <TulparButton size="2xl">2XL</TulparButton>
+            <TulparButton size="3xl">3XL</TulparButton>
+          </div>
+          <pre class="code"><code>{{ sizeCode }}</code></pre>
+        </section>
 
-      <!-- ── 17. :icon prop — Lucide convenience API ───────────────────── -->
-      <section class="doc-section">
-        <h2 class="section-title">17. :icon prop — Lucide convenience API (v0.3.1)</h2>
-        <p class="section-desc">
-          Pass any <code class="inline-code">lucide-vue-next</code> component reference via
-          <code class="inline-code">:icon</code>. The wrapper renders it into
-          <code class="inline-code">slot="start"</code> at the correct size for the button's
-          <code class="inline-code">size</code>. Use <code class="inline-code">:icon-size</code>
-          to override. Auto icon-only kicks in when no default-slot text is provided.
-        </p>
-        <div class="preview preview--baseline">
-          <TulparButton severity="success" :icon="Check">Save</TulparButton>
-          <TulparButton severity="premium" size="lg" :icon="Crown" :icon-size="24"
-            >Go Pro</TulparButton
-          >
-          <TulparButton severity="danger" :icon="Trash2" aria-label="Delete" />
-          <TulparButton :icon="Check" icon-position="top" size="lg">Confirm</TulparButton>
-        </div>
-        <pre class="code"><code>{{ iconPropCode }}</code></pre>
-      </section>
+        <!-- ── 4. Color override ────────────────────────────────────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">4. Color override</h2>
+          <p class="section-desc">
+            The <code class="inline-code">color</code> prop overrides the severity's palette with
+            any design-system color. Severity remains as a DOM hint for accessibility semantics.
+          </p>
+          <div class="preview">
+            <TulparButton color="gold">Gold</TulparButton>
+            <TulparButton color="emerald">Emerald</TulparButton>
+            <TulparButton color="rose">Rose</TulparButton>
+            <TulparButton color="indigo">Indigo</TulparButton>
+            <TulparButton color="cyan" variant="outlined">Cyan Outlined</TulparButton>
+            <TulparButton color="purple" variant="tonal">Purple Tonal</TulparButton>
+          </div>
+          <pre class="code"><code>{{ colorCode }}</code></pre>
+        </section>
 
-      <!-- ── 18. Tooltip ──────────────────────────────────────────────── -->
-      <section class="doc-section">
-        <h2 class="section-title">18. Tooltip (v0.3.1)</h2>
-        <p class="section-desc">
-          Pass a string to <code class="inline-code">tooltip</code> to show an inline tooltip on
-          hover and focus. Especially useful for icon-only buttons where the label is visually
-          hidden — the tooltip satisfies the a11y gap alongside
-          <code class="inline-code">aria-label</code>. Tooltip appears below the button, 150 ms
-          fade.
-        </p>
-        <div class="preview preview--baseline">
-          <!-- Tooltip on icon-only button -->
-          <TulparButton :icon="Settings" tooltip="Open settings" aria-label="Open settings" />
-          <!-- Tooltip on a labelled button -->
-          <TulparButton severity="danger" :icon="Trash2" tooltip="Permanently delete this item">
-            Delete
-          </TulparButton>
-          <!-- Tooltip on an anchor -->
-          <TulparButton
-            href="https://example.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            tooltip="Opens in a new tab"
-          >
-            Visit Example
-          </TulparButton>
-        </div>
-        <pre class="code"><code>{{ tooltipCode }}</code></pre>
-      </section>
+        <!-- ── 5. Shape ────────────────────────────────────────────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">5. Shape</h2>
+          <p class="section-desc">
+            <code class="inline-code">default</code> (rectangle),
+            <code class="inline-code">round</code> (pill), and
+            <code class="inline-code">circle</code> (icon-only).
+          </p>
+          <div class="preview">
+            <TulparButton shape="default">Default</TulparButton>
+            <TulparButton shape="round">Round</TulparButton>
+            <TulparButton shape="circle" :icon="Plus" aria-label="Add item" />
+          </div>
+          <pre class="code"><code>{{ shapeCode }}</code></pre>
+        </section>
 
-      <!-- ── 19. Escape hatch — non-Lucide icon libraries ──────────────── -->
-      <section class="doc-section">
-        <h2 class="section-title">19. Escape hatch — non-Lucide icon libraries</h2>
-        <p class="section-desc">
-          The <code class="inline-code">:icon</code> prop is Lucide-optimised (passes
-          <code class="inline-code">:size</code> automatically). For Heroicons, Tabler, Material, or
-          custom SVG, project your icon directly via
-          <code class="inline-code">&#60;span slot="start"&#62;</code> — the slot pattern still
-          works as the underlying Web Component escape hatch. Multi-icon layouts (two icons) also
-          require the slot pattern, since <code class="inline-code">:icon</code> supports a single
-          leading icon only.
-        </p>
-        <div class="preview preview--baseline">
-          <!-- Heroicon / custom icon via slot -->
-          <TulparButton severity="primary">
-            <span slot="start">
-              <!-- Substitute your own icon component here -->
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M12 5v14M5 12l7 7 7-7" />
-              </svg>
-            </span>
-            Save with custom icon
-          </TulparButton>
-          <!-- Multi-icon via slot (both start and end) -->
-          <TulparButton severity="secondary" variant="outlined">
-            <span slot="start"><ArrowLeft :size="16" /></span>
-            Navigate
-            <span slot="end"><ArrowRight :size="16" /></span>
-          </TulparButton>
-        </div>
-        <pre class="code"><code>{{ slotEscapeHatchCode }}</code></pre>
-      </section>
+        <!-- ── 6. Icons — leading, trailing, both ──────────────────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">6. Icons — leading, trailing, both</h2>
+          <p class="section-desc">
+            Use the <code class="inline-code">:icon</code> prop for Lucide icons — it renders into
+            the <code class="inline-code">slot="start"</code> automatically. For a trailing icon,
+            use <code class="inline-code">&#60;span slot="end"&#62;</code>. For multi-icon, combine
+            both.
+          </p>
+          <div class="preview">
+            <!-- Leading icon via prop -->
+            <TulparButton severity="success" :icon="Check">Save</TulparButton>
+            <!-- Trailing icon via slot -->
+            <TulparButton severity="primary">
+              Continue
+              <span slot="end"><ArrowRight :size="16" /></span>
+            </TulparButton>
+            <!-- Both: prop for start, slot for end -->
+            <TulparButton severity="primary" :icon="Check">
+              Save and continue
+              <span slot="end"><ArrowRight :size="16" /></span>
+            </TulparButton>
+          </div>
+          <pre class="code"><code>{{ iconsCode }}</code></pre>
+        </section>
 
+        <!-- ── 7. Icon-only ────────────────────────────────────────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">7. Icon-only</h2>
+          <p class="section-desc">
+            When <code class="inline-code">:icon</code> is set and no text is in the default slot,
+            icon-only mode is applied <em>automatically</em> — no extra prop needed. Always include
+            <code class="inline-code">aria-label</code> for screen reader accessibility.
+          </p>
+          <div class="preview preview--baseline">
+            <!-- Auto icon-only -->
+            <TulparButton severity="danger" :icon="Trash2" aria-label="Delete item" />
+            <TulparButton severity="secondary" :icon="Settings" aria-label="Settings" />
+            <!-- Auto icon-only + circle shape -->
+            <TulparButton severity="success" :icon="Save" shape="circle" aria-label="Save" />
+            <!-- Explicit iconOnly still works -->
+            <TulparButton
+              severity="premium"
+              :icon-only="true"
+              shape="round"
+              :icon="Crown"
+              aria-label="Premium"
+            />
+          </div>
+          <pre class="code"><code>{{ iconOnlyCode }}</code></pre>
+        </section>
+
+        <!-- ── 8. Icon position ────────────────────────────────────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">8. Icon position</h2>
+          <p class="section-desc">
+            Control where the icon renders relative to the label:
+            <code class="inline-code">start</code>, <code class="inline-code">end</code>,
+            <code class="inline-code">top</code>, <code class="inline-code">bottom</code>. The
+            <code class="inline-code">:icon</code> prop always renders in the start slot; for
+            <code class="inline-code">icon-position="end"</code> use
+            <code class="inline-code">&#60;span slot="end"&#62;</code>.
+          </p>
+          <div class="preview preview--baseline">
+            <TulparButton :icon="Check" icon-position="start" size="lg">Confirm</TulparButton>
+            <TulparButton icon-position="end" size="lg">
+              Confirm
+              <span slot="end"><Check :size="18" /></span>
+            </TulparButton>
+            <TulparButton :icon="Check" icon-position="top" size="lg">Confirm</TulparButton>
+            <TulparButton :icon="Check" icon-position="bottom" size="lg">Confirm</TulparButton>
+          </div>
+          <pre class="code"><code>{{ iconPositionCode }}</code></pre>
+        </section>
+
+        <!-- ── 9. Icon separator ───────────────────────────────────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">9. Icon separator</h2>
+          <p class="section-desc">
+            The <code class="inline-code">icon-separator</code> prop draws a visual divider between
+            icon and label. Works across all variants.
+          </p>
+          <div class="preview">
+            <TulparButton variant="outlined" :icon-separator="true" :icon="Download"
+              >Download</TulparButton
+            >
+            <TulparButton variant="tonal" :icon-separator="true" :icon="ArrowLeft">
+              Navigate
+              <span slot="end"><ArrowRight :size="16" /></span>
+            </TulparButton>
+            <TulparButton variant="solid" :icon-separator="true">
+              Next
+              <span slot="end"><ArrowRight :size="16" /></span>
+            </TulparButton>
+          </div>
+          <pre class="code"><code>{{ iconSeparatorCode }}</code></pre>
+        </section>
+
+        <!-- ── 10. Modifiers ──────────────────────────────────────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">10. Modifiers — raised, block, justify</h2>
+          <p class="section-desc">
+            <code class="inline-code">raised</code> adds a drop shadow.
+            <code class="inline-code">block</code> stretches to full container width.
+            <code class="inline-code">justify</code> controls internal content alignment (start /
+            center / end / between).
+          </p>
+          <div class="preview preview--col">
+            <div class="preview-row">
+              <TulparButton :raised="true">Raised Solid</TulparButton>
+              <TulparButton :raised="true" variant="outlined">Raised Outlined</TulparButton>
+            </div>
+            <TulparButton :block="true">Block Button</TulparButton>
+            <TulparButton :block="true" justify="between" :icon="Mail">
+              Send Email
+              <span slot="end"><ArrowRight :size="16" /></span>
+            </TulparButton>
+          </div>
+          <pre class="code"><code>{{ modifiersCode }}</code></pre>
+        </section>
+
+        <!-- ── 11. Loading states ─────────────────────────────────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">11. Loading states</h2>
+          <p class="section-desc">
+            The <code class="inline-code">loading</code> prop disables interaction and shows a
+            spinner. Control spinner position with
+            <code class="inline-code">loading-position</code>. Provide a
+            <code class="inline-code">loading-label</code> for status announcements. Use
+            <code class="inline-code">slot="loading-icon"</code> to swap the spinner with a custom
+            icon.
+          </p>
+          <div class="preview">
+            <TulparButton :loading="true">Save</TulparButton>
+            <TulparButton :loading="true" loading-position="start">Save</TulparButton>
+            <TulparButton :loading="true" loading-position="end">Save</TulparButton>
+            <TulparButton :loading="true" loading-label="Saving…">Save</TulparButton>
+            <TulparButton :loading="true" severity="success">
+              <span slot="loading-icon" class="spin-icon">
+                <Loader2 :size="16" />
+              </span>
+              Upload
+            </TulparButton>
+          </div>
+          <pre class="code"><code>{{ loadingCode }}</code></pre>
+        </section>
+
+        <!-- ── 12. Disabled vs data-disabled ─────────────────────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">12. Disabled vs data-disabled</h2>
+          <p class="section-desc">
+            <code class="inline-code">disabled</code> prevents all interaction.
+            <code class="inline-code">data-disabled</code> applies disabled styling but still fires
+            click events — useful when wrapping with a tooltip that explains why the action is
+            unavailable.
+          </p>
+          <div class="preview preview--baseline">
+            <TulparButton :disabled="true">Disabled</TulparButton>
+            <div title="You need edit permissions to perform this action">
+              <TulparButton :data-disabled="true" @click="onDataDisabledClick">
+                Restricted Action
+              </TulparButton>
+            </div>
+            <span v-if="dataDisabledClicked" class="click-feedback">Click received!</span>
+          </div>
+          <pre class="code"><code>{{ disabledCode }}</code></pre>
+        </section>
+
+        <!-- ── 13. Polymorphism ───────────────────────────────────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">13. Polymorphism — href renders &lt;a&gt;</h2>
+          <p class="section-desc">
+            Pass an <code class="inline-code">href</code> prop to render the button as an anchor
+            element. All ARIA and keyboard semantics are preserved.
+          </p>
+          <div class="preview">
+            <TulparButton href="https://example.com" target="_blank" rel="noopener noreferrer">
+              <span slot="start"><ArrowRight :size="16" /></span>
+              Visit Example
+            </TulparButton>
+            <TulparButton href="/dashboard" severity="secondary" variant="outlined">
+              Go to Dashboard
+            </TulparButton>
+          </div>
+          <pre class="code"><code>{{ polymorphismCode }}</code></pre>
+        </section>
+
+        <!-- ── 14. Form integration ───────────────────────────────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">14. Form integration</h2>
+          <p class="section-desc">
+            <code class="inline-code">type="submit"</code> and
+            <code class="inline-code">type="reset"</code> integrate with native HTML forms via
+            <code class="inline-code">formAssociated</code> internals — no extra wiring needed.
+          </p>
+          <div class="preview preview--col">
+            <form class="demo-form" @submit="onSubmit">
+              <input class="demo-input" name="email" type="email" placeholder="your@email.com" />
+              <TulparButton type="submit" severity="primary" :icon="Mail">Submit</TulparButton>
+              <TulparButton type="reset" severity="secondary" variant="outlined">
+                Reset
+              </TulparButton>
+            </form>
+            <p v-if="submittedEmail !== null" class="submit-feedback">
+              Submitted: <strong>{{ submittedEmail || "(empty)" }}</strong>
+            </p>
+          </div>
+          <pre class="code"><code>{{ formCode }}</code></pre>
+        </section>
+
+        <!-- ── 15. Button Group ───────────────────────────────────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">15. Button Group — horizontal + stacked</h2>
+          <p class="section-desc">
+            <code class="inline-code">&#60;tulpar-button-group&#62;</code> manages roving tabindex
+            and keyboard navigation. Horizontal: <kbd>ArrowLeft</kbd> / <kbd>ArrowRight</kbd>.
+            Stacked (add <code class="inline-code">stacked</code> attr): <kbd>ArrowUp</kbd> /
+            <kbd>ArrowDown</kbd>. Both: <kbd>Home</kbd> / <kbd>End</kbd>.
+          </p>
+          <div class="preview preview--col">
+            <div>
+              <p class="preview-label">Horizontal</p>
+              <tulpar-button-group>
+                <tulpar-button severity="secondary" variant="outlined">Day</tulpar-button>
+                <tulpar-button severity="secondary" variant="outlined">Week</tulpar-button>
+                <tulpar-button severity="secondary" variant="outlined">Month</tulpar-button>
+              </tulpar-button-group>
+            </div>
+            <div>
+              <p class="preview-label">Stacked</p>
+              <tulpar-button-group stacked>
+                <tulpar-button severity="secondary" variant="ghost">Edit profile</tulpar-button>
+                <tulpar-button severity="secondary" variant="ghost">Settings</tulpar-button>
+                <tulpar-button severity="danger" variant="ghost">Sign out</tulpar-button>
+              </tulpar-button-group>
+            </div>
+          </div>
+          <pre class="code"><code>{{ buttonGroupCode }}</code></pre>
+        </section>
+
+        <!-- ── 16. Premium CTA ───────────────────────────────────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">16. Premium CTA — the gold marketing example</h2>
+          <p class="section-desc">
+            <code class="inline-code">severity="premium"</code> is the gold accent for marketing
+            calls-to-action. Light theme: gold.500 background + dark text. Hover
+            <em>brightens</em> (gold.500 → .400 → .300) — intentionally distinct from
+            <code class="inline-code">primary</code> (navy), which darkens on hover.
+          </p>
+          <div class="preview preview--baseline">
+            <TulparButton severity="premium" :icon="Crown">Upgrade to Pro</TulparButton>
+            <TulparButton severity="premium" variant="tonal" :icon="Sparkles"
+              >Get early access</TulparButton
+            >
+            <TulparButton severity="premium" size="lg" :icon="Crown" :icon-size="24"
+              >Go Pro</TulparButton
+            >
+          </div>
+          <pre class="code"><code>{{ premiumCode }}</code></pre>
+        </section>
+
+        <!-- ── 17. :icon prop — Lucide convenience API ───────────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">17. :icon prop — Lucide convenience API (v0.3.1)</h2>
+          <p class="section-desc">
+            Pass any <code class="inline-code">lucide-vue-next</code> component reference via
+            <code class="inline-code">:icon</code>. The wrapper renders it into
+            <code class="inline-code">slot="start"</code> at the correct size for the button's
+            <code class="inline-code">size</code>. Use <code class="inline-code">:icon-size</code>
+            to override. Auto icon-only kicks in when no default-slot text is provided.
+          </p>
+          <div class="preview preview--baseline">
+            <TulparButton severity="success" :icon="Check">Save</TulparButton>
+            <TulparButton severity="premium" size="lg" :icon="Crown" :icon-size="24"
+              >Go Pro</TulparButton
+            >
+            <TulparButton severity="danger" :icon="Trash2" aria-label="Delete" />
+            <TulparButton :icon="Check" icon-position="top" size="lg">Confirm</TulparButton>
+          </div>
+          <pre class="code"><code>{{ iconPropCode }}</code></pre>
+        </section>
+
+        <!-- ── 18. Tooltip ──────────────────────────────────────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">18. Tooltip (v0.3.1)</h2>
+          <p class="section-desc">
+            Pass a string to <code class="inline-code">tooltip</code> to show an inline tooltip on
+            hover and focus. Especially useful for icon-only buttons where the label is visually
+            hidden — the tooltip satisfies the a11y gap alongside
+            <code class="inline-code">aria-label</code>. Tooltip appears below the button, 150 ms
+            fade.
+          </p>
+          <div class="preview preview--baseline">
+            <!-- Tooltip on icon-only button -->
+            <TulparButton :icon="Settings" tooltip="Open settings" aria-label="Open settings" />
+            <!-- Tooltip on a labelled button -->
+            <TulparButton severity="danger" :icon="Trash2" tooltip="Permanently delete this item">
+              Delete
+            </TulparButton>
+            <!-- Tooltip on an anchor -->
+            <TulparButton
+              href="https://example.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              tooltip="Opens in a new tab"
+            >
+              Visit Example
+            </TulparButton>
+          </div>
+          <pre class="code"><code>{{ tooltipCode }}</code></pre>
+        </section>
+
+        <!-- ── 19. Escape hatch — non-Lucide icon libraries ──────────────── -->
+        <section class="doc-section">
+          <h2 class="section-title">19. Escape hatch — non-Lucide icon libraries</h2>
+          <p class="section-desc">
+            The <code class="inline-code">:icon</code> prop is Lucide-optimised (passes
+            <code class="inline-code">:size</code> automatically). For Heroicons, Tabler, Material,
+            or custom SVG, project your icon directly via
+            <code class="inline-code">&#60;span slot="start"&#62;</code> — the slot pattern still
+            works as the underlying Web Component escape hatch. Multi-icon layouts (two icons) also
+            require the slot pattern, since <code class="inline-code">:icon</code> supports a single
+            leading icon only.
+          </p>
+          <div class="preview preview--baseline">
+            <!-- Heroicon / custom icon via slot -->
+            <TulparButton severity="primary">
+              <span slot="start">
+                <!-- Substitute your own icon component here -->
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M12 5v14M5 12l7 7 7-7" />
+                </svg>
+              </span>
+              Save with custom icon
+            </TulparButton>
+            <!-- Multi-icon via slot (both start and end) -->
+            <TulparButton severity="secondary" variant="outlined">
+              <span slot="start"><ArrowLeft :size="16" /></span>
+              Navigate
+              <span slot="end"><ArrowRight :size="16" /></span>
+            </TulparButton>
+          </div>
+          <pre class="code"><code>{{ slotEscapeHatchCode }}</code></pre>
+        </section>
       </template>
       <!-- end v-if button -->
     </main>
@@ -894,7 +903,9 @@ body {
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.1s, color 0.1s;
+  transition:
+    background 0.1s,
+    color 0.1s;
 }
 
 .nav-btn:hover {

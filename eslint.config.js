@@ -43,8 +43,7 @@ export default [
           patterns: [
             {
               group: ["@tulpar-ui/*/_internal*", "@tulpar-ui/*/dist/_internal*"],
-              message:
-                "_internal is package-private. See docs/architecture/internal-layering.md",
+              message: "_internal is package-private. See docs/architecture/internal-layering.md",
             },
           ],
         },

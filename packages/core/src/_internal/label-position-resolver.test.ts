@@ -29,9 +29,9 @@ describe("resolveLabelPosition", () => {
   });
 
   it("returns 'none' when label is missing and no position requested", () => {
-    expect(
-      resolveLabelPosition({ ...base, requested: undefined, hasLabel: false }),
-    ).to.equal("none");
+    expect(resolveLabelPosition({ ...base, requested: undefined, hasLabel: false })).to.equal(
+      "none",
+    );
   });
 
   it("returns 'top' explicitly when requested", () => {
@@ -39,9 +39,7 @@ describe("resolveLabelPosition", () => {
   });
 
   it("falls back float* → top when variant=ghost", () => {
-    expect(resolveLabelPosition({ ...base, requested: "float", variant: "ghost" })).to.equal(
-      "top",
-    );
+    expect(resolveLabelPosition({ ...base, requested: "float", variant: "ghost" })).to.equal("top");
     expect(resolveLabelPosition({ ...base, requested: "float-in", variant: "ghost" })).to.equal(
       "top",
     );

@@ -44,11 +44,11 @@ export const formFieldBaseStyles = css`
     color: var(--tulpar-input-message-helper, #57534e);
   }
 
-  .field-message[data-kind='error'] {
+  .field-message[data-kind="error"] {
     color: var(--tulpar-input-message-error, #b91c1c);
   }
 
-  .field-message[data-kind='warn'] {
+  .field-message[data-kind="warn"] {
     color: var(--tulpar-input-message-warn, #b45309);
   }
 
@@ -63,13 +63,13 @@ export const formFieldBaseStyles = css`
     display: none;
   }
 
-  .field-status-icon[data-kind='invalid'] {
+  .field-status-icon[data-kind="invalid"] {
     color: var(--tulpar-input-icon-invalid, #b91c1c);
   }
-  .field-status-icon[data-kind='warn'] {
+  .field-status-icon[data-kind="warn"] {
     color: var(--tulpar-input-icon-warn, #d97706);
   }
-  .field-status-icon[data-kind='validating'] {
+  .field-status-icon[data-kind="validating"] {
     color: var(--tulpar-input-icon-validating, #133a66);
   }
 
@@ -78,10 +78,13 @@ export const formFieldBaseStyles = css`
   }
 
   @keyframes tulpar-input-spinner {
-    to { transform: rotate(360deg); }
+    to {
+      transform: rotate(360deg);
+    }
   }
 
-  .field-prefix-host, .field-suffix-host {
+  .field-prefix-host,
+  .field-suffix-host {
     display: inline-flex;
     align-items: center;
     pointer-events: none;
@@ -102,25 +105,25 @@ export const formFieldBaseStyles = css`
     --field-resolved-font-size: var(--tulpar-input-size-md-font-size, 0.875rem);
   }
 
-  :host([size='xs']) {
+  :host([size="xs"]) {
     --field-resolved-height: var(--tulpar-input-size-xs-height, 1.5rem);
     --field-resolved-padding-x: var(--tulpar-input-size-xs-padding-x, 0.5rem);
     --field-resolved-padding-y: var(--tulpar-input-size-xs-padding-y, 0.125rem);
     --field-resolved-font-size: var(--tulpar-input-size-xs-font-size, 0.75rem);
   }
-  :host([size='sm']) {
+  :host([size="sm"]) {
     --field-resolved-height: var(--tulpar-input-size-sm-height, 1.75rem);
     --field-resolved-padding-x: var(--tulpar-input-size-sm-padding-x, 0.625rem);
     --field-resolved-padding-y: var(--tulpar-input-size-sm-padding-y, 0.25rem);
     --field-resolved-font-size: var(--tulpar-input-size-sm-font-size, 0.875rem);
   }
-  :host([size='lg']) {
+  :host([size="lg"]) {
     --field-resolved-height: var(--tulpar-input-size-lg-height, 2.75rem);
     --field-resolved-padding-x: var(--tulpar-input-size-lg-padding-x, 0.875rem);
     --field-resolved-padding-y: var(--tulpar-input-size-lg-padding-y, 0.5rem);
     --field-resolved-font-size: var(--tulpar-input-size-lg-font-size, 1rem);
   }
-  :host([size='xl']) {
+  :host([size="xl"]) {
     --field-resolved-height: var(--tulpar-input-size-xl-height, 3.25rem);
     --field-resolved-padding-x: var(--tulpar-input-size-xl-padding-x, 1rem);
     --field-resolved-padding-y: var(--tulpar-input-size-xl-padding-y, 0.625rem);
@@ -143,12 +146,12 @@ export const formFieldBaseStyles = css`
     position: relative;
   }
 
-  :host([variant='filled']) .control-row {
+  :host([variant="filled"]) .control-row {
     background: var(--tulpar-input-bg-readonly, #fafaf9);
     border-color: transparent;
   }
 
-  :host([variant='underlined']) .control-row {
+  :host([variant="underlined"]) .control-row {
     background: transparent;
     border: none;
     border-bottom: 1px solid var(--tulpar-input-border-default, #e7e5e4);
@@ -157,12 +160,12 @@ export const formFieldBaseStyles = css`
     padding-right: 0;
   }
 
-  :host([variant='ghost']) .control-row {
+  :host([variant="ghost"]) .control-row {
     background: transparent;
     border-color: transparent;
   }
 
-  :host([variant='ghost']) .control-row:focus-within {
+  :host([variant="ghost"]) .control-row:focus-within {
     outline: 2px solid var(--tulpar-input-border-focus, #133a66);
     outline-offset: -1px;
   }
@@ -190,10 +193,10 @@ export const formFieldBaseStyles = css`
      the native placeholder — otherwise label and placeholder overlap (MUI
      behaves the same way). The placeholder reappears once the label floats
      up on focus. float-on is static on the border, so no overlap there. */
-  [data-label-position='float'] .control-row:not(:focus-within) input::placeholder,
-  [data-label-position='float'] .control-row:not(:focus-within) textarea::placeholder,
-  [data-label-position='float-in'] .control-row:not(:focus-within) input::placeholder,
-  [data-label-position='float-in'] .control-row:not(:focus-within) textarea::placeholder {
+  [data-label-position="float"] .control-row:not(:focus-within) input::placeholder,
+  [data-label-position="float"] .control-row:not(:focus-within) textarea::placeholder,
+  [data-label-position="float-in"] .control-row:not(:focus-within) input::placeholder,
+  [data-label-position="float-in"] .control-row:not(:focus-within) textarea::placeholder {
     color: transparent;
   }
 
@@ -201,7 +204,7 @@ export const formFieldBaseStyles = css`
      border (PrimeNG FloatLabel "over"). Reserve its vertical space up front
      so the rest→float transition causes zero layout shift, and so the label
      never overlaps content above the field. */
-  [data-label-position='float'] .field-control-wrap {
+  [data-label-position="float"] .field-control-wrap {
     margin-top: 1.125rem;
   }
 
@@ -216,25 +219,29 @@ export const formFieldBaseStyles = css`
     transform-origin: left center;
     color: var(--tulpar-input-text-placeholder, #a8a29e);
     background: transparent;
-    transition: transform 150ms ease, top 150ms ease, font-size 150ms ease, color 150ms ease;
+    transition:
+      transform 150ms ease,
+      top 150ms ease,
+      font-size 150ms ease,
+      color 150ms ease;
   }
 
-  [data-label-position='float'] .control-row:focus-within ~ .field-label--float,
-  [data-label-position='float'][data-has-value] .field-label--float {
+  [data-label-position="float"] .control-row:focus-within ~ .field-label--float,
+  [data-label-position="float"][data-has-value] .field-label--float {
     top: -0.125rem;
     transform: translateY(-100%) scale(0.85);
     color: var(--tulpar-input-label-default, #44403c);
   }
 
-  [data-label-position='float-in'] .control-row:focus-within ~ .field-label--float-in,
-  [data-label-position='float-in'][data-has-value] .field-label--float-in {
+  [data-label-position="float-in"] .control-row:focus-within ~ .field-label--float-in,
+  [data-label-position="float-in"][data-has-value] .field-label--float-in {
     top: 0.25rem;
     transform: none;
     font-size: 0.7rem;
     color: var(--tulpar-input-label-default, #44403c);
   }
 
-  [data-label-position='float-on'] .field-label--float-on {
+  [data-label-position="float-on"] .field-label--float-on {
     top: 0;
     left: var(--field-resolved-padding-x);
     transform: translateY(-50%);

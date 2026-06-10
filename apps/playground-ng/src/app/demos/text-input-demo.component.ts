@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { TulparTextInputComponent } from '@tulpar-ui/angular';
 
 // ─── Code snippets (outside class to avoid backtick nesting) ─────────────────
@@ -120,13 +115,17 @@ const SECTIONS = [
         class="sub-btn"
         [class.active]="activeSection() === 'all'"
         (click)="activeSection.set('all')"
-      >All</button>
+      >
+        All
+      </button>
       @for (s of sections; track s.id) {
         <button
           class="sub-btn"
           [class.active]="activeSection() === s.id"
           (click)="activeSection.set(s.id)"
-        >{{ s.title }}</button>
+        >
+          {{ s.title }}
+        </button>
       }
     </div>
 
@@ -134,17 +133,47 @@ const SECTIONS = [
     @if (activeSection() === 'all' || activeSection() === 'types') {
       <section class="demo-section">
         <h3 class="demo-title">Types</h3>
-        <p class="demo-desc">All 6 input types. Search auto-adds a magnifier icon and clearable affordance. Password shows a reveal toggle.</p>
+        <p class="demo-desc">
+          All 6 input types. Search auto-adds a magnifier icon and clearable affordance. Password
+          shows a reveal toggle.
+        </p>
         <div class="preview preview--col">
           <div class="preview-row">
-            <tulpar-text-input-ng type="text" label="Text (default)" placeholder="Plain text"></tulpar-text-input-ng>
-            <tulpar-text-input-ng type="email" label="Email" autocomplete="email" placeholder="you@example.com"></tulpar-text-input-ng>
-            <tulpar-text-input-ng type="url" label="URL" placeholder="https://"></tulpar-text-input-ng>
+            <tulpar-text-input-ng
+              type="text"
+              label="Text (default)"
+              placeholder="Plain text"
+            ></tulpar-text-input-ng>
+            <tulpar-text-input-ng
+              type="email"
+              label="Email"
+              autocomplete="email"
+              placeholder="you@example.com"
+            ></tulpar-text-input-ng>
+            <tulpar-text-input-ng
+              type="url"
+              label="URL"
+              placeholder="https://"
+            ></tulpar-text-input-ng>
           </div>
           <div class="preview-row">
-            <tulpar-text-input-ng type="tel" label="Tel" autocomplete="tel" placeholder="+1 555 000 0000"></tulpar-text-input-ng>
-            <tulpar-text-input-ng type="search" label="Search" placeholder="Search…"></tulpar-text-input-ng>
-            <tulpar-text-input-ng type="password" label="Password" autocomplete="current-password" placeholder="••••••••"></tulpar-text-input-ng>
+            <tulpar-text-input-ng
+              type="tel"
+              label="Tel"
+              autocomplete="tel"
+              placeholder="+1 555 000 0000"
+            ></tulpar-text-input-ng>
+            <tulpar-text-input-ng
+              type="search"
+              label="Search"
+              placeholder="Search…"
+            ></tulpar-text-input-ng>
+            <tulpar-text-input-ng
+              type="password"
+              label="Password"
+              autocomplete="current-password"
+              placeholder="••••••••"
+            ></tulpar-text-input-ng>
           </div>
         </div>
         <pre class="code"><code>{{ typesCode }}</code></pre>
@@ -155,13 +184,36 @@ const SECTIONS = [
     @if (activeSection() === 'all' || activeSection() === 'sizes') {
       <section class="demo-section">
         <h3 class="demo-title">Sizes</h3>
-        <p class="demo-desc">Five sizes: xs → xl. At xs, action buttons (clear/copy/paste) are auto-hidden to respect touch target a11y guidelines.</p>
+        <p class="demo-desc">
+          Five sizes: xs → xl. At xs, action buttons (clear/copy/paste) are auto-hidden to respect
+          touch target a11y guidelines.
+        </p>
         <div class="preview preview--col">
-          <tulpar-text-input-ng size="xs" label="xs — Extra Small" placeholder="xs"></tulpar-text-input-ng>
-          <tulpar-text-input-ng size="sm" label="sm — Small" placeholder="sm"></tulpar-text-input-ng>
-          <tulpar-text-input-ng size="md" label="md — Medium (default)" placeholder="md"></tulpar-text-input-ng>
-          <tulpar-text-input-ng size="lg" label="lg — Large" placeholder="lg"></tulpar-text-input-ng>
-          <tulpar-text-input-ng size="xl" label="xl — Extra Large" placeholder="xl"></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            size="xs"
+            label="xs — Extra Small"
+            placeholder="xs"
+          ></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            size="sm"
+            label="sm — Small"
+            placeholder="sm"
+          ></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            size="md"
+            label="md — Medium (default)"
+            placeholder="md"
+          ></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            size="lg"
+            label="lg — Large"
+            placeholder="lg"
+          ></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            size="xl"
+            label="xl — Extra Large"
+            placeholder="xl"
+          ></tulpar-text-input-ng>
         </div>
         <pre class="code"><code>{{ sizesCode }}</code></pre>
       </section>
@@ -171,12 +223,30 @@ const SECTIONS = [
     @if (activeSection() === 'all' || activeSection() === 'variants') {
       <section class="demo-section">
         <h3 class="demo-title">Variants</h3>
-        <p class="demo-desc">Four rendering styles. Ghost with float label falls back to top (console warning).</p>
+        <p class="demo-desc">
+          Four rendering styles. Ghost with float label falls back to top (console warning).
+        </p>
         <div class="preview preview--col">
-          <tulpar-text-input-ng variant="outlined" label="Outlined (default)" placeholder="Outlined"></tulpar-text-input-ng>
-          <tulpar-text-input-ng variant="filled" label="Filled" placeholder="Filled"></tulpar-text-input-ng>
-          <tulpar-text-input-ng variant="underlined" label="Underlined" placeholder="Underlined"></tulpar-text-input-ng>
-          <tulpar-text-input-ng variant="ghost" label="Ghost" placeholder="Ghost"></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            variant="outlined"
+            label="Outlined (default)"
+            placeholder="Outlined"
+          ></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            variant="filled"
+            label="Filled"
+            placeholder="Filled"
+          ></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            variant="underlined"
+            label="Underlined"
+            placeholder="Underlined"
+          ></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            variant="ghost"
+            label="Ghost"
+            placeholder="Ghost"
+          ></tulpar-text-input-ng>
         </div>
         <pre class="code"><code>{{ variantsCode }}</code></pre>
       </section>
@@ -186,16 +256,43 @@ const SECTIONS = [
     @if (activeSection() === 'all' || activeSection() === 'label-positions') {
       <section class="demo-section">
         <h3 class="demo-title">Label Positions</h3>
-        <p class="demo-desc">Five positions. The last example shows the fallback: float + ghost forces top layout with a console warning.</p>
+        <p class="demo-desc">
+          Five positions. The last example shows the fallback: float + ghost forces top layout with
+          a console warning.
+        </p>
         <div class="preview preview--col">
-          <tulpar-text-input-ng labelPosition="top" label="Top (default)" placeholder="top"></tulpar-text-input-ng>
-          <tulpar-text-input-ng labelPosition="float" label="Float" placeholder="Click to float label"></tulpar-text-input-ng>
-          <tulpar-text-input-ng labelPosition="float-in" label="Float-in" placeholder="float-in"></tulpar-text-input-ng>
-          <tulpar-text-input-ng labelPosition="float-on" label="Float-on" placeholder="float-on"></tulpar-text-input-ng>
-          <tulpar-text-input-ng labelPosition="none" placeholder="No label (labelPosition=none)"></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            labelPosition="top"
+            label="Top (default)"
+            placeholder="top"
+          ></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            labelPosition="float"
+            label="Float"
+            placeholder="Click to float label"
+          ></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            labelPosition="float-in"
+            label="Float-in"
+            placeholder="float-in"
+          ></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            labelPosition="float-on"
+            label="Float-on"
+            placeholder="float-on"
+          ></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            labelPosition="none"
+            placeholder="No label (labelPosition=none)"
+          ></tulpar-text-input-ng>
           <div>
             <p class="demo-note">Fallback: float + ghost → renders as top (console warning)</p>
-            <tulpar-text-input-ng labelPosition="float" variant="ghost" label="Float + Ghost → fallback to top" placeholder="ghost float fallback"></tulpar-text-input-ng>
+            <tulpar-text-input-ng
+              labelPosition="float"
+              variant="ghost"
+              label="Float + Ghost → fallback to top"
+              placeholder="ghost float fallback"
+            ></tulpar-text-input-ng>
           </div>
         </div>
         <pre class="code"><code>{{ labelPositionsCode }}</code></pre>
@@ -209,14 +306,36 @@ const SECTIONS = [
         <p class="demo-desc">Three modes: icon (asterisk), label (appends text), none.</p>
         <div class="preview preview--col">
           <div class="preview-row">
-            <tulpar-text-input-ng label="Required (icon)" [required]="true" necessityIndicator="icon" placeholder="required + icon"></tulpar-text-input-ng>
-            <tulpar-text-input-ng label="Optional (icon)" necessityIndicator="icon" placeholder="optional + icon (no mark)"></tulpar-text-input-ng>
+            <tulpar-text-input-ng
+              label="Required (icon)"
+              [required]="true"
+              necessityIndicator="icon"
+              placeholder="required + icon"
+            ></tulpar-text-input-ng>
+            <tulpar-text-input-ng
+              label="Optional (icon)"
+              necessityIndicator="icon"
+              placeholder="optional + icon (no mark)"
+            ></tulpar-text-input-ng>
           </div>
           <div class="preview-row">
-            <tulpar-text-input-ng label="Required (label)" [required]="true" necessityIndicator="label" placeholder="required + label text"></tulpar-text-input-ng>
-            <tulpar-text-input-ng label="Optional (label)" necessityIndicator="label" placeholder="optional + label text"></tulpar-text-input-ng>
+            <tulpar-text-input-ng
+              label="Required (label)"
+              [required]="true"
+              necessityIndicator="label"
+              placeholder="required + label text"
+            ></tulpar-text-input-ng>
+            <tulpar-text-input-ng
+              label="Optional (label)"
+              necessityIndicator="label"
+              placeholder="optional + label text"
+            ></tulpar-text-input-ng>
           </div>
-          <tulpar-text-input-ng label="No indicator" necessityIndicator="none" placeholder="necessityIndicator=none"></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            label="No indicator"
+            necessityIndicator="none"
+            placeholder="necessityIndicator=none"
+          ></tulpar-text-input-ng>
         </div>
         <pre class="code"><code>{{ necessityCode }}</code></pre>
       </section>
@@ -226,13 +345,41 @@ const SECTIONS = [
     @if (activeSection() === 'all' || activeSection() === 'statuses') {
       <section class="demo-section">
         <h3 class="demo-title">Statuses</h3>
-        <p class="demo-desc">invalid + errorText, warn + warnText, validating + helperText, invalid + validating combo, and a helper-only baseline.</p>
+        <p class="demo-desc">
+          invalid + errorText, warn + warnText, validating + helperText, invalid + validating combo,
+          and a helper-only baseline.
+        </p>
         <div class="preview preview--col">
-          <tulpar-text-input-ng label="Email" [invalid]="true" errorText="Invalid email address" value="not-an-email"></tulpar-text-input-ng>
-          <tulpar-text-input-ng label="Username" [warn]="true" warnText="Username may already be taken" value="john_doe"></tulpar-text-input-ng>
-          <tulpar-text-input-ng label="Subdomain" [validating]="true" helperText="Checking availability…" value="my-app"></tulpar-text-input-ng>
-          <tulpar-text-input-ng label="Slug" [invalid]="true" [validating]="true" errorText="Invalid format — re-checking" value="bad slug!"></tulpar-text-input-ng>
-          <tulpar-text-input-ng label="Website" helperText="Include https://" placeholder="https://example.com"></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            label="Email"
+            [invalid]="true"
+            errorText="Invalid email address"
+            value="not-an-email"
+          ></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            label="Username"
+            [warn]="true"
+            warnText="Username may already be taken"
+            value="john_doe"
+          ></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            label="Subdomain"
+            [validating]="true"
+            helperText="Checking availability…"
+            value="my-app"
+          ></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            label="Slug"
+            [invalid]="true"
+            [validating]="true"
+            errorText="Invalid format — re-checking"
+            value="bad slug!"
+          ></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            label="Website"
+            helperText="Include https://"
+            placeholder="https://example.com"
+          ></tulpar-text-input-ng>
         </div>
         <pre class="code"><code>{{ statusesCode }}</code></pre>
       </section>
@@ -242,7 +389,9 @@ const SECTIONS = [
     @if (activeSection() === 'all' || activeSection() === 'affordances') {
       <section class="demo-section">
         <h3 class="demo-title">Affordances</h3>
-        <p class="demo-desc">clearable, show-count, copyable (great for readonly tokens), pastable, and combined.</p>
+        <p class="demo-desc">
+          clearable, show-count, copyable (great for readonly tokens), pastable, and combined.
+        </p>
         <div class="preview preview--col">
           <tulpar-text-input-ng
             label="Clearable"
@@ -291,8 +440,8 @@ const SECTIONS = [
       <section class="demo-section">
         <h3 class="demo-title">Masks</h3>
         <p class="demo-desc">
-          Mask tokens: 9=digit, A=letter, *=any. In Angular templates the backslash before
-          the leading digit in "+90" must be doubled to produce a literal escape.
+          Mask tokens: 9=digit, A=letter, *=any. In Angular templates the backslash before the
+          leading digit in "+90" must be doubled to produce a literal escape.
         </p>
         <div class="preview preview--col">
           <tulpar-text-input-ng
@@ -375,7 +524,10 @@ const SECTIONS = [
     @if (activeSection() === 'all' || activeSection() === 'slots') {
       <section class="demo-section">
         <h3 class="demo-title">Slots</h3>
-        <p class="demo-desc">prefix and suffix slots accept any content. prefix-interactive enables a tabbable / clickable element in the prefix zone.</p>
+        <p class="demo-desc">
+          prefix and suffix slots accept any content. prefix-interactive enables a tabbable /
+          clickable element in the prefix zone.
+        </p>
         <div class="preview preview--col">
           <tulpar-text-input-ng label="Amount (prefix $)">
             <span slot="prefix">$</span>
@@ -385,7 +537,10 @@ const SECTIONS = [
             <span slot="suffix">.com</span>
           </tulpar-text-input-ng>
 
-          <tulpar-text-input-ng label="Search (prefix-interactive button)" [prefixInteractive]="true">
+          <tulpar-text-input-ng
+            label="Search (prefix-interactive button)"
+            [prefixInteractive]="true"
+          >
             <button slot="prefix" type="button" style="padding: 0 8px; cursor:pointer;">Go</button>
           </tulpar-text-input-ng>
         </div>
@@ -397,129 +552,149 @@ const SECTIONS = [
     @if (activeSection() === 'all' || activeSection() === 'states') {
       <section class="demo-section">
         <h3 class="demo-title">States</h3>
-        <p class="demo-desc">disabled, readonly, and no-message-space (tight layout — no reserved row below).</p>
+        <p class="demo-desc">
+          disabled, readonly, and no-message-space (tight layout — no reserved row below).
+        </p>
         <div class="preview preview--col">
-          <tulpar-text-input-ng label="Disabled" [disabled]="true" value="Cannot edit this"></tulpar-text-input-ng>
-          <tulpar-text-input-ng label="Readonly" [readonly]="true" value="Read only value"></tulpar-text-input-ng>
-          <tulpar-text-input-ng label="No Message Space" [noMessageSpace]="true" placeholder="tight layout — no gap below"></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            label="Disabled"
+            [disabled]="true"
+            value="Cannot edit this"
+          ></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            label="Readonly"
+            [readonly]="true"
+            value="Read only value"
+          ></tulpar-text-input-ng>
+          <tulpar-text-input-ng
+            label="No Message Space"
+            [noMessageSpace]="true"
+            placeholder="tight layout — no gap below"
+          ></tulpar-text-input-ng>
         </div>
         <pre class="code"><code>{{ statesCode }}</code></pre>
       </section>
     }
   `,
-  styles: [`
-    :host { display: block; }
+  styles: [
+    `
+      :host {
+        display: block;
+      }
 
-    .sub-menu {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      padding: 16px 0 24px;
-      border-bottom: 1px solid var(--tulpar-color-border-default, #e7e5e4);
-      margin-bottom: 32px;
-    }
+      .sub-menu {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 16px 0 24px;
+        border-bottom: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        margin-bottom: 32px;
+      }
 
-    .sub-btn {
-      padding: 6px 14px;
-      border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
-      border-radius: 20px;
-      background: var(--tulpar-color-bg-elevated, #ffffff);
-      color: var(--tulpar-color-text-secondary, #57534e);
-      font-family: var(--tulpar-font-family-ui, system-ui, sans-serif);
-      font-size: 13px;
-      cursor: pointer;
-      transition: background 0.1s, color 0.1s;
-    }
+      .sub-btn {
+        padding: 6px 14px;
+        border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        border-radius: 20px;
+        background: var(--tulpar-color-bg-elevated, #ffffff);
+        color: var(--tulpar-color-text-secondary, #57534e);
+        font-family: var(--tulpar-font-family-ui, system-ui, sans-serif);
+        font-size: 13px;
+        cursor: pointer;
+        transition:
+          background 0.1s,
+          color 0.1s;
+      }
 
-    .sub-btn:hover {
-      background: var(--tulpar-color-bg-subtle, #f5f5f4);
-      color: var(--tulpar-color-text-primary, #1c1917);
-    }
+      .sub-btn:hover {
+        background: var(--tulpar-color-bg-subtle, #f5f5f4);
+        color: var(--tulpar-color-text-primary, #1c1917);
+      }
 
-    .sub-btn.active {
-      background: var(--tulpar-color-brand-default, #2563eb);
-      border-color: var(--tulpar-color-brand-default, #2563eb);
-      color: #ffffff;
-    }
+      .sub-btn.active {
+        background: var(--tulpar-color-brand-default, #2563eb);
+        border-color: var(--tulpar-color-brand-default, #2563eb);
+        color: #ffffff;
+      }
 
-    .demo-section {
-      padding-bottom: 48px;
-      margin-bottom: 48px;
-      border-bottom: 1px solid var(--tulpar-color-border-default, #e7e5e4);
-    }
+      .demo-section {
+        padding-bottom: 48px;
+        margin-bottom: 48px;
+        border-bottom: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+      }
 
-    .demo-section:last-child {
-      border-bottom: none;
-    }
+      .demo-section:last-child {
+        border-bottom: none;
+      }
 
-    .demo-title {
-      margin: 0 0 8px;
-      font-family: var(--tulpar-font-family-display, Georgia, serif);
-      font-size: 22px;
-      font-weight: 600;
-      color: var(--tulpar-color-text-primary, #1c1917);
-    }
+      .demo-title {
+        margin: 0 0 8px;
+        font-family: var(--tulpar-font-family-display, Georgia, serif);
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--tulpar-color-text-primary, #1c1917);
+      }
 
-    .demo-desc {
-      margin: 0 0 20px;
-      font-size: 14px;
-      color: var(--tulpar-color-text-secondary, #57534e);
-      max-width: 620px;
-      line-height: 1.6;
-    }
+      .demo-desc {
+        margin: 0 0 20px;
+        font-size: 14px;
+        color: var(--tulpar-color-text-secondary, #57534e);
+        max-width: 620px;
+        line-height: 1.6;
+      }
 
-    .demo-note {
-      margin: 0 0 8px;
-      font-size: 12px;
-      font-style: italic;
-      color: var(--tulpar-color-text-muted, #78716c);
-    }
+      .demo-note {
+        margin: 0 0 8px;
+        font-size: 12px;
+        font-style: italic;
+        color: var(--tulpar-color-text-muted, #78716c);
+      }
 
-    .preview {
-      background: var(--tulpar-color-bg-subtle, #f5f5f4);
-      border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
-      border-bottom: none;
-      border-radius: 6px 6px 0 0;
-      padding: 24px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: flex-start;
-    }
+      .preview {
+        background: var(--tulpar-color-bg-subtle, #f5f5f4);
+        border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        border-bottom: none;
+        border-radius: 6px 6px 0 0;
+        padding: 24px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: flex-start;
+      }
 
-    .preview--col {
-      flex-direction: column;
-      align-items: stretch;
-    }
+      .preview--col {
+        flex-direction: column;
+        align-items: stretch;
+      }
 
-    .preview-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      align-items: flex-start;
-    }
+      .preview-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: flex-start;
+      }
 
-    .code {
-      margin: 0;
-      padding: 16px 20px;
-      background: var(--tulpar-color-bg-inverse, #1c1917);
-      border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
-      border-radius: 0 0 6px 6px;
-      overflow-x: auto;
-      font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-      font-size: 13px;
-      line-height: 1.55;
-      color: #e7e5e4;
-      white-space: pre;
-    }
+      .code {
+        margin: 0;
+        padding: 16px 20px;
+        background: var(--tulpar-color-bg-inverse, #1c1917);
+        border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        border-radius: 0 0 6px 6px;
+        overflow-x: auto;
+        font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.55;
+        color: #e7e5e4;
+        white-space: pre;
+      }
 
-    .value-display {
-      margin: 4px 0 0;
-      font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-      font-size: 12px;
-      color: var(--tulpar-color-text-secondary, #57534e);
-    }
-  `],
+      .value-display {
+        margin: 4px 0 0;
+        font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+        font-size: 12px;
+        color: var(--tulpar-color-text-secondary, #57534e);
+      }
+    `,
+  ],
 })
 export class TextInputDemoComponent {
   readonly sections = SECTIONS;
