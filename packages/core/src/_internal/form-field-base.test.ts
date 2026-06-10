@@ -308,3 +308,42 @@ describe("FormFieldBase accessibility hardening", () => {
     expect(cs.transitionProperty).to.contain("opacity");
   });
 });
+
+describe("FormFieldBase float label positioning", () => {
+  it("anchors the resting float label inside the control row's box", async () => {
+    // Offset wrapper simulates real page layout — without a positioned
+    // containing block inside the component, the absolute label escapes
+    // to the viewport and lands far away from the field.
+    const wrapper = await fixture<HTMLDivElement>(testHtml`
+      <div style="padding-top: 150px;">
+        <test-form-field label="Email" label-position="float"></test-form-field>
+      </div>
+    `);
+    const field = wrapper.querySelector<TestField>("test-form-field")!;
+    await field.updateComplete;
+    const label = field.shadowRoot!.querySelector(".field-label--float")!;
+    const row = field.shadowRoot!.querySelector(".control-row")!;
+    const lr = label.getBoundingClientRect();
+    const rr = row.getBoundingClientRect();
+    expect(lr.top).to.be.at.least(rr.top - 1);
+    expect(lr.bottom).to.be.at.most(rr.bottom + 1);
+    expect(lr.left).to.be.at.least(rr.left);
+  });
+
+  it("anchors the float-on label to the control row's top border", async () => {
+    const wrapper = await fixture<HTMLDivElement>(testHtml`
+      <div style="padding-top: 150px;">
+        <test-form-field label="Email" label-position="float-on"></test-form-field>
+      </div>
+    `);
+    const field = wrapper.querySelector<TestField>("test-form-field")!;
+    await field.updateComplete;
+    const label = field.shadowRoot!.querySelector(".field-label--float-on")!;
+    const row = field.shadowRoot!.querySelector(".control-row")!;
+    const lr = label.getBoundingClientRect();
+    const rr = row.getBoundingClientRect();
+    // Label straddles the top border: its vertical center ≈ row top.
+    const labelCenter = (lr.top + lr.bottom) / 2;
+    expect(Math.abs(labelCenter - rr.top)).to.be.at.most(2);
+  });
+});

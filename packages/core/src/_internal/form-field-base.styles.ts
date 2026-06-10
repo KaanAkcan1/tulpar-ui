@@ -169,11 +169,32 @@ export const formFieldBaseStyles = css`
 
   /* ── Float label common ──────────────────────────────────────────────── */
 
+  /* Positioned containing block for the absolute float label. Without this,
+     the label would resolve its containing block OUTSIDE the shadow root
+     (nearest positioned page ancestor / viewport) and render far away from
+     the field. The wrap contains only the control row + the float label, so
+     top: 50% centers the label on the control row exactly. */
+  .field-control-wrap {
+    position: relative;
+  }
+
   .field-label--float,
   .field-label--float-in,
   .field-label--float-on {
     position: absolute;
     pointer-events: none;
+    margin-bottom: 0;
+  }
+
+  /* While the float label rests inside the field (empty + unfocused), hide
+     the native placeholder — otherwise label and placeholder overlap (MUI
+     behaves the same way). The placeholder reappears once the label floats
+     up on focus. float-on is static on the border, so no overlap there. */
+  [data-label-position='float'] .control-row:not(:focus-within) input::placeholder,
+  [data-label-position='float'] .control-row:not(:focus-within) textarea::placeholder,
+  [data-label-position='float-in'] .control-row:not(:focus-within) input::placeholder,
+  [data-label-position='float-in'] .control-row:not(:focus-within) textarea::placeholder {
+    color: transparent;
   }
 
   .field-label--float {

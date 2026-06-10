@@ -250,10 +250,12 @@ export abstract class FormFieldBase extends LitElement {
         ${showTopLabel
           ? html`<label class="field-label" part="label" for="control">${this._renderLabelContent()}</label>`
           : nothing}
-        ${this.renderControl(ariaLabel)}
         ${isFloat
-          ? html`<label class="field-label field-label--${pos}" part="label" for="control">${this._renderLabelContent()}</label>`
-          : nothing}
+          ? html`<div class="field-control-wrap">
+              ${this.renderControl(ariaLabel)}
+              <label class="field-label field-label--${pos}" part="label" for="control">${this._renderLabelContent()}</label>
+            </div>`
+          : this.renderControl(ariaLabel)}
         ${this._renderMessageRow()}
         ${this._renderValidatingLiveRegion()}
       </div>
