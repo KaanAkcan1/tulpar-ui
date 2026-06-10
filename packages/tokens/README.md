@@ -35,8 +35,42 @@ Apply a brand and optional dark mode on the root element:
 
 ## TypeScript exports
 
+Primitive token objects (raw values):
+
 ```ts
-import { semanticTokens, primitiveTokens, brandTokens } from "@tulpar-ui/tokens";
+import {
+  primitiveColor,
+  primitiveSpacing,
+  primitiveTypography,
+  primitiveRadius,
+  primitiveShadow,
+  primitiveTransition,
+} from "@tulpar-ui/tokens";
+```
+
+Brand token objects (semantic → primitive mappings per mode):
+
+```ts
+import { tulparLight, tulparDark } from "@tulpar-ui/tokens";
+```
+
+Type exports:
+
+```ts
+import type {
+  SemanticTokens,
+  ColorTokens,
+  ButtonTokens,
+  ButtonSizeTokens,
+  VariantColorTokens,
+} from "@tulpar-ui/tokens";
+```
+
+CSS fallback map (for components that need hard-coded fallbacks):
+
+```ts
+import { FALLBACKS } from "@tulpar-ui/tokens";
+import type { FallbackKey } from "@tulpar-ui/tokens";
 ```
 
 Full docs: https://github.com/KaanAkcan1/tulpar-ui#readme
