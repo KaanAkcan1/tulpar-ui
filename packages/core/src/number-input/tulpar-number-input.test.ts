@@ -299,3 +299,49 @@ describe("<tulpar-number-input> integer-only", () => {
     expect(input.getAttribute("inputmode")).to.equal("numeric");
   });
 });
+
+describe("<tulpar-number-input> format prefix/suffix string", () => {
+  it("prepends format-prefix to displayed value", async () => {
+    const el = await fixture<TulparNumberInput>(html`
+      <tulpar-number-input format-prefix="₺ " .value=${1234} locale="en-US"></tulpar-number-input>
+    `);
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+    expect(input.value).to.equal("₺ 1,234");
+  });
+
+  it("appends format-suffix to displayed value", async () => {
+    const el = await fixture<TulparNumberInput>(html`
+      <tulpar-number-input format-suffix=" adet" .value=${1234} locale="tr-TR"></tulpar-number-input>
+    `);
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+    expect(input.value).to.equal("1.234 adet");
+  });
+
+  it("both prefix and suffix simultaneously", async () => {
+    const el = await fixture<TulparNumberInput>(html`
+      <tulpar-number-input format-prefix="~" format-suffix=" kg" .value=${5} locale="en-US"></tulpar-number-input>
+    `);
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+    expect(input.value).to.equal("~5 kg");
+  });
+
+  it("renders slot prefix host alongside format strings", async () => {
+    const el = await fixture<TulparNumberInput>(html`
+      <tulpar-number-input format-prefix="$">
+        <span slot="prefix">icon</span>
+      </tulpar-number-input>
+    `);
+    expect(el.shadowRoot!.querySelector(".field-prefix-host")).to.not.equal(null);
+  });
+
+  it("typing buffer (focused) shows raw value without format prefix/suffix", async () => {
+    const el = await fixture<TulparNumberInput>(html`
+      <tulpar-number-input format-suffix=" adet" .value=${1234} locale="en-US"></tulpar-number-input>
+    `);
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
+    input.focus();
+    input.dispatchEvent(new Event("focus", { bubbles: true }));
+    await el.updateComplete;
+    expect(input.value).to.equal("1234"); // raw buffer, no suffix
+  });
+});
