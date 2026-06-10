@@ -1,18 +1,23 @@
+import { readdirSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 
+/** src/<dir>/index.ts olan her dizin bir entry'dir; _internal hariç. */
+export function scanEntries(srcDir: string): Record<string, string> {
+  const entries: Record<string, string> = { index: resolve(srcDir, "index.ts") };
+  for (const d of readdirSync(srcDir, { withFileTypes: true })) {
+    if (!d.isDirectory() || d.name.startsWith("_")) continue;
+    const idx = resolve(srcDir, d.name, "index.ts");
+    if (existsSync(idx)) entries[`${d.name}/index`] = idx;
+  }
+  return entries;
+}
+
 export default defineConfig({
   build: {
     lib: {
-      entry: {
-        index: resolve(__dirname, "src/index.ts"),
-        "button/index": resolve(__dirname, "src/button/index.ts"),
-        "button-group/index": resolve(__dirname, "src/button-group/index.ts"),
-        "text-input/index": resolve(__dirname, "src/text-input/index.ts"),
-        "textarea/index": resolve(__dirname, "src/textarea/index.ts"),
-        "number-input/index": resolve(__dirname, "src/number-input/index.ts"),
-      },
+      entry: scanEntries(resolve(__dirname, "src")),
       formats: ["es"],
     },
     outDir: "dist",
