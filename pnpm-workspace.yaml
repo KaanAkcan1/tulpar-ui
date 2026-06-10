@@ -1,3 +1,7 @@
 packages:
   - "packages/*"
   - "apps/*"
+
+catalog:
+  lit: ^3.1.0
+  vite-plugin-dts: ^3.7.0
