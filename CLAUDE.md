@@ -6,7 +6,7 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 **Tulpar UI** — A from-scratch design system that ships as Web Components (Lit-based) with idiomatic Angular and Vue wrappers. The goal is a single source of truth for UI behavior + rendering, consumable from any framework.
 
-**Status:** v0.1 in progress. Single component (Button + ButtonGroup), full architectural foundation.
+**Status:** v0.5 (input family) complete; v0.6 in progress — shell family (@tulpar-ui/shell) + infra hardening. Ships Button/ButtonGroup + TextInput/NumberInput/Textarea.
 
 **Owner:** Kaan Akcan. This is a personal project being built gradually — possible commercial product down the line.
 
@@ -16,6 +16,10 @@ Always read these before making architectural decisions or expanding scope:
 
 - **Spec:** [`docs/superpowers/specs/2026-06-05-tulpar-ui-v0.1-button-design.md`](docs/superpowers/specs/2026-06-05-tulpar-ui-v0.1-button-design.md)
 - **Implementation plan:** [`docs/superpowers/plans/2026-06-05-tulpar-ui-v0.1-button-implementation.md`](docs/superpowers/plans/2026-06-05-tulpar-ui-v0.1-button-implementation.md)
+- **Shell spec (v0.6b):** [`docs/superpowers/specs/2026-06-10-tulpar-ui-v0.6-shell-design.md`](docs/superpowers/specs/2026-06-10-tulpar-ui-v0.6-shell-design.md)
+- **Infra plan (v0.6a):** [`docs/superpowers/plans/2026-06-10-tulpar-ui-v0.6a-infra-quality.md`](docs/superpowers/plans/2026-06-10-tulpar-ui-v0.6a-infra-quality.md)
+- **Shell plan (v0.6b):** [`docs/superpowers/plans/2026-06-10-tulpar-ui-v0.6b-shell-family.md`](docs/superpowers/plans/2026-06-10-tulpar-ui-v0.6b-shell-family.md)
+- **Internal layering:** [`docs/architecture/internal-layering.md`](docs/architecture/internal-layering.md)
 
 The plan is the working contract. Follow it task by task. If a question is unclear, the spec is authoritative.
 
@@ -23,9 +27,10 @@ The plan is the working contract. Follow it task by task. If a question is uncle
 
 ```
 @tulpar-ui/tokens   → TS source of truth, generates CSS custom properties (3-layer multi-brand)
-@tulpar-ui/core     → Lit Web Components — <tulpar-button>, <tulpar-button-group> (source of truth)
-@tulpar-ui/angular  → Signal-based Angular wrapper (<tulpar-button-ng>)
-@tulpar-ui/vue      → Vue 3 SFC wrapper (<TulparButton>)
+@tulpar-ui/core     → Lit Web Components — <tulpar-button>, <tulpar-button-group>, <tulpar-text-input>, <tulpar-number-input>, <tulpar-textarea> (source of truth)
+@tulpar-ui/angular  → Signal-based Angular wrapper (<tulpar-button-ng>, <tulpar-text-input-ng>, …)
+@tulpar-ui/vue      → Vue 3 SFC wrapper (<TulparButton>, <TulparTextInput>, …)
+@tulpar-ui/shell    → App shell (tulpar-shell, tulpar-topbar, tulpar-sidenav, tulpar-nav-item) [v0.6 target]
 ```
 
 **Element prefix:** `tulpar-` (defensive against collisions like Toast UI's `tui-`)
@@ -45,18 +50,18 @@ The plan is the working contract. Follow it task by task. If a question is uncle
 
 | Concern | Tool |
 |---|---|
-| Package manager | pnpm workspaces |
+| Package manager | pnpm 9 + catalogs (workspaces) |
 | Build | Vite (library mode) |
 | Versioning + publish | Changesets (linked versioning for `@tulpar-ui/*`) |
 | TypeScript | 5.4+, strict, ES2022, `useDefineForClassFields: false`, `experimentalDecorators: true` (Lit requirement) |
 | Web Component lib | Lit 3 |
 | Component testing (core) | `@web/test-runner` + `@open-wc/testing` (real-browser Shadow DOM) |
 | Wrapper testing | Vitest + happy-dom |
-| Angular | v20, signal-based inputs, `CUSTOM_ELEMENTS_SCHEMA` inside wrapper |
+| Angular | v22, signal-based inputs, `CUSTOM_ELEMENTS_SCHEMA` inside wrapper |
 | Vue | 3.4+, SFC, `compilerOptions.isCustomElement` for `tulpar-` |
 | Docs | Storybook 8 + `@storybook/web-components-vite` + addon-themes + addon-a11y |
 | Linting | ESLint flat config + Prettier |
-| Node | 20.11.0 (pinned in `.nvmrc`) |
+| Node | 22.22.3 (pinned in `.nvmrc`) |
 
 ## Commands
 
@@ -115,12 +120,20 @@ Otherwise Vue's compiler will treat `<tulpar-button>` as a Vue component and thr
 
 ### Token usage in component CSS
 
-Component CSS (inside Lit's `css` tagged template) **only** uses semantic tokens (`var(--tulpar-color-brand-default)`). Never reference primitive tokens directly inside component styles — that would defeat the multi-brand layer.
+Component CSS (inside Lit's `css` tagged template) **only** uses semantic tokens (`var(--tulpar-color-brand-default)`). Never reference primitive tokens directly inside component styles — that would defeat the multi-brand layer. **This is enforced by ESLint:** a `no-restricted-syntax` rule on `*.styles.ts` rejects any `--tulpar-primitive-*` reference. Bind primitives in the brand layer (`brand/tulpar/*.ts`) instead.
 
 Provide a fallback in `var()` calls for when tokens CSS hasn't been loaded:
 ```css
 background: var(--tulpar-color-brand-default, #2563eb);
 ```
+
+### `_internal` layering
+
+Each package's `src/_internal/` is package-private: never re-exported, never in the `exports` map, and **no package may import another package's `_internal`** (enforced by an ESLint `no-restricted-imports` boundary). Shared code is copied if ≤~50 lines, otherwise promoted to a dedicated published-but-undocumented package — only once a real second consumer exists. Full rule: [`docs/architecture/internal-layering.md`](docs/architecture/internal-layering.md).
+
+### Design decisions
+
+For any visual/UX judgment (colors, spacing, motion, layout, story design), invoke the `/frontend-design` and `/ui-ux-pro-max` skills before deciding. Target bar: enterprise, product-ready.
 
 ### Form-associated custom elements
 
@@ -136,23 +149,33 @@ Buttons use `static formAssociated = true` + `attachInternals()`. The wrapper do
 These were established during brainstorming and apply throughout this project:
 
 - **Push back, don't validate.** When user asks "is X really the right call?", give honest analysis with concrete trade-offs and counter-examples. Don't soften to please.
-- **Gradual building.** User wants to shape this slowly. Don't add scope beyond what's in the spec. v0.1 = Button only.
+- **Gradual building.** User wants to shape this slowly. Don't add scope beyond what's in the current spec. Each version is tightly scoped (v0.1 Button → v0.5 input family → v0.6 shell); don't pull future components forward.
 - **Angular: signals.** All new Angular code uses `input()`, `output()`, `signal()`, `computed()`. No `@Input/@Output`, no RxJS subscriptions for state, no `BehaviorSubject` for view state.
 - **Discuss backend/architecture changes first.** Don't refactor or restructure mid-implementation without checking. If the plan needs to deviate, surface it.
 - **Defensive defaults.** Tulpar UI is potentially commercial — choose collision-safe, conservative options when in doubt (e.g., full `tulpar-` prefix, not `tui-`).
-- **Out-of-scope is enforced.** The spec's "out of scope" list is binding. Split button, dropdown button, FAB, Input, Checkbox — none in v0.1. If a use-case demands one, surface it as a future scope question, don't sneak it in.
+- **Out-of-scope is enforced.** The current spec's "out of scope" list is binding. If a use-case demands an out-of-scope component, surface it as a future scope question, don't sneak it in.
 
-## Out of Scope for v0.1
+## Shipped so far
 
-(Repeated for emphasis — see spec for full list)
+- **v0.1–v0.4:** Button + ButtonGroup, architecture foundation, design-system redesign, button API expansion, enterprise hardening.
+- **v0.5:** Input family — TextInput, NumberInput, Textarea (shared internal `FormFieldBase`).
+- **v0.6 (in progress):** `@tulpar-ui/shell` app shell + infra hardening (pnpm 9 catalogs, CI/CD, glob exports, `_internal` rule, tokens split, primitive-token lint, READMEs, MIT license).
 
-- Input, Checkbox, Select, or any non-Button component
+## Out of Scope for v0.6
+
+(See the v0.6 shell spec for the full list)
+
+- Configurator panel (v2 — needs Select/Switch/Checkbox first)
+- Runtime color preset API (separate tokens-package spec)
+- `top` / `mix` shell layout modes
+- Breadcrumb, user-menu dropdown, separate footer component
+- RTL
 - Second brand theme
 - React wrapper
-- SSR optimization
+- SSR optimization tuning
 - Mobile-native (RN/Flutter)
 - Split button, dropdown menu button, toggle button, badged button, FAB
-- Tooltip integration
+- Public Tooltip / Badge / Icon components
 
 ## Execution Workflow
 
