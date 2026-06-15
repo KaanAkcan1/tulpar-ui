@@ -42,3 +42,6 @@ out-tsc/
 
 # Vite config bundling temp files (created while vite is running)
 vite.config.ts.timestamp-*.mjs
+
+# Claude Code local state / worktrees
+.claude/worktrees/
