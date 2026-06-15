@@ -25,11 +25,18 @@
   },
   "dependencies": {
     "@tulpar-ui/core": "workspace:*",
+    "@tulpar-ui/shell": "workspace:*",
     "@tulpar-ui/tokens": "workspace:*"
   },
   "peerDependencies": {
     "@angular/common": "^22.0.0",
-    "@angular/core": "^22.0.0"
+    "@angular/core": "^22.0.0",
+    "@angular/router": "^22.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@angular/router": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@analogjs/vite-plugin-angular": "^2.6.0",
@@ -40,7 +47,9 @@
     "@angular/core": "^22.0.0",
     "@angular/platform-browser": "^22.0.0",
     "@angular/platform-browser-dynamic": "^22.0.0",
+    "@angular/router": "^22.0.0",
     "@tulpar-ui/core": "workspace:*",
+    "@tulpar-ui/shell": "workspace:*",
     "@tulpar-ui/tokens": "workspace:*",
     "happy-dom": "^20.0.0",
     "ng-packagr": "^22.0.0",
