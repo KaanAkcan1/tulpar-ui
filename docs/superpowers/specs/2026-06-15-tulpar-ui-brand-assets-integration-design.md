@@ -106,8 +106,9 @@ En üste, docs sitesine linkli banner (GitHub relatif path'i render eder):
 
 ### 4.3 playground-vue
 
-- `public/favicon.svg` → `assets/brand/svg/tulpar-ui-icon.svg` ile değiştirilir
-  (ya da `png/favicon.svg` yoksa icon.svg). Ek olarak `apple-touch-icon-180.png`.
+- `public/favicon.svg` → `assets/brand/svg/tulpar-ui-icon.svg` ile değiştirilir.
+  Ek olarak `apple-touch-icon-180.png` public'e kopyalanır. (Kit'te `favicon.svg`
+  diye ayrı bir dosya yoktur; favicon olarak `tulpar-ui-icon.svg` kullanılır.)
 - `index.html`:
   - `<title>` → "Tulpar UI — Vue Playground"
   - OG meta: `og:image` = `og-image-1200x630.png` (public'e kopyalanır),
@@ -130,12 +131,12 @@ render etmez; npm sayfasında görünmesi için **absolute URL** kullanılır
 
 ```html
 <p align="center">
-  <img src="https://raw.githubusercontent.com/<owner>/<repo>/main/assets/brand/svg/tulpar-ui-icon.svg" width="48" alt="Tulpar UI" />
+  <img src="https://raw.githubusercontent.com/KaanAkcan1/tulpar-ui/main/assets/brand/svg/tulpar-ui-icon.svg" width="48" alt="Tulpar UI" />
 </p>
 ```
 
-Doğru `<owner>/<repo>` ve `main` branch'i implementation sırasında repo
-remote'undan doğrulanır.
+Remote `origin` = `github.com/KaanAkcan1/tulpar-ui` (implementation sırasında
+teyit edildi). Asset'ler `main`'e merge edildikten sonra raw URL canlı olur.
 
 > Not: `apps/playground-{ng,vue}/README.md` şu an Vite/Vue boilerplate. Bunlar
 > kısa, projeye özgü içerikle değiştirilir + ikon başlık eklenir.
@@ -158,17 +159,20 @@ Her servis edilen app için ilgili dosyalar `public/`'e kopyalanır:
 
 | App | Kopyalanan |
 |---|---|
-| apps/docs (Storybook) | `favicon.ico`, `favicon-32`, `favicon-16`, lockup-light.svg |
+| apps/docs (Storybook) | `favicon.ico`, `favicon-32.png`, `favicon-16.png`, `tulpar-ui-lockup-light.svg` |
 | playground-vue | `tulpar-ui-icon.svg`, `apple-touch-icon-180.png`, `og-image-1200x630.png`, lockup |
 | playground-ng | `favicon.ico`, `apple-touch-icon-180.png`, lockup |
 
-PWA manifest (192/512) bu turda **eklenmez** (mevcut applerde manifest yok;
-scope dışı). Dosyalar `assets/brand/png/`'de ileride kullanılmak üzere durur.
+PWA manifest (`pwa-icon-192.png`, `pwa-icon-512.png`) bu turda **eklenmez**
+(mevcut applerde manifest yok; scope dışı). Bu dosyalar + `favicon-48.png`
+(`.ico` zaten 16/32/48 içerir) `assets/brand/png/`'de **kopyalanmış ama
+referanssız** durur; ileride kullanılmak üzere parke edilir, eksik referans
+sayılmaz.
 
 ## 6. Doğrulama (Verification)
 
 - `pnpm build` ve `pnpm lint` temiz geçer (yeni binary asset'ler lint'e takılmaz).
-- Storybook lokalde açılır; manager'da wordmark logo ve favicon görünür.
+- Storybook lokalde açılır; manager'da lockup logo (lockup-light) ve favicon görünür.
 - Her iki playground lokalde açılır; favicon ve header logosu görünür.
 - Kök README GitHub önizlemesinde banner render eder (relatif path).
 - Paket README'lerindeki ikon absolute URL ile yüklenir (görsel kontrol).
