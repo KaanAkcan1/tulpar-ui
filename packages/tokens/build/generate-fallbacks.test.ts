@@ -5,9 +5,9 @@ import { primitiveColor } from "../src/primitive/color";
 describe("buildFallbacks", () => {
   it("maps known semantic fallback keys to primitive values", () => {
     const fb = buildFallbacks();
-    expect(fb.borderDefault).toBe(primitiveColor.stone[200]);
-    expect(fb.textPrimary).toBe(primitiveColor.stone[900]);
-    expect(fb.textInverse).toBe(primitiveColor.stone[50]);
+    expect(fb.borderDefault).toBe(primitiveColor.colpan[200]);
+    expect(fb.textPrimary).toBe(primitiveColor.yagiz[900]);
+    expect(fb.textInverse).toBe(primitiveColor.colpan[50]);
     expect(fb.bgSurface).toBe(primitiveColor.white);
   });
 
