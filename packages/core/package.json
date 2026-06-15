@@ -1,6 +1,6 @@
 {
   "name": "@tulpar-ui/core",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Lit Web Components for Tulpar UI",
   "license": "MIT",
   "type": "module",
