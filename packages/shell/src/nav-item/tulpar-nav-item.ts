@@ -14,6 +14,10 @@ export interface TulparNavItemData {
 }
 
 export class TulparNavItem extends LitElement {
+  static override shadowRootOptions: ShadowRootInit = {
+    ...LitElement.shadowRootOptions,
+    delegatesFocus: true,
+  };
   static override styles = navItemStyles;
 
   @property({ type: String }) href?: string;
