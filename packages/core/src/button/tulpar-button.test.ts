@@ -59,6 +59,21 @@ describe("<tulpar-button>", () => {
         expect(el.severity).to.equal(s);
       }
     });
+
+    it("secondary severity is wired to the dedicated secondary token (kam, not neutral)", () => {
+      // v0.7: secondary severity points at --tulpar-color-secondary-*, no longer
+      // the neutral (kara) role — so the two are now distinct. Token CSS isn't
+      // loaded in the test document, so inspect the stylesheet text directly
+      // (same approach as the variant hover/active scoping tests above).
+      const stripComments = (s: string) => s.replace(/\/\*[\s\S]*?\*\//g, "");
+      const css = stripComments(buttonStyles.cssText);
+      const secondaryRule = css.match(/:host\(\[severity="secondary"\]\)\s*\{([^}]*)\}/);
+      expect(secondaryRule, "secondary severity rule should exist").to.not.be.null;
+      const body = secondaryRule![1];
+      expect(body).to.contain("--tulpar-color-secondary-default");
+      expect(body).to.contain("--tulpar-color-secondary-on-color");
+      expect(body).to.not.contain("--tulpar-color-neutral-");
+    });
   });
 
   describe("variant", () => {

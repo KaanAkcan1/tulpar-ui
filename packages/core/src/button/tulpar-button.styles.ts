@@ -48,13 +48,13 @@ export const buttonStyles = css`
    * Severity → semantic color stops
    * ============================================================ */
   :host([severity="secondary"]) {
-    --_btn-color-default: var(--tulpar-color-neutral-default);
-    --_btn-color-hover: var(--tulpar-color-neutral-hover);
-    --_btn-color-active: var(--tulpar-color-neutral-active);
-    --_btn-color-disabled: var(--tulpar-color-neutral-disabled);
-    --_btn-color-on: var(--tulpar-color-neutral-on-color);
-    --_btn-color-subtle: var(--tulpar-color-neutral-subtle);
-    --_btn-color-subtle-hover: var(--tulpar-color-neutral-subtle-hover);
+    --_btn-color-default: var(--tulpar-color-secondary-default);
+    --_btn-color-hover: var(--tulpar-color-secondary-hover);
+    --_btn-color-active: var(--tulpar-color-secondary-active);
+    --_btn-color-disabled: var(--tulpar-color-secondary-disabled);
+    --_btn-color-on: var(--tulpar-color-secondary-on-color);
+    --_btn-color-subtle: var(--tulpar-color-secondary-subtle);
+    --_btn-color-subtle-hover: var(--tulpar-color-secondary-subtle-hover);
   }
   :host([severity="info"]) {
     --_btn-color-default: var(--tulpar-color-info-default);
