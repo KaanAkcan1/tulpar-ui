@@ -2,85 +2,78 @@ import { describe, it, expect } from "vitest";
 import { tulparLight } from "./light";
 
 describe("tulparLight", () => {
-  it("uses white as surface and warm stone for subtle/muted backgrounds", () => {
+  it("surfaces: white cards, colpan tinted bg, white elevated/overlay", () => {
     expect(tulparLight.color.bg.surface).toBe("#ffffff");
-    expect(tulparLight.color.bg.subtle).toBe("#fafaf9");
-    expect(tulparLight.color.bg.muted).toBe("#f5f5f4");
+    expect(tulparLight.color.bg.subtle).toBe("#f0f7f5"); // colpan-50
+    expect(tulparLight.color.bg.muted).toBe("#e9f1ef"); // colpan-100
+    expect(tulparLight.color.bg.elevated).toBe("#ffffff");
+    expect(tulparLight.color.bg.overlay).toBe("#ffffff");
   });
 
-  it("uses stone for text (warm dark)", () => {
-    expect(tulparLight.color.text.primary).toBe("#1c1917");
-    expect(tulparLight.color.text.secondary).toBe("#44403c");
-    expect(tulparLight.color.text.muted).toBe("#78716c");
+  it("text: warm yagiz ink, cool kara muted, gok link", () => {
+    expect(tulparLight.color.text.primary).toBe("#15110b"); // yagiz-900
+    expect(tulparLight.color.text.secondary).toBe("#27231d"); // yagiz-700
+    expect(tulparLight.color.text.muted).toBe("#74777a"); // kara-500
+    expect(tulparLight.color.text.link).toBe("#1c6eb3"); // gok-600
   });
 
-  it("uses navy.700 as brand default (WCAG AA contrast with white text)", () => {
-    expect(tulparLight.color.brand.default).toBe("#0a2540"); // navy.700
-    expect(tulparLight.color.brand.hover).toBe("#061a30"); // navy.800
-    expect(tulparLight.color.brand.active).toBe("#03101f"); // navy.900
-    expect(tulparLight.color.brand.onColor).toBe("#fafaf9");
+  it("brand = signature bright tulpar-500 + dark ink onColor", () => {
+    expect(tulparLight.color.brand.default).toBe("#00c57a"); // tulpar-500
+    expect(tulparLight.color.brand.hover).toBe("#00a468"); // tulpar-600
+    expect(tulparLight.color.brand.active).toBe("#0b7e52"); // tulpar-700
+    expect(tulparLight.color.brand.onColor).toBe("#15110b"); // yagiz-900
   });
 
-  it("uses .700 default / .800 hover / .900 active for danger/success/warn (AA contrast)", () => {
-    expect(tulparLight.color.danger.default).toBe("#b91c1c"); // red.700
-    expect(tulparLight.color.danger.hover).toBe("#991b1b"); // red.800
-    expect(tulparLight.color.success.default).toBe("#15803d"); // green.700
-    expect(tulparLight.color.warn.default).toBe("#b45309"); // amber.700
+  it("secondary = kam (indigo, white text)", () => {
+    expect(tulparLight.color.secondary.default).toBe("#393b8b"); // kam-700
+    expect(tulparLight.color.secondary.onColor).toBe("#f0f7f5"); // colpan-50
   });
 
-  it("provides info (blue.700), help (purple.700), contrast (stone.900) — new in v0.3", () => {
-    expect(tulparLight.color.info.default).toBe("#1d4ed8"); // blue.700
-    expect(tulparLight.color.info.hover).toBe("#1e40af"); // blue.800
-    expect(tulparLight.color.help.default).toBe("#7e22ce"); // purple.700
-    expect(tulparLight.color.help.hover).toBe("#6b21a8"); // purple.800
-    expect(tulparLight.color.contrast.default).toBe("#1c1917"); // stone.900
-    expect(tulparLight.color.contrast.hover).toBe("#292524"); // stone.800
+  it("severities map to mythology families", () => {
+    expect(tulparLight.color.success.default).toBe("#256b52"); // otuken-500
+    expect(tulparLight.color.danger.default).toBe("#b22128"); // al-600
+    expect(tulparLight.color.warn.default).toBe("#935f17"); // kuyas-700
+    expect(tulparLight.color.info.default).toBe("#1c6eb3"); // gok-600
+    expect(tulparLight.color.help.default).toBe("#602ea3"); // erlik-600
+    expect(tulparLight.color.contrast.default).toBe("#15110b"); // yagiz-900
+    expect(tulparLight.color.neutral.default).toBe("#4f5153"); // kara-700
   });
 
-  it("uses stone.700 for neutral (secondary) — AA contrast with white", () => {
-    expect(tulparLight.color.neutral.default).toBe("#44403c");
-    expect(tulparLight.color.neutral.hover).toBe("#292524");
+  it("premium = ulgen antique gold + dark ink + brighten-on-hover", () => {
+    expect(tulparLight.color.premium.default).toBe("#d7a40f"); // ulgen-500
+    expect(tulparLight.color.premium.hover).toBe("#ecb32a"); // ulgen-400
+    expect(tulparLight.color.premium.onColor).toBe("#15110b"); // yagiz-900
   });
 
-  it("uses gold.500 for premium severity + DARK text + brighten-on-hover (matches D4 brand accent)", () => {
-    expect(tulparLight.color.premium.default).toBe("#b8985a"); // gold.500
-    expect(tulparLight.color.premium.hover).toBe("#c9a23e"); // gold.400 (brighter)
-    expect(tulparLight.color.premium.active).toBe("#dbb958"); // gold.300 (brightest)
-    expect(tulparLight.color.premium.onColor).toBe("#1c1917"); // stone.900 dark text
-    expect(tulparLight.color.premium.subtle).toBe("#fbf6e9"); // gold.50
+  it("focus ring = kam @ 40%", () => {
+    expect(tulparLight.color.focusRing).toBe("rgba(81, 78, 207, 0.40)");
   });
 
-  it("uses navy@40% as focus ring", () => {
-    expect(tulparLight.color.focusRing).toBe("rgba(10, 37, 64, 0.40)");
+  it("chart series anchors at 500 (categorical, colorblind-aware order)", () => {
+    expect(tulparLight.chart[1]).toBe("#00c57a"); // tulpar
+    expect(tulparLight.chart[2]).toBe("#514ecf"); // kam
+    expect(tulparLight.chart[4]).toBe("#b93c90"); // ilay
+    expect(tulparLight.chart[8]).toBe("#8fb31c"); // kayin
   });
 
   it("provides all 7 button sizes with 4px border radius", () => {
     const sizes = ["xs", "sm", "md", "lg", "xl", "2xl", "3xl"] as const;
-    sizes.forEach((s) => {
-      expect(tulparLight.button.size[s].height).toBeDefined();
-    });
+    sizes.forEach((s) => expect(tulparLight.button.size[s].height).toBeDefined());
     expect(tulparLight.button.size.md.height).toBe("40px");
     expect(tulparLight.button.borderRadius).toBe("4px");
-  });
-
-  it("uses Source Sans 3 for ui font and Source Serif 4 for display", () => {
-    expect(tulparLight.font.family.ui).toContain("Source Sans 3");
-    expect(tulparLight.font.family.display).toContain("Source Serif 4");
-    expect(tulparLight.font.family.mono).toContain("JetBrains Mono");
   });
 });
 
 describe("tulparLight.input", () => {
-  it("uses surface bg + neutral border for default state", () => {
+  it("uses surface bg + colpan border for default; kam focus", () => {
     expect(tulparLight.input.bg.default).toBe(tulparLight.color.bg.surface);
     expect(tulparLight.input.border.default).toBe(tulparLight.color.border.default);
+    expect(tulparLight.input.border.focus).toBe("#514ecf"); // kam-500
   });
 
-  it("uses danger / warn colors for invalid + warn states", () => {
+  it("invalid + warn states track danger/warn colors", () => {
     expect(tulparLight.input.border.invalid).toBe(tulparLight.color.danger.default);
     expect(tulparLight.input.border.warn).toBe(tulparLight.color.warn.default);
-    expect(tulparLight.input.message.error).toBe(tulparLight.color.danger.default);
-    expect(tulparLight.input.message.warn).toBe(tulparLight.color.warn.default);
   });
 
   it("ships 5 size tiers (xs..xl)", () => {

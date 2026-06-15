@@ -3,18 +3,22 @@ export interface ColorTokens {
     surface: string;
     subtle: string;
     muted: string;
+    elevated: string;
+    overlay: string;
   };
   text: {
     primary: string;
     secondary: string;
     muted: string;
     inverse: string;
+    link: string;
   };
   border: {
     default: string;
     strong: string;
   };
   brand: VariantColorTokens;
+  secondary: VariantColorTokens;
   danger: VariantColorTokens;
   success: VariantColorTokens;
   warn: VariantColorTokens;

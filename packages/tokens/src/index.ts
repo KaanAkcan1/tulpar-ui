@@ -5,6 +5,7 @@ export type {
   ButtonTokens,
   ButtonSizeTokens,
   VariantColorTokens,
+  ChartTokens,
 } from "./semantic/types";
 export { tulparLight, tulparDark } from "./brand/tulpar";
 export { FALLBACKS, type FallbackKey } from "./fallbacks";
