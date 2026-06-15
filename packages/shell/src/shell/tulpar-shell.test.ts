@@ -99,6 +99,34 @@ describe("<tulpar-shell>", () => {
     expect(document.activeElement).to.equal(el.querySelector("#opener"));
   });
 
+  it("restores focus to original trigger when aside closes over an open sidenav", async () => {
+    const el = await fixture<TulparShell>(html`
+      <tulpar-shell sidenav-mode="overlay">
+        <button id="opener">open</button>
+        <a slot="sidenav" id="nav-link" href="#">nav</a>
+        <button slot="aside" id="inside">x</button>
+      </tulpar-shell>
+    `);
+    // Original trigger gains focus, then opens the overlay sidenav.
+    el.querySelector<HTMLButtonElement>("#opener")!.focus();
+    el.dispatchEvent(new CustomEvent("tulpar-menu-toggle", { bubbles: true }));
+    await el.updateComplete;
+    await new Promise((r) => requestAnimationFrame(r));
+    expect(document.activeElement).to.equal(el.querySelector("#nav-link"));
+
+    // Open aside while sidenav is still open — focus moves into aside but the
+    // recorded trigger must remain the original #opener, not the nav link.
+    el.asideOpen = true;
+    await el.updateComplete;
+    await new Promise((r) => requestAnimationFrame(r));
+    expect(document.activeElement).to.equal(el.querySelector("#inside"));
+
+    // Closing aside restores focus to the ORIGINAL trigger, not into the sidenav.
+    el.asideOpen = false;
+    await el.updateComplete;
+    expect(document.activeElement).to.equal(el.querySelector("#opener"));
+  });
+
   it("sets data-rail on slotted sidenav in rail+collapsed mode", async () => {
     const el = await fixture<TulparShell>(html`
       <tulpar-shell sidenav-mode="rail">

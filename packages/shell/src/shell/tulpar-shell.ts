@@ -80,6 +80,7 @@ export class TulparShell extends LitElement {
   }
 
   private _onMenuToggle = () => {
+    // Mobile always forces overlay behaviour regardless of sidenavMode
     if (this._isMobile || this.sidenavMode === "overlay") {
       this._setSidenavOpen(!this.sidenavOpen);
     } else {
@@ -100,13 +101,24 @@ export class TulparShell extends LitElement {
   }
 
   private _focusPanel(slotName: "aside" | "sidenav") {
-    this._lastFocused = document.activeElement as HTMLElement | null;
+    // Only record the ORIGINAL trigger. If a second panel opens while one is
+    // already open, don't overwrite _lastFocused with focus already inside the
+    // first panel — otherwise closing restores focus to the wrong place.
+    if (!this._lastFocused) {
+      this._lastFocused = document.activeElement as HTMLElement | null;
+    }
     requestAnimationFrame(() => {
       const slotted = this.querySelector<HTMLElement>(`[slot="${slotName}"]`);
+      // focusable child first; fall back to the panel container itself
       const target =
         slotted?.querySelector<HTMLElement>(
           "a[href], button:not([disabled]), input, [tabindex]:not([tabindex='-1'])",
         ) ?? slotted;
+      // If the fallback is a non-focusable container (no tabindex), make it
+      // programmatically focusable so target?.focus() actually moves focus.
+      if (target && target === slotted && !target.hasAttribute("tabindex")) {
+        target.setAttribute("tabindex", "-1");
+      }
       target?.focus();
     });
   }
