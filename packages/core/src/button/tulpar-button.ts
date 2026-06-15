@@ -29,57 +29,56 @@ export type ButtonType = "button" | "submit" | "reset";
 export type ButtonJustify = "start" | "center" | "end" | "between";
 
 export type ButtonColor =
-  | "navy"
-  | "gold"
-  | "stone"
-  | "slate"
-  | "red"
-  | "orange"
-  | "amber"
-  | "yellow"
-  | "lime"
-  | "green"
-  | "emerald"
-  | "teal"
-  | "cyan"
-  | "sky"
-  | "blue"
-  | "indigo"
-  | "violet"
-  | "purple"
-  | "fuchsia"
-  | "pink"
-  | "rose";
+  | "al"
+  | "kizagan"
+  | "umay"
+  | "ilay"
+  | "erlik"
+  | "kam"
+  | "mergen"
+  | "gok"
+  | "ay"
+  | "yersu"
+  | "tulpar"
+  | "otuken"
+  | "kayin"
+  | "ulgen"
+  | "kuyas"
+  | "alaz"
+  | "burkut"
+  | "colpan"
+  | "ayzit"
+  | "boz"
+  | "kara"
+  | "yagiz";
 
 /**
- * For `color` override, on-color (foreground) is chosen per family.
- * Color override now uses the .700 stop (matching severity defaults for
- * WCAG AA contrast with white text). Light-luminance families (yellow,
- * lime) still need dark text even at .700. All other families work with
- * white text.
+ * For `color` override, on-color (foreground) is chosen per family at the .700
+ * override stop. Light/mid-luminance families keep dark ink even at .700.
  */
 const ON_COLOR_MAP: Record<ButtonColor, string> = {
-  navy: "var(--tulpar-primitive-color-stone-50)",
-  gold: "var(--tulpar-primitive-color-stone-50)",
-  stone: "var(--tulpar-primitive-color-stone-50)",
-  slate: "var(--tulpar-primitive-color-stone-50)",
-  red: "var(--tulpar-primitive-color-stone-50)",
-  orange: "var(--tulpar-primitive-color-stone-50)",
-  amber: "var(--tulpar-primitive-color-stone-50)",
-  yellow: "var(--tulpar-primitive-color-stone-900)",
-  lime: "var(--tulpar-primitive-color-stone-900)",
-  green: "var(--tulpar-primitive-color-stone-50)",
-  emerald: "var(--tulpar-primitive-color-stone-50)",
-  teal: "var(--tulpar-primitive-color-stone-50)",
-  cyan: "var(--tulpar-primitive-color-stone-50)",
-  sky: "var(--tulpar-primitive-color-stone-50)",
-  blue: "var(--tulpar-primitive-color-stone-50)",
-  indigo: "var(--tulpar-primitive-color-stone-50)",
-  violet: "var(--tulpar-primitive-color-stone-50)",
-  purple: "var(--tulpar-primitive-color-stone-50)",
-  fuchsia: "var(--tulpar-primitive-color-stone-50)",
-  pink: "var(--tulpar-primitive-color-stone-50)",
-  rose: "var(--tulpar-primitive-color-stone-50)",
+  al: "var(--tulpar-primitive-color-colpan-50)",
+  kizagan: "var(--tulpar-primitive-color-colpan-50)",
+  umay: "var(--tulpar-primitive-color-colpan-50)",
+  ilay: "var(--tulpar-primitive-color-colpan-50)",
+  erlik: "var(--tulpar-primitive-color-colpan-50)",
+  kam: "var(--tulpar-primitive-color-colpan-50)",
+  mergen: "var(--tulpar-primitive-color-colpan-50)",
+  gok: "var(--tulpar-primitive-color-colpan-50)",
+  ay: "var(--tulpar-primitive-color-colpan-50)",
+  yersu: "var(--tulpar-primitive-color-colpan-50)",
+  tulpar: "var(--tulpar-primitive-color-yagiz-900)",
+  otuken: "var(--tulpar-primitive-color-colpan-50)",
+  kayin: "var(--tulpar-primitive-color-yagiz-900)",
+  ulgen: "var(--tulpar-primitive-color-yagiz-900)",
+  kuyas: "var(--tulpar-primitive-color-yagiz-900)",
+  alaz: "var(--tulpar-primitive-color-colpan-50)",
+  burkut: "var(--tulpar-primitive-color-colpan-50)",
+  colpan: "var(--tulpar-primitive-color-yagiz-900)",
+  ayzit: "var(--tulpar-primitive-color-yagiz-900)",
+  boz: "var(--tulpar-primitive-color-yagiz-900)",
+  kara: "var(--tulpar-primitive-color-colpan-50)",
+  yagiz: "var(--tulpar-primitive-color-colpan-50)",
 };
 
 export class TulparButton extends LitElement {
