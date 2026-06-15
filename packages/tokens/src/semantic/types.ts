@@ -8,11 +8,13 @@ import type { ColorTokens } from "./color";
 import type { ButtonTokens } from "./button";
 import type { InputTokens } from "./input";
 import type { FontTokens, TransitionTokens } from "./common";
+import type { ShellTokens } from "./shell";
 
 export type { ColorTokens, VariantColorTokens } from "./color";
 export type { ButtonTokens, ButtonSizeTokens } from "./button";
 export type { InputTokens, InputSizeTokens } from "./input";
 export type { FontTokens, TransitionTokens } from "./common";
+export type { ShellTokens, ShellNavItemTokens } from "./shell";
 
 export interface SemanticTokens {
   color: ColorTokens;
@@ -20,4 +22,5 @@ export interface SemanticTokens {
   input: InputTokens;
   font: FontTokens;
   transition: TransitionTokens;
+  shell: ShellTokens;
 }

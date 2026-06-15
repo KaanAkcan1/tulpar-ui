@@ -169,4 +169,36 @@ export const tulparDark: SemanticTokens = {
     size: tulparLight.input.size,
     messageRowHeight: "1.25rem",
   },
+
+  shell: {
+    topbar: { height: "4rem", bg: c.stone[900], fg: c.stone[100], border: c.stone[800] },
+    sidenav: {
+      width: "17.5rem",
+      railWidth: "4.5rem",
+      bg: c.stone[950],
+      fg: c.stone[300],
+      fgMuted: c.stone[500],
+      border: c.stone[800],
+      item: {
+        height: "2.75rem",
+        radius: "0.375rem",
+        bgHover: c.stone[800],
+        bgActive: c.navy[900],
+        fgActive: c.navy[200],
+        indicator: c.navy[400],
+        badgeBg: c.navy[400],
+        badgeFg: c.stone[950],
+      },
+    },
+    content: {
+      bg: c.stone[900],
+      maxWidth: "80rem",
+      paddingCompact: "0.75rem",
+      paddingComfortable: "1.5rem",
+    },
+    footer: { bg: c.stone[900], fg: c.stone[500], border: c.stone[800] },
+    aside: { width: "22rem", bg: c.stone[900], border: c.stone[800] },
+    mask: { bg: "rgb(2 6 23 / 0.6)" },
+    z: { topbar: "100", mask: "150", sidenav: "200", aside: "300" },
+  },
 };

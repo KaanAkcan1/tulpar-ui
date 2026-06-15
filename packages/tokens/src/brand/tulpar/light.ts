@@ -200,4 +200,36 @@ export const tulparLight: SemanticTokens = {
     },
     messageRowHeight: "1.25rem",
   },
+
+  shell: {
+    topbar: { height: "4rem", bg: c.white, fg: c.stone[900], border: c.stone[200] },
+    sidenav: {
+      width: "17.5rem",
+      railWidth: "4.5rem",
+      bg: c.stone[50],
+      fg: c.stone[700],
+      fgMuted: c.stone[500],
+      border: c.stone[200],
+      item: {
+        height: "2.75rem",
+        radius: "0.375rem",
+        bgHover: c.stone[100],
+        bgActive: c.navy[50],
+        fgActive: c.navy[800],
+        indicator: c.navy[700],
+        badgeBg: c.navy[700],
+        badgeFg: c.stone[50],
+      },
+    },
+    content: {
+      bg: c.stone[100],
+      maxWidth: "80rem",
+      paddingCompact: "0.75rem",
+      paddingComfortable: "1.5rem",
+    },
+    footer: { bg: c.white, fg: c.stone[500], border: c.stone[200] },
+    aside: { width: "22rem", bg: c.white, border: c.stone[200] },
+    mask: { bg: "rgb(2 6 23 / 0.5)" },
+    z: { topbar: "100", mask: "150", sidenav: "200", aside: "300" },
+  },
 };
