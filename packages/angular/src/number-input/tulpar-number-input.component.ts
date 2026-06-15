@@ -1,5 +1,4 @@
-import type {
-  ElementRef} from "@angular/core";
+import type { ElementRef } from "@angular/core";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -118,9 +117,7 @@ export class TulparNumberInputComponent {
   // Format shorthand inputs
   readonly formatStyle = input<NumberFormatStyle>("decimal");
   readonly currency = input<string | undefined>(undefined);
-  readonly locale = input<string>(
-    typeof navigator !== "undefined" ? navigator.language : "en-US",
-  );
+  readonly locale = input<string>(typeof navigator !== "undefined" ? navigator.language : "en-US");
   readonly minFractionDigits = input<number | undefined>(undefined);
   readonly maxFractionDigits = input<number | undefined>(undefined);
   // useGrouping defaults true — use property binding for the same reason as allowEmpty.

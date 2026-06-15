@@ -123,14 +123,18 @@ watchEffect(() => {
       class="sub-btn"
       :class="{ active: activeSection === 'all' }"
       @click="activeSection = 'all'"
-    >All</button>
+    >
+      All
+    </button>
     <button
       v-for="s in sections"
       :key="s.id"
       class="sub-btn"
       :class="{ active: activeSection === s.id }"
       @click="activeSection = s.id"
-    >{{ s.title }}</button>
+    >
+      {{ s.title }}
+    </button>
   </div>
 
   <!-- ── Basics ─────────────────────────────────────────────────────────────── -->
@@ -154,7 +158,10 @@ watchEffect(() => {
   <!-- ── Formatting ─────────────────────────────────────────────────────────── -->
   <section v-if="activeSection === 'all' || activeSection === 'formatting'" class="demo-section">
     <h3 class="demo-title">Formatting</h3>
-    <p class="demo-desc">Currency (TRY/USD/EUR), percent (Intl ×100 semantics — value 0.125 displays as 12.5%), and grouping toggle.</p>
+    <p class="demo-desc">
+      Currency (TRY/USD/EUR), percent (Intl ×100 semantics — value 0.125 displays as 12.5%), and
+      grouping toggle.
+    </p>
     <div class="preview preview--col">
       <div class="preview-row">
         <TulparNumberInput
@@ -193,16 +200,8 @@ watchEffect(() => {
           v-model="percentVal"
           helper-text="value=0.125 → displays %12,5"
         />
-        <TulparNumberInput
-          label="Grouping ON (default)"
-          :value="1234567"
-          :use-grouping="true"
-        />
-        <TulparNumberInput
-          label="Grouping OFF"
-          :value="1234567"
-          :use-grouping="false"
-        />
+        <TulparNumberInput label="Grouping ON (default)" :value="1234567" :use-grouping="true" />
+        <TulparNumberInput label="Grouping OFF" :value="1234567" :use-grouping="false" />
       </div>
     </div>
     <pre class="code"><code>{{ formattingCode }}</code></pre>
@@ -211,7 +210,10 @@ watchEffect(() => {
   <!-- ── Constraints ────────────────────────────────────────────────────────── -->
   <section v-if="activeSection === 'all' || activeSection === 'constraints'" class="demo-section">
     <h3 class="demo-title">Constraints</h3>
-    <p class="demo-desc">min/max clamp on blur. integer-only shakes on '.' press. allow-empty=false reverts to last valid value when left empty.</p>
+    <p class="demo-desc">
+      min/max clamp on blur. integer-only shakes on '.' press. allow-empty=false reverts to last
+      valid value when left empty.
+    </p>
     <div class="preview preview--col">
       <TulparNumberInput
         label="Clamped (0–100)"
@@ -240,17 +242,13 @@ watchEffect(() => {
   <!-- ── Steppers ───────────────────────────────────────────────────────────── -->
   <section v-if="activeSection === 'all' || activeSection === 'steppers'" class="demo-section">
     <h3 class="demo-title">Steppers</h3>
-    <p class="demo-desc">Default steppers, hide-steppers, and long-press acceleration (step-hold-delay + step-hold-interval).</p>
+    <p class="demo-desc">
+      Default steppers, hide-steppers, and long-press acceleration (step-hold-delay +
+      step-hold-interval).
+    </p>
     <div class="preview preview--col">
-      <TulparNumberInput
-        label="Default steppers"
-        :min="0"
-        :max="100"
-      />
-      <TulparNumberInput
-        label="No steppers (hide-steppers)"
-        :hide-steppers="true"
-      />
+      <TulparNumberInput label="Default steppers" :min="0" :max="100" />
+      <TulparNumberInput label="No steppers (hide-steppers)" :hide-steppers="true" />
       <TulparNumberInput
         label="Long-press acceleration"
         :step-hold-delay="300"
@@ -291,7 +289,9 @@ watchEffect(() => {
   <!-- ── Format Extras ──────────────────────────────────────────────────────── -->
   <section v-if="activeSection === 'all' || activeSection === 'format-extras'" class="demo-section">
     <h3 class="demo-title">Format Extras — prefix &amp; suffix</h3>
-    <p class="demo-desc">format-prefix and format-suffix append static strings around the formatted value.</p>
+    <p class="demo-desc">
+      format-prefix and format-suffix append static strings around the formatted value.
+    </p>
     <div class="preview preview--col">
       <TulparNumberInput label="Prefix ~" format-prefix="~" :value="42" />
       <TulparNumberInput label="Suffix (adet)" format-suffix=" adet" :value="10" />
@@ -305,7 +305,8 @@ watchEffect(() => {
     <h3 class="demo-title">Advanced — formatOptions</h3>
     <p class="demo-desc">
       <code class="inline-code">formatOptions</code> is a JS property on the WC (not an attribute).
-      In Vue, set it via a template ref + <code class="inline-code">watchEffect</code> to push it onto the element after mount.
+      In Vue, set it via a template ref + <code class="inline-code">watchEffect</code> to push it
+      onto the element after mount.
     </p>
     <div class="preview preview--col">
       <TulparNumberInput
@@ -340,7 +341,9 @@ watchEffect(() => {
   font-family: var(--tulpar-font-family-ui, system-ui, sans-serif);
   font-size: 13px;
   cursor: pointer;
-  transition: background 0.1s, color 0.1s;
+  transition:
+    background 0.1s,
+    color 0.1s;
 }
 
 .sub-btn:hover {

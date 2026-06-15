@@ -23,19 +23,19 @@ export const textareaStyles = css`
     color: var(--tulpar-input-text-placeholder, #a8a29e);
   }
 
-  :host([resize='none']) .field-textarea {
+  :host([resize="none"]) .field-textarea {
     resize: none;
   }
 
-  :host([resize='both']) .field-textarea {
+  :host([resize="both"]) .field-textarea {
     resize: both;
   }
 
-  :host([resize='horizontal']) .field-textarea {
+  :host([resize="horizontal"]) .field-textarea {
     resize: horizontal;
   }
 
-  :host([resize='vertical']) .field-textarea {
+  :host([resize="vertical"]) .field-textarea {
     resize: vertical;
   }
 
@@ -88,7 +88,7 @@ export const textareaStyles = css`
     border-radius: 0.25rem;
   }
 
-  .field-textarea-counter[data-at-limit='true'] {
+  .field-textarea-counter[data-at-limit="true"] {
     color: var(--tulpar-input-message-error, #b91c1c);
   }
 
@@ -108,9 +108,16 @@ export const textareaStyles = css`
   }
 
   @keyframes tulpar-textarea-shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-3px); }
-    75% { transform: translateX(3px); }
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-3px);
+    }
+    75% {
+      transform: translateX(3px);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

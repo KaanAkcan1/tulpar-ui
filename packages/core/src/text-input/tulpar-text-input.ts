@@ -59,7 +59,7 @@ export class TulparTextInput extends FormFieldBase {
   constructor() {
     super();
     // Create custom accessor for clearable to track when it's explicitly set
-    Object.defineProperty(this, 'clearable', {
+    Object.defineProperty(this, "clearable", {
       get() {
         return this._clearableExplicitValue !== undefined ? this._clearableExplicitValue : false;
       },
@@ -67,13 +67,13 @@ export class TulparTextInput extends FormFieldBase {
         this._clearableExplicitValue = value;
         // Reflect to attribute
         if (value) {
-          this.setAttribute('clearable', '');
+          this.setAttribute("clearable", "");
         } else {
-          this.removeAttribute('clearable');
+          this.removeAttribute("clearable");
         }
       },
       enumerable: true,
-      configurable: true
+      configurable: true,
     });
   }
 
@@ -131,8 +131,13 @@ export class TulparTextInput extends FormFieldBase {
         <span class="field-prefix-host">
           <span class="field-search-icon" aria-hidden="true">
             <svg width="14" height="14" viewBox="0 0 24 24">
-              <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none"/>
-              <path d="M16 16 L22 22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none" />
+              <path
+                d="M16 16 L22 22"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
             </svg>
           </span>
         </span>
@@ -169,12 +174,8 @@ export class TulparTextInput extends FormFieldBase {
           @paste=${this._onPasteEvent}
           @input=${this._onInput}
         />
-        ${this._renderStatusZone()}
-        ${this._renderRevealButton()}
-        ${this._renderPasteButton()}
-        ${this._renderCopyButton()}
-        ${this._renderClearButton()}
-        ${this._renderSuffixSlot()}
+        ${this._renderStatusZone()} ${this._renderRevealButton()} ${this._renderPasteButton()}
+        ${this._renderCopyButton()} ${this._renderClearButton()} ${this._renderSuffixSlot()}
       </div>
     `;
   }
@@ -238,7 +239,9 @@ export class TulparTextInput extends FormFieldBase {
     try {
       await navigator.clipboard.writeText(this.value);
       this._copyConfirm = true;
-      setTimeout(() => { this._copyConfirm = false; }, 1500);
+      setTimeout(() => {
+        this._copyConfirm = false;
+      }, 1500);
     } catch {
       // permissions denied — silent
     }
@@ -255,7 +258,9 @@ export class TulparTextInput extends FormFieldBase {
       }
       this.dispatchEvent(new Event("change", { bubbles: true }));
       this._pasteConfirm = true;
-      setTimeout(() => { this._pasteConfirm = false; }, 1500);
+      setTimeout(() => {
+        this._pasteConfirm = false;
+      }, 1500);
     } catch {
       // Permission denied or empty — emit data-mask-rejected for shake feedback.
       this.setAttribute("data-mask-rejected", "");
@@ -272,16 +277,28 @@ export class TulparTextInput extends FormFieldBase {
         type="button"
         class="field-reveal-btn"
         aria-label=${revealed ? "Hide password" : "Show password"}
-        @click=${() => { this._passwordRevealed = !this._passwordRevealed; }}
+        @click=${() => {
+          this._passwordRevealed = !this._passwordRevealed;
+        }}
       >
         ${revealed
           ? html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M1 12 C5 6, 11 4, 12 4 S19 6, 23 12 C19 18, 13 20, 12 20 S5 18, 1 12 Z" stroke="currentColor" stroke-width="2" fill="none"/>
-              <path d="M3 3 L21 21" stroke="currentColor" stroke-width="2"/>
+              <path
+                d="M1 12 C5 6, 11 4, 12 4 S19 6, 23 12 C19 18, 13 20, 12 20 S5 18, 1 12 Z"
+                stroke="currentColor"
+                stroke-width="2"
+                fill="none"
+              />
+              <path d="M3 3 L21 21" stroke="currentColor" stroke-width="2" />
             </svg>`
           : html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M1 12 C5 6, 11 4, 12 4 S19 6, 23 12 C19 18, 13 20, 12 20 S5 18, 1 12 Z" stroke="currentColor" stroke-width="2" fill="none"/>
-              <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none"/>
+              <path
+                d="M1 12 C5 6, 11 4, 12 4 S19 6, 23 12 C19 18, 13 20, 12 20 S5 18, 1 12 Z"
+                stroke="currentColor"
+                stroke-width="2"
+                fill="none"
+              />
+              <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none" />
             </svg>`}
       </button>
     `;
@@ -289,7 +306,14 @@ export class TulparTextInput extends FormFieldBase {
 
   private _renderClearButton(): TemplateResult | typeof nothing {
     // Auto-hide at xs (cannot meet 44pt touch target — see spec §4.6 xs constraints).
-    if (this._isXs() || !this._effectiveClearable || this.disabled || this.readonly || this.value === "") return nothing;
+    if (
+      this._isXs() ||
+      !this._effectiveClearable ||
+      this.disabled ||
+      this.readonly ||
+      this.value === ""
+    )
+      return nothing;
     return html`
       <button
         type="button"
@@ -298,7 +322,13 @@ export class TulparTextInput extends FormFieldBase {
         @click=${this._onClear}
       >
         <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6 6 L18 18 M18 6 L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" />
+          <path
+            d="M6 6 L18 18 M18 6 L6 18"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            fill="none"
+          />
         </svg>
       </button>
     `;
@@ -315,8 +345,29 @@ export class TulparTextInput extends FormFieldBase {
         @click=${this._onCopy}
       >
         ${this._copyConfirm
-          ? html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13 l4 4 L19 7" stroke="currentColor" stroke-width="2" fill="none"/></svg>`
-          : html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none"/><rect x="4" y="4" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none"/></svg>`}
+          ? html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 13 l4 4 L19 7" stroke="currentColor" stroke-width="2" fill="none" />
+            </svg>`
+          : html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+              <rect
+                x="8"
+                y="8"
+                width="12"
+                height="12"
+                stroke="currentColor"
+                stroke-width="2"
+                fill="none"
+              />
+              <rect
+                x="4"
+                y="4"
+                width="12"
+                height="12"
+                stroke="currentColor"
+                stroke-width="2"
+                fill="none"
+              />
+            </svg>`}
       </button>
     `;
   }
@@ -334,8 +385,17 @@ export class TulparTextInput extends FormFieldBase {
         @click=${this._onPaste}
       >
         ${this._pasteConfirm
-          ? html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13 l4 4 L19 7" stroke="currentColor" stroke-width="2" fill="none"/></svg>`
-          : html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 v14 M6 10 l6 6 l6 -6" stroke="currentColor" stroke-width="2" fill="none"/></svg>`}
+          ? html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 13 l4 4 L19 7" stroke="currentColor" stroke-width="2" fill="none" />
+            </svg>`
+          : html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12 2 v14 M6 10 l6 6 l6 -6"
+                stroke="currentColor"
+                stroke-width="2"
+                fill="none"
+              />
+            </svg>`}
       </button>
     `;
   }
@@ -352,7 +412,9 @@ export class TulparTextInput extends FormFieldBase {
     return html`
       <div class="field-message-row">
         ${this._renderMessageText()}
-        <span class="field-counter" data-at-limit=${atLimit ? "true" : "false"}>${counterText}</span>
+        <span class="field-counter" data-at-limit=${atLimit ? "true" : "false"}
+          >${counterText}</span
+        >
       </div>
     `;
   }
@@ -365,19 +427,39 @@ export class TulparTextInput extends FormFieldBase {
 class _MaskHostAdapter implements MaskHost {
   constructor(private el: TulparTextInput) {}
 
-  get value() { return this.el.value; }
-  set value(v: string) { this.el._maskSetValue(v); }
+  get value() {
+    return this.el.value;
+  }
+  set value(v: string) {
+    this.el._maskSetValue(v);
+  }
 
-  get rawValue() { return this.el._maskGetRaw(); }
-  set rawValue(v: string) { this.el._maskSetRaw(v); }
+  get rawValue() {
+    return this.el._maskGetRaw();
+  }
+  set rawValue(v: string) {
+    this.el._maskSetRaw(v);
+  }
 
-  get mask() { return this.el.mask ?? ""; }
-  get maskEmit() { return this.el.maskEmit; }
-  get maskDisplay() { return this.el.maskDisplay; }
-  get maskSlotChar() { return this.el.maskSlotChar; }
+  get mask() {
+    return this.el.mask ?? "";
+  }
+  get maskEmit() {
+    return this.el.maskEmit;
+  }
+  get maskDisplay() {
+    return this.el.maskDisplay;
+  }
+  get maskSlotChar() {
+    return this.el.maskSlotChar;
+  }
 
-  requestUpdate() { this.el.requestUpdate(); }
-  dispatchEvent(e: Event) { return this.el.dispatchEvent(e); }
+  requestUpdate() {
+    this.el.requestUpdate();
+  }
+  dispatchEvent(e: Event) {
+    return this.el.dispatchEvent(e);
+  }
   markRejected() {
     this.el.setAttribute("data-mask-rejected", "");
     setTimeout(() => this.el.removeAttribute("data-mask-rejected"), 200);

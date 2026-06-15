@@ -3,17 +3,18 @@
   "version": "0.0.0",
   "private": true,
   "description": "Tulpar UI — Lit-based design system with Angular and Vue wrappers",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "build": "pnpm -r --filter=\"./packages/*\" run build",
     "predev:ng": "pnpm -r --filter=\"./packages/*\" run build && pnpm --filter playground-ng exec ng cache clean",
-    "dev:ng": "pnpm --parallel --filter @tulpar-ui/tokens --filter @tulpar-ui/core --filter @tulpar-ui/angular --filter playground-ng run dev",
+    "dev:ng": "pnpm --parallel --filter @tulpar-ui/tokens --filter @tulpar-ui/core --filter @tulpar-ui/shell --filter @tulpar-ui/angular --filter playground-ng run dev",
     "predev:vue": "pnpm -r --filter=\"./packages/*\" run build",
-    "dev:vue": "pnpm --parallel --filter @tulpar-ui/tokens --filter @tulpar-ui/core --filter @tulpar-ui/vue --filter playground-vue run dev",
+    "dev:vue": "pnpm --parallel --filter @tulpar-ui/tokens --filter @tulpar-ui/core --filter @tulpar-ui/shell --filter @tulpar-ui/vue --filter playground-vue run dev",
     "predev:storybook": "pnpm -r --filter=\"./packages/*\" run build",
-    "dev:storybook": "pnpm --parallel --filter @tulpar-ui/tokens --filter @tulpar-ui/core --filter docs run dev",
+    "dev:storybook": "pnpm --parallel --filter @tulpar-ui/tokens --filter @tulpar-ui/core --filter @tulpar-ui/shell --filter docs run dev",
     "predev": "pnpm -r --filter=\"./packages/*\" run build && pnpm --filter playground-ng exec ng cache clean",
-    "dev": "pnpm --parallel --filter @tulpar-ui/tokens --filter @tulpar-ui/core --filter @tulpar-ui/angular --filter @tulpar-ui/vue --filter playground-ng --filter playground-vue --filter docs run dev",
+    "dev": "pnpm --parallel --filter @tulpar-ui/tokens --filter @tulpar-ui/core --filter @tulpar-ui/shell --filter @tulpar-ui/angular --filter @tulpar-ui/vue --filter playground-ng --filter playground-vue --filter docs run dev",
     "test": "pnpm -r run test",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{ts,js,json,md,css,html,vue}\"",
@@ -31,9 +32,9 @@
     "typescript": "^6.0.0",
     "wrangler": "^4.98.0"
   },
-  "packageManager": "pnpm@8.15.0",
+  "packageManager": "pnpm@9.15.9",
   "engines": {
     "node": ">=22.22.3",
-    "pnpm": ">=8.15.0"
+    "pnpm": ">=9.0.0"
   }
 }

@@ -28,7 +28,7 @@ export default defineConfig({
       // Regex: subpath imports (@tulpar-ui/core/text-input etc.) must stay
       // external too — an exact-string external silently bundles them INTO
       // this wrapper (duplicating core's components in the vue dist).
-      external: ["vue", /^@tulpar-ui\/core(\/.*)?$/],
+      external: ["vue", "vue-router", /^@tulpar-ui\/(core|shell)(\/.*)?$/],
     },
     outDir: "dist",
     sourcemap: true,

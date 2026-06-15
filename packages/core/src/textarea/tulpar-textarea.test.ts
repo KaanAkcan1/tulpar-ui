@@ -13,8 +13,12 @@ describe("<tulpar-textarea> baseline", () => {
   });
 
   it("reflects value to the underlying textarea", async () => {
-    const el = await fixture<TulparTextarea>(html`<tulpar-textarea value="hello"></tulpar-textarea>`);
-    expect(el.shadowRoot!.querySelector<HTMLTextAreaElement>("textarea#control")!.value).to.equal("hello");
+    const el = await fixture<TulparTextarea>(
+      html`<tulpar-textarea value="hello"></tulpar-textarea>`,
+    );
+    expect(el.shadowRoot!.querySelector<HTMLTextAreaElement>("textarea#control")!.value).to.equal(
+      "hello",
+    );
   });
 
   it("updates value on user input + reports to form", async () => {
@@ -42,7 +46,9 @@ describe("<tulpar-textarea> baseline", () => {
       <tulpar-textarea label="Bio" helper-text="Tell us about yourself"></tulpar-textarea>
     `);
     expect(el.shadowRoot!.querySelector(".field-label")).to.not.equal(null);
-    expect(el.shadowRoot!.querySelector(".field-message")?.textContent).to.equal("Tell us about yourself");
+    expect(el.shadowRoot!.querySelector(".field-message")?.textContent).to.equal(
+      "Tell us about yourself",
+    );
   });
 });
 
@@ -65,7 +71,9 @@ describe("<tulpar-textarea> autosize", () => {
   });
 
   it("caps height at max-rows", async () => {
-    const el = await fixture<TulparTextarea>(html`<tulpar-textarea max-rows="3"></tulpar-textarea>`);
+    const el = await fixture<TulparTextarea>(
+      html`<tulpar-textarea max-rows="3"></tulpar-textarea>`,
+    );
     const ta = el.shadowRoot!.querySelector<HTMLTextAreaElement>("textarea#control")!;
     ta.value = Array.from({ length: 20 }, (_, i) => `line ${i}`).join("\n");
     ta.dispatchEvent(new Event("input", { bubbles: true }));
@@ -91,13 +99,17 @@ describe("<tulpar-textarea> resize attribute", () => {
   });
 
   it("setting resize=none applies CSS resize:none", async () => {
-    const el = await fixture<TulparTextarea>(html`<tulpar-textarea resize="none"></tulpar-textarea>`);
+    const el = await fixture<TulparTextarea>(
+      html`<tulpar-textarea resize="none"></tulpar-textarea>`,
+    );
     const ta = el.shadowRoot!.querySelector<HTMLTextAreaElement>("textarea#control")!;
     expect(getComputedStyle(ta).resize).to.equal("none");
   });
 
   it("setting resize=both applies CSS resize:both", async () => {
-    const el = await fixture<TulparTextarea>(html`<tulpar-textarea resize="both"></tulpar-textarea>`);
+    const el = await fixture<TulparTextarea>(
+      html`<tulpar-textarea resize="both"></tulpar-textarea>`,
+    );
     const ta = el.shadowRoot!.querySelector<HTMLTextAreaElement>("textarea#control")!;
     expect(getComputedStyle(ta).resize).to.equal("both");
   });
@@ -105,18 +117,28 @@ describe("<tulpar-textarea> resize attribute", () => {
 
 describe("<tulpar-textarea> show-count overlay", () => {
   it("renders counter inside the control row when show-count", async () => {
-    const el = await fixture<TulparTextarea>(html`<tulpar-textarea show-count value="hi"></tulpar-textarea>`);
+    const el = await fixture<TulparTextarea>(
+      html`<tulpar-textarea show-count value="hi"></tulpar-textarea>`,
+    );
     expect(el.shadowRoot!.querySelector(".field-textarea-counter")).to.not.equal(null);
   });
 
   it("counter shows X / Y when maxlength set", async () => {
-    const el = await fixture<TulparTextarea>(html`<tulpar-textarea show-count maxlength="100" value="hi"></tulpar-textarea>`);
-    expect(el.shadowRoot!.querySelector(".field-textarea-counter")?.textContent?.trim()).to.equal("2 / 100");
+    const el = await fixture<TulparTextarea>(
+      html`<tulpar-textarea show-count maxlength="100" value="hi"></tulpar-textarea>`,
+    );
+    expect(el.shadowRoot!.querySelector(".field-textarea-counter")?.textContent?.trim()).to.equal(
+      "2 / 100",
+    );
   });
 
   it("counter shows bare count without maxlength", async () => {
-    const el = await fixture<TulparTextarea>(html`<tulpar-textarea show-count value="abc"></tulpar-textarea>`);
-    expect(el.shadowRoot!.querySelector(".field-textarea-counter")?.textContent?.trim()).to.equal("3");
+    const el = await fixture<TulparTextarea>(
+      html`<tulpar-textarea show-count value="abc"></tulpar-textarea>`,
+    );
+    expect(el.shadowRoot!.querySelector(".field-textarea-counter")?.textContent?.trim()).to.equal(
+      "3",
+    );
   });
 
   it("no counter when show-count is false", async () => {
@@ -135,7 +157,9 @@ describe("<tulpar-textarea> corner actions (copy/paste)", () => {
     writeCalls = [];
     originalWriteText = navigator.clipboard.writeText.bind(navigator.clipboard);
     originalReadText = navigator.clipboard.readText.bind(navigator.clipboard);
-    navigator.clipboard.writeText = async (text: string) => { writeCalls.push(text); };
+    navigator.clipboard.writeText = async (text: string) => {
+      writeCalls.push(text);
+    };
     navigator.clipboard.readText = async () => readReturn;
   });
 
@@ -145,23 +169,33 @@ describe("<tulpar-textarea> corner actions (copy/paste)", () => {
   });
 
   it("renders copy button in top-right action cluster when copyable", async () => {
-    const el = await fixture<TulparTextarea>(html`<tulpar-textarea copyable value="hi"></tulpar-textarea>`);
-    expect(el.shadowRoot!.querySelector(".field-textarea-actions .field-copy-btn")).to.not.equal(null);
+    const el = await fixture<TulparTextarea>(
+      html`<tulpar-textarea copyable value="hi"></tulpar-textarea>`,
+    );
+    expect(el.shadowRoot!.querySelector(".field-textarea-actions .field-copy-btn")).to.not.equal(
+      null,
+    );
   });
 
   it("renders paste button when pastable", async () => {
     const el = await fixture<TulparTextarea>(html`<tulpar-textarea pastable></tulpar-textarea>`);
-    expect(el.shadowRoot!.querySelector(".field-textarea-actions .field-paste-btn")).to.not.equal(null);
+    expect(el.shadowRoot!.querySelector(".field-textarea-actions .field-paste-btn")).to.not.equal(
+      null,
+    );
   });
 
   it("auto-hides actions at size=xs", async () => {
-    const el = await fixture<TulparTextarea>(html`<tulpar-textarea copyable pastable value="hi" size="xs"></tulpar-textarea>`);
+    const el = await fixture<TulparTextarea>(
+      html`<tulpar-textarea copyable pastable value="hi" size="xs"></tulpar-textarea>`,
+    );
     expect(el.shadowRoot!.querySelector(".field-copy-btn")).to.equal(null);
     expect(el.shadowRoot!.querySelector(".field-paste-btn")).to.equal(null);
   });
 
   it("copy writes value to clipboard", async () => {
-    const el = await fixture<TulparTextarea>(html`<tulpar-textarea copyable value="hello world"></tulpar-textarea>`);
+    const el = await fixture<TulparTextarea>(
+      html`<tulpar-textarea copyable value="hello world"></tulpar-textarea>`,
+    );
     el.shadowRoot!.querySelector<HTMLButtonElement>(".field-copy-btn")!.click();
     await new Promise((r) => setTimeout(r, 10));
     expect(writeCalls).to.deep.equal(["hello world"]);
@@ -177,7 +211,11 @@ describe("<tulpar-textarea> corner actions (copy/paste)", () => {
   });
 
   it("status icon renders in the action cluster when validating", async () => {
-    const el = await fixture<TulparTextarea>(html`<tulpar-textarea validating copyable value="x"></tulpar-textarea>`);
-    expect(el.shadowRoot!.querySelector(".field-textarea-actions .field-status-icon")).to.not.equal(null);
+    const el = await fixture<TulparTextarea>(
+      html`<tulpar-textarea validating copyable value="x"></tulpar-textarea>`,
+    );
+    expect(el.shadowRoot!.querySelector(".field-textarea-actions .field-status-icon")).to.not.equal(
+      null,
+    );
   });
 });

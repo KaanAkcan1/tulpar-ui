@@ -34,4 +34,33 @@ export default [
       "@typescript-eslint/consistent-type-imports": "error",
     },
   },
+  {
+    files: ["packages/*/src/**/*.ts", "apps/**/*.ts"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@tulpar-ui/*/_internal*", "@tulpar-ui/*/dist/_internal*"],
+              message: "_internal is package-private. See docs/architecture/internal-layering.md",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ["packages/*/src/**/*.styles.ts"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "TemplateElement[value.raw=/--tulpar-primitive-/]",
+          message:
+            "Component styles must use semantic tokens (var(--tulpar-...)), never primitives (--tulpar-primitive-...). Bind primitives in the brand layer instead.",
+        },
+      ],
+    },
+  },
 ];

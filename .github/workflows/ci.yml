@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm lint
+
+      - run: pnpm format:check
+
+      - run: pnpm --filter @tulpar-ui/core run sync-exports:check
+
+      - run: pnpm build
+
+      - name: Install Playwright (core browser tests)
+        run: pnpm --filter @tulpar-ui/core exec playwright install --with-deps chromium
+
+      - run: pnpm test
+
+      - name: Changeset status (informational)
+        run: pnpm exec changeset status --since=origin/main || echo "::warning::No changeset found - add one with 'pnpm changeset' if this PR changes published packages"

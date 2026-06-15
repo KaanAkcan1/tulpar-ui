@@ -14,15 +14,23 @@ describe("<tulpar-number-input> baseline", () => {
   });
 
   it("displays formatted value (en-US grouping)", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input .value=${1234.5} locale="en-US"></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input .value=${1234.5} locale="en-US"></tulpar-number-input>`,
+    );
     const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
     expect(input.value).to.equal("1,234.5");
   });
 
   it("renders TRY currency in tr-TR locale", async () => {
     const el = await fixture<TulparNumberInput>(html`
-      <tulpar-number-input format-style="currency" currency="TRY" locale="tr-TR"
-        min-fraction-digits="2" max-fraction-digits="2" .value=${1234.5}></tulpar-number-input>
+      <tulpar-number-input
+        format-style="currency"
+        currency="TRY"
+        locale="tr-TR"
+        min-fraction-digits="2"
+        max-fraction-digits="2"
+        .value=${1234.5}
+      ></tulpar-number-input>
     `);
     const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
     expect(input.value).to.contain("1.234,50");
@@ -30,7 +38,11 @@ describe("<tulpar-number-input> baseline", () => {
 
   it("applies format-prefix and format-suffix to the display", async () => {
     const el = await fixture<TulparNumberInput>(html`
-      <tulpar-number-input format-suffix=" adet" locale="tr-TR" .value=${1234}></tulpar-number-input>
+      <tulpar-number-input
+        format-suffix=" adet"
+        locale="tr-TR"
+        .value=${1234}
+      ></tulpar-number-input>
     `);
     const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
     expect(input.value).to.contain(" adet");
@@ -59,7 +71,9 @@ describe("<tulpar-number-input> baseline", () => {
   });
 
   it(".formatOptions property overrides shorthand attrs", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input locale="en-US" .value=${1234567}></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input locale="en-US" .value=${1234567}></tulpar-number-input>`,
+    );
     el.formatOptions = { notation: "compact", compactDisplay: "short" };
     await el.updateComplete;
     const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
@@ -88,28 +102,36 @@ describe("<tulpar-number-input> clamp on blur", () => {
   });
 
   it("clamps value above max on blur", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input min="0" max="100"></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input min="0" max="100"></tulpar-number-input>`,
+    );
     typeAndBlur(el, "999");
     await el.updateComplete;
     expect(el.value).to.equal(100);
   });
 
   it("in-range value passes through unclamped", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input min="0" max="100"></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input min="0" max="100"></tulpar-number-input>`,
+    );
     typeAndBlur(el, "42");
     await el.updateComplete;
     expect(el.value).to.equal(42);
   });
 
   it("empty input → null when allow-empty (default)", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input min="0" .value=${5}></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input min="0" .value=${5}></tulpar-number-input>`,
+    );
     typeAndBlur(el, "");
     await el.updateComplete;
     expect(el.value).to.equal(null);
   });
 
   it("empty input → min when allow-empty=false", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input min="10" .allowEmpty=${false}></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input min="10" .allowEmpty=${false}></tulpar-number-input>`,
+    );
     typeAndBlur(el, "");
     await el.updateComplete;
     expect(el.value).to.equal(10);
@@ -118,7 +140,9 @@ describe("<tulpar-number-input> clamp on blur", () => {
   it("dispatches change event on blur", async () => {
     const el = await fixture<TulparNumberInput>(html`<tulpar-number-input></tulpar-number-input>`);
     let changed = false;
-    el.addEventListener("change", () => { changed = true; });
+    el.addEventListener("change", () => {
+      changed = true;
+    });
     typeAndBlur(el, "7");
     await el.updateComplete;
     expect(changed).to.equal(true);
@@ -133,17 +157,23 @@ describe("<tulpar-number-input> steppers", () => {
   });
 
   it("hides steppers when hide-steppers is set", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input hide-steppers></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input hide-steppers></tulpar-number-input>`,
+    );
     expect(el.shadowRoot!.querySelector(".field-steppers")).to.equal(null);
   });
 
   it("auto-hides steppers at size=xs", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input size="xs"></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input size="xs"></tulpar-number-input>`,
+    );
     expect(el.shadowRoot!.querySelector(".field-steppers")).to.equal(null);
   });
 
   it("increments by step on pointerdown+pointerup", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input .value=${5} step="2"></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input .value=${5} step="2"></tulpar-number-input>`,
+    );
     const btn = el.shadowRoot!.querySelector<HTMLButtonElement>(".stepper-inc")!;
     btn.dispatchEvent(new PointerEvent("pointerdown"));
     btn.dispatchEvent(new PointerEvent("pointerup"));
@@ -152,7 +182,9 @@ describe("<tulpar-number-input> steppers", () => {
   });
 
   it("decrements by step", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input .value=${5} step="1"></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input .value=${5} step="1"></tulpar-number-input>`,
+    );
     const btn = el.shadowRoot!.querySelector<HTMLButtonElement>(".stepper-dec")!;
     btn.dispatchEvent(new PointerEvent("pointerdown"));
     btn.dispatchEvent(new PointerEvent("pointerup"));
@@ -161,7 +193,9 @@ describe("<tulpar-number-input> steppers", () => {
   });
 
   it("steps from min (or 0) when value is null", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input min="10"></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input min="10"></tulpar-number-input>`,
+    );
     const btn = el.shadowRoot!.querySelector<HTMLButtonElement>(".stepper-inc")!;
     btn.dispatchEvent(new PointerEvent("pointerdown"));
     btn.dispatchEvent(new PointerEvent("pointerup"));
@@ -170,20 +204,29 @@ describe("<tulpar-number-input> steppers", () => {
   });
 
   it("disables increment when value === max", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input .value=${10} max="10"></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input .value=${10} max="10"></tulpar-number-input>`,
+    );
     const incBtn = el.shadowRoot!.querySelector<HTMLButtonElement>(".stepper-inc")!;
     expect(incBtn.disabled).to.equal(true);
   });
 
   it("disables decrement when value === min", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input .value=${0} min="0"></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input .value=${0} min="0"></tulpar-number-input>`,
+    );
     const decBtn = el.shadowRoot!.querySelector<HTMLButtonElement>(".stepper-dec")!;
     expect(decBtn.disabled).to.equal(true);
   });
 
   it("long-press repeats after step-hold-delay at step-hold-interval", async () => {
     const el = await fixture<TulparNumberInput>(html`
-      <tulpar-number-input .value=${0} step="1" step-hold-delay="50" step-hold-interval="20"></tulpar-number-input>
+      <tulpar-number-input
+        .value=${0}
+        step="1"
+        step-hold-delay="50"
+        step-hold-interval="20"
+      ></tulpar-number-input>
     `);
     const btn = el.shadowRoot!.querySelector<HTMLButtonElement>(".stepper-inc")!;
     btn.dispatchEvent(new PointerEvent("pointerdown"));
@@ -196,7 +239,12 @@ describe("<tulpar-number-input> steppers", () => {
 
   it("stops repeating on pointerleave", async () => {
     const el = await fixture<TulparNumberInput>(html`
-      <tulpar-number-input .value=${0} step="1" step-hold-delay="30" step-hold-interval="20"></tulpar-number-input>
+      <tulpar-number-input
+        .value=${0}
+        step="1"
+        step-hold-delay="30"
+        step-hold-interval="20"
+      ></tulpar-number-input>
     `);
     const btn = el.shadowRoot!.querySelector<HTMLButtonElement>(".stepper-inc")!;
     btn.dispatchEvent(new PointerEvent("pointerdown"));
@@ -215,7 +263,9 @@ describe("<tulpar-number-input> keyboard", () => {
   }
 
   it("ArrowUp adds step; ArrowDown subtracts step", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input .value=${5} step="1"></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input .value=${5} step="1"></tulpar-number-input>`,
+    );
     key(el, { key: "ArrowUp" });
     await el.updateComplete;
     expect(el.value).to.equal(6);
@@ -225,35 +275,45 @@ describe("<tulpar-number-input> keyboard", () => {
   });
 
   it("Shift+ArrowUp multiplies step by 10", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input .value=${5} step="1"></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input .value=${5} step="1"></tulpar-number-input>`,
+    );
     key(el, { key: "ArrowUp", shiftKey: true });
     await el.updateComplete;
     expect(el.value).to.equal(15);
   });
 
   it("Ctrl+ArrowUp multiplies step by 100", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input .value=${5} step="1"></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input .value=${5} step="1"></tulpar-number-input>`,
+    );
     key(el, { key: "ArrowUp", ctrlKey: true });
     await el.updateComplete;
     expect(el.value).to.equal(105);
   });
 
   it("Home jumps to min", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input .value=${50} min="0"></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input .value=${50} min="0"></tulpar-number-input>`,
+    );
     key(el, { key: "Home" });
     await el.updateComplete;
     expect(el.value).to.equal(0);
   });
 
   it("End jumps to max", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input .value=${5} max="99"></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input .value=${5} max="99"></tulpar-number-input>`,
+    );
     key(el, { key: "End" });
     await el.updateComplete;
     expect(el.value).to.equal(99);
   });
 
   it("arrow stepping respects clamp bounds", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input .value=${99} max="100" step="5"></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input .value=${99} max="100" step="5"></tulpar-number-input>`,
+    );
     key(el, { key: "ArrowUp" });
     await el.updateComplete;
     expect(el.value).to.equal(100); // clamped, not 104
@@ -262,7 +322,9 @@ describe("<tulpar-number-input> keyboard", () => {
 
 describe("<tulpar-number-input> integer-only", () => {
   it("rejects decimal point key + adds data-mask-rejected", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input integer-only></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input integer-only></tulpar-number-input>`,
+    );
     const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
     const ev = new KeyboardEvent("keydown", { key: ".", bubbles: true, cancelable: true });
     input.dispatchEvent(ev);
@@ -271,7 +333,9 @@ describe("<tulpar-number-input> integer-only", () => {
   });
 
   it("rejects comma decimal separator too", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input integer-only></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input integer-only></tulpar-number-input>`,
+    );
     const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
     const ev = new KeyboardEvent("keydown", { key: ",", bubbles: true, cancelable: true });
     input.dispatchEvent(ev);
@@ -287,14 +351,22 @@ describe("<tulpar-number-input> integer-only", () => {
   });
 
   it("formats with no fraction digits when integer-only", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input integer-only locale="en-US" .value=${1234.5}></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input
+        integer-only
+        locale="en-US"
+        .value=${1234.5}
+      ></tulpar-number-input>`,
+    );
     const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
     expect(input.value).to.not.contain(".5");
     expect(input.value).to.not.contain(",5");
   });
 
   it("uses numeric inputmode when integer-only", async () => {
-    const el = await fixture<TulparNumberInput>(html`<tulpar-number-input integer-only></tulpar-number-input>`);
+    const el = await fixture<TulparNumberInput>(
+      html`<tulpar-number-input integer-only></tulpar-number-input>`,
+    );
     const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
     expect(input.getAttribute("inputmode")).to.equal("numeric");
   });
@@ -311,7 +383,11 @@ describe("<tulpar-number-input> format prefix/suffix string", () => {
 
   it("appends format-suffix to displayed value", async () => {
     const el = await fixture<TulparNumberInput>(html`
-      <tulpar-number-input format-suffix=" adet" .value=${1234} locale="tr-TR"></tulpar-number-input>
+      <tulpar-number-input
+        format-suffix=" adet"
+        .value=${1234}
+        locale="tr-TR"
+      ></tulpar-number-input>
     `);
     const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
     expect(input.value).to.equal("1.234 adet");
@@ -319,7 +395,12 @@ describe("<tulpar-number-input> format prefix/suffix string", () => {
 
   it("both prefix and suffix simultaneously", async () => {
     const el = await fixture<TulparNumberInput>(html`
-      <tulpar-number-input format-prefix="~" format-suffix=" kg" .value=${5} locale="en-US"></tulpar-number-input>
+      <tulpar-number-input
+        format-prefix="~"
+        format-suffix=" kg"
+        .value=${5}
+        locale="en-US"
+      ></tulpar-number-input>
     `);
     const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
     expect(input.value).to.equal("~5 kg");
@@ -336,7 +417,11 @@ describe("<tulpar-number-input> format prefix/suffix string", () => {
 
   it("typing buffer (focused) shows raw value without format prefix/suffix", async () => {
     const el = await fixture<TulparNumberInput>(html`
-      <tulpar-number-input format-suffix=" adet" .value=${1234} locale="en-US"></tulpar-number-input>
+      <tulpar-number-input
+        format-suffix=" adet"
+        .value=${1234}
+        locale="en-US"
+      ></tulpar-number-input>
     `);
     const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
     input.focus();

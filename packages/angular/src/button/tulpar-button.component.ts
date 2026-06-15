@@ -9,8 +9,7 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
-import type { ElementRef ,
-  Type} from "@angular/core";
+import type { ElementRef, Type } from "@angular/core";
 import { NgComponentOutlet } from "@angular/common";
 
 import "@tulpar-ui/core/button";
@@ -87,9 +86,7 @@ const ICON_SIZE_BY_BUTTON_SIZE: Record<ButtonSize, number> = {
     >
       @if (icon(); as iconCmp) {
         <span slot="start">
-          <ng-container
-            *ngComponentOutlet="iconCmp; inputs: { size: effectiveIconSize() }"
-          />
+          <ng-container *ngComponentOutlet="iconCmp; inputs: { size: effectiveIconSize() }" />
         </span>
       }
       <ng-content select="[slot=start]" />

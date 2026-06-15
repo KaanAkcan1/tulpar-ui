@@ -23,3 +23,9 @@ export type {
 export { default as TulparTextarea } from "./textarea/TulparTextarea.vue";
 
 export { default as TulparNumberInput } from "./number-input/TulparNumberInput.vue";
+
+export { default as TulparShell } from "./shell/TulparShell.vue";
+export { default as TulparTopbar } from "./shell/TulparTopbar.vue";
+export { default as TulparSidenav } from "./shell/TulparSidenav.vue";
+export { default as TulparNavItem } from "./shell/TulparNavItem.vue";
+export type { ShellSidenavMode, ShellState, TulparNavItemData } from "@tulpar-ui/shell";

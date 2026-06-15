@@ -14,7 +14,8 @@ import { TulparButtonComponent } from "./tulpar-button.component";
       [disabled]="disabled()"
       [iconSize]="iconSize()"
       (clicked)="onClick($event)"
-    >{{ label() }}</tulpar-button-ng>
+      >{{ label() }}</tulpar-button-ng
+    >
   `,
 })
 class Host {

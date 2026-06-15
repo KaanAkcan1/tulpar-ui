@@ -30,7 +30,9 @@ export class TulparTextarea extends FormFieldBase {
     try {
       await navigator.clipboard.writeText(this.value);
       this._copyConfirm = true;
-      setTimeout(() => { this._copyConfirm = false; }, 1500);
+      setTimeout(() => {
+        this._copyConfirm = false;
+      }, 1500);
     } catch {
       // permission denied — silent
     }
@@ -44,7 +46,9 @@ export class TulparTextarea extends FormFieldBase {
       this.dispatchEvent(new Event("change", { bubbles: true }));
       if (this.autosize) this._resize();
       this._pasteConfirm = true;
-      setTimeout(() => { this._pasteConfirm = false; }, 1500);
+      setTimeout(() => {
+        this._pasteConfirm = false;
+      }, 1500);
     } catch {
       this.setAttribute("data-mask-rejected", "");
       setTimeout(() => this.removeAttribute("data-mask-rejected"), 200);
@@ -61,22 +65,58 @@ export class TulparTextarea extends FormFieldBase {
       <div class="field-textarea-actions">
         ${this._renderStatusZone()}
         ${showPaste
-          ? html`<button type="button" class="field-paste-btn"
+          ? html`<button
+              type="button"
+              class="field-paste-btn"
               aria-label=${this._pasteConfirm ? "Pasted" : "Paste from clipboard"}
               ?disabled=${pasteInert}
-              @click=${this._onPasteAction}>
+              @click=${this._onPasteAction}
+            >
               ${this._pasteConfirm
-                ? html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13 l4 4 L19 7" stroke="currentColor" stroke-width="2" fill="none"/></svg>`
-                : html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 v14 M6 10 l6 6 l6 -6" stroke="currentColor" stroke-width="2" fill="none"/></svg>`}
+                ? html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 13 l4 4 L19 7" stroke="currentColor" stroke-width="2" fill="none" />
+                  </svg>`
+                : html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      d="M12 2 v14 M6 10 l6 6 l6 -6"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      fill="none"
+                    />
+                  </svg>`}
             </button>`
           : nothing}
         ${showCopy
-          ? html`<button type="button" class="field-copy-btn"
+          ? html`<button
+              type="button"
+              class="field-copy-btn"
               aria-label=${this._copyConfirm ? "Copied" : "Copy value"}
-              @click=${this._onCopy}>
+              @click=${this._onCopy}
+            >
               ${this._copyConfirm
-                ? html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13 l4 4 L19 7" stroke="currentColor" stroke-width="2" fill="none"/></svg>`
-                : html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none"/><rect x="4" y="4" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none"/></svg>`}
+                ? html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 13 l4 4 L19 7" stroke="currentColor" stroke-width="2" fill="none" />
+                  </svg>`
+                : html`<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+                    <rect
+                      x="8"
+                      y="8"
+                      width="12"
+                      height="12"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      fill="none"
+                    />
+                    <rect
+                      x="4"
+                      y="4"
+                      width="12"
+                      height="12"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      fill="none"
+                    />
+                  </svg>`}
             </button>`
           : nothing}
       </div>
@@ -88,7 +128,9 @@ export class TulparTextarea extends FormFieldBase {
     const len = this.value.length;
     const txt = this.maxLength ? `${len} / ${this.maxLength}` : `${len}`;
     const atLimit = this.maxLength !== undefined && len >= this.maxLength;
-    return html`<span class="field-textarea-counter" data-at-limit=${atLimit ? "true" : "false"}>${txt}</span>`;
+    return html`<span class="field-textarea-counter" data-at-limit=${atLimit ? "true" : "false"}
+      >${txt}</span
+    >`;
   }
 
   protected override renderControl(ariaLabel?: string): TemplateResult {
@@ -111,8 +153,7 @@ export class TulparTextarea extends FormFieldBase {
           aria-label=${ariaLabel ?? nothing}
           @input=${this._onInput}
         ></textarea>
-        ${this._renderActions()}
-        ${this._renderCounter()}
+        ${this._renderActions()} ${this._renderCounter()}
       </div>
     `;
   }
@@ -129,7 +170,10 @@ export class TulparTextarea extends FormFieldBase {
     if (changed.has("rows") && this.rows !== undefined) {
       this.autosize = false;
     }
-    if (this.autosize && (changed.has("value") || changed.has("minRows") || changed.has("maxRows"))) {
+    if (
+      this.autosize &&
+      (changed.has("value") || changed.has("minRows") || changed.has("maxRows"))
+    ) {
       this._resize();
     }
   }

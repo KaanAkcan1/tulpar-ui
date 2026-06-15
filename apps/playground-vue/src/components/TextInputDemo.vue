@@ -117,30 +117,47 @@ const statesCode = `<TulparTextInput label="Disabled" :disabled="true" value="Ca
       class="sub-btn"
       :class="{ active: activeSection === 'all' }"
       @click="activeSection = 'all'"
-    >All</button>
+    >
+      All
+    </button>
     <button
       v-for="s in sections"
       :key="s.id"
       class="sub-btn"
       :class="{ active: activeSection === s.id }"
       @click="activeSection = s.id"
-    >{{ s.title }}</button>
+    >
+      {{ s.title }}
+    </button>
   </div>
 
   <!-- ── Types ──────────────────────────────────────────────────────────────── -->
   <section v-if="activeSection === 'all' || activeSection === 'types'" class="demo-section">
     <h3 class="demo-title">Types</h3>
-    <p class="demo-desc">All 6 input types. Search auto-adds a magnifier icon and clearable affordance. Password shows a reveal toggle.</p>
+    <p class="demo-desc">
+      All 6 input types. Search auto-adds a magnifier icon and clearable affordance. Password shows
+      a reveal toggle.
+    </p>
     <div class="preview preview--col">
       <div class="preview-row">
         <TulparTextInput type="text" label="Text (default)" placeholder="Plain text" />
-        <TulparTextInput type="email" label="Email" autocomplete="email" placeholder="you@example.com" />
+        <TulparTextInput
+          type="email"
+          label="Email"
+          autocomplete="email"
+          placeholder="you@example.com"
+        />
         <TulparTextInput type="url" label="URL" placeholder="https://" />
       </div>
       <div class="preview-row">
         <TulparTextInput type="tel" label="Tel" autocomplete="tel" placeholder="+1 555 000 0000" />
         <TulparTextInput type="search" label="Search" placeholder="Search…" />
-        <TulparTextInput type="password" label="Password" autocomplete="current-password" placeholder="••••••••" />
+        <TulparTextInput
+          type="password"
+          label="Password"
+          autocomplete="current-password"
+          placeholder="••••••••"
+        />
       </div>
     </div>
     <pre class="code"><code>{{ typesCode }}</code></pre>
@@ -149,7 +166,10 @@ const statesCode = `<TulparTextInput label="Disabled" :disabled="true" value="Ca
   <!-- ── Sizes ──────────────────────────────────────────────────────────────── -->
   <section v-if="activeSection === 'all' || activeSection === 'sizes'" class="demo-section">
     <h3 class="demo-title">Sizes</h3>
-    <p class="demo-desc">Five sizes: xs → xl. At xs, action buttons (clear/copy/paste) are auto-hidden to respect touch target a11y guidelines.</p>
+    <p class="demo-desc">
+      Five sizes: xs → xl. At xs, action buttons (clear/copy/paste) are auto-hidden to respect touch
+      target a11y guidelines.
+    </p>
     <div class="preview preview--col">
       <TulparTextInput size="xs" label="xs — Extra Small" placeholder="xs" />
       <TulparTextInput size="sm" label="sm — Small" placeholder="sm" />
@@ -163,7 +183,9 @@ const statesCode = `<TulparTextInput label="Disabled" :disabled="true" value="Ca
   <!-- ── Variants ───────────────────────────────────────────────────────────── -->
   <section v-if="activeSection === 'all' || activeSection === 'variants'" class="demo-section">
     <h3 class="demo-title">Variants</h3>
-    <p class="demo-desc">Four rendering styles. Ghost with float label falls back to top (console warning).</p>
+    <p class="demo-desc">
+      Four rendering styles. Ghost with float label falls back to top (console warning).
+    </p>
     <div class="preview preview--col">
       <TulparTextInput variant="outlined" label="Outlined (default)" placeholder="Outlined" />
       <TulparTextInput variant="filled" label="Filled" placeholder="Filled" />
@@ -174,9 +196,15 @@ const statesCode = `<TulparTextInput label="Disabled" :disabled="true" value="Ca
   </section>
 
   <!-- ── Label Positions ────────────────────────────────────────────────────── -->
-  <section v-if="activeSection === 'all' || activeSection === 'label-positions'" class="demo-section">
+  <section
+    v-if="activeSection === 'all' || activeSection === 'label-positions'"
+    class="demo-section"
+  >
     <h3 class="demo-title">Label Positions</h3>
-    <p class="demo-desc">Five positions. The last example shows the fallback: float + ghost forces top layout with a console warning.</p>
+    <p class="demo-desc">
+      Five positions. The last example shows the fallback: float + ghost forces top layout with a
+      console warning.
+    </p>
     <div class="preview preview--col">
       <TulparTextInput label-position="top" label="Top (default)" placeholder="top" />
       <TulparTextInput label-position="float" label="Float" placeholder="Click to float label" />
@@ -185,7 +213,12 @@ const statesCode = `<TulparTextInput label="Disabled" :disabled="true" value="Ca
       <TulparTextInput label-position="none" placeholder="No label (label-position=none)" />
       <div>
         <p class="demo-note">Fallback: float + ghost → renders as top (console warning)</p>
-        <TulparTextInput label-position="float" variant="ghost" label="Float + Ghost → fallback to top" placeholder="ghost float fallback" />
+        <TulparTextInput
+          label-position="float"
+          variant="ghost"
+          label="Float + Ghost → fallback to top"
+          placeholder="ghost float fallback"
+        />
       </div>
     </div>
     <pre class="code"><code>{{ labelPositionsCode }}</code></pre>
@@ -197,14 +230,36 @@ const statesCode = `<TulparTextInput label="Disabled" :disabled="true" value="Ca
     <p class="demo-desc">Three modes: icon (asterisk), label (appends text), none.</p>
     <div class="preview preview--col">
       <div class="preview-row">
-        <TulparTextInput label="Required (icon)" :required="true" necessity-indicator="icon" placeholder="required + icon" />
-        <TulparTextInput label="Optional (icon)" necessity-indicator="icon" placeholder="optional + icon (no mark)" />
+        <TulparTextInput
+          label="Required (icon)"
+          :required="true"
+          necessity-indicator="icon"
+          placeholder="required + icon"
+        />
+        <TulparTextInput
+          label="Optional (icon)"
+          necessity-indicator="icon"
+          placeholder="optional + icon (no mark)"
+        />
       </div>
       <div class="preview-row">
-        <TulparTextInput label="Required (label)" :required="true" necessity-indicator="label" placeholder="required + label text" />
-        <TulparTextInput label="Optional (label)" necessity-indicator="label" placeholder="optional + label text" />
+        <TulparTextInput
+          label="Required (label)"
+          :required="true"
+          necessity-indicator="label"
+          placeholder="required + label text"
+        />
+        <TulparTextInput
+          label="Optional (label)"
+          necessity-indicator="label"
+          placeholder="optional + label text"
+        />
       </div>
-      <TulparTextInput label="No indicator" necessity-indicator="none" placeholder="necessity-indicator=none" />
+      <TulparTextInput
+        label="No indicator"
+        necessity-indicator="none"
+        placeholder="necessity-indicator=none"
+      />
     </div>
     <pre class="code"><code>{{ necessityCode }}</code></pre>
   </section>
@@ -212,13 +267,41 @@ const statesCode = `<TulparTextInput label="Disabled" :disabled="true" value="Ca
   <!-- ── Statuses ───────────────────────────────────────────────────────────── -->
   <section v-if="activeSection === 'all' || activeSection === 'statuses'" class="demo-section">
     <h3 class="demo-title">Statuses</h3>
-    <p class="demo-desc">invalid + error-text, warn + warn-text, validating + helper-text, invalid + validating combo, and a helper-only baseline.</p>
+    <p class="demo-desc">
+      invalid + error-text, warn + warn-text, validating + helper-text, invalid + validating combo,
+      and a helper-only baseline.
+    </p>
     <div class="preview preview--col">
-      <TulparTextInput label="Email" :invalid="true" error-text="Invalid email address" value="not-an-email" />
-      <TulparTextInput label="Username" :warn="true" warn-text="Username may already be taken" value="john_doe" />
-      <TulparTextInput label="Subdomain" :validating="true" helper-text="Checking availability…" value="my-app" />
-      <TulparTextInput label="Slug" :invalid="true" :validating="true" error-text="Invalid format — re-checking" value="bad slug!" />
-      <TulparTextInput label="Website" helper-text="Include https://" placeholder="https://example.com" />
+      <TulparTextInput
+        label="Email"
+        :invalid="true"
+        error-text="Invalid email address"
+        value="not-an-email"
+      />
+      <TulparTextInput
+        label="Username"
+        :warn="true"
+        warn-text="Username may already be taken"
+        value="john_doe"
+      />
+      <TulparTextInput
+        label="Subdomain"
+        :validating="true"
+        helper-text="Checking availability…"
+        value="my-app"
+      />
+      <TulparTextInput
+        label="Slug"
+        :invalid="true"
+        :validating="true"
+        error-text="Invalid format — re-checking"
+        value="bad slug!"
+      />
+      <TulparTextInput
+        label="Website"
+        helper-text="Include https://"
+        placeholder="https://example.com"
+      />
     </div>
     <pre class="code"><code>{{ statusesCode }}</code></pre>
   </section>
@@ -226,7 +309,9 @@ const statesCode = `<TulparTextInput label="Disabled" :disabled="true" value="Ca
   <!-- ── Affordances ────────────────────────────────────────────────────────── -->
   <section v-if="activeSection === 'all' || activeSection === 'affordances'" class="demo-section">
     <h3 class="demo-title">Affordances</h3>
-    <p class="demo-desc">clearable, show-count, copyable (great for readonly tokens), pastable, and combined.</p>
+    <p class="demo-desc">
+      clearable, show-count, copyable (great for readonly tokens), pastable, and combined.
+    </p>
     <div class="preview preview--col">
       <TulparTextInput
         label="Clearable"
@@ -251,11 +336,7 @@ const statesCode = `<TulparTextInput label="Disabled" :disabled="true" value="Ca
         value="sk_test_4xK7mR9pQnW2vL8hJ5cB"
       />
 
-      <TulparTextInput
-        label="Pastable"
-        :pastable="true"
-        placeholder="Click paste icon…"
-      />
+      <TulparTextInput label="Pastable" :pastable="true" placeholder="Click paste icon…" />
 
       <TulparTextInput
         label="Copyable + Pastable"
@@ -295,20 +376,11 @@ const statesCode = `<TulparTextInput label="Disabled" :disabled="true" value="Ca
         placeholder="0000 0000 0000 0000"
       />
 
-      <TulparTextInput
-        label="Date"
-        mask="99/99/9999"
-        placeholder="DD/MM/YYYY"
-      />
+      <TulparTextInput label="Date" mask="99/99/9999" placeholder="DD/MM/YYYY" />
 
       <div class="preview-row">
         <div>
-          <TulparTextInput
-            label="mask-emit=raw"
-            mask="999-999"
-            mask-emit="raw"
-            v-model="maskRaw"
-          />
+          <TulparTextInput label="mask-emit=raw" mask="999-999" mask-emit="raw" v-model="maskRaw" />
           <p class="value-display">raw = "{{ maskRaw }}"</p>
         </div>
         <div>
@@ -350,7 +422,10 @@ const statesCode = `<TulparTextInput label="Disabled" :disabled="true" value="Ca
   <!-- ── Slots ──────────────────────────────────────────────────────────────── -->
   <section v-if="activeSection === 'all' || activeSection === 'slots'" class="demo-section">
     <h3 class="demo-title">Slots</h3>
-    <p class="demo-desc">prefix and suffix slots accept any content. prefix-interactive enables a tabbable / clickable element in the prefix zone.</p>
+    <p class="demo-desc">
+      prefix and suffix slots accept any content. prefix-interactive enables a tabbable / clickable
+      element in the prefix zone.
+    </p>
     <div class="preview preview--col">
       <TulparTextInput label="Amount (prefix $)">
         <span slot="prefix">$</span>
@@ -361,7 +436,7 @@ const statesCode = `<TulparTextInput label="Disabled" :disabled="true" value="Ca
       </TulparTextInput>
 
       <TulparTextInput label="Search (prefix-interactive button)" :prefix-interactive="true">
-        <button slot="prefix" type="button" style="padding: 0 8px; cursor: pointer;">Go</button>
+        <button slot="prefix" type="button" style="padding: 0 8px; cursor: pointer">Go</button>
       </TulparTextInput>
     </div>
     <pre class="code"><code>{{ slotsCode }}</code></pre>
@@ -370,11 +445,17 @@ const statesCode = `<TulparTextInput label="Disabled" :disabled="true" value="Ca
   <!-- ── States ─────────────────────────────────────────────────────────────── -->
   <section v-if="activeSection === 'all' || activeSection === 'states'" class="demo-section">
     <h3 class="demo-title">States</h3>
-    <p class="demo-desc">disabled, readonly, and no-message-space (tight layout — no reserved row below).</p>
+    <p class="demo-desc">
+      disabled, readonly, and no-message-space (tight layout — no reserved row below).
+    </p>
     <div class="preview preview--col">
       <TulparTextInput label="Disabled" :disabled="true" value="Cannot edit this" />
       <TulparTextInput label="Readonly" :readonly="true" value="Read only value" />
-      <TulparTextInput label="No Message Space" :no-message-space="true" placeholder="tight layout — no gap below" />
+      <TulparTextInput
+        label="No Message Space"
+        :no-message-space="true"
+        placeholder="tight layout — no gap below"
+      />
     </div>
     <pre class="code"><code>{{ statesCode }}</code></pre>
   </section>
@@ -399,7 +480,9 @@ const statesCode = `<TulparTextInput label="Disabled" :disabled="true" value="Ca
   font-family: var(--tulpar-font-family-ui, system-ui, sans-serif);
   font-size: 13px;
   cursor: pointer;
-  transition: background 0.1s, color 0.1s;
+  transition:
+    background 0.1s,
+    color 0.1s;
 }
 
 .sub-btn:hover {

@@ -1,12 +1,7 @@
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
 import "@tulpar-ui/core/number-input";
-import type {
-  FieldSize,
-  FieldVariant,
-  LabelPosition,
-  NecessityIndicator,
-} from "@tulpar-ui/core";
+import type { FieldSize, FieldVariant, LabelPosition, NecessityIndicator } from "@tulpar-ui/core";
 
 interface Props {
   modelValue?: number | null;

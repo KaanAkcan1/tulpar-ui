@@ -9,3 +9,5 @@ docs/
 .angular
 .vite
 out-tsc
+.claude/
+packages/tokens/src/fallbacks.ts

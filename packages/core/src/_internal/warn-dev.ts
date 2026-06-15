@@ -18,9 +18,7 @@ export function warnDev(msg: string, ctx?: unknown): void {
 
   const isProd = metaEnv?.PROD === true || nodeEnv === "production";
   const isDev =
-    metaEnv?.DEV === true ||
-    (nodeEnv !== undefined && nodeEnv !== "production") ||
-    !isProd;
+    metaEnv?.DEV === true || (nodeEnv !== undefined && nodeEnv !== "production") || !isProd;
 
   if (isDev && !isProd) {
     if (ctx === undefined) console.warn(msg);

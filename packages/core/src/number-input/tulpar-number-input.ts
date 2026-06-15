@@ -88,9 +88,7 @@ export class TulparNumberInput extends FormFieldBase {
           @keydown=${this._onKeydown}
           @wheel=${this._onWheel}
         />
-        ${this._renderStatusZone()}
-        ${this._renderSteppers()}
-        ${this._renderSuffixSlot()}
+        ${this._renderStatusZone()} ${this._renderSteppers()} ${this._renderSuffixSlot()}
       </div>
     `;
   }
@@ -138,21 +136,35 @@ export class TulparNumberInput extends FormFieldBase {
     const disabled = this.disabled || this.readonly;
     return html`
       <div class="field-steppers">
-        <button type="button" class="stepper-inc" aria-label="Increment" tabindex="-1"
+        <button
+          type="button"
+          class="stepper-inc"
+          aria-label="Increment"
+          tabindex="-1"
           ?disabled=${disabled || atMax}
           @pointerdown=${() => this._startHold(1)}
           @pointerup=${this._stopHold}
           @pointerleave=${this._stopHold}
-          @pointercancel=${this._stopHold}>
-          <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 5 L5 1 L9 5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+          @pointercancel=${this._stopHold}
+        >
+          <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true">
+            <path d="M1 5 L5 1 L9 5" stroke="currentColor" stroke-width="1.5" fill="none" />
+          </svg>
         </button>
-        <button type="button" class="stepper-dec" aria-label="Decrement" tabindex="-1"
+        <button
+          type="button"
+          class="stepper-dec"
+          aria-label="Decrement"
+          tabindex="-1"
           ?disabled=${disabled || atMin}
           @pointerdown=${() => this._startHold(-1)}
           @pointerup=${this._stopHold}
           @pointerleave=${this._stopHold}
-          @pointercancel=${this._stopHold}>
-          <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1 L5 5 L9 1" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+          @pointercancel=${this._stopHold}
+        >
+          <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true">
+            <path d="M1 1 L5 5 L9 1" stroke="currentColor" stroke-width="1.5" fill="none" />
+          </svg>
         </button>
       </div>
     `;
@@ -224,9 +236,7 @@ export class TulparNumberInput extends FormFieldBase {
       return this.allowEmpty ? undefined : (this.min ?? 0);
     }
     // Heuristic cleanup: strip everything except digits, sign, separators; normalize comma to dot.
-    const cleaned = this._typingBuffer
-      .replace(/[^\d.,\-]/g, "")
-      .replace(",", ".");
+    const cleaned = this._typingBuffer.replace(/[^\d.,\-]/g, "").replace(",", ".");
     const n = parseFloat(cleaned);
     return Number.isNaN(n) ? undefined : n;
   }

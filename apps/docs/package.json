@@ -11,8 +11,9 @@
   },
   "dependencies": {
     "@tulpar-ui/core": "workspace:*",
+    "@tulpar-ui/shell": "workspace:*",
     "@tulpar-ui/tokens": "workspace:*",
-    "lit": "^3.1.0"
+    "lit": "catalog:"
   },
   "devDependencies": {
     "@storybook/addon-a11y": "^8.0.0",

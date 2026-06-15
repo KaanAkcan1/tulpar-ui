@@ -1,5 +1,13 @@
 import { expect } from "@open-wc/testing";
-import { compileMask, tokenAccepts, tokenTransform, applyMask, extractRaw, MaskController, type MaskHost } from "./mask-engine";
+import {
+  compileMask,
+  tokenAccepts,
+  tokenTransform,
+  applyMask,
+  extractRaw,
+  MaskController,
+  type MaskHost,
+} from "./mask-engine";
 
 describe("compileMask", () => {
   it("parses 9 as digit token", () => {
@@ -100,9 +108,9 @@ describe("applyMask (eager)", () => {
     expect(applyMask(["5", "3", "2"], tokens, "_")).to.equal("+90 (532) ___ __ __");
   });
   it("ignores extra chars beyond mask length", () => {
-    expect(
-      applyMask(["5", "3", "2", "1", "2", "3", "4", "5", "6", "7"], tokens, "_")
-    ).to.equal("+90 (532) 123 45 67");
+    expect(applyMask(["5", "3", "2", "1", "2", "3", "4", "5", "6", "7"], tokens, "_")).to.equal(
+      "+90 (532) 123 45 67",
+    );
   });
 });
 
@@ -133,9 +141,15 @@ class TestHost implements MaskHost {
   maskSlotChar = "_";
   updateCount = 0;
   rejected = false;
-  requestUpdate() { this.updateCount++; }
-  dispatchEvent(_e: Event) { return true; }
-  markRejected() { this.rejected = true; }
+  requestUpdate() {
+    this.updateCount++;
+  }
+  dispatchEvent(_e: Event) {
+    return true;
+  }
+  markRejected() {
+    this.rejected = true;
+  }
 }
 
 describe("MaskController accept/reject", () => {

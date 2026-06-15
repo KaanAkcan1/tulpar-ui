@@ -1,73 +1,83 @@
 # Tulpar UI
 
-A Lit-based design system with Angular and Vue wrappers. Enterprise-grade
-palette (Navy + Gold brand, 17 chromatic families) and Source Serif 4 +
-Source Sans 3 typography.
+From-scratch design system: Lit-based Web Components with idiomatic
+Angular and Vue wrappers. Single source of truth for behavior and
+rendering, consumable from any framework.
+
+**Docs / Demos:** [Storybook](https://tulpar-ui-docs.pages.dev) ·
+[Angular playground](https://tulpar-ui-ng.pages.dev) ·
+[Vue playground](https://tulpar-ui-vue.pages.dev)
 
 ## Packages
 
-- `@tulpar-ui/tokens` — Design tokens (CSS custom properties + TypeScript exports)
-- `@tulpar-ui/core` — Lit Web Components (source of truth)
-- `@tulpar-ui/angular` — Angular wrappers
-- `@tulpar-ui/vue` — Vue 3 wrappers
+| Package              | Description                                                                                |
+| -------------------- | ------------------------------------------------------------------------------------------ |
+| `@tulpar-ui/tokens`  | 3-layer design tokens (primitive → semantic → brand×mode), generated CSS custom properties |
+| `@tulpar-ui/core`    | Lit Web Components (`<tulpar-button>`, input family) — source of truth                     |
+| `@tulpar-ui/angular` | Signal-based Angular wrappers (`<tulpar-button-ng>`)                                       |
+| `@tulpar-ui/vue`     | Vue 3 SFC wrappers (`<TulparButton>`)                                                      |
 
-## Fonts (consumer-loaded)
+## Quick start (Vue)
 
-Tulpar UI does not bundle fonts. Load these in your app shell:
-
-```html
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
-  rel="stylesheet"
-/>
+```bash
+pnpm add @tulpar-ui/vue @tulpar-ui/tokens
 ```
 
-## Documentation
+```ts
+// main.ts
+import "@tulpar-ui/tokens/css/tulpar.css";
+```
 
-Storybook: `pnpm --filter docs storybook`
+```vue
+<script setup>
+import { TulparButton } from "@tulpar-ui/vue";
+</script>
+<template>
+  <TulparButton severity="primary">Save</TulparButton>
+</template>
+```
+
+Vite config requires a custom element declaration:
+
+```ts
+vue({
+  template: {
+    compilerOptions: { isCustomElement: (tag) => tag.startsWith("tulpar-") },
+  },
+});
+```
+
+## Quick start (Angular)
+
+```bash
+pnpm add @tulpar-ui/angular @tulpar-ui/tokens
+```
+
+Add the tokens CSS to your `angular.json` styles array:
+
+```json
+"node_modules/@tulpar-ui/tokens/dist/css/tulpar.css"
+```
+
+```ts
+import { TulparButtonComponent } from "@tulpar-ui/angular";
+```
+
+## Theming
+
+- Brand: `<html data-brand="tulpar">` (default `:root`)
+- Dark mode: `.dark` class (Tailwind-compatible)
+- Override: any `--tulpar-*` custom property
 
 ## Development
 
 ```bash
 pnpm install
-pnpm build
-pnpm test
+pnpm build          # all packages, topological
+pnpm test           # all tests
+pnpm dev            # watch everything + playgrounds + Storybook
 ```
 
-## Browser baseline
+## License
 
-v0.4 targets:
-- Chromium ≥ 65
-- Firefox ≥ 78
-- **Safari ≥ 17** — required for reliable `delegatesFocus` on form-associated
-  custom elements. Safari 16 still works; only focus-ring visibility on inner
-  buttons may regress.
-
-## Tooltip
-
-The `tooltip` property on `<tulpar-button>` is a simple inline string tooltip.
-Limitations:
-
-- Clipped by ancestors with `overflow: hidden`.
-- Fixed `z-index: 100`; may be obscured by modals or drawers.
-- No ESC dismiss, no hover delay, no viewport-edge collision detection.
-
-For production tooltips, wait for the dedicated component in v0.5 (Popover API
-+ CSS Anchor Positioning).
-
-## Angular wrapper transparency
-
-`<tulpar-button-ng>` uses `display: contents` so its host element is excluded
-from layout. Visually identical to placing `<tulpar-button>` directly. CSS that
-targets `tulpar-button-ng { … }` for layout (width, padding, border) will not
-take effect — apply layout to `<tulpar-button>` instead.
-
-## Status
-
-v0.3 — Button API expansion (severity + variant + composable modifiers + 21-family color override + icon-position/separator + stacked ButtonGroup).
-
-See [v0.3 spec](docs/superpowers/specs/2026-06-08-tulpar-ui-v0.3-button-api-expansion-design.md) and [v0.3 plan](docs/superpowers/plans/2026-06-08-tulpar-ui-v0.3-button-api-expansion-implementation.md).
-
-Previous versions: [v0.2](docs/superpowers/specs/2026-06-08-tulpar-ui-v0.2-design-system-redesign.md), [v0.1](docs/superpowers/specs/2026-06-05-tulpar-ui-v0.1-button-design.md).
+See [LICENSE](./LICENSE).

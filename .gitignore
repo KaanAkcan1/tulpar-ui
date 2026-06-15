@@ -6,6 +6,8 @@ node_modules/
 dist/
 build/
 !packages/tokens/build/
+!packages/core/build/
+!packages/shell/build/
 *.tsbuildinfo
 
 # Storybook
