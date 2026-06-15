@@ -54,9 +54,23 @@ describe("<tulpar-sidenav>", () => {
       </tulpar-sidenav>
     `);
     const items = el.querySelectorAll("tulpar-nav-item");
-    items[0].shadowRoot!.querySelector("a")!.focus();
-    el.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
+
+    // Bug 1 fix: await child render before accessing shadow DOM
+    await items[0].updateComplete;
+    const firstAnchor = items[0].shadowRoot!.querySelector("a")!;
+    expect(firstAnchor).to.exist;
+    firstAnchor.focus();
+
+    // Bug 2 fix: dispatch on the shadow <nav>, not on the host
+    // (the @keydown handler is bound to the shadow <nav>)
+    const nav = el.shadowRoot!.querySelector("nav")!;
+    nav.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
     await el.updateComplete;
     expect(document.activeElement).to.equal(items[1]);
+
+    // ArrowUp: move focus back to items[0]
+    nav.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowUp", bubbles: true }));
+    await el.updateComplete;
+    expect(document.activeElement).to.equal(items[0]);
   });
 });
