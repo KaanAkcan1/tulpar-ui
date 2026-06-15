@@ -11,6 +11,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./nav-item": {
+      "types": "./dist/nav-item/index.d.ts",
+      "import": "./dist/nav-item/index.js"
     }
   },
   "files": [
