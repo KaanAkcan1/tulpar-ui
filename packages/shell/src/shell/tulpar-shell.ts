@@ -137,7 +137,14 @@ export class TulparShell extends LitElement {
       this._updateRailAttr();
     }
     if (changed.has("dark")) {
-      document.documentElement.classList.toggle("dark", this.dark);
+      const apply = () => document.documentElement.classList.toggle("dark", this.dark);
+      if (document.startViewTransition) {
+        const t = document.startViewTransition(apply);
+        t.ready.catch(() => {});
+        t.finished.catch(() => {});
+      } else {
+        apply();
+      }
       if (changed.get("dark") !== undefined) this._emitChange();
     }
     if (changed.has("asideOpen")) {

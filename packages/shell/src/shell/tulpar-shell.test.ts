@@ -73,9 +73,12 @@ describe("<tulpar-shell>", () => {
     const el = await fixture<TulparShell>(html`<tulpar-shell></tulpar-shell>`);
     el.dark = true;
     await el.updateComplete;
+    // startViewTransition runs its callback in a rendering frame, not a microtask
+    await new Promise((r) => requestAnimationFrame(r));
     expect(document.documentElement.classList.contains("dark")).to.be.true;
     el.dark = false;
     await el.updateComplete;
+    await new Promise((r) => requestAnimationFrame(r));
     expect(document.documentElement.classList.contains("dark")).to.be.false;
   });
 
