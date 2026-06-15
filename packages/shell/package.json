@@ -16,6 +16,10 @@
       "types": "./dist/nav-item/index.d.ts",
       "import": "./dist/nav-item/index.js"
     },
+    "./persist": {
+      "types": "./dist/persist/index.d.ts",
+      "import": "./dist/persist/index.js"
+    },
     "./shell": {
       "types": "./dist/shell/index.d.ts",
       "import": "./dist/shell/index.js"
