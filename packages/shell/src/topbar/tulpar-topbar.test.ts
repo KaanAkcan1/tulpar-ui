@@ -20,9 +20,7 @@ describe("<tulpar-topbar>", () => {
   });
 
   it("dispatches composed tulpar-menu-toggle on menu click", async () => {
-    const el = await fixture<TulparTopbar>(
-      html`<tulpar-topbar show-menu-button></tulpar-topbar>`,
-    );
+    const el = await fixture<TulparTopbar>(html`<tulpar-topbar show-menu-button></tulpar-topbar>`);
     setTimeout(() => el.shadowRoot!.querySelector<HTMLButtonElement>("button.menu")!.click());
     const ev = await oneEvent(el, "tulpar-menu-toggle");
     expect((ev as CustomEvent).composed).to.be.true;

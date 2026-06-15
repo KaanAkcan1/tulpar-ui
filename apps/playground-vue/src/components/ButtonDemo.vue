@@ -279,9 +279,7 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
     <header class="demo-page-header">
       <p class="eyebrow">Tulpar UI · Vue · v0.6</p>
       <h1 class="page-title">Button — full feature reference</h1>
-      <p class="page-lede">
-        Live previews and copy-paste code for every Button capability.
-      </p>
+      <p class="page-lede">Live previews and copy-paste code for every Button capability.</p>
     </header>
 
     <!-- ── 1. Severity ──────────────────────────────────────────────────── -->
@@ -345,8 +343,8 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
     <section class="doc-section">
       <h2 class="section-title">4. Color override</h2>
       <p class="section-desc">
-        The <code class="inline-code">color</code> prop overrides the severity's palette with
-        any design-system color. Severity remains as a DOM hint for accessibility semantics.
+        The <code class="inline-code">color</code> prop overrides the severity's palette with any
+        design-system color. Severity remains as a DOM hint for accessibility semantics.
       </p>
       <div class="preview">
         <TulparButton color="gold">Gold</TulparButton>
@@ -379,10 +377,9 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
     <section class="doc-section">
       <h2 class="section-title">6. Icons — leading, trailing, both</h2>
       <p class="section-desc">
-        Use the <code class="inline-code">:icon</code> prop for Lucide icons — it renders into
-        the <code class="inline-code">slot="start"</code> automatically. For a trailing icon,
-        use <code class="inline-code">&#60;span slot="end"&#62;</code>. For multi-icon, combine
-        both.
+        Use the <code class="inline-code">:icon</code> prop for Lucide icons — it renders into the
+        <code class="inline-code">slot="start"</code> automatically. For a trailing icon, use
+        <code class="inline-code">&#60;span slot="end"&#62;</code>. For multi-icon, combine both.
       </p>
       <div class="preview">
         <TulparButton severity="success" :icon="Check">Save</TulparButton>
@@ -448,8 +445,8 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
     <section class="doc-section">
       <h2 class="section-title">9. Icon separator</h2>
       <p class="section-desc">
-        The <code class="inline-code">icon-separator</code> prop draws a visual divider between
-        icon and label. Works across all variants.
+        The <code class="inline-code">icon-separator</code> prop draws a visual divider between icon
+        and label. Works across all variants.
       </p>
       <div class="preview">
         <TulparButton variant="outlined" :icon-separator="true" :icon="Download"
@@ -473,8 +470,8 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
       <p class="section-desc">
         <code class="inline-code">raised</code> adds a drop shadow.
         <code class="inline-code">block</code> stretches to full container width.
-        <code class="inline-code">justify</code> controls internal content alignment (start /
-        center / end / between).
+        <code class="inline-code">justify</code> controls internal content alignment (start / center
+        / end / between).
       </p>
       <div class="preview preview--col">
         <div class="preview-row">
@@ -494,12 +491,10 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
     <section class="doc-section">
       <h2 class="section-title">11. Loading states</h2>
       <p class="section-desc">
-        The <code class="inline-code">loading</code> prop disables interaction and shows a
-        spinner. Control spinner position with
-        <code class="inline-code">loading-position</code>. Provide a
+        The <code class="inline-code">loading</code> prop disables interaction and shows a spinner.
+        Control spinner position with <code class="inline-code">loading-position</code>. Provide a
         <code class="inline-code">loading-label</code> for status announcements. Use
-        <code class="inline-code">slot="loading-icon"</code> to swap the spinner with a custom
-        icon.
+        <code class="inline-code">slot="loading-icon"</code> to swap the spinner with a custom icon.
       </p>
       <div class="preview">
         <TulparButton :loading="true">Save</TulparButton>
@@ -568,9 +563,7 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
         <form class="demo-form" @submit="onSubmit">
           <input class="demo-input" name="email" type="email" placeholder="your@email.com" />
           <TulparButton type="submit" severity="primary" :icon="Mail">Submit</TulparButton>
-          <TulparButton type="reset" severity="secondary" variant="outlined">
-            Reset
-          </TulparButton>
+          <TulparButton type="reset" severity="secondary" variant="outlined"> Reset </TulparButton>
         </form>
         <p v-if="submittedEmail !== null" class="submit-feedback">
           Submitted: <strong>{{ submittedEmail || "(empty)" }}</strong>
@@ -583,10 +576,10 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
     <section class="doc-section">
       <h2 class="section-title">15. Button Group — horizontal + stacked</h2>
       <p class="section-desc">
-        <code class="inline-code">&#60;tulpar-button-group&#62;</code> manages roving tabindex
-        and keyboard navigation. Horizontal: <kbd>ArrowLeft</kbd> / <kbd>ArrowRight</kbd>.
-        Stacked (add <code class="inline-code">stacked</code> attr): <kbd>ArrowUp</kbd> /
-        <kbd>ArrowDown</kbd>. Both: <kbd>Home</kbd> / <kbd>End</kbd>.
+        <code class="inline-code">&#60;tulpar-button-group&#62;</code> manages roving tabindex and
+        keyboard navigation. Horizontal: <kbd>ArrowLeft</kbd> / <kbd>ArrowRight</kbd>. Stacked (add
+        <code class="inline-code">stacked</code> attr): <kbd>ArrowUp</kbd> / <kbd>ArrowDown</kbd>.
+        Both: <kbd>Home</kbd> / <kbd>End</kbd>.
       </p>
       <div class="preview preview--col">
         <div>
@@ -655,11 +648,10 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
     <section class="doc-section">
       <h2 class="section-title">18. Tooltip (v0.3.1)</h2>
       <p class="section-desc">
-        Pass a string to <code class="inline-code">tooltip</code> to show an inline tooltip on
-        hover and focus. Especially useful for icon-only buttons where the label is visually
-        hidden — the tooltip satisfies the a11y gap alongside
-        <code class="inline-code">aria-label</code>. Tooltip appears below the button, 150 ms
-        fade.
+        Pass a string to <code class="inline-code">tooltip</code> to show an inline tooltip on hover
+        and focus. Especially useful for icon-only buttons where the label is visually hidden — the
+        tooltip satisfies the a11y gap alongside <code class="inline-code">aria-label</code>.
+        Tooltip appears below the button, 150 ms fade.
       </p>
       <div class="preview preview--baseline">
         <TulparButton :icon="Settings" tooltip="Open settings" aria-label="Open settings" />
@@ -683,12 +675,12 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
       <h2 class="section-title">19. Escape hatch — non-Lucide icon libraries</h2>
       <p class="section-desc">
         The <code class="inline-code">:icon</code> prop is Lucide-optimised (passes
-        <code class="inline-code">:size</code> automatically). For Heroicons, Tabler, Material,
-        or custom SVG, project your icon directly via
-        <code class="inline-code">&#60;span slot="start"&#62;</code> — the slot pattern still
-        works as the underlying Web Component escape hatch. Multi-icon layouts (two icons) also
-        require the slot pattern, since <code class="inline-code">:icon</code> supports a single
-        leading icon only.
+        <code class="inline-code">:size</code> automatically). For Heroicons, Tabler, Material, or
+        custom SVG, project your icon directly via
+        <code class="inline-code">&#60;span slot="start"&#62;</code> — the slot pattern still works
+        as the underlying Web Component escape hatch. Multi-icon layouts (two icons) also require
+        the slot pattern, since <code class="inline-code">:icon</code> supports a single leading
+        icon only.
       </p>
       <div class="preview preview--baseline">
         <TulparButton severity="primary">

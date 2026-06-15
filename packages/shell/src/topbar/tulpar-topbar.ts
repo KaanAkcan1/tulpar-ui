@@ -13,9 +13,7 @@ export class TulparTopbar extends LitElement {
   @property({ type: String, attribute: "menu-button-label" }) menuButtonLabel = "Toggle navigation";
 
   private _toggle() {
-    this.dispatchEvent(
-      new CustomEvent("tulpar-menu-toggle", { bubbles: true, composed: true }),
-    );
+    this.dispatchEvent(new CustomEvent("tulpar-menu-toggle", { bubbles: true, composed: true }));
   }
 
   override render() {

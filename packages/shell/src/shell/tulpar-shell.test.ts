@@ -30,11 +30,15 @@ describe("<tulpar-shell>", () => {
 
   it("toggles on tulpar-menu-toggle from slotted content and emits tulpar-shell-change", async () => {
     // WTR viewport is 800×600; use a breakpoint smaller than that so we stay in desktop mode
-    const el = await fixture<TulparShell>(html`<tulpar-shell mobile-breakpoint="(max-width: 499px)"><div slot="topbar" id="t"></div></tulpar-shell>`);
+    const el = await fixture<TulparShell>(
+      html`<tulpar-shell mobile-breakpoint="(max-width: 499px)"
+        ><div slot="topbar" id="t"></div
+      ></tulpar-shell>`,
+    );
     setTimeout(() =>
-      el.querySelector("#t")!.dispatchEvent(
-        new CustomEvent("tulpar-menu-toggle", { bubbles: true, composed: true }),
-      ),
+      el
+        .querySelector("#t")!
+        .dispatchEvent(new CustomEvent("tulpar-menu-toggle", { bubbles: true, composed: true })),
     );
     const ev = (await oneEvent(el, "tulpar-shell-change")) as CustomEvent;
     expect(ev.detail.collapsed.desktop).to.be.true;
@@ -62,7 +66,11 @@ describe("<tulpar-shell>", () => {
 
   it("applies content props as host attributes", async () => {
     const el = await fixture<TulparShell>(
-      html`<tulpar-shell content-width="fixed" content-padding="compact" footer-mode="fixed"></tulpar-shell>`,
+      html`<tulpar-shell
+        content-width="fixed"
+        content-padding="compact"
+        footer-mode="fixed"
+      ></tulpar-shell>`,
     );
     expect(el.getAttribute("content-width")).to.equal("fixed");
     expect(el.getAttribute("content-padding")).to.equal("compact");

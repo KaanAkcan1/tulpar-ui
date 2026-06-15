@@ -9,7 +9,11 @@ describe("persistShellState", () => {
   it("restores persisted state on attach", async () => {
     localStorage.setItem(
       "test-shell",
-      JSON.stringify({ sidenavMode: "rail", collapsed: { desktop: true, mobile: true }, dark: false }),
+      JSON.stringify({
+        sidenavMode: "rail",
+        collapsed: { desktop: true, mobile: true },
+        dark: false,
+      }),
     );
     const el = await fixture<TulparShell>(html`<tulpar-shell></tulpar-shell>`);
     const dispose = persistShellState(el, "test-shell");

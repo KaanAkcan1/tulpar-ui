@@ -40,10 +40,7 @@ describe("<tulpar-sidenav>", () => {
       </tulpar-sidenav>
     `);
     const slots = el.shadowRoot!.querySelectorAll("slot[name]");
-    expect([...slots].map((s) => s.getAttribute("name"))).to.include.members([
-      "header",
-      "footer",
-    ]);
+    expect([...slots].map((s) => s.getAttribute("name"))).to.include.members(["header", "footer"]);
   });
 
   it("moves focus between items with ArrowDown/ArrowUp", async () => {

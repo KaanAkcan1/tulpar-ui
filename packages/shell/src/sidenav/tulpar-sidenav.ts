@@ -37,9 +37,7 @@ export class TulparSidenav extends LitElement {
     if (current === -1) return;
     e.preventDefault();
     const next =
-      e.key === "ArrowDown"
-        ? Math.min(current + 1, items.length - 1)
-        : Math.max(current - 1, 0);
+      e.key === "ArrowDown" ? Math.min(current + 1, items.length - 1) : Math.max(current - 1, 0);
     items[next].focus();
   };
 

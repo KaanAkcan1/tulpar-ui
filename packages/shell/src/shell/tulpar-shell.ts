@@ -188,8 +188,7 @@ export class TulparShell extends LitElement {
   }
 
   override render() {
-    const overlayActive =
-      (this._isMobile || this.sidenavMode === "overlay") && this.sidenavOpen;
+    const overlayActive = (this._isMobile || this.sidenavMode === "overlay") && this.sidenavOpen;
     const maskVisible = overlayActive || this.asideOpen;
     return html`
       <a class="skip-link" href="#tulpar-shell-content">Skip to content</a>

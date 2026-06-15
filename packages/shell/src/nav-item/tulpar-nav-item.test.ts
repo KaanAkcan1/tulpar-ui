@@ -60,7 +60,12 @@ describe("<tulpar-nav-item>", () => {
 
   it("renders badge and iconClass", async () => {
     const el = await fixture<TulparNavItem>(
-      html`<tulpar-nav-item href="/b" label="B" badge="3" icon-class="pi pi-home"></tulpar-nav-item>`,
+      html`<tulpar-nav-item
+        href="/b"
+        label="B"
+        badge="3"
+        icon-class="pi pi-home"
+      ></tulpar-nav-item>`,
     );
     expect(el.shadowRoot!.querySelector(".badge")!.textContent).to.equal("3");
     expect(el.shadowRoot!.querySelector("i.pi.pi-home")).to.exist;

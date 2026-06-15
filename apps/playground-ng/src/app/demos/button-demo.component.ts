@@ -402,8 +402,8 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
     <section class="doc-section">
       <h2 class="section-title">4. Color override</h2>
       <p class="section-desc">
-        The <code class="inline-code">color</code> prop overrides the severity's palette with
-        any design-system color. Severity remains as a DOM hint for accessibility semantics.
+        The <code class="inline-code">color</code> prop overrides the severity's palette with any
+        design-system color. Severity remains as a DOM hint for accessibility semantics.
       </p>
       <div class="preview">
         <tulpar-button-ng color="gold">Gold</tulpar-button-ng>
@@ -438,9 +438,9 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
     <section class="doc-section">
       <h2 class="section-title">6. Icons — leading, trailing, both</h2>
       <p class="section-desc">
-        Project a Lucide icon into <code class="inline-code">slot="start"</code> for a leading
-        icon, or <code class="inline-code">slot="end"</code> for a trailing icon. For
-        multi-icon layouts, combine both slots on the same button.
+        Project a Lucide icon into <code class="inline-code">slot="start"</code> for a leading icon,
+        or <code class="inline-code">slot="end"</code> for a trailing icon. For multi-icon layouts,
+        combine both slots on the same button.
       </p>
       <div class="preview">
         <tulpar-button-ng severity="success">
@@ -465,9 +465,8 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
       <h2 class="section-title">7. Icon-only</h2>
       <p class="section-desc">
         Project a single icon into <code class="inline-code">slot="start"</code> and set
-        <code class="inline-code">[iconOnly]="true"</code> explicitly when there's no text.
-        Always include <code class="inline-code">ariaLabel</code> for screen reader
-        accessibility.
+        <code class="inline-code">[iconOnly]="true"</code> explicitly when there's no text. Always
+        include <code class="inline-code">ariaLabel</code> for screen reader accessibility.
       </p>
       <div class="preview preview--baseline">
         <tulpar-button-ng severity="danger" ariaLabel="Delete item" [iconOnly]="true">
@@ -519,8 +518,8 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
     <section class="doc-section">
       <h2 class="section-title">9. Icon separator</h2>
       <p class="section-desc">
-        The <code class="inline-code">iconSeparator</code> input draws a visual divider
-        between icon and label. Works across all variants.
+        The <code class="inline-code">iconSeparator</code> input draws a visual divider between icon
+        and label. Works across all variants.
       </p>
       <div class="preview">
         <tulpar-button-ng variant="outlined" [iconSeparator]="true">
@@ -567,9 +566,8 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
     <section class="doc-section">
       <h2 class="section-title">11. Loading states</h2>
       <p class="section-desc">
-        The <code class="inline-code">loading</code> input disables interaction and shows a
-        spinner. Control spinner position with
-        <code class="inline-code">loadingPosition</code>. Use
+        The <code class="inline-code">loading</code> input disables interaction and shows a spinner.
+        Control spinner position with <code class="inline-code">loadingPosition</code>. Use
         <code class="inline-code">slot="loading-icon"</code> to swap the spinner.
       </p>
       <div class="preview">
@@ -592,8 +590,8 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
       <h2 class="section-title">12. Disabled vs data-disabled</h2>
       <p class="section-desc">
         <code class="inline-code">disabled</code> prevents all interaction.
-        <code class="inline-code">dataDisabled</code> applies disabled styling but still fires
-        click events — useful when wrapping with a tooltip.
+        <code class="inline-code">dataDisabled</code> applies disabled styling but still fires click
+        events — useful when wrapping with a tooltip.
       </p>
       <div class="preview preview--baseline">
         <tulpar-button-ng [disabled]="true">Disabled</tulpar-button-ng>
@@ -660,9 +658,9 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
     <section class="doc-section">
       <h2 class="section-title">15. Button Group — horizontal + stacked</h2>
       <p class="section-desc">
-        <code class="inline-code">&lt;tulpar-button-group&gt;</code> manages roving tabindex
-        and keyboard navigation. Horizontal: <kbd>ArrowLeft</kbd> / <kbd>ArrowRight</kbd>.
-        Stacked: <kbd>ArrowUp</kbd> / <kbd>ArrowDown</kbd>. Both: <kbd>Home</kbd> / <kbd>End</kbd>.
+        <code class="inline-code">&lt;tulpar-button-group&gt;</code> manages roving tabindex and
+        keyboard navigation. Horizontal: <kbd>ArrowLeft</kbd> / <kbd>ArrowRight</kbd>. Stacked:
+        <kbd>ArrowUp</kbd> / <kbd>ArrowDown</kbd>. Both: <kbd>Home</kbd> / <kbd>End</kbd>.
       </p>
       <div class="preview preview--col">
         <div>
@@ -714,13 +712,15 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
       <h2 class="section-title">17. Named-component icon (Pattern 2)</h2>
       <p class="section-desc">
         The <code class="inline-code">[icon]</code> input accepts an Angular
-        <code class="inline-code">Type&lt;unknown&gt;</code> (a component class) and renders
-        it via <code class="inline-code">NgComponentOutlet</code> in
+        <code class="inline-code">Type&lt;unknown&gt;</code> (a component class) and renders it via
+        <code class="inline-code">NgComponentOutlet</code> in
         <code class="inline-code">slot="start"</code>.
       </p>
       <div class="preview preview--baseline">
         <tulpar-button-ng [icon]="AppCheckIcon">Save (named)</tulpar-button-ng>
-        <tulpar-button-ng [icon]="AppCheckIcon" [iconSize]="24" size="lg">Save large</tulpar-button-ng>
+        <tulpar-button-ng [icon]="AppCheckIcon" [iconSize]="24" size="lg"
+          >Save large</tulpar-button-ng
+        >
       </div>
       <pre class="code"><code>{{ iconPropCode }}</code></pre>
     </section>
@@ -729,8 +729,8 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
     <section class="doc-section">
       <h2 class="section-title">18. Tooltip (v0.3.1)</h2>
       <p class="section-desc">
-        Pass a string to <code class="inline-code">tooltip</code> to show an inline tooltip on
-        hover and focus. Especially useful for icon-only buttons.
+        Pass a string to <code class="inline-code">tooltip</code> to show an inline tooltip on hover
+        and focus. Especially useful for icon-only buttons.
       </p>
       <div class="preview preview--baseline">
         <tulpar-button-ng tooltip="Open settings" ariaLabel="Open settings" [iconOnly]="true">
@@ -756,8 +756,8 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
     <section class="doc-section">
       <h2 class="section-title">19. Non-Lucide icon libraries</h2>
       <p class="section-desc">
-        The slot pattern works with any icon library — Heroicons, Tabler, Material, or custom
-        SVG. Project via <code class="inline-code">&lt;span slot="start"&gt;</code>.
+        The slot pattern works with any icon library — Heroicons, Tabler, Material, or custom SVG.
+        Project via <code class="inline-code">&lt;span slot="start"&gt;</code>.
       </p>
       <div class="preview preview--baseline">
         <tulpar-button-ng severity="primary">
