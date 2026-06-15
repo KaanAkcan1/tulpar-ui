@@ -36,6 +36,7 @@ export const navItemStyles = css`
     background: var(--tulpar-shell-sidenav-item-bg-active, #eef2ff);
     color: var(--tulpar-shell-sidenav-item-fg-active, #1e3a8a);
   }
+  /* left:0 assumes vertical sidenav; rail mode overrides this in the shell container task */
   a[aria-current="page"]::before {
     content: "";
     position: absolute;
@@ -78,6 +79,7 @@ export const navItemStyles = css`
   .children {
     padding-inline-start: 1rem;
   }
+  /* explicit: keep hidden working if .children later gets a display value */
   .children[hidden] {
     display: none;
   }

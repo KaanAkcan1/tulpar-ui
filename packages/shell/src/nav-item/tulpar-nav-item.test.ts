@@ -13,16 +13,35 @@ describe("<tulpar-nav-item>", () => {
     expect(a.textContent).to.include("Home");
   });
 
-  it("dispatches cancelable tulpar-navigate on click and cancels default when prevented", async () => {
+  it("dispatches cancelable tulpar-navigate and prevents native navigation when canceled", async () => {
     const el = await fixture<TulparNavItem>(
       html`<tulpar-nav-item href="/x" label="X"></tulpar-nav-item>`,
     );
     el.addEventListener("tulpar-navigate", (e) => e.preventDefault());
     const a = el.shadowRoot!.querySelector("a")!;
+    let nativeEvent: MouseEvent | undefined;
+    a.addEventListener("click", (e) => {
+      nativeEvent = e as MouseEvent;
+    });
     setTimeout(() => a.click());
     const ev = (await oneEvent(el, "tulpar-navigate")) as CustomEvent;
     expect(ev.cancelable).to.be.true;
     expect(ev.detail.href).to.equal("/x");
+    expect(nativeEvent?.defaultPrevented).to.be.true;
+  });
+
+  it("does not prevent native navigation when tulpar-navigate is not canceled", async () => {
+    const el = await fixture<TulparNavItem>(
+      html`<tulpar-nav-item href="/x" label="X"></tulpar-nav-item>`,
+    );
+    const a = el.shadowRoot!.querySelector("a")!;
+    let preventedByComponent: boolean | undefined;
+    a.addEventListener("click", (e) => {
+      preventedByComponent = e.defaultPrevented; // component's @click ran first (attached in render)
+      e.preventDefault(); // stop the test runner from actually navigating
+    });
+    a.click();
+    expect(preventedByComponent).to.be.false;
   });
 
   it("sets aria-current=page when active", async () => {
@@ -59,5 +78,24 @@ describe("<tulpar-nav-item>", () => {
     btn.click();
     await el.updateComplete;
     expect(btn.getAttribute("aria-expanded")).to.equal("true");
+  });
+
+  it("disabled item is out of tab order and does not navigate", async () => {
+    const el = await fixture<TulparNavItem>(
+      html`<tulpar-nav-item href="/z" label="Z" disabled></tulpar-nav-item>`,
+    );
+    const a = el.shadowRoot!.querySelector("a")!;
+    expect(a.getAttribute("tabindex")).to.equal("-1");
+    let fired = false;
+    el.addEventListener("tulpar-navigate", () => {
+      fired = true;
+    });
+    // Prevent actual navigation so the test runner is not disrupted.
+    // The component's _onClick returns early when disabled, so it will NOT
+    // call preventDefault — we must stop real navigation ourselves here.
+    a.addEventListener("click", (e) => e.preventDefault());
+    a.click();
+    await el.updateComplete;
+    expect(fired).to.be.false;
   });
 });

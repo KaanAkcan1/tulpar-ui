@@ -22,7 +22,11 @@ export class TulparNavItem extends LitElement {
   @property({ type: String }) badge?: string;
   @property({ type: String }) target?: string;
   @property({ type: Boolean, reflect: true }) disabled = false;
-  /** Manuel override; verilmezse URL eşleşmesinden hesaplanır. */
+  /**
+   * Manual active override. MUST stay `undefined` when unset (no `= false`
+   * initializer) so `active ?? _urlActive` can fall back to URL auto-match.
+   * Defaulting to false would permanently disable auto-activation.
+   */
   @property({ type: Boolean }) active?: boolean;
 
   @state() private _expanded = false;
@@ -58,6 +62,7 @@ export class TulparNavItem extends LitElement {
   }
 
   private _onClick(e: MouseEvent) {
+    if (this.disabled) return;
     if (!this.href) return;
     const ev = new CustomEvent("tulpar-navigate", {
       bubbles: true,
@@ -87,6 +92,7 @@ export class TulparNavItem extends LitElement {
           href=${this.href}
           target=${this.target ?? nothing}
           aria-current=${this._isActive ? "page" : nothing}
+          tabindex=${this.disabled ? "-1" : nothing}
           @click=${this._onClick}
           >${this._renderInner()}</a
         >`
