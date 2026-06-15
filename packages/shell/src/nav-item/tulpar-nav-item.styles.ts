@@ -90,4 +90,25 @@ export const navItemStyles = css`
       transition: none;
     }
   }
+
+  /* Rail flyout: show label/badge as hover tooltip when ancestor has [data-rail] */
+  /* Note: :host-context works in Chromium (WTR target); Firefox fallback is v2 scope */
+  :host-context([data-rail]) .label,
+  :host-context([data-rail]) .badge,
+  :host-context([data-rail]) .chevron {
+    position: absolute;
+    inset-inline-start: calc(100% + 0.25rem);
+    background: var(--tulpar-shell-sidenav-bg, #f8fafc);
+    border: 1px solid var(--tulpar-shell-sidenav-border, #e2e8f0);
+    border-radius: 0.375rem;
+    padding: 0.375rem 0.625rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    z-index: var(--tulpar-shell-z-sidenav, 200);
+  }
+  :host-context([data-rail]) a:hover .label,
+  :host-context([data-rail]) a:focus-visible .label {
+    opacity: 1;
+  }
 `;

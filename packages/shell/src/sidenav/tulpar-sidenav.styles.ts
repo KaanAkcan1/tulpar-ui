@@ -28,4 +28,9 @@ export const sidenavStyles = css`
     border-top: 1px solid var(--tulpar-shell-sidenav-border, #e2e8f0);
     margin-top: auto;
   }
+
+  /* Rail mode: pass context down to slotted nav-items */
+  :host([data-rail]) ::slotted(tulpar-nav-item) {
+    --tulpar-nav-item-rail: 1;
+  }
 `;
