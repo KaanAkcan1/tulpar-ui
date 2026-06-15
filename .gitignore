@@ -45,3 +45,5 @@ vite.config.ts.timestamp-*.mjs
 
 # Claude Code local state / worktrees
 .claude/worktrees/
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
