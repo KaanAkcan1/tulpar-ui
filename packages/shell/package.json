@@ -1,0 +1,47 @@
+{
+  "name": "@tulpar-ui/shell",
+  "version": "0.5.0",
+  "description": "Application shell components for Tulpar UI",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "sync-exports": "tsx build/sync-exports.ts",
+    "sync-exports:check": "tsx build/sync-exports.ts --check",
+    "prebuild": "tsx build/sync-exports.ts",
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "test": "wtr",
+    "test:watch": "wtr --watch"
+  },
+  "dependencies": {
+    "lit": "catalog:"
+  },
+  "devDependencies": {
+    "@open-wc/testing": "^4.0.0",
+    "@tulpar-ui/tokens": "workspace:*",
+    "@types/mocha": "^10.0.6",
+    "@web/dev-server-esbuild": "^1.0.0",
+    "@web/test-runner": "^0.20.0",
+    "@web/test-runner-playwright": "^0.11.0",
+    "tsx": "^4.7.0",
+    "vite": "^5.1.0",
+    "vite-plugin-dts": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
