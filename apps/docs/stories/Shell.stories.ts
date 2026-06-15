@@ -34,7 +34,7 @@ const iconStyles = html`
       background: currentColor;
     }
     .demo-icon--blue {
-      color: #2563eb;
+      color: #00c57a;
     }
     .demo-icon--violet {
       color: #7c3aed;
@@ -59,7 +59,7 @@ const contentBlock = html`
   <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:0.75rem;">
     ${[1, 2, 3, 4].map(
       (n) => html`<div
-        style="border:1px solid var(--tulpar-color-border-default,#e7e5e4); border-radius:8px; padding:1rem; background:var(--tulpar-color-bg-raised,#fff);"
+        style="border:1px solid var(--tulpar-color-border-default,#d9e0df); border-radius:8px; padding:1rem; background:var(--tulpar-color-bg-raised,#fff);"
       >
         Card ${n}
       </div>`,
@@ -99,13 +99,13 @@ const meta: Meta = {
       content-padding=${args["content-padding"]}
       content-width=${args["content-width"]}
       ?aside-open=${args["aside-open"]}
-      style="height: 480px; border:1px solid var(--tulpar-color-border-default,#e7e5e4); border-radius:10px; overflow:hidden;"
+      style="height: 480px; border:1px solid var(--tulpar-color-border-default,#d9e0df); border-radius:10px; overflow:hidden;"
     >
       <tulpar-topbar slot="topbar" show-menu-button>
         <strong slot="start" style="font-size:1.05rem;">Tulpar</strong>
         <button
           slot="end"
-          style="border:1px solid var(--tulpar-color-border-default,#e7e5e4); background:transparent; color:inherit; border-radius:6px; padding:0.35rem 0.75rem; cursor:pointer;"
+          style="border:1px solid var(--tulpar-color-border-default,#d9e0df); background:transparent; color:inherit; border-radius:6px; padding:0.35rem 0.75rem; cursor:pointer;"
         >
           Action
         </button>
@@ -114,7 +114,7 @@ const meta: Meta = {
       ${contentBlock}
       <footer
         slot="footer"
-        style="padding:0.5rem 1rem; font-size:0.85rem; color:var(--tulpar-color-text-secondary,#78716c);"
+        style="padding:0.5rem 1rem; font-size:0.85rem; color:var(--tulpar-color-text-secondary,#74777a);"
       >
         Tulpar UI · v0.6
       </footer>
@@ -153,7 +153,7 @@ export const SlottedNavItems: Story = {
       sidenav-mode=${args["sidenav-mode"]}
       content-padding=${args["content-padding"]}
       content-width=${args["content-width"]}
-      style="height: 480px; border:1px solid var(--tulpar-color-border-default,#e7e5e4); border-radius:10px; overflow:hidden;"
+      style="height: 480px; border:1px solid var(--tulpar-color-border-default,#d9e0df); border-radius:10px; overflow:hidden;"
     >
       <tulpar-topbar slot="topbar" show-menu-button>
         <strong slot="start" style="font-size:1.05rem;">Tulpar</strong>
@@ -169,7 +169,7 @@ export const SlottedNavItems: Story = {
       ${contentBlock}
       <footer
         slot="footer"
-        style="padding:0.5rem 1rem; font-size:0.85rem; color:var(--tulpar-color-text-secondary,#78716c);"
+        style="padding:0.5rem 1rem; font-size:0.85rem; color:var(--tulpar-color-text-secondary,#74777a);"
       >
         Tulpar UI · v0.6
       </footer>
@@ -189,13 +189,13 @@ export const WithAside: Story = {
       content-padding=${args["content-padding"]}
       content-width=${args["content-width"]}
       ?aside-open=${args["aside-open"]}
-      style="height: 480px; border:1px solid var(--tulpar-color-border-default,#e7e5e4); border-radius:10px; overflow:hidden;"
+      style="height: 480px; border:1px solid var(--tulpar-color-border-default,#d9e0df); border-radius:10px; overflow:hidden;"
     >
       <tulpar-topbar slot="topbar" show-menu-button>
         <strong slot="start" style="font-size:1.05rem;">Tulpar</strong>
         <button
           slot="end"
-          style="border:1px solid var(--tulpar-color-border-default,#e7e5e4); background:transparent; color:inherit; border-radius:6px; padding:0.35rem 0.75rem; cursor:pointer;"
+          style="border:1px solid var(--tulpar-color-border-default,#d9e0df); background:transparent; color:inherit; border-radius:6px; padding:0.35rem 0.75rem; cursor:pointer;"
         >
           Toggle panel
         </button>
@@ -204,17 +204,17 @@ export const WithAside: Story = {
       ${contentBlock}
       <aside
         slot="aside"
-        style="padding:1rem; width:240px; border-left:1px solid var(--tulpar-color-border-default,#e7e5e4); height:100%; box-sizing:border-box;"
+        style="padding:1rem; width:240px; border-left:1px solid var(--tulpar-color-border-default,#d9e0df); height:100%; box-sizing:border-box;"
       >
         <h2 style="margin:0 0 0.75rem; font-size:1rem;">Configurator</h2>
-        <p style="margin:0; font-size:0.85rem; line-height:1.6; color:var(--tulpar-color-text-secondary,#78716c);">
+        <p style="margin:0; font-size:0.85rem; line-height:1.6; color:var(--tulpar-color-text-secondary,#74777a);">
           Placeholder panel mounted in the <code>aside</code> slot. Real apps drop
           a settings form or inspector here.
         </p>
       </aside>
       <footer
         slot="footer"
-        style="padding:0.5rem 1rem; font-size:0.85rem; color:var(--tulpar-color-text-secondary,#78716c);"
+        style="padding:0.5rem 1rem; font-size:0.85rem; color:var(--tulpar-color-text-secondary,#74777a);"
       >
         Tulpar UI · v0.6
       </footer>

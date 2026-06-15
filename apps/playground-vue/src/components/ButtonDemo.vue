@@ -58,12 +58,12 @@ const sizeCode = `<TulparButton size="xs">Extra Small</TulparButton>
 <TulparButton size="2xl">2XL</TulparButton>
 <TulparButton size="3xl">3XL</TulparButton>`;
 
-const colorCode = `<TulparButton color="gold">Gold</TulparButton>
-<TulparButton color="emerald">Emerald</TulparButton>
-<TulparButton color="rose">Rose</TulparButton>
-<TulparButton color="indigo">Indigo</TulparButton>
-<TulparButton color="cyan" variant="outlined">Cyan Outlined</TulparButton>
-<TulparButton color="purple" variant="tonal">Purple Tonal</TulparButton>`;
+const colorCode = `<TulparButton color="ulgen">Ulgen</TulparButton>
+<TulparButton color="otuken">Otuken</TulparButton>
+<TulparButton color="kizagan">Kizagan</TulparButton>
+<TulparButton color="kam">Kam</TulparButton>
+<TulparButton color="yersu" variant="outlined">Yersu Outlined</TulparButton>
+<TulparButton color="erlik" variant="tonal">Erlik Tonal</TulparButton>`;
 
 const shapeCode = `<!-- Default (rectangle) -->
 <TulparButton shape="default">Default</TulparButton>
@@ -347,12 +347,12 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
         design-system color. Severity remains as a DOM hint for accessibility semantics.
       </p>
       <div class="preview">
-        <TulparButton color="gold">Gold</TulparButton>
-        <TulparButton color="emerald">Emerald</TulparButton>
-        <TulparButton color="rose">Rose</TulparButton>
-        <TulparButton color="indigo">Indigo</TulparButton>
-        <TulparButton color="cyan" variant="outlined">Cyan Outlined</TulparButton>
-        <TulparButton color="purple" variant="tonal">Purple Tonal</TulparButton>
+        <TulparButton color="ulgen">Ulgen</TulparButton>
+        <TulparButton color="otuken">Otuken</TulparButton>
+        <TulparButton color="kizagan">Kizagan</TulparButton>
+        <TulparButton color="kam">Kam</TulparButton>
+        <TulparButton color="yersu" variant="outlined">Yersu Outlined</TulparButton>
+        <TulparButton color="erlik" variant="tonal">Erlik Tonal</TulparButton>
       </div>
       <pre class="code"><code>{{ colorCode }}</code></pre>
     </section>
@@ -723,7 +723,7 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--tulpar-color-text-muted, #78716c);
+  color: var(--tulpar-color-text-muted, #74777a);
 }
 
 .page-title {
@@ -732,7 +732,7 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
   font-size: 32px;
   font-weight: 600;
   line-height: 1.15;
-  color: var(--tulpar-color-text-primary, #1c1917);
+  color: var(--tulpar-color-text-primary, #15110b);
 }
 
 .page-lede {
@@ -746,7 +746,7 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
 .doc-section {
   padding-bottom: 48px;
   margin-bottom: 48px;
-  border-bottom: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+  border-bottom: 1px solid var(--tulpar-color-border-default, #d9e0df);
 }
 
 .doc-section:last-child {
@@ -758,7 +758,7 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
   font-family: var(--tulpar-font-family-display, Georgia, serif);
   font-size: 26px;
   font-weight: 600;
-  color: var(--tulpar-color-text-primary, #1c1917);
+  color: var(--tulpar-color-text-primary, #15110b);
 }
 
 .section-desc {
@@ -770,8 +770,8 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
 }
 
 .preview {
-  background: var(--tulpar-color-bg-subtle, #f5f5f4);
-  border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+  background: var(--tulpar-color-bg-subtle, #e9f1ef);
+  border: 1px solid var(--tulpar-color-border-default, #d9e0df);
   border-bottom: none;
   border-radius: 6px 6px 0 0;
   padding: 24px;
@@ -803,31 +803,31 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--tulpar-color-text-muted, #78716c);
+  color: var(--tulpar-color-text-muted, #74777a);
 }
 
 .code {
   margin: 0;
   padding: 16px 20px;
-  background: var(--tulpar-color-bg-inverse, #1c1917);
-  border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+  background: var(--tulpar-color-bg-inverse, #15110b);
+  border: 1px solid var(--tulpar-color-border-default, #d9e0df);
   border-radius: 0 0 6px 6px;
   overflow-x: auto;
   font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
   font-size: 13px;
   line-height: 1.55;
-  color: #e7e5e4;
+  color: #d9e0df;
   white-space: pre;
 }
 
 .inline-code {
   font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
   font-size: 0.85em;
-  background: var(--tulpar-color-bg-subtle, #f5f5f4);
-  border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+  background: var(--tulpar-color-bg-subtle, #e9f1ef);
+  border: 1px solid var(--tulpar-color-border-default, #d9e0df);
   border-radius: 3px;
   padding: 1px 5px;
-  color: var(--tulpar-color-text-primary, #1c1917);
+  color: var(--tulpar-color-text-primary, #15110b);
 }
 
 .demo-form {
@@ -840,10 +840,10 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
 .demo-input {
   height: 40px;
   padding: 0 12px;
-  border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+  border: 1px solid var(--tulpar-color-border-default, #d9e0df);
   border-radius: 6px;
   background: var(--tulpar-color-bg-elevated, #ffffff);
-  color: var(--tulpar-color-text-primary, #1c1917);
+  color: var(--tulpar-color-text-primary, #15110b);
   font-family: var(--tulpar-font-family-ui, system-ui, sans-serif);
   font-size: 14px;
   min-width: 220px;
@@ -863,12 +863,12 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
 kbd {
   display: inline-block;
   padding: 1px 5px;
-  border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+  border: 1px solid var(--tulpar-color-border-default, #d9e0df);
   border-radius: 3px;
   font-family: "JetBrains Mono", Consolas, monospace;
   font-size: 11px;
   background: var(--tulpar-color-bg-elevated, #ffffff);
-  color: var(--tulpar-color-text-primary, #1c1917);
+  color: var(--tulpar-color-text-primary, #15110b);
 }
 
 @keyframes spin {

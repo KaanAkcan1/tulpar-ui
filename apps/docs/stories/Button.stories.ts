@@ -166,7 +166,7 @@ export const SeverityVariantMatrix: Story = {
         ${vars.map(
           (v) => html`
             <tr>
-              <td style="font-family: monospace; color: #78716c; padding-right: 12px;">${v}</td>
+              <td style="font-family: monospace; color: #74777a; padding-right: 12px;">${v}</td>
               ${sevs.map(
                 (s) => html`<td><tulpar-button severity=${s} variant=${v}>${s}</tulpar-button></td>`,
               )}
@@ -181,14 +181,14 @@ export const SeverityVariantMatrix: Story = {
 export const ColorOverrides: Story = {
   render: () => html`
     <div style="display:flex; gap: 8px; flex-wrap: wrap;">
-      <tulpar-button color="gold">Gold (Upgrade)</tulpar-button>
-      <tulpar-button color="emerald">Emerald</tulpar-button>
-      <tulpar-button color="rose">Rose</tulpar-button>
-      <tulpar-button color="indigo">Indigo</tulpar-button>
-      <tulpar-button color="cyan" variant="outlined">Cyan outlined</tulpar-button>
-      <tulpar-button color="purple" variant="tonal">Purple tonal</tulpar-button>
-      <tulpar-button color="amber" variant="ghost">Amber ghost</tulpar-button>
-      <tulpar-button color="yellow">Yellow (dark text auto)</tulpar-button>
+      <tulpar-button color="ulgen">Ulgen (Upgrade)</tulpar-button>
+      <tulpar-button color="otuken">Otuken</tulpar-button>
+      <tulpar-button color="kizagan">Kizagan</tulpar-button>
+      <tulpar-button color="kam">Kam</tulpar-button>
+      <tulpar-button color="yersu" variant="outlined">Yersu outlined</tulpar-button>
+      <tulpar-button color="erlik" variant="tonal">Erlik tonal</tulpar-button>
+      <tulpar-button color="kuyas" variant="ghost">Kuyas ghost</tulpar-button>
+      <tulpar-button color="ulgen">Ulgen (dark text auto)</tulpar-button>
     </div>
   `,
 };
@@ -353,7 +353,7 @@ export const DataDisabledTooltipPattern: Story = {
     <div title="You don't have permission to delete">
       <tulpar-button data-disabled severity="danger">Delete</tulpar-button>
     </div>
-    <p style="font-size: 12px; color: #78716c; margin-top: 8px;">
+    <p style="font-size: 12px; color: #74777a; margin-top: 8px;">
       Hover the button — the tooltip remains active because <code>data-disabled</code>
       styles disabled but does NOT block pointer events.
     </p>
@@ -362,7 +362,7 @@ export const DataDisabledTooltipPattern: Story = {
 
 export const GoldUpgradeCTA: Story = {
   render: () => html`
-    <tulpar-button color="gold" raised>
+    <tulpar-button color="ulgen" raised>
       <span slot="start">${checkIcon}</span>
       Upgrade to Pro
     </tulpar-button>
@@ -410,7 +410,7 @@ export const WithIconProp: Story = {
     <div style="display:flex; flex-direction:column; gap:24px;">
       <!-- Vue/Angular wrapper usage (shown as code comment for documentation) -->
       <div>
-        <p style="margin:0 0 8px; font-size:12px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:#78716c; font-family:monospace;">
+        <p style="margin:0 0 8px; font-size:12px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:#74777a; font-family:monospace;">
           :icon prop (Vue) / [icon] input (Angular)
         </p>
         <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
@@ -433,7 +433,7 @@ export const WithIconProp: Story = {
         </div>
       </div>
 
-      <div style="background:#1c1917; padding:16px 20px; border-radius:6px; font-family:monospace; font-size:13px; color:#e7e5e4; white-space:pre;"><!-- Vue -->
+      <div style="background:#15110b; padding:16px 20px; border-radius:6px; font-family:monospace; font-size:13px; color:#d9e0df; white-space:pre;"><!-- Vue -->
 &lt;TulparButton severity="success" :icon="Check"&gt;Save&lt;/TulparButton&gt;
 &lt;TulparButton severity="premium" size="lg" :icon="Crown" :icon-size="24"&gt;Go Pro&lt;/TulparButton&gt;
 &lt;TulparButton :icon="Check" icon-position="top" size="lg"&gt;Confirm&lt;/TulparButton&gt;
@@ -457,7 +457,7 @@ export const IconOnlyAutoDetect: Story = {
   render: () => html`
     <div style="display:flex; flex-direction:column; gap:24px;">
       <div>
-        <p style="margin:0 0 8px; font-size:12px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:#78716c; font-family:monospace;">
+        <p style="margin:0 0 8px; font-size:12px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:#74777a; font-family:monospace;">
           Auto icon-only — no text in default slot
         </p>
         <div style="display:flex; gap:8px; align-items:center;">
@@ -472,7 +472,7 @@ export const IconOnlyAutoDetect: Story = {
         </div>
       </div>
 
-      <div style="background:#1c1917; padding:16px 20px; border-radius:6px; font-family:monospace; font-size:13px; color:#e7e5e4; white-space:pre;"><!-- Vue: icon + no text = auto icon-only, no :icon-only prop needed -->
+      <div style="background:#15110b; padding:16px 20px; border-radius:6px; font-family:monospace; font-size:13px; color:#d9e0df; white-space:pre;"><!-- Vue: icon + no text = auto icon-only, no :icon-only prop needed -->
 &lt;TulparButton severity="danger" :icon="Trash2" aria-label="Delete item" /&gt;
 &lt;TulparButton severity="secondary" :icon="Settings" aria-label="Settings" /&gt;
 &lt;TulparButton severity="success" :icon="Save" shape="circle" aria-label="Save" /&gt;
@@ -493,7 +493,7 @@ export const WithTooltip: Story = {
   render: () => html`
     <div style="display:flex; flex-direction:column; gap:24px;">
       <div>
-        <p style="margin:0 0 8px; font-size:12px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:#78716c; font-family:monospace;">
+        <p style="margin:0 0 8px; font-size:12px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:#74777a; font-family:monospace;">
           Hover or focus each button to see the tooltip
         </p>
         <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; padding:32px 0 16px;">
@@ -517,13 +517,13 @@ export const WithTooltip: Story = {
             Visit Example
           </tulpar-button>
         </div>
-        <p style="font-size:12px; color:#78716c; margin:0;">
+        <p style="font-size:12px; color:#74777a; margin:0;">
           Tooltip uses <code>role="tooltip"</code> + <code>aria-describedby</code> for full
           keyboard and screen reader support. Shows on hover and focus-visible.
         </p>
       </div>
 
-      <div style="background:#1c1917; padding:16px 20px; border-radius:6px; font-family:monospace; font-size:13px; color:#e7e5e4; white-space:pre;">&lt;!-- Core Web Component --&gt;
+      <div style="background:#15110b; padding:16px 20px; border-radius:6px; font-family:monospace; font-size:13px; color:#d9e0df; white-space:pre;">&lt;!-- Core Web Component --&gt;
 &lt;tulpar-button icon-only aria-label="Open settings" tooltip="Open settings"&gt;...&lt;/tulpar-button&gt;
 &lt;tulpar-button severity="danger" tooltip="Permanently delete this item"&gt;Delete&lt;/tulpar-button&gt;
 
