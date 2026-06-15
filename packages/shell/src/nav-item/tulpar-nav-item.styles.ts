@@ -29,12 +29,12 @@ export const navItemStyles = css`
   }
   a:focus-visible,
   button:focus-visible {
-    outline: 2px solid var(--tulpar-color-focus-ring, #1e3a8a);
+    outline: 2px solid var(--tulpar-color-focus-ring, #514ecf);
     outline-offset: -2px;
   }
   a[aria-current="page"] {
     background: var(--tulpar-shell-sidenav-item-bg-active, #eef2ff);
-    color: var(--tulpar-shell-sidenav-item-fg-active, #1e3a8a);
+    color: var(--tulpar-shell-sidenav-item-fg-active, #514ecf);
   }
   /* left:0 assumes vertical sidenav; rail mode overrides this in the shell container task */
   a[aria-current="page"]::before {
@@ -45,7 +45,7 @@ export const navItemStyles = css`
     bottom: 20%;
     width: 3px;
     border-radius: 2px;
-    background: var(--tulpar-shell-sidenav-item-indicator, #1e3a8a);
+    background: var(--tulpar-shell-sidenav-item-indicator, #514ecf);
   }
   :host([disabled]) a,
   :host([disabled]) button {
@@ -60,7 +60,7 @@ export const navItemStyles = css`
     font-size: 0.75rem;
     line-height: 1;
     text-align: center;
-    background: var(--tulpar-shell-sidenav-item-badge-bg, #1e3a8a);
+    background: var(--tulpar-shell-sidenav-item-badge-bg, #514ecf);
     color: var(--tulpar-shell-sidenav-item-badge-fg, #f8fafc);
   }
   .label {

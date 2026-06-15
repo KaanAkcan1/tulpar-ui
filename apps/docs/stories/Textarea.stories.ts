@@ -72,7 +72,7 @@ export const Autosize: Story = {
       placeholder="Type here — the textarea grows up to 6 rows then scrolls"
       style="max-width:400px; display:block;"
     ></tulpar-textarea>
-    <p style="font-size:12px; color:#78716c; margin-top:8px;">
+    <p style="font-size:12px; color:#74777a; margin-top:8px;">
       <code>autosize</code> (default: enabled) — expands from <code>min-rows=2</code>
       up to <code>max-rows=6</code>. Paste a long paragraph to see it scroll at the cap.
     </p>
@@ -90,7 +90,7 @@ export const FixedRows: Story = {
       placeholder="autosize is disabled when rows is set — height is fixed"
       style="max-width:400px; display:block;"
     ></tulpar-textarea>
-    <p style="font-size:12px; color:#78716c; margin-top:8px;">
+    <p style="font-size:12px; color:#74777a; margin-top:8px;">
       Setting <code>rows</code> disables <code>autosize</code> automatically.
     </p>
   `,
@@ -159,7 +159,7 @@ export const CopyablePastable: Story = {
         value="Both copy and paste affordances active."
       ></tulpar-textarea>
     </div>
-    <p style="font-size:12px; color:#78716c; margin-top:8px;">
+    <p style="font-size:12px; color:#74777a; margin-top:8px;">
       Action buttons are hidden at <code>size="xs"</code> (cannot meet the 44 pt touch target minimum).
     </p>
   `,

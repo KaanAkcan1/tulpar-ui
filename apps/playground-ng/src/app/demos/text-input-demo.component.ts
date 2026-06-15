@@ -587,13 +587,13 @@ const SECTIONS = [
         flex-wrap: wrap;
         gap: 6px;
         padding: 16px 0 24px;
-        border-bottom: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        border-bottom: 1px solid var(--tulpar-color-border-default, #d9e0df);
         margin-bottom: 32px;
       }
 
       .sub-btn {
         padding: 6px 14px;
-        border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        border: 1px solid var(--tulpar-color-border-default, #d9e0df);
         border-radius: 20px;
         background: var(--tulpar-color-bg-elevated, #ffffff);
         color: var(--tulpar-color-text-secondary, #57534e);
@@ -606,20 +606,20 @@ const SECTIONS = [
       }
 
       .sub-btn:hover {
-        background: var(--tulpar-color-bg-subtle, #f5f5f4);
-        color: var(--tulpar-color-text-primary, #1c1917);
+        background: var(--tulpar-color-bg-subtle, #e9f1ef);
+        color: var(--tulpar-color-text-primary, #15110b);
       }
 
       .sub-btn.active {
-        background: var(--tulpar-color-brand-default, #2563eb);
-        border-color: var(--tulpar-color-brand-default, #2563eb);
+        background: var(--tulpar-color-brand-default, #00c57a);
+        border-color: var(--tulpar-color-brand-default, #00c57a);
         color: #ffffff;
       }
 
       .demo-section {
         padding-bottom: 48px;
         margin-bottom: 48px;
-        border-bottom: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        border-bottom: 1px solid var(--tulpar-color-border-default, #d9e0df);
       }
 
       .demo-section:last-child {
@@ -631,7 +631,7 @@ const SECTIONS = [
         font-family: var(--tulpar-font-family-display, Georgia, serif);
         font-size: 22px;
         font-weight: 600;
-        color: var(--tulpar-color-text-primary, #1c1917);
+        color: var(--tulpar-color-text-primary, #15110b);
       }
 
       .demo-desc {
@@ -646,12 +646,12 @@ const SECTIONS = [
         margin: 0 0 8px;
         font-size: 12px;
         font-style: italic;
-        color: var(--tulpar-color-text-muted, #78716c);
+        color: var(--tulpar-color-text-muted, #74777a);
       }
 
       .preview {
-        background: var(--tulpar-color-bg-subtle, #f5f5f4);
-        border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        background: var(--tulpar-color-bg-subtle, #e9f1ef);
+        border: 1px solid var(--tulpar-color-border-default, #d9e0df);
         border-bottom: none;
         border-radius: 6px 6px 0 0;
         padding: 24px;
@@ -676,14 +676,14 @@ const SECTIONS = [
       .code {
         margin: 0;
         padding: 16px 20px;
-        background: var(--tulpar-color-bg-inverse, #1c1917);
-        border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        background: var(--tulpar-color-bg-inverse, #15110b);
+        border: 1px solid var(--tulpar-color-border-default, #d9e0df);
         border-radius: 0 0 6px 6px;
         overflow-x: auto;
         font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
         font-size: 13px;
         line-height: 1.55;
-        color: #e7e5e4;
+        color: #d9e0df;
         white-space: pre;
       }
 

@@ -25,12 +25,12 @@ export const textInputStyles = css`
     padding: 0.125rem;
     margin-left: 0.25rem;
     cursor: pointer;
-    color: var(--tulpar-input-icon-default, #78716c);
+    color: var(--tulpar-input-icon-default, #74777a);
     border-radius: 999px;
   }
 
   .field-reveal-btn:hover {
-    background: var(--tulpar-input-bg-readonly, #fafaf9);
+    background: var(--tulpar-input-bg-readonly, #f0f7f5);
   }
 
   .field-clear-btn {
@@ -42,12 +42,12 @@ export const textInputStyles = css`
     padding: 0.125rem;
     margin-left: 0.25rem;
     cursor: pointer;
-    color: var(--tulpar-input-icon-default, #78716c);
+    color: var(--tulpar-input-icon-default, #74777a);
     border-radius: 999px;
   }
 
   .field-clear-btn:hover {
-    background: var(--tulpar-input-bg-readonly, #fafaf9);
+    background: var(--tulpar-input-bg-readonly, #f0f7f5);
   }
 
   .field-counter {
@@ -63,7 +63,7 @@ export const textInputStyles = css`
   .field-search-icon {
     display: inline-flex;
     align-items: center;
-    color: var(--tulpar-input-icon-default, #78716c);
+    color: var(--tulpar-input-icon-default, #74777a);
   }
 
   .field-copy-btn,
@@ -76,13 +76,13 @@ export const textInputStyles = css`
     padding: 0.125rem;
     margin-left: 0.25rem;
     cursor: pointer;
-    color: var(--tulpar-input-icon-default, #78716c);
+    color: var(--tulpar-input-icon-default, #74777a);
     border-radius: 999px;
   }
 
   .field-copy-btn:hover,
   .field-paste-btn:hover:not([disabled]) {
-    background: var(--tulpar-input-bg-readonly, #fafaf9);
+    background: var(--tulpar-input-bg-readonly, #f0f7f5);
   }
 
   .field-paste-btn[disabled] {

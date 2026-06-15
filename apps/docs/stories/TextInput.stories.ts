@@ -105,7 +105,7 @@ export const LabelPositions: Story = {
       <tulpar-text-input label-position="float-on" label="float-on" placeholder="Floats on top of the border"></tulpar-text-input>
       <tulpar-text-input label-position="none" label="none (aria-label only)" placeholder="No visible label"></tulpar-text-input>
       <div>
-        <p style="margin:0 0 6px; font-size:12px; color:#78716c; font-family:monospace;">
+        <p style="margin:0 0 6px; font-size:12px; color:#74777a; font-family:monospace;">
           Fallback: label-position="float" + variant="ghost" → renders as top + dev warning
         </p>
         <tulpar-text-input
@@ -244,7 +244,7 @@ export const Mask_LicensePlate: Story = {
       mask="99 AAA 999"
       placeholder="34 ABC 123"
     ></tulpar-text-input>
-    <p style="font-size:12px; color:#78716c; margin-top:8px;">
+    <p style="font-size:12px; color:#74777a; margin-top:8px;">
       <code>A</code> slots auto-uppercase — try typing lowercase letters.
     </p>
   `,
@@ -301,7 +301,7 @@ export const Mask_EmitRaw: Story = {
           </output>
         </div>
       </div>
-      <p style="font-size:12px; color:#78716c; margin-top:8px;">
+      <p style="font-size:12px; color:#74777a; margin-top:8px;">
         Both fields share the same visual mask. The right field's <code>el.value</code>
         returns digits only — handy for form submission without stripping separators manually.
       </p>
@@ -329,7 +329,7 @@ export const Mask_LazyDisplay: Story = {
         placeholder="Mask appears as you type"
       ></tulpar-text-input>
     </div>
-    <p style="font-size:12px; color:#78716c; margin-top:8px;">
+    <p style="font-size:12px; color:#74777a; margin-top:8px;">
       Focus each field and start typing to see the difference.
       <em>Eager</em> shows all slot characters upfront; <em>lazy</em> reveals them as each position is filled.
     </p>
@@ -384,7 +384,7 @@ export const Affordances: Story = {
 
 export const NoMessageSpace: Story = {
   render: () => html`
-    <div style="display:flex; align-items:center; gap:8px; padding:8px; background:var(--tulpar-color-bg-surface, #f5f5f4); border-radius:6px;">
+    <div style="display:flex; align-items:center; gap:8px; padding:8px; background:var(--tulpar-color-bg-surface, #e9f1ef); border-radius:6px;">
       <tulpar-text-input
         type="search"
         label-position="none"
@@ -394,7 +394,7 @@ export const NoMessageSpace: Story = {
         style="flex:1;"
       ></tulpar-text-input>
     </div>
-    <p style="font-size:12px; color:#78716c; margin-top:8px;">
+    <p style="font-size:12px; color:#74777a; margin-top:8px;">
       <code>no-message-space</code> removes the reserved row below the control —
       useful when the field lives inside a toolbar or data-table header with no room for helper text.
     </p>
