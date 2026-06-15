@@ -44,6 +44,9 @@ importers:
       '@tulpar-ui/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@tulpar-ui/shell':
+        specifier: workspace:*
+        version: link:../../packages/shell
       '@tulpar-ui/tokens':
         specifier: workspace:*
         version: link:../../packages/tokens
