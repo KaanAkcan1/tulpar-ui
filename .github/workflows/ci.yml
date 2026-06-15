@@ -35,7 +35,12 @@ jobs:
       - name: Install Playwright (core browser tests)
         run: pnpm --filter @tulpar-ui/core exec playwright install --with-deps chromium
 
-      - run: pnpm test
+      # Test the published packages only. The demo apps (playground-ng/-vue, docs)
+      # are not published; their dogfooding value is in compiling against the shell,
+      # which the Deploy workflow exercises. Their generated Karma/headless tests are
+      # boilerplate and flake in CI (ChromeHeadless /dev/shm disconnects).
+      - name: Test packages
+        run: pnpm -r --filter "./packages/*" run test
 
       - name: Changeset status (informational)
         run: pnpm exec changeset status --since=origin/main || echo "::warning::No changeset found - add one with 'pnpm changeset' if this PR changes published packages"

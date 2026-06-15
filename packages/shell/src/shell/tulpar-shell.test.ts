@@ -1,4 +1,4 @@
-import { fixture, html, expect, oneEvent } from "@open-wc/testing";
+import { fixture, html, expect, oneEvent, waitUntil } from "@open-wc/testing";
 import { sendKeys } from "@web/test-runner-commands";
 import "./tulpar-shell";
 import type { TulparShell } from "./tulpar-shell";
@@ -81,13 +81,19 @@ describe("<tulpar-shell>", () => {
     const el = await fixture<TulparShell>(html`<tulpar-shell></tulpar-shell>`);
     el.dark = true;
     await el.updateComplete;
-    // startViewTransition runs its callback in a rendering frame, not a microtask
-    await new Promise((r) => requestAnimationFrame(r));
-    expect(document.documentElement.classList.contains("dark")).to.be.true;
+    // startViewTransition applies the class in a rendering frame (not a microtask),
+    // and the number of frames varies by engine — poll until it lands rather than
+    // assuming a fixed rAF count (one rAF is flaky on headless Chromium / CI).
+    await waitUntil(
+      () => document.documentElement.classList.contains("dark"),
+      "dark class should be added",
+    );
     el.dark = false;
     await el.updateComplete;
-    await new Promise((r) => requestAnimationFrame(r));
-    expect(document.documentElement.classList.contains("dark")).to.be.false;
+    await waitUntil(
+      () => !document.documentElement.classList.contains("dark"),
+      "dark class should be removed",
+    );
   });
 
   it("moves focus into aside when opened and restores on close", async () => {
