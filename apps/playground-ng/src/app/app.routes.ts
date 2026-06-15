@@ -4,6 +4,7 @@ import { ButtonDemoComponent } from './demos/button-demo.component';
 import { TextInputDemoComponent } from './demos/text-input-demo.component';
 import { TextareaDemoComponent } from './demos/textarea-demo.component';
 import { NumberInputDemoComponent } from './demos/number-input-demo.component';
+import { ColorsDemoComponent } from './demos/colors-demo.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'button' },
@@ -11,5 +12,6 @@ export const routes: Routes = [
   { path: 'text-input', component: TextInputDemoComponent, title: 'TextInput — Tulpar UI' },
   { path: 'textarea', component: TextareaDemoComponent, title: 'Textarea — Tulpar UI' },
   { path: 'number-input', component: NumberInputDemoComponent, title: 'NumberInput — Tulpar UI' },
+  { path: 'colors', component: ColorsDemoComponent, title: 'Colors — Tulpar UI' },
   { path: '**', redirectTo: 'button' },
 ];

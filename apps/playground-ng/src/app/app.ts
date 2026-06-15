@@ -113,7 +113,7 @@ import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
 
       .brand-mark {
         font-size: 16px;
-        color: var(--tulpar-color-brand-default, #2563eb);
+        color: var(--tulpar-color-brand-default, #00c57a);
       }
 
       .brand-name {
@@ -148,7 +148,7 @@ import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
       }
 
       .settings-trigger:focus-visible {
-        outline: 2px solid var(--tulpar-color-focus-ring, #1e3a8a);
+        outline: 2px solid var(--tulpar-color-focus-ring, rgba(81,78,207,.4));
         outline-offset: 2px;
       }
 
@@ -198,7 +198,7 @@ import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
       }
 
       .settings-close:focus-visible {
-        outline: 2px solid var(--tulpar-color-focus-ring, #1e3a8a);
+        outline: 2px solid var(--tulpar-color-focus-ring, rgba(81,78,207,.4));
         outline-offset: 2px;
       }
 
@@ -247,7 +247,7 @@ import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
 
       .segmented label.on {
         background: var(--tulpar-color-bg-surface, #fff);
-        color: var(--tulpar-color-brand-default, #2563eb);
+        color: var(--tulpar-color-brand-default, #00c57a);
         font-weight: 600;
         box-shadow: var(--tulpar-shadow-sm, 0 1px 2px rgb(0 0 0 / 0.08));
       }
@@ -264,7 +264,7 @@ import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
       }
 
       .segmented label:focus-within {
-        outline: 2px solid var(--tulpar-color-focus-ring, #1e3a8a);
+        outline: 2px solid var(--tulpar-color-focus-ring, rgba(81,78,207,.4));
         outline-offset: 2px;
       }
 
@@ -316,6 +316,7 @@ export class App {
         { label: 'TextInput', href: '/text-input' },
         { label: 'Textarea', href: '/textarea' },
         { label: 'NumberInput', href: '/number-input' },
+        { label: 'Colors', href: '/colors' },
       ],
     },
   ];
