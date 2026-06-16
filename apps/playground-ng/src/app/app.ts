@@ -276,8 +276,9 @@ type SidenavDensity = 'comfortable' | 'compact';
         </fieldset>
 
         <p class="settings-hint">
-          Theme lives in the sidenav utility toggle. Shell + sidenav state persists across reloads
-          via <code>persistKey</code>. Close with Esc, the ✕, or the backdrop.
+          Theme lives in the sidenav utility toggle. Sidenav mode persists across reloads via
+          <code>persistKey</code>; position and density reset on reload. Close with Esc, the ✕, or
+          the backdrop.
         </p>
       </section>
     </tulpar-shell-ng>
@@ -738,7 +739,7 @@ export class App {
    * matching what the topbar's built-in menu button does.
    */
   toggleMenu(event: Event) {
-    event.target?.dispatchEvent(
+    (event.currentTarget as HTMLElement)?.dispatchEvent(
       new CustomEvent('tulpar-menu-toggle', { bubbles: true, composed: true }),
     );
   }

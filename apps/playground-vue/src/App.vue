@@ -47,7 +47,7 @@ const densities: { value: SidenavDensity; label: string }[] = [
  * the topbar's built-in menu button does.
  */
 function toggleMenu(event: Event) {
-  event.target?.dispatchEvent(
+  ((event.currentTarget as HTMLElement) ?? (event.target as HTMLElement)?.closest("button"))?.dispatchEvent(
     new CustomEvent("tulpar-menu-toggle", { bubbles: true, composed: true }),
   );
 }
@@ -303,8 +303,9 @@ function toggleMenu(event: Event) {
       </fieldset>
 
       <p class="settings-hint">
-        Theme lives in the sidenav utility toggle. Shell + sidenav state persists across reloads via
-        <code>persist-key</code>. Close with Esc, the ✕, or the backdrop.
+        Theme lives in the sidenav utility toggle. Sidenav mode persists across reloads via
+        <code>persist-key</code>; position and density reset on reload. Close with Esc, the ✕, or
+        the backdrop.
       </p>
     </section>
   </TulparShell>
