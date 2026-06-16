@@ -280,4 +280,19 @@ describe("<tulpar-sidenav>", () => {
     expect(getComputedStyle(el.shadowRoot!.querySelector(".account-actions") as HTMLElement).display).to.equal("none");
     expect(el.shadowRoot!.querySelector(".account-avatar, .account-avatar-img")).to.exist;
   });
+
+  // ── Chunk 6: data-rail reflection onto slotted items (B3) ──────────────
+
+  it("reflects data-rail onto slotted nav-items and nav-sections", async () => {
+    const el = await fixture<TulparSidenav>(html`
+      <tulpar-sidenav data-rail>
+        <tulpar-nav-section label="S"><tulpar-nav-item href="/a" label="A"></tulpar-nav-item></tulpar-nav-section>
+        <tulpar-nav-item href="/b" label="B"></tulpar-nav-item>
+      </tulpar-sidenav>
+    `);
+    await el.updateComplete;
+    el.querySelectorAll("tulpar-nav-item, tulpar-nav-section").forEach((n) => {
+      expect(n.hasAttribute("data-rail")).to.be.true;
+    });
+  });
 });

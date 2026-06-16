@@ -133,4 +133,16 @@ describe("<tulpar-nav-item>", () => {
     );
     expect(el.shadowRoot!.querySelector("svg.probe")).to.exist;
   });
+
+  it("rail flyout uses fixed positioning to escape the clipped nav (B3)", async () => {
+    const el = await fixture<TulparNavItem>(html`<tulpar-nav-item href="/x" label="Longish label"></tulpar-nav-item>`);
+    el.setAttribute("data-rail", "");
+    await el.updateComplete;
+    const a = el.shadowRoot!.querySelector("a")!;
+    a.dispatchEvent(new Event("pointerenter"));
+    await el.updateComplete;
+    const fly = el.shadowRoot!.querySelector(".rail-flyout") as HTMLElement;
+    expect(fly).to.exist;
+    expect(getComputedStyle(fly).position).to.equal("fixed");
+  });
 });

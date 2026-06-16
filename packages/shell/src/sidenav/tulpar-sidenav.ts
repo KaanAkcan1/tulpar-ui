@@ -35,7 +35,26 @@ export class TulparSidenav extends LitElement {
     super.attributeChangedCallback(name, oldVal, newVal);
     if (name === "data-collapsed" || name === "data-sidenav-open" || name === "data-rail") {
       this.requestUpdate();
+      if (name === "data-rail") {
+        this._reflectRail();
+      }
     }
+  }
+
+  /**
+   * Reflects the host's `data-rail` attribute onto every slotted and
+   * data-driven (shadow-DOM) `tulpar-nav-item` / `tulpar-nav-section`
+   * so each item can key its own flyout styles on `:host([data-rail])`
+   * instead of the non-composable `:host-context()`.
+   */
+  private _reflectRail() {
+    const on = this.hasAttribute("data-rail");
+    this.querySelectorAll("tulpar-nav-item, tulpar-nav-section").forEach((n) =>
+      n.toggleAttribute("data-rail", on),
+    );
+    this.shadowRoot?.querySelectorAll("tulpar-nav-item, tulpar-nav-section").forEach((n) =>
+      n.toggleAttribute("data-rail", on),
+    );
   }
 
   /** JSON menü verisi — slot ile birlikte kullanılabilir. */
@@ -228,11 +247,20 @@ export class TulparSidenav extends LitElement {
     this._hasFooterSlot = !!this.querySelector(':scope > [slot="footer"]');
     this._attrObserver = new MutationObserver(() => {
       this.requestUpdate();
+      this._reflectRail();
     });
     this._attrObserver.observe(this, {
       attributes: true,
       attributeFilter: ["data-collapsed", "data-sidenav-open", "data-rail"],
     });
+  }
+
+  override firstUpdated() {
+    this._reflectRail();
+  }
+
+  override updated() {
+    this._reflectRail();
   }
 
   override disconnectedCallback() {
@@ -242,13 +270,19 @@ export class TulparSidenav extends LitElement {
     this._attrObserver = null;
   }
 
+  private _onDefaultSlotChange = (e: Event) => {
+    this._reflectRail();
+    // Propagate slotchange to allow external observers
+    void e;
+  };
+
   override render() {
     return html`
       ${renderHeader(this)}
       <div class="search"><slot name="search"></slot></div>
       <nav aria-label=${this.navLabel} @keydown=${this._onKeydown}>
         ${this.items?.map((i) => this._renderItem(i)) ?? nothing}
-        <slot></slot>
+        <slot @slotchange=${this._onDefaultSlotChange}></slot>
       </nav>
       ${renderUtility(this)}
       ${renderAccount(this)}

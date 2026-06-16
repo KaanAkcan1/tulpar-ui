@@ -139,38 +139,29 @@ export const navItemStyles = css`
     }
   }
 
-  /* Rail flyout: show label/badge as hover tooltip when ancestor has [data-rail] */
-  /* Note: :host-context works in Chromium (WTR target); Firefox fallback is v2 scope */
-  /* Flyout appears to the right of the icon by default (left-positioned sidenav) */
-  :host-context([data-rail]) .label,
-  :host-context([data-rail]) .badge,
-  :host-context([data-rail]) .chevron {
-    position: absolute;
-    inset-inline-start: calc(100% + 0.25rem);
+  /* Rail mode: hide the inline label/badge/chevron — they show via the JS-positioned .rail-flyout */
+  :host([data-rail]) .label,
+  :host([data-rail]) .badge,
+  :host([data-rail]) .chevron,
+  :host([data-rail]) .count,
+  :host([data-rail]) .kbd-hint,
+  :host([data-rail]) .dot,
+  :host([data-rail]) .external {
+    display: none;
+  }
+
+  /* Rail flyout: fixed-position label tooltip that escapes overflow-x:clip (B3) */
+  .rail-flyout {
+    position: fixed;
+    z-index: var(--tulpar-shell-z-aside, 300);
     background: var(--tulpar-shell-sidenav-bg, #f8fafc);
     border: 1px solid var(--tulpar-shell-sidenav-border, #e2e8f0);
     border-radius: 0.375rem;
     padding: 0.375rem 0.625rem;
     white-space: nowrap;
-    opacity: 0;
     pointer-events: none;
-    z-index: var(--tulpar-shell-z-sidenav, 200);
+    box-shadow: 0 2px 8px var(--tulpar-shadow-sm, rgba(11, 8, 4, 0.08));
+    font-size: 0.875rem;
+    color: var(--tulpar-shell-sidenav-fg, #334155);
   }
-  :host-context([data-rail]) a:hover .label,
-  :host-context([data-rail]) a:focus-visible .label {
-    opacity: 1;
-  }
-  /* Mirror flyout to the left when sidenav is right-positioned
-     (flyout escapes to the left of the icon instead of right) */
-  :host-context([data-rail]):host-context([position="right"]) .label,
-  :host-context([data-rail]):host-context([position="right"]) .badge,
-  :host-context([data-rail]):host-context([position="right"]) .chevron {
-    inset-inline-start: auto;
-    inset-inline-end: calc(100% + 0.25rem);
-  }
-  /* TODO(v2): migrate to CSS Anchor Positioning (position-area) for true overflow-escape
-     flyouts once browser support is sufficient. The absolute approach works because
-     the nav has overflow-x:clip (not hidden), so the flyout is visually clipped at
-     the nav edge — the right-position mirror above ensures it opens toward the viewport
-     center. Full popover API integration is tracked as a follow-up. */
 `;

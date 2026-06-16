@@ -17,8 +17,9 @@ export const navSectionStyles = css`
     flex-direction: column;
     gap: 2px;
   }
-  /* Rail: hide label text, collapse to a divider */
-  :host-context([data-rail]) .section-label {
+  /* Rail: hide label text, collapse to a divider.
+     Uses :host([data-rail]) — the sidenav reflects data-rail onto each item (B3). */
+  :host([data-rail]) .section-label {
     height: 1px;
     padding: 0.5rem 0.75rem;
     overflow: hidden;
