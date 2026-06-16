@@ -117,6 +117,27 @@ export const navItemStyles = css`
       transition: none;
     }
   }
+  @media (prefers-reduced-motion: no-preference) {
+    a[aria-current="page"]::after {
+      content: "";
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+      width: 6px;
+      background: linear-gradient(
+        to top,
+        var(--tulpar-shell-sidenav-item-indicator, #00c57a),
+        transparent
+      );
+      opacity: 0;
+      animation: tulpar-nav-ignite 260ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1)) 1;
+      pointer-events: none;
+    }
+    @keyframes tulpar-nav-ignite {
+      from { transform: translateY(100%); opacity: 0.8; }
+      to { transform: translateY(0); opacity: 0; }
+    }
+  }
 
   /* Rail flyout: show label/badge as hover tooltip when ancestor has [data-rail] */
   /* Note: :host-context works in Chromium (WTR target); Firefox fallback is v2 scope */
