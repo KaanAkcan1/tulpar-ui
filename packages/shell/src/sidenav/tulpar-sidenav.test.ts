@@ -183,4 +183,43 @@ describe("<tulpar-sidenav>", () => {
     expect(getComputedStyle(brand).display).to.equal("none");
     expect(el.shadowRoot!.querySelector(".sidenav-toggle")).to.exist;
   });
+
+  // ── Chunk 4: built-in utility row (theme toggle + config) ───────────────────
+
+  it("renders mode-selection by default and emits tulpar-theme-toggle", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav></tulpar-sidenav>`);
+    const btn = el.shadowRoot!.querySelector(".util-theme") as HTMLButtonElement;
+    expect(btn).to.exist;
+    setTimeout(() => btn.click());
+    expect(await oneEvent(el, "tulpar-theme-toggle")).to.exist;
+  });
+  it("hides mode-selection when showModeSelection is false", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav></tulpar-sidenav>`);
+    el.showModeSelection = false; await el.updateComplete;
+    expect(el.shadowRoot!.querySelector(".util-theme")).to.be.null;
+  });
+  it("renders config button with config-text when showConfig and emits tulpar-config-click", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav></tulpar-sidenav>`);
+    el.showConfig = true; el.configText = "Tweak"; await el.updateComplete;
+    const c = el.shadowRoot!.querySelector(".util-config") as HTMLButtonElement;
+    expect(c).to.exist;
+    expect(c.textContent).to.contain("Tweak");
+    setTimeout(() => c.click());
+    expect(await oneEvent(el, "tulpar-config-click")).to.exist;
+  });
+  it("omits the utility region entirely when both are off", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav></tulpar-sidenav>`);
+    el.showModeSelection = false; el.showConfig = false; await el.updateComplete;
+    expect(el.shadowRoot!.querySelector(".utility")).to.be.null;
+  });
+
+  // ── Chunk 4: rail utility icon-only (B2) ─────────────────────────────────
+
+  it("rail makes theme toggle icon-only and hides config (B2)", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav data-rail></tulpar-sidenav>`);
+    el.showConfig = true; await el.updateComplete;
+    const text = el.shadowRoot!.querySelector(".util-theme .util-text") as HTMLElement;
+    expect(getComputedStyle(text).display).to.equal("none");
+    expect(getComputedStyle(el.shadowRoot!.querySelector(".util-config") as HTMLElement).display).to.equal("none");
+  });
 });

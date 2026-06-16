@@ -50,6 +50,17 @@ export class TulparSidenav extends LitElement {
   /** Accessible label for the built-in toggle button. */
   @property({ attribute: "toggle-label" }) toggleLabel = "Toggle navigation";
 
+  /** Show the built-in theme-toggle cell in the utility row. */
+  @property({ type: Boolean, attribute: "show-mode-selection" }) showModeSelection = true;
+  /** Show the built-in config cell in the utility row. */
+  @property({ type: Boolean, attribute: "show-config" }) showConfig = false;
+  /** Label text rendered inside the config button. */
+  @property({ attribute: "config-text" }) configText = "Configure";
+  /** aria-label for the theme-toggle button. */
+  @property({ attribute: "theme-label" }) themeLabel = "Toggle color theme";
+  /** aria-label for the config button. */
+  @property({ attribute: "config-label" }) configLabel = "Open configurator";
+
   /** True when the consumer has placed a [slot=header] child into light DOM. */
   @state() hasHeaderSlot = false;
 
