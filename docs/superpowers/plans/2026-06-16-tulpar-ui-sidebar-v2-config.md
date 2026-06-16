@@ -179,6 +179,7 @@ export function renderHeader(host: TulparSidenav) {
 }
 ```
 Mirror for `renderUtility` (current `.utility` with `utility-start`/`utility-end` slots) and `renderAccount` (current `.footer` with `footer` slot). Move the corresponding CSS rules into `header.styles.ts` / `utility.styles.ts` / `account.styles.ts` as exported `css` blocks.
+> **Preserve the `header-actions` slot** in `renderHeader` through this refactor (the current sidenav header has both `header` and `header-actions` — do not drop it). Chunk 3 builds the built-in toggle/brand path on top; `header-actions` remains available.
 - [ ] **Step 3:** In `tulpar-sidenav.styles.ts`, keep host/nav/search/scroll rules; remove the moved rules. In `tulpar-sidenav.ts`, set `static styles = [sidenavStyles, headerStyles, utilityStyles, accountStyles]` and call the render fns in `render()` in the same positions.
 - [ ] **Step 4:** Run tests → SAME PASS count (no behavior change). Fix until green.
 - [ ] **Step 5: Commit**
@@ -205,8 +206,15 @@ git commit -m "refactor(shell): extract sidenav header/utility/account into part
     const ev = await oneEvent(el, "tulpar-menu-toggle");
     expect(ev).to.exist;
   });
-  it("toggle button reflects aria-expanded from data-collapsed", async () => {
+  it("toggle button reflects aria-expanded from data-collapsed (initial)", async () => {
     const el = await fixture<TulparSidenav>(html`<tulpar-sidenav data-collapsed></tulpar-sidenav>`);
+    expect(el.shadowRoot!.querySelector(".sidenav-toggle")!.getAttribute("aria-expanded")).to.equal("false");
+  });
+  it("toggle aria-expanded updates live when data-collapsed mutates (exercises the MutationObserver)", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav></tulpar-sidenav>`);
+    expect(el.shadowRoot!.querySelector(".sidenav-toggle")!.getAttribute("aria-expanded")).to.equal("true");
+    el.toggleAttribute("data-collapsed", true); // shell sets this at runtime
+    await el.updateComplete;
     expect(el.shadowRoot!.querySelector(".sidenav-toggle")!.getAttribute("aria-expanded")).to.equal("false");
   });
   it("does not render built-in toggle/brand when slot=header is provided", async () => {
@@ -247,7 +255,8 @@ export function renderHeader(host: TulparSidenav) {
   `;
 }
 ```
-Add to `tulpar-sidenav.ts`: `@property({ attribute: "toggle-label" }) toggleLabel = "Toggle navigation";`, a `@state() hasHeaderSlot = false;` updated via a `@slotchange` on a probe, and re-render on `data-collapsed`/`data-sidenav-open` attribute changes (observe via `static observedAttributes`? Lit reflects host attrs; use a `MutationObserver` on self for `data-collapsed`/`data-sidenav-open`, or simpler: the shell sets these and the sidenav listens. Use a small MutationObserver in connectedCallback to `requestUpdate()` on those attrs).
+Add to `tulpar-sidenav.ts`: `@property({ attribute: "toggle-label" }) toggleLabel = "Toggle navigation";` and `@state() hasHeaderSlot = false;` (updated via a `@slotchange` probe).
+**REQUIRED (not optional):** Lit does NOT re-render on arbitrary host-attribute mutations, and the shell sets `data-collapsed`/`data-sidenav-open`/`data-rail` on the sidenav at runtime via `toggleAttribute`. Add a `MutationObserver` on `this` in `connectedCallback` with `attributeFilter: ["data-collapsed","data-sidenav-open","data-rail"]` whose callback calls `this.requestUpdate()` AND `this._reflectRail()` (Task 6.1). Disconnect it in `disconnectedCallback`. Without this, `aria-expanded` and rail reflection won't update on live toggles (the live-toggle test above catches it).
 - [ ] **Step 4:** Header styles: toggle button (40px, hover wash), brand text. Run → PASS.
 - [ ] **Step 5: Commit**
 ```bash
@@ -287,10 +296,9 @@ git commit -m "feat(shell): built-in sidenav toggle + brand with slot override +
     setTimeout(() => btn.click());
     expect(await oneEvent(el, "tulpar-theme-toggle")).to.exist;
   });
-  it("hides mode-selection when show-mode-selection=false", async () => {
-    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav show-mode-selection="false"></tulpar-sidenav>`);
-    // boolean-ish: use property
-    el.showModeSelection = false; await el.updateComplete;
+  it("hides mode-selection when showModeSelection is false", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav></tulpar-sidenav>`);
+    el.showModeSelection = false; await el.updateComplete; // boolean prop set in JS (presence-as-true makes the attr form unreliable)
     expect(el.shadowRoot!.querySelector(".util-theme")).to.be.null;
   });
   it("renders config button with config-text when show-config", async () => {
@@ -405,9 +413,11 @@ Implement `renderAccount(host)` using `initials(host.userName)`; render `.accoun
     expect(getComputedStyle(fly).position).to.equal("fixed");
   });
 ```
-> Note: the rail context currently arrives via `:host-context([data-rail])` from an ancestor. For a testable, container-independent fix, add a `data-rail` reflection onto the nav-item itself (the sidenav already sets `--tulpar-nav-item-rail`; also reflect `data-rail` onto slotted items in the sidenav rail rule, OR have nav-item read `:host-context`). Choose: sidenav sets `data-rail` on slotted nav-items (add to the existing rail `::slotted` rule is not possible for attributes via CSS — so set it in the sidenav's render/updated when rail). Simplest: nav-item computes flyout position with JS on pointerenter/focus and applies `position:fixed` + coords; CSS `.flyout{position:fixed}` in rail.
-- [ ] **Step 2:** Run → FAIL.
-- [ ] **Step 3:** Implement: on `pointerenter`/`focusin` of the anchor when in rail, compute the item's `getBoundingClientRect()` and set the flyout's fixed `top`/`left` (respecting `position` left/right via a host signal/attr); add `.flyout { position: fixed; z-index: <high> }` for rail. Hide/reposition on `pointerleave`/`focusout`/scroll. Keep the existing tooltip content. Keep `overflow-x: clip` on the sidenav nav (scrollbar fix stays).
+> **COMMITTED MECHANISM (resolves the rail-context fork):** stop using `:host-context([data-rail])`. Instead the **sidenav reflects `data-rail` onto each slotted `tulpar-nav-item` (and `tulpar-nav-section`)** via JS, so both CSS and the flyout JS key on `:host([data-rail])` — which the B3 test reproduces by setting `data-rail` on the item directly. This matches production exactly and removes the Chromium-only `:host-context` dependency.
+
+- [ ] **Step 1a (sidenav side):** In `tulpar-sidenav.ts`, add a method `_reflectRail()` that sets/removes the `data-rail` attribute on every slotted `tulpar-nav-item` and `tulpar-nav-section` based on the sidenav's own `data-rail`. Call it in `updated()` (when `data-rail` changes — observe via the same MutationObserver used in Task 3.1) and on `slotchange`. Migrate the existing `:host-context([data-rail])` rules in `tulpar-nav-item.styles.ts` and `tulpar-nav-section.styles.ts` to `:host([data-rail])`. Add/keep a test that a slotted item gets `data-rail` when the sidenav is railed.
+- [ ] **Step 2:** Run → FAIL (flyout not yet fixed-positioned).
+- [ ] **Step 3:** In `tulpar-nav-item.ts`: on `pointerenter`/`focusin` of the anchor **when `this.hasAttribute("data-rail")`**, compute the item's `getBoundingClientRect()` and set the flyout's fixed `top`/`left` (respecting `position` left/right — read a reflected `data-sidenav-position` or default left); CSS `:host([data-rail]) .flyout { position: fixed; z-index: var(--tulpar-shell-z-aside, 300); }`. Hide/reposition on `pointerleave`/`focusout`/scroll/resize. Keep the existing tooltip content and `overflow-x: clip` on the nav (scrollbar fix stays).
 - [ ] **Step 4:** Run → PASS. Also verify existing nav-item tests still pass.
 - [ ] **Step 5: Commit** `fix(shell): rail flyout escapes clipped nav via fixed positioning (B3)`.
 
@@ -522,7 +532,7 @@ Implement `renderAccount(host)` using `initials(host.userName)`; render `.accoun
 
 ## Chunk 10: changeset + final gate
 
-- [ ] **Step 1:** Update/extend the existing changeset (or add `.changeset/sidebar-v2.md`) noting the new sidenav API (minor) for `@tulpar-ui/{core,shell,angular,vue}` (+ tokens if any re-bind). Commit.
+- [ ] **Step 1:** **Extend the existing `.changeset/v0-8-shell-sidebar-redesign.md` summary** (this work is on the same unmerged branch/PR) to also cover the self-contained sidenav API — do NOT add a second changeset re-bumping the same packages (avoids a confusing double-entry changelog). The package bump levels stay minor. Commit.
 - [ ] **Step 2:** Final: `pnpm build && pnpm lint && pnpm format:check` green; package tests + `playground-ng` test green; `pnpm --filter docs build-storybook` ok (update the Shell story if the new API changed usage). Commit any fixes.
 - [ ] **Step 3:** Manual pass: both playgrounds (light/dark, under/over, static/rail/overlay, left/right), floating button, rail flyout/header/utility/account, theme toggle, logout/config events.
 
