@@ -3,6 +3,7 @@ import { property } from "lit/decorators.js";
 import { sidenavStyles } from "./tulpar-sidenav.styles";
 import type { TulparNavItemData } from "../nav-item/tulpar-nav-item";
 import "../nav-item/tulpar-nav-item";
+import "../nav-section/tulpar-nav-section";
 
 export class TulparSidenav extends LitElement {
   static override styles = sidenavStyles;
@@ -13,11 +14,20 @@ export class TulparSidenav extends LitElement {
   @property({ type: String, attribute: "nav-label" }) navLabel = "Main navigation";
 
   private _renderItem(item: TulparNavItemData): unknown {
+    if (item.type === "section") {
+      return html`<tulpar-nav-section label=${item.label ?? nothing}>
+        ${item.items?.map((c) => this._renderItem(c)) ?? nothing}
+      </tulpar-nav-section>`;
+    }
     return html`<tulpar-nav-item
       href=${item.href ?? nothing}
       label=${item.label}
       icon-class=${item.iconClass ?? nothing}
       badge=${item.badge ?? nothing}
+      count=${item.count ?? nothing}
+      ?dot=${item.dot ?? false}
+      dot-label=${item.dotLabel ?? nothing}
+      kbd=${item.kbd ?? nothing}
       target=${item.target ?? nothing}
       ?disabled=${item.disabled ?? false}
       .active=${item.active}

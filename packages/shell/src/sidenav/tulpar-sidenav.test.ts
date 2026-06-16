@@ -43,6 +43,18 @@ describe("<tulpar-sidenav>", () => {
     expect([...slots].map((s) => s.getAttribute("name"))).to.include.members(["header", "footer"]);
   });
 
+  it("renders a section node from items data", async () => {
+    const el = await fixture<TulparSidenav>(html`
+      <tulpar-sidenav
+        .items=${[
+          { type: "section", label: "Components", items: [{ label: "Button", href: "/button" }] },
+        ]}
+      ></tulpar-sidenav>
+    `);
+    await el.updateComplete;
+    expect(el.shadowRoot!.querySelector("tulpar-nav-section")).to.exist;
+  });
+
   it("moves focus between items with ArrowDown/ArrowUp", async () => {
     const el = await fixture<TulparSidenav>(html`
       <tulpar-sidenav>
