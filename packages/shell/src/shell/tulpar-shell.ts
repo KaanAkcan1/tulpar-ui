@@ -45,6 +45,7 @@ export class TulparShell extends LitElement {
 
   private _mql?: MediaQueryList;
   private _lastFocused: HTMLElement | null = null;
+  private _sidenavObserver?: MutationObserver;
 
   private _onMql = (e: MediaQueryListEvent | MediaQueryList) => {
     this._isMobile = e.matches;
@@ -70,6 +71,9 @@ export class TulparShell extends LitElement {
     this._onMql(this._mql);
     document.addEventListener("keydown", this._onKeydown);
     this.addEventListener("tulpar-menu-toggle", this._onMenuToggle);
+    // Watch the sidenav slot for position attribute changes
+    this._sidenavObserver = new MutationObserver(() => this._syncSidenavPosition());
+    this._observeSidenavSlot();
   }
 
   override disconnectedCallback() {
@@ -77,6 +81,7 @@ export class TulparShell extends LitElement {
     this._mql?.removeEventListener("change", this._onMql);
     document.removeEventListener("keydown", this._onKeydown);
     this.removeEventListener("tulpar-menu-toggle", this._onMenuToggle);
+    this._sidenavObserver?.disconnect();
   }
 
   private _onMenuToggle = () => {
@@ -169,6 +174,26 @@ export class TulparShell extends LitElement {
     }
   }
 
+  private _syncSidenavPosition() {
+    const sidenav = this.querySelector("[slot='sidenav']");
+    const pos = sidenav?.getAttribute("position") ?? "left";
+    if (pos === "right") {
+      this.setAttribute("data-sidenav-position", "right");
+    } else {
+      this.removeAttribute("data-sidenav-position");
+    }
+  }
+
+  private _observeSidenavSlot() {
+    // Re-observe whenever the slotted sidenav element changes
+    this._sidenavObserver?.disconnect();
+    const sidenav = this.querySelector("[slot='sidenav']");
+    if (sidenav) {
+      this._sidenavObserver?.observe(sidenav, { attributes: true, attributeFilter: ["position"] });
+    }
+    this._syncSidenavPosition();
+  }
+
   private _updateRailAttr() {
     const isRail = this.sidenavMode === "rail" && this.sidenavCollapsed;
     const sidenav = this.querySelector("[slot='sidenav']");
@@ -193,7 +218,7 @@ export class TulparShell extends LitElement {
     return html`
       <a class="skip-link" href="#tulpar-shell-content">Skip to content</a>
       <div class="topbar"><slot name="topbar"></slot></div>
-      <div class="sidenav"><slot name="sidenav"></slot></div>
+      <div class="sidenav"><slot name="sidenav" @slotchange=${this._observeSidenavSlot}></slot></div>
       <main id="tulpar-shell-content">
         <div class="content-box"><slot></slot></div>
       </main>

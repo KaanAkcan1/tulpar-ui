@@ -1,6 +1,7 @@
 import { fixture, html, expect, oneEvent, waitUntil } from "@open-wc/testing";
 import { sendKeys } from "@web/test-runner-commands";
 import "./tulpar-shell";
+import "../sidenav/tulpar-sidenav";
 import type { TulparShell } from "./tulpar-shell";
 
 describe("<tulpar-shell>", () => {
@@ -150,5 +151,30 @@ describe("<tulpar-shell>", () => {
     el.sidenavCollapsed = true;
     await el.updateComplete;
     expect(el.querySelector("#sn")!.hasAttribute("data-rail")).to.be.true;
+  });
+
+  it("reflects data-sidenav-position=right when slotted sidenav has position=right", async () => {
+    const el = await fixture<TulparShell>(html`
+      <tulpar-shell>
+        <tulpar-sidenav slot="sidenav" position="right"></tulpar-sidenav>
+      </tulpar-shell>
+    `);
+    await el.updateComplete;
+    expect(el.getAttribute("data-sidenav-position")).to.equal("right");
+  });
+
+  it("grid-template-areas swaps sidenav and content columns for right-positioned sidenav", async () => {
+    const el = await fixture<TulparShell>(html`
+      <tulpar-shell>
+        <tulpar-sidenav slot="sidenav" position="right"></tulpar-sidenav>
+      </tulpar-shell>
+    `);
+    await el.updateComplete;
+    const areas = getComputedStyle(el).gridTemplateAreas;
+    // right position: content comes before sidenav in the row
+    expect(areas).to.include("content");
+    expect(areas).to.include("sidenav");
+    // "content sidenav" order (content before sidenav) when position=right
+    expect(areas.indexOf("content")).to.be.lessThan(areas.indexOf("sidenav"));
   });
 });

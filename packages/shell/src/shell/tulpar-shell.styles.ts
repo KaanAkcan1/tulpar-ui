@@ -63,6 +63,15 @@ export const shellStyles = css`
     bottom: 0;
   }
 
+  /* --- right-positioned sidenav: swap grid columns so content is left, sidenav is right --- */
+  :host([data-sidenav-position="right"]) {
+    grid-template-columns: 1fr var(--_sidenav-col, var(--tulpar-shell-sidenav-width, 17.5rem));
+    grid-template-areas:
+      "topbar topbar"
+      "content sidenav"
+      "footer footer";
+  }
+
   /* --- collapsed (static) --- */
   :host([sidenav-mode="static"][data-collapsed]) {
     --_sidenav-col: 0px;
