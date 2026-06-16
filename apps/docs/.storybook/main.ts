@@ -12,6 +12,8 @@ const config: StorybookConfig = {
     options: {},
   },
   docs: { autodocs: "tag" },
+  managerHead: (head) =>
+    `${head}<link rel="icon" type="image/svg+xml" href="favicon.svg" />`,
 };
 
 export default config;

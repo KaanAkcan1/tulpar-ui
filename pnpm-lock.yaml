@@ -63,6 +63,12 @@ importers:
       '@storybook/addon-themes':
         specifier: ^8.0.0
         version: 8.6.18(storybook@8.6.18(prettier@3.8.3))
+      '@storybook/manager-api':
+        specifier: ^8.0.0
+        version: 8.6.18(storybook@8.6.18(prettier@3.8.3))
+      '@storybook/theming':
+        specifier: ^8.0.0
+        version: 8.6.18(storybook@8.6.18(prettier@3.8.3))
       '@storybook/web-components':
         specifier: ^8.0.0
         version: 8.6.18(lit@3.3.3)(storybook@8.6.18(prettier@3.8.3))

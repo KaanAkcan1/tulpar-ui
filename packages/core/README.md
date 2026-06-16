@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://github.com/KaanAkcan1/tulpar-ui">
+    <img src="https://raw.githubusercontent.com/KaanAkcan1/tulpar-ui/main/assets/brand/svg/tulpar-ui-icon.svg" width="56" alt="Tulpar UI" />
+  </a>
+</p>
+
 # @tulpar-ui/core
 
 Lit-based Web Components for Tulpar UI — the source of truth for

@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://tulpar-ui-docs.pages.dev">
+    <img src="assets/brand/social/readme-banner-1280x320.png" alt="Tulpar UI — Enterprise web components" width="100%" />
+  </a>
+</p>
+
 # Tulpar UI
 
 From-scratch design system: Lit-based Web Components with idiomatic

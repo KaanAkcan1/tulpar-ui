@@ -43,8 +43,11 @@ const menu: TulparNavItemData[] = [
     <!-- ── Topbar ───────────────────────────────────────────────────────── -->
     <TulparTopbar slot="topbar" show-menu-button>
       <div slot="start" class="brand">
-        <span class="brand-mark">▲</span>
-        <span class="brand-name">Tulpar UI</span>
+        <img
+          class="brand-logo"
+          :src="dark ? '/brand/tulpar-ui-lockup-dark.svg' : '/brand/tulpar-ui-lockup-light.svg'"
+          alt="Tulpar UI"
+        />
         <span class="brand-tag">Vue playground</span>
       </div>
       <button
@@ -137,20 +140,14 @@ body {
 
 .brand {
   display: inline-flex;
-  align-items: baseline;
-  gap: 8px;
+  align-items: center;
+  gap: 10px;
 }
 
-.brand-mark {
-  font-size: 16px;
-  color: var(--tulpar-color-brand-default, #00c57a);
-}
-
-.brand-name {
-  font-family: var(--tulpar-font-family-display, Georgia, serif);
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--tulpar-color-text-primary, #15110b);
+.brand-logo {
+  display: block;
+  height: 26px;
+  width: auto;
 }
 
 .brand-tag {
