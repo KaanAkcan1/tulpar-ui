@@ -4,6 +4,7 @@ import {
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
   type Type,
+  computed,
   effect,
   inject,
   input,
@@ -164,10 +165,12 @@ export class TulparSidenavComponent {
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
-  /** True when items must be rendered in light DOM (component icons present). */
-  renderItemsInLightDom(): boolean {
-    return hasComponentIcon(this.items());
-  }
+  /**
+   * True when items must be rendered in light DOM (component icons present).
+   * Memoised as a computed signal so the `hasComponentIcon` tree traversal is
+   * shared between the template `@if` and the `effect()` read sites.
+   */
+  readonly renderItemsInLightDom = computed(() => hasComponentIcon(this.items()));
 
   isStringIcon(icon: unknown): icon is string {
     return typeof icon === "string";

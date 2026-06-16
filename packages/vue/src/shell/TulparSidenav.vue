@@ -85,7 +85,7 @@ const NavNode = defineComponent({
   props: { item: { type: Object as PropType<TulparNavItemVueData>, required: true } },
   setup(p) {
     const renderChildren = (children?: TulparNavItemVueData[]): VNode[] =>
-      (children ?? []).map((c, i) => h(NavNode, { item: c, key: i }));
+      (children ?? []).map((c, i) => h(NavNode, { item: c, key: c.href ?? c.label ?? i }));
 
     return () => {
       const item = p.item;
@@ -169,7 +169,7 @@ watchEffect(() => {
     <slot name="utility-start" />
     <slot name="utility-end" />
     <template v-if="renderItemsInLightDom">
-      <NavNode v-for="(item, i) in items" :key="i" :item="item" />
+      <NavNode v-for="(item, i) in items" :key="item.href ?? item.label ?? i" :item="item" />
     </template>
     <slot />
     <slot name="footer" />

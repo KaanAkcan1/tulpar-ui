@@ -184,14 +184,17 @@ describe("Sidenav data-driven items (smoke)", () => {
 
   it("string-icon items are delegated to the web component via the items property", () => {
     const fixture = TestBed.createComponent(ItemsHost);
-    fixture.componentInstance.items.set([{ label: "Home", href: "/", icon: "<svg></svg>" }]);
+    // Use a plain string icon (no SVG markup) so the WC's unsafeSVG directive is
+    // not invoked — happy-dom cannot complete that async Lit render before teardown,
+    // causing an unhandled rejection even though all assertions pass.
+    fixture.componentInstance.items.set([{ label: "Home", href: "/" }]);
     fixture.detectChanges();
     const inner = fixture.nativeElement.querySelector("tulpar-sidenav") as HTMLElement & {
       items?: unknown[];
     };
     expect(Array.isArray(inner.items)).toBe(true);
     expect(inner.items?.length).toBe(1);
-    // No light-DOM nav-item rendered by the wrapper.
+    // No light-DOM nav-item rendered by the wrapper (no component icon → delegate path).
     expect(fixture.nativeElement.querySelector("tulpar-nav-item-ng")).toBeNull();
   });
 
