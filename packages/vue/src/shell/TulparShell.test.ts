@@ -4,6 +4,7 @@ import TulparShell from "./TulparShell.vue";
 import TulparTopbar from "./TulparTopbar.vue";
 import TulparSidenav from "./TulparSidenav.vue";
 import TulparNavItem from "./TulparNavItem.vue";
+import TulparNavSection from "./TulparNavSection.vue";
 import type { TulparNavItemData } from "@tulpar-ui/shell";
 
 describe("shell family Vue wrappers", () => {
@@ -11,11 +12,12 @@ describe("shell family Vue wrappers", () => {
     await import("@tulpar-ui/shell");
   });
 
-  it("all four SFCs are defined", () => {
+  it("all five SFCs are defined", () => {
     expect(TulparShell).toBeDefined();
     expect(TulparTopbar).toBeDefined();
     expect(TulparSidenav).toBeDefined();
     expect(TulparNavItem).toBeDefined();
+    expect(TulparNavSection).toBeDefined();
   });
 
   // The component reads $router off the app context — a router-less mount must
@@ -87,5 +89,41 @@ describe("shell family Vue wrappers", () => {
     const inner = wrapper.find("tulpar-nav-item");
     expect(inner.attributes("href")).toBe("/x");
     expect(inner.attributes("label")).toBe("X");
+  });
+
+  it("TulparNavItem forwards count/dot/dot-label/kbd", () => {
+    const wrapper = mount(TulparNavItem, {
+      props: { label: "Inbox", count: "12", dot: true, dotLabel: "new", kbd: "g i" },
+    });
+    const inner = wrapper.find("tulpar-nav-item");
+    expect(inner.attributes("count")).toBe("12");
+    expect(inner.attributes("dot-label")).toBe("new");
+    expect(inner.attributes("kbd")).toBe("g i");
+    expect(inner.attributes("dot")).toBeDefined();
+  });
+
+  it("TulparSidenav defaults position/density and omits single-expand", () => {
+    const wrapper = mount(TulparSidenav);
+    const inner = wrapper.find("tulpar-sidenav");
+    expect(inner.attributes("position")).toBe("left");
+    expect(inner.attributes("density")).toBe("comfortable");
+    expect(inner.attributes("single-expand")).toBeUndefined();
+  });
+
+  it("TulparSidenav forwards position/density/single-expand", () => {
+    const wrapper = mount(TulparSidenav, {
+      props: { position: "right", density: "compact", singleExpand: true },
+    });
+    const inner = wrapper.find("tulpar-sidenav");
+    expect(inner.attributes("position")).toBe("right");
+    expect(inner.attributes("density")).toBe("compact");
+    expect(inner.attributes("single-expand")).toBeDefined();
+  });
+
+  it("TulparNavSection forwards label", () => {
+    const wrapper = mount(TulparNavSection, { props: { label: "Main" } });
+    const inner = wrapper.find("tulpar-nav-section");
+    expect(inner.exists()).toBe(true);
+    expect(inner.attributes("label")).toBe("Main");
   });
 });

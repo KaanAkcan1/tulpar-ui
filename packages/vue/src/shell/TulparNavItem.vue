@@ -9,6 +9,10 @@ interface Props {
   active?: boolean;
   disabled?: boolean;
   target?: string;
+  count?: string;
+  dot?: boolean;
+  dotLabel?: string;
+  kbd?: string;
 }
 
 const {
@@ -19,6 +23,10 @@ const {
   active = false,
   disabled = false,
   target,
+  count,
+  dot = false,
+  dotLabel,
+  kbd,
 } = defineProps<Props>();
 </script>
 
@@ -29,8 +37,12 @@ const {
     :icon-class="iconClass ?? undefined"
     :badge="badge ?? undefined"
     :target="target ?? undefined"
+    :count="count ?? undefined"
+    :dot-label="dotLabel ?? undefined"
+    :kbd="kbd ?? undefined"
     :active="active || undefined"
     :disabled="disabled || undefined"
+    :dot="dot || undefined"
   >
     <slot />
   </tulpar-nav-item>
