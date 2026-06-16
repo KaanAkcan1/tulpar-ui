@@ -4,6 +4,8 @@ import "@tulpar-ui/shell";
 interface Props {
   href?: string;
   label?: string;
+  /** Raw SVG string forwarded to the element's `icon` attribute. */
+  icon?: string;
   iconClass?: string;
   badge?: string;
   active?: boolean;
@@ -18,6 +20,7 @@ interface Props {
 const {
   href,
   label,
+  icon,
   iconClass,
   badge,
   active = false,
@@ -34,6 +37,7 @@ const {
   <tulpar-nav-item
     :href="href ?? undefined"
     :label="label ?? undefined"
+    :icon="icon ?? undefined"
     :icon-class="iconClass ?? undefined"
     :badge="badge ?? undefined"
     :target="target ?? undefined"
