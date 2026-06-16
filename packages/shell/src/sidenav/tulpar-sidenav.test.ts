@@ -1,4 +1,4 @@
-import { fixture, html, expect } from "@open-wc/testing";
+import { fixture, html, expect, oneEvent } from "@open-wc/testing";
 import "./tulpar-sidenav";
 import "../nav-item/tulpar-nav-item";
 import type { TulparSidenav } from "./tulpar-sidenav";
@@ -145,5 +145,42 @@ describe("<tulpar-sidenav>", () => {
     g2.expand();
     await el.updateComplete;
     expect(g1.shadowRoot!.querySelector("button")!.getAttribute("aria-expanded")).to.equal("false");
+  });
+
+  // ── Chunk 3: built-in toggle + brand + aria state-sync ──────────────────────
+
+  it("renders a built-in toggle button that emits tulpar-menu-toggle", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav></tulpar-sidenav>`);
+    const btn = el.shadowRoot!.querySelector(".sidenav-toggle") as HTMLButtonElement;
+    expect(btn).to.exist;
+    setTimeout(() => btn.click());
+    expect(await oneEvent(el, "tulpar-menu-toggle")).to.exist;
+  });
+
+  it("toggle button reflects aria-expanded from data-collapsed (initial)", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav data-collapsed></tulpar-sidenav>`);
+    expect(el.shadowRoot!.querySelector(".sidenav-toggle")!.getAttribute("aria-expanded")).to.equal("false");
+  });
+
+  it("toggle aria-expanded updates live when data-collapsed mutates (MutationObserver)", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav></tulpar-sidenav>`);
+    expect(el.shadowRoot!.querySelector(".sidenav-toggle")!.getAttribute("aria-expanded")).to.equal("true");
+    el.toggleAttribute("data-collapsed", true);
+    await el.updateComplete;
+    expect(el.shadowRoot!.querySelector(".sidenav-toggle")!.getAttribute("aria-expanded")).to.equal("false");
+  });
+
+  it("does not render built-in toggle/brand when slot=header is provided", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav><div slot="header">custom</div></tulpar-sidenav>`);
+    expect(el.shadowRoot!.querySelector(".sidenav-toggle")).to.be.null;
+  });
+
+  // ── Chunk 3: rail header collapse (B1) ──────────────────────────────────────
+
+  it("rail collapses header to the toggle button only (B1)", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav data-rail></tulpar-sidenav>`);
+    const brand = el.shadowRoot!.querySelector(".brand") as HTMLElement;
+    expect(getComputedStyle(brand).display).to.equal("none");
+    expect(el.shadowRoot!.querySelector(".sidenav-toggle")).to.exist;
   });
 });

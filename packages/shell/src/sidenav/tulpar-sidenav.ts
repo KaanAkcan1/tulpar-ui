@@ -1,5 +1,5 @@
 import { LitElement, html, nothing } from "lit";
-import { property } from "lit/decorators.js";
+import { property, state } from "lit/decorators.js";
 import { sidenavStyles } from "./tulpar-sidenav.styles";
 import { headerStyles } from "./parts/header.styles";
 import { utilityStyles } from "./parts/utility.styles";
@@ -15,6 +15,29 @@ import "../nav-section/tulpar-nav-section";
 export class TulparSidenav extends LitElement {
   static override styles = [sidenavStyles, headerStyles, utilityStyles, accountStyles];
 
+  /**
+   * Tell the browser (and Lit) to observe these non-declared attributes so that
+   * attributeChangedCallback fires synchronously on mutation, guaranteeing that
+   * `await el.updateComplete` after `toggleAttribute("data-collapsed")` catches
+   * the re-render. The MutationObserver in connectedCallback is kept as an extra
+   * safety net for external mutations that may bypass attributeChangedCallback.
+   */
+  static override get observedAttributes() {
+    return [
+      ...super.observedAttributes,
+      "data-collapsed",
+      "data-sidenav-open",
+      "data-rail",
+    ];
+  }
+
+  override attributeChangedCallback(name: string, oldVal: string | null, newVal: string | null) {
+    super.attributeChangedCallback(name, oldVal, newVal);
+    if (name === "data-collapsed" || name === "data-sidenav-open" || name === "data-rail") {
+      this.requestUpdate();
+    }
+  }
+
   /** JSON menü verisi — slot ile birlikte kullanılabilir. */
   @property({ attribute: false }) items?: TulparNavItemData[];
 
@@ -23,6 +46,14 @@ export class TulparSidenav extends LitElement {
   @property({ type: String, reflect: true }) position: "left" | "right" = "left";
   @property({ type: String, reflect: true }) density: "comfortable" | "compact" = "comfortable";
   @property({ type: Boolean, attribute: "single-expand" }) singleExpand = false;
+
+  /** Accessible label for the built-in toggle button. */
+  @property({ attribute: "toggle-label" }) toggleLabel = "Toggle navigation";
+
+  /** True when the consumer has placed a [slot=header] child into light DOM. */
+  @state() hasHeaderSlot = false;
+
+  private _attrObserver: MutationObserver | null = null;
 
   private _renderItem(item: TulparNavItemData): unknown {
     if (item.type === "section") {
@@ -98,14 +129,38 @@ export class TulparSidenav extends LitElement {
     });
   };
 
+  /**
+   * Called whenever the header slot's assigned nodes change.
+   * Public so renderHeader() can bind it from parts/header.ts.
+   */
+  _onHeaderSlotChange = (e?: Event) => {
+    const slot = e?.target as HTMLSlotElement | undefined;
+    if (slot) {
+      this.hasHeaderSlot = slot.assignedElements().length > 0;
+    } else {
+      this.hasHeaderSlot = !!this.querySelector(':scope > [slot="header"]');
+    }
+  };
+
   override connectedCallback() {
     super.connectedCallback();
     this.addEventListener("tulpar-nav-item-expand", this._onItemExpand);
+    // Detect initial state synchronously before first render
+    this.hasHeaderSlot = !!this.querySelector(':scope > [slot="header"]');
+    this._attrObserver = new MutationObserver(() => {
+      this.requestUpdate();
+    });
+    this._attrObserver.observe(this, {
+      attributes: true,
+      attributeFilter: ["data-collapsed", "data-sidenav-open", "data-rail"],
+    });
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.removeEventListener("tulpar-nav-item-expand", this._onItemExpand);
+    this._attrObserver?.disconnect();
+    this._attrObserver = null;
   }
 
   override render() {
