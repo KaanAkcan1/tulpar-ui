@@ -2,6 +2,7 @@ import { fixture, html, expect } from "@open-wc/testing";
 import "./tulpar-sidenav";
 import "../nav-item/tulpar-nav-item";
 import type { TulparSidenav } from "./tulpar-sidenav";
+import type { TulparNavItem } from "../nav-item/tulpar-nav-item";
 
 describe("<tulpar-sidenav>", () => {
   it("renders a nav landmark with aria-label", async () => {
@@ -139,12 +140,10 @@ describe("<tulpar-sidenav>", () => {
     // Use direct children only so we get G1 and G2, not the nested c1/c2
     const [g1, g2] = [...el.children].filter(
       (c) => c.tagName.toLowerCase() === "tulpar-nav-item",
-    ) as Element[];
-    (g1 as any).expand();
-    (g2 as any).expand();
+    ) as TulparNavItem[];
+    g1.expand();
+    g2.expand();
     await el.updateComplete;
-    expect((g1 as any)._expanded ?? g1.shadowRoot!.querySelector("button")!.getAttribute("aria-expanded")).to.satisfy(
-      (v: unknown) => v === false || v === "false",
-    );
+    expect(g1.shadowRoot!.querySelector("button")!.getAttribute("aria-expanded")).to.equal("false");
   });
 });
