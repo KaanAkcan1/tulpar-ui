@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/web-components";
-import { html } from "lit";
+import { html, nothing } from "lit";
 import "@tulpar-ui/core/number-input";
 
 const meta: Meta = {
@@ -43,16 +43,109 @@ type Story = StoryObj;
 
 // ─── 1. Default ───────────────────────────────────────────────────────────────
 
+/**
+ * **Playground** — every declared control is wired: size, variant,
+ * format-style, label-position, min/max/step and every boolean (hide-steppers,
+ * integer-only, allow-empty, validation states) all visibly affect the field
+ * from the controls panel.
+ */
 export const Default: Story = {
-  render: () => html`
+  args: {
+    label: "Quantity",
+    size: "md",
+    variant: "outlined",
+    "label-position": "top",
+    min: 0,
+    max: 100,
+    step: 1,
+  },
+  render: (args) => html`
     <tulpar-number-input
-      label="Quantity"
-      min="0"
-      max="100"
-      step="1"
       style="max-width:280px; display:block;"
+      label=${args["label"] ?? nothing}
+      size=${args["size"] ?? nothing}
+      variant=${args["variant"] ?? nothing}
+      format-style=${args["format-style"] ?? nothing}
+      label-position=${args["label-position"] ?? nothing}
+      min=${args["min"] ?? nothing}
+      max=${args["max"] ?? nothing}
+      step=${args["step"] ?? nothing}
+      ?disabled=${args["disabled"]}
+      ?readonly=${args["readonly"]}
+      ?required=${args["required"]}
+      ?invalid=${args["invalid"]}
+      ?warn=${args["warn"]}
+      ?validating=${args["validating"]}
+      ?hide-steppers=${args["hide-steppers"]}
+      ?integer-only=${args["integer-only"]}
+      ?allow-empty=${args["allow-empty"]}
     ></tulpar-number-input>
   `,
+};
+
+/**
+ * **OrderLine** — a realistic composition: an order line pairing an
+ * integer-only quantity stepper with a currency-formatted unit price and a
+ * live-computed line total. Shows the number input inside real commerce UI.
+ */
+export const OrderLine: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => {
+    const root = document.createElement("div");
+    root.setAttribute(
+      "style",
+      "max-width:440px; padding:20px; border:1px solid var(--tulpar-color-border-default,#d9e0df); border-radius:12px; background:var(--tulpar-color-bg-raised,#fff);",
+    );
+
+    const unitPrice = 24.5;
+    const qtyEl = document.createElement("tulpar-number-input") as HTMLElement & {
+      value: number | null;
+    };
+    qtyEl.setAttribute("label", "Quantity");
+    qtyEl.setAttribute("integer-only", "");
+    qtyEl.setAttribute("min", "1");
+    qtyEl.setAttribute("max", "99");
+    qtyEl.setAttribute("step", "1");
+    qtyEl.setAttribute("style", "flex:1;");
+    qtyEl.value = 2;
+
+    const priceEl = document.createElement("tulpar-number-input") as HTMLElement & {
+      value: number | null;
+    };
+    priceEl.setAttribute("label", "Unit price");
+    priceEl.setAttribute("format-style", "currency");
+    priceEl.setAttribute("currency", "USD");
+    priceEl.setAttribute("locale", "en-US");
+    priceEl.setAttribute("readonly", "");
+    priceEl.setAttribute("style", "flex:1;");
+    priceEl.value = unitPrice;
+
+    const totalFmt = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+    const total = document.createElement("strong");
+    const render = () => {
+      const qty = qtyEl.value ?? 0;
+      total.textContent = totalFmt.format(qty * unitPrice);
+    };
+    qtyEl.addEventListener("input", render);
+
+    const fields = document.createElement("div");
+    fields.setAttribute("style", "display:flex; gap:12px; align-items:flex-start;");
+    fields.append(qtyEl, priceEl);
+
+    const summary = document.createElement("div");
+    summary.setAttribute(
+      "style",
+      "display:flex; justify-content:space-between; align-items:center; margin-top:8px; padding-top:12px; border-top:1px solid var(--tulpar-color-border-default,#d9e0df);",
+    );
+    const label = document.createElement("span");
+    label.textContent = "Line total";
+    label.setAttribute("style", "color:var(--tulpar-color-text-secondary,#74777a);");
+    summary.append(label, total);
+
+    root.append(fields, summary);
+    render();
+    return root;
+  },
 };
 
 // ─── 2. TRY_Currency ──────────────────────────────────────────────────────────

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/web-components";
-import { html } from "lit";
+import { html, nothing } from "lit";
 import "@tulpar-ui/core/textarea";
 
 const meta: Meta = {
@@ -44,18 +44,89 @@ type Story = StoryObj;
 
 // ─── 1. Default ───────────────────────────────────────────────────────────────
 
+/**
+ * **Playground** — every declared control is wired: size, variant, resize,
+ * label-position, autosize/min-rows/max-rows/rows and every boolean
+ * (show-count, copyable, pastable, validation states) all visibly affect the
+ * field from the controls panel.
+ */
 export const Default: Story = {
-  args: { label: "Description", placeholder: "Enter a description…" },
+  args: {
+    label: "Description",
+    placeholder: "Enter a description…",
+    size: "md",
+    variant: "outlined",
+    "label-position": "top",
+    resize: "vertical",
+  },
   render: (args) => html`
     <tulpar-textarea
-      label=${args["label"]}
+      style="max-width:400px; display:block;"
+      label=${args["label"] ?? nothing}
       placeholder=${args["placeholder"] ?? ""}
-      size=${args["size"] ?? "md"}
-      variant=${args["variant"] ?? "outlined"}
+      size=${args["size"] ?? nothing}
+      variant=${args["variant"] ?? nothing}
+      resize=${args["resize"] ?? nothing}
+      label-position=${args["label-position"] ?? nothing}
+      rows=${args["rows"] ?? nothing}
+      min-rows=${args["min-rows"] ?? nothing}
+      max-rows=${args["max-rows"] ?? nothing}
+      ?autosize=${args["autosize"]}
+      ?show-count=${args["show-count"]}
+      ?copyable=${args["copyable"]}
+      ?pastable=${args["pastable"]}
       ?disabled=${args["disabled"]}
       ?readonly=${args["readonly"]}
-      style="max-width:400px; display:block;"
+      ?required=${args["required"]}
+      ?invalid=${args["invalid"]}
+      ?warn=${args["warn"]}
+      ?validating=${args["validating"]}
     ></tulpar-textarea>
+  `,
+};
+
+/**
+ * **FeedbackForm** — a realistic composition: a feedback card combining an
+ * auto-growing message textarea with a character counter and a submit row.
+ * Shows the textarea inside a real product surface.
+ */
+export const FeedbackForm: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => html`
+    <form
+      @submit=${(e: Event) => e.preventDefault()}
+      style="max-width:440px; padding:24px; border:1px solid var(--tulpar-color-border-default,#d9e0df); border-radius:12px; background:var(--tulpar-color-bg-raised,#fff); display:flex; flex-direction:column; gap:16px;"
+    >
+      <div>
+        <h2 style="margin:0 0 4px; font-size:1.25rem;">Send feedback</h2>
+        <p style="margin:0; font-size:0.85rem; color:var(--tulpar-color-text-secondary,#74777a);">
+          Tell us what's working and what isn't. We read every message.
+        </p>
+      </div>
+      <tulpar-textarea
+        label="Your message"
+        required
+        show-count
+        maxlength="500"
+        min-rows="3"
+        max-rows="8"
+        placeholder="Describe your experience…"
+      ></tulpar-textarea>
+      <div style="display:flex; justify-content:flex-end; gap:8px;">
+        <button
+          type="button"
+          style="padding:0.55rem 1rem; border:1px solid var(--tulpar-color-border-default,#d9e0df); border-radius:8px; background:transparent; color:inherit; cursor:pointer;"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          style="padding:0.55rem 1rem; border:none; border-radius:8px; background:var(--tulpar-color-brand-default,#00c57a); color:#fff; font-weight:600; cursor:pointer;"
+        >
+          Submit
+        </button>
+      </div>
+    </form>
   `,
 };
 

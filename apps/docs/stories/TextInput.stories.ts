@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/web-components";
-import { html } from "lit";
+import { html, nothing } from "lit";
 import "@tulpar-ui/core/text-input";
 
 const meta: Meta = {
@@ -46,17 +46,89 @@ type Story = StoryObj;
 
 // ─── 1. Default ───────────────────────────────────────────────────────────────
 
+/**
+ * **Playground** — every declared control is wired, so size, variant,
+ * label-position, type, necessity-indicator and every boolean affordance
+ * (clearable, show-count, copyable, pastable, no-message-space, validation
+ * states) visibly affect the field from the controls panel.
+ */
 export const Default: Story = {
-  args: { label: "Full name", placeholder: "Enter your name" },
+  args: {
+    label: "Full name",
+    placeholder: "Enter your name",
+    size: "md",
+    variant: "outlined",
+    "label-position": "top",
+    type: "text",
+  },
   render: (args) => html`
     <tulpar-text-input
-      label=${args["label"]}
+      style="max-width:360px; display:block;"
+      label=${args["label"] ?? nothing}
       placeholder=${args["placeholder"] ?? ""}
-      size=${args["size"] ?? "md"}
-      variant=${args["variant"] ?? "outlined"}
+      size=${args["size"] ?? nothing}
+      variant=${args["variant"] ?? nothing}
+      label-position=${args["label-position"] ?? nothing}
+      type=${args["type"] ?? nothing}
+      necessity-indicator=${args["necessity-indicator"] ?? nothing}
       ?disabled=${args["disabled"]}
       ?readonly=${args["readonly"]}
+      ?required=${args["required"]}
+      ?invalid=${args["invalid"]}
+      ?warn=${args["warn"]}
+      ?validating=${args["validating"]}
+      ?clearable=${args["clearable"]}
+      ?show-count=${args["show-count"]}
+      ?copyable=${args["copyable"]}
+      ?pastable=${args["pastable"]}
+      ?no-message-space=${args["no-message-space"]}
     ></tulpar-text-input>
+  `,
+};
+
+/**
+ * **SignInForm** — a realistic composition: a sign-in card combining an email
+ * field, a password field with reveal toggle, and validation messaging. Shows
+ * the inputs working together inside a real product surface.
+ */
+export const SignInForm: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => html`
+    <form
+      @submit=${(e: Event) => e.preventDefault()}
+      style="max-width:360px; padding:24px; border:1px solid var(--tulpar-color-border-default,#d9e0df); border-radius:12px; background:var(--tulpar-color-bg-raised,#fff); display:flex; flex-direction:column; gap:16px;"
+    >
+      <div>
+        <h2 style="margin:0 0 4px; font-size:1.25rem;">Sign in</h2>
+        <p style="margin:0; font-size:0.85rem; color:var(--tulpar-color-text-secondary,#74777a);">
+          Welcome back. Enter your credentials to continue.
+        </p>
+      </div>
+      <tulpar-text-input
+        type="email"
+        label="Email"
+        required
+        necessity-indicator="icon"
+        placeholder="you@example.com"
+        autocomplete="email"
+        clearable
+      ></tulpar-text-input>
+      <tulpar-text-input
+        type="password"
+        label="Password"
+        required
+        necessity-indicator="icon"
+        placeholder="Enter your password"
+        autocomplete="current-password"
+        helper-text="At least 8 characters."
+      ></tulpar-text-input>
+      <button
+        type="submit"
+        style="margin-top:4px; padding:0.6rem; border:none; border-radius:8px; background:var(--tulpar-color-brand-default,#00c57a); color:#fff; font-weight:600; cursor:pointer;"
+      >
+        Continue
+      </button>
+    </form>
   `,
 };
 
