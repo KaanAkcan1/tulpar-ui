@@ -181,6 +181,33 @@ Rewrite both playground shells to the prop-driven API:
 
 ---
 
+## 8a. File structure / decomposition (architecture)
+
+The current `packages/shell/src/` layout (one folder per public element + co-located styles/test/barrel) is sound and kept. The risk this iteration is `tulpar-sidenav` becoming a god-component, so its regions are decomposed — **without adding new public elements** (the self-contained goal forbids expanding the documented/tested/wrapped API surface; `nav-item`/`nav-section` stay the only composable public building blocks).
+
+```
+packages/shell/src/
+  sidenav/
+    tulpar-sidenav.ts          # orchestrator: state, items render, slots, events, keyboard, state-sync
+    tulpar-sidenav.styles.ts   # host/nav/scroll styles; composes part styles via css[] array
+    parts/
+      header.ts   header.styles.ts     # renderHeader(host) → toggle + brand
+      utility.ts  utility.styles.ts     # renderUtility(host) → theme toggle + config
+      account.ts  account.styles.ts     # renderAccount(host) → avatar + name/role + settings/logout
+  _internal/                            # package-private (CLAUDE.md _internal rule), shared within @tulpar-ui/shell only
+    brand-mark.ts                       # inline brand-mark SVG — shared by sidenav toggle default AND shell floating button (DRY, single source)
+    initials.ts                         # "Kaan Akcan" → "KA"; pure function, own test
+  shell/ ...                            # floating reopen button lives here (shell concern); imports brand-mark from _internal
+```
+
+**Decisions:**
+- **Render-function modules, not nested private custom elements.** Each part is a pure function returning a Lit template, taking the sidenav host/props; state and events stay on the orchestrator. This avoids per-region shadow roots + slot plumbing (simpler, DRYer). Styles split per part and compose via Lit `static styles = [base, headerStyles, utilityStyles, accountStyles]`. Promote a region to a private element only if it later grows its own state/behavior (YAGNI).
+- **No new public elements** for header/utility/account/toggle — internal only.
+- **DRY shared bits in `src/_internal/`**: the brand-mark SVG (used by the sidenav toggle default and the shell floating reopen button) and the initials helper live once. `_internal` is importable across folders *within* `@tulpar-ui/shell` (the rule only forbids cross-*package* `_internal` imports).
+- Don't over-split (YAGNI): only the regions v2 actually grows are extracted.
+
+Each part file has one clear responsibility and a documented `render<Part>(host)` interface; the orchestrator stays readable as the composition root.
+
 ## 9. Out of scope
 
 - `top` / `bottom` (horizontal) layout.
