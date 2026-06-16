@@ -45,6 +45,7 @@ The common case must not require slotted SVG. Add an `icon` field that travels i
 
 - **Core WC** `TulparNavItemData.icon?: string` — raw SVG markup, rendered via Lit `unsafeSVG` into the existing icon position. Universal (Storybook, plain HTML).
   - Security note: `unsafeSVG` trusts the string. Document that `icon` must be author-controlled markup, not user input. (Menu definitions are developer data, so this is acceptable; call it out.)
+  - Bundle note: importing `unsafeSVG` into `tulpar-nav-item` (the highest-instance-count element) adds one Lit directive; render it only when `icon` is a string so the directive isn't exercised needlessly.
 - The existing `slot="icon"` and `icon-class` paths remain (escape hatches / icon-font usage).
 - Existing `count`/`dot`/`kbd`/`badge`/external affordances unchanged.
 
@@ -58,11 +59,13 @@ The richer per-framework icon ergonomics (passing a component) live in the wrapp
 
 ### 4.1 Header: built-in toggle + brand
 
-- **Built-in toggle button** in the header. Emits `tulpar-menu-toggle` (reusing the existing shell-handled event, so the shell's collapse/overlay logic works unchanged). Carries `aria-expanded` reflecting collapsed state and an `aria-label` (default "Toggle navigation", override `toggle-label`).
+- **Built-in toggle button** in the header. Emits `tulpar-menu-toggle` (reusing the existing shell-handled event, so the shell's collapse/overlay logic works unchanged). Carries an `aria-label` (default "Toggle navigation", override `toggle-label`) and `aria-expanded` (see state-sync contract below).
+  - **State-sync contract for `aria-expanded`:** the collapsed/open state lives on the **shell** (`sidenavCollapsed` / `sidenavOpen`), and rail state already round-trips to the sidenav via `data-rail` (`_updateRailAttr`). Extend the shell to reflect the not-rail collapse/open state onto the slotted sidenav the same way — reflect **`data-collapsed`** (static collapsed) and **`data-open`** (overlay open) onto the slotted `[slot="sidenav"]` element. The sidenav derives `aria-expanded` from these (expanded = visible/not-collapsed; for overlay, expanded = open). This is the only added state channel; no new public props.
   - Default icon = inline Tulpar **brand mark** SVG. Override via `slot="toggle-icon"` (core) / `toggleIcon` component (wrappers).
 - **Brand/wordmark** beside the toggle. Default = inline Tulpar **wordmark**. Override via `slot="brand"` (core) / `brand` (wrappers).
   - Trade-off (accepted): the WC ships Tulpar's own mark + wordmark as defaults (this is the reference shell); external consumers override. Keep the inlined SVGs minimal.
-- The existing `slot="header"` remains as a full-header override (wins over the built-in toggle+brand).
+  - **Theming the inlined defaults (resolves the prior spec's dark-mode wordmark issue):** the default **wordmark** SVG MUST use `fill="currentColor"` (the sidenav inherits `--tulpar-shell-sidenav-fg`, which is dark text in light mode / light text in dark mode) — NOT a baked `#07291F`. The default **brand mark** (three ascending strokes) keeps its brand greens: it is logo artwork (an asset), not themeable UI chrome, and green reads on both light and dark — so it is exempt from the token rule. No hex is baked into themeable text.
+- The existing `slot="header"` remains as a full-header override (wins over the built-in toggle+brand). **When `slot="header"` is provided, the built-in toggle button — and therefore its `tulpar-menu-toggle` emitter — is NOT rendered;** the consumer is responsible for providing their own toggle affordance (this interacts with the overlay/hidden reopen affordance in §5.2, which is shell-rendered and independent of the header slot).
 - **Rail (B1 fix):** in rail, the header collapses to **only the toggle button** (brand mark); the wordmark/brand is hidden — no overflow.
 
 ### 4.2 Menu
@@ -109,6 +112,7 @@ The richer per-framework icon ergonomics (passing a component) live in the wrapp
 Root cause: v0.8 added `overflow-x: clip` to the scrollable `nav` to kill the rail horizontal scrollbar — but that **clips the rail hover flyouts**, so they don't appear.
 
 Fix: the flyout must **escape the clipped scroll container**. Render the rail flyout in the top layer / detached from the clipped flow — via the `popover` API or `position: fixed` with JS positioning anchored to the focused/hovered item (computed on `pointerenter`/`focus`), with a high stacking context. Keep `overflow-x: clip` (scrollbar fix stays). Flyout direction respects `position` (left/right). Keyboard-reachable (shows on focus). Falls back gracefully where `popover` is unsupported (fixed-position path).
+- **Reposition/dismiss on scroll/resize:** with `position: fixed`/JS anchoring, the flyout must reposition or dismiss when the `nav` scrolls or the window resizes (otherwise it detaches from a scrolled-away item). Hide on `pointerleave`/`blur`/scroll; recompute on reopen.
 
 ---
 
@@ -119,17 +123,22 @@ Fix: the flyout must **escape the clipped scroll container**. Render the rail fl
 `@property sidenav-layout: "under-topbar" | "over-topbar"` (reflected), default `"under-topbar"`.
 
 - `under-topbar` (current): grid `"topbar topbar" / "sidenav content"` — topbar full width on top, sidenav below.
-- `over-topbar`: grid `"sidenav topbar" / "sidenav content"` — sidenav spans full height from the top; topbar only above the content column. Footer behavior: the shell `footer` area spans the content column (not under the sidenav) in over-topbar; under-topbar keeps full-width footer. (Both are token/grid-only changes; no new colors.)
+- `over-topbar`: grid `"sidenav topbar" / "sidenav content"` — sidenav spans full height from the top; topbar only above the content column. Footer behavior: the shell `footer` area spans the content column (not under the sidenav) in over-topbar; under-topbar keeps full-width footer. (Both are grid-only changes; no new colors.)
 - Combine correctly with `data-sidenav-position="right"` (mirror the columns/areas).
+- **z-index:** existing `z` tokens already place sidenav (200) above topbar (100), so in `over-topbar` the full-height sidenav paints over the topbar's left edge correctly — no z-index rework expected; verify the topbar/sidenav corner (no shadow seam) during implementation.
 
 ### 5.2 Floating reopen button (B4)
 
-When the sidenav is fully hidden (static mode + collapsed; the `--_sidenav-col: 0` / `display:none` case), the **shell** renders a floating button:
+When there is **no visible affordance to open the sidenav**, the **shell** renders a floating reopen button. Two cases qualify:
+1. **Static + collapsed** (the `--_sidenav-col: 0` / `display:none` case, `tulpar-shell.styles.ts:76-81`).
+2. **Overlay/mobile + closed** — the sidenav (and its built-in toggle) is off-screen, and the topbar menu button is **opt-in** (`showMenuButton` default `false`), so without this there is no reopen affordance. The floating button covers that gap.
 
-- Top-left of the shell, **high z-index** (above topbar/content), animated in (slide/fade) and out; honors `prefers-reduced-motion`.
-- Shows the same toggle affordance (Tulpar brand mark by default); on click emits `tulpar-menu-toggle` → sidenav reopens (slides back).
+Behavior:
+- Top-left of the shell, **high z-index** (above topbar/content/overlay scrim), animated in (slide/fade) and out; honors `prefers-reduced-motion`.
+- Shows the same toggle affordance (Tulpar brand mark by default); on click emits `tulpar-menu-toggle` → sidenav reopens (slides back / overlay opens).
 - Works in both `under-topbar` and `over-topbar`.
-- Does **not** appear in rail mode (the rail toggle is always visible) or overlay/mobile (the topbar/overlay trigger handles it) — only when the sidenav is truly hidden.
+- Does **not** appear in **rail** mode (the rail toggle is always visible), nor when the sidenav is currently visible/open.
+- It is shell-rendered and independent of the sidenav's `slot="header"` override, so it remains available even if the consumer replaces the built-in header toggle.
 
 ### 5.3 Shell event handling
 
