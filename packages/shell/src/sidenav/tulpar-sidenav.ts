@@ -61,6 +61,24 @@ export class TulparSidenav extends LitElement {
   /** aria-label for the config button. */
   @property({ attribute: "config-label" }) configLabel = "Open configurator";
 
+  // ── Account block props (Chunk 5) ────────────────────────────────────────
+  /** Show the built-in account block at the bottom. Defaults to true. */
+  @property({ type: Boolean, attribute: "show-account-block" }) showAccountBlock = true;
+  /** Display name of the signed-in user. */
+  @property({ attribute: "user-name" }) userName?: string;
+  /** Role/title line below the user name. */
+  @property({ attribute: "user-role" }) userRole?: string;
+  /** URL of the user's profile image. When provided, shows an <img> instead of initials. */
+  @property({ attribute: "profile-image" }) profileImage?: string;
+  /** Show the settings icon button. Defaults to false (opt-in). */
+  @property({ type: Boolean, attribute: "show-settings" }) showSettings = false;
+  /** Show the logout icon button. Defaults to true. */
+  @property({ type: Boolean, attribute: "show-logout" }) showLogout = true;
+  /** aria-label for the settings button. */
+  @property({ attribute: "settings-label" }) settingsLabel = "Settings";
+  /** aria-label for the logout button. */
+  @property({ attribute: "logout-label" }) logoutLabel = "Log out";
+
   /** True when the consumer has placed a [slot=header] child into light DOM. */
   @state() hasHeaderSlot = false;
 
@@ -68,6 +86,9 @@ export class TulparSidenav extends LitElement {
   @state() _hasUtilityStart = false;
   /** True when a [slot=utility-end] child is present in light DOM. */
   @state() _hasUtilityEnd = false;
+
+  /** True when a [slot=footer] child is present in light DOM. */
+  @state() _hasFooterSlot = false;
 
   private _attrObserver: MutationObserver | null = null;
 
@@ -184,6 +205,19 @@ export class TulparSidenav extends LitElement {
     }
   };
 
+  /**
+   * Called whenever the footer slot's assigned nodes change.
+   * Public so renderAccount() can bind it from parts/account.ts.
+   */
+  _onFooterSlotChange = (e?: Event) => {
+    const slot = e?.target as HTMLSlotElement | undefined;
+    if (slot) {
+      this._hasFooterSlot = slot.assignedElements().length > 0;
+    } else {
+      this._hasFooterSlot = !!this.querySelector(':scope > [slot="footer"]');
+    }
+  };
+
   override connectedCallback() {
     super.connectedCallback();
     this.addEventListener("tulpar-nav-item-expand", this._onItemExpand);
@@ -191,6 +225,7 @@ export class TulparSidenav extends LitElement {
     this.hasHeaderSlot = !!this.querySelector(':scope > [slot="header"]');
     this._hasUtilityStart = !!this.querySelector(':scope > [slot="utility-start"]');
     this._hasUtilityEnd = !!this.querySelector(':scope > [slot="utility-end"]');
+    this._hasFooterSlot = !!this.querySelector(':scope > [slot="footer"]');
     this._attrObserver = new MutationObserver(() => {
       this.requestUpdate();
     });

@@ -230,4 +230,54 @@ describe("<tulpar-sidenav>", () => {
     expect(getComputedStyle(text).display).to.equal("none");
     expect(getComputedStyle(el.shadowRoot!.querySelector(".util-config") as HTMLElement).display).to.equal("none");
   });
+
+  // ── Chunk 5: built-in account block ─────────────────────────────────────
+
+  it("shows account block by default with initials from user-name", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav user-name="Kaan Akcan" user-role="Owner"></tulpar-sidenav>`);
+    expect(el.shadowRoot!.querySelector(".account")).to.exist;
+    expect(el.shadowRoot!.querySelector(".account-avatar")!.textContent!.trim()).to.equal("KA");
+    expect(el.shadowRoot!.querySelector(".account-name")!.textContent).to.contain("Kaan Akcan");
+    expect(el.shadowRoot!.querySelector(".account-role")!.textContent).to.contain("Owner");
+  });
+  it("uses profile image when provided", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav user-name="Kaan" profile-image="/a.png"></tulpar-sidenav>`);
+    expect(el.shadowRoot!.querySelector("img.account-avatar-img")).to.exist;
+  });
+  it("hides the whole block when show-account-block=false", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav user-name="Kaan"></tulpar-sidenav>`);
+    el.showAccountBlock = false; await el.updateComplete;
+    expect(el.shadowRoot!.querySelector(".account")).to.be.null;
+  });
+  it("omits the name line when userName is absent (graceful empty)", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav></tulpar-sidenav>`);
+    expect(el.shadowRoot!.querySelector(".account")).to.exist; // showAccountBlock default true
+    expect(el.shadowRoot!.querySelector(".account-name")).to.be.null;
+  });
+  it("logout shows by default and emits tulpar-logout; settings opt-in emits tulpar-settings-click", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav user-name="Kaan"></tulpar-sidenav>`);
+    el.showSettings = true; await el.updateComplete;
+    const logout = el.shadowRoot!.querySelector(".account-logout") as HTMLButtonElement;
+    setTimeout(() => logout.click());
+    expect(await oneEvent(el, "tulpar-logout")).to.exist;
+    const settings = el.shadowRoot!.querySelector(".account-settings") as HTMLButtonElement;
+    setTimeout(() => settings.click());
+    expect(await oneEvent(el, "tulpar-settings-click")).to.exist;
+  });
+  it("footer slot overrides the built-in account block", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav user-name="Kaan"><div slot="footer" class="mine">x</div></tulpar-sidenav>`);
+    await el.updateComplete;
+    expect(el.shadowRoot!.querySelector(".account")).to.be.null;
+    expect(el.shadowRoot!.querySelector('slot[name="footer"]')).to.exist;
+  });
+
+  // ── Chunk 5.2: rail account = avatar only ───────────────────────────────
+
+  it("rail account shows avatar only (meta + actions hidden)", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav data-rail user-name="Kaan"></tulpar-sidenav>`);
+    el.showSettings = true; await el.updateComplete;
+    expect(getComputedStyle(el.shadowRoot!.querySelector(".account-meta") as HTMLElement).display).to.equal("none");
+    expect(getComputedStyle(el.shadowRoot!.querySelector(".account-actions") as HTMLElement).display).to.equal("none");
+    expect(el.shadowRoot!.querySelector(".account-avatar, .account-avatar-img")).to.exist;
+  });
 });
