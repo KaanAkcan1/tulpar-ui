@@ -60,7 +60,7 @@ The richer per-framework icon ergonomics (passing a component) live in the wrapp
 ### 4.1 Header: built-in toggle + brand
 
 - **Built-in toggle button** in the header. Emits `tulpar-menu-toggle` (reusing the existing shell-handled event, so the shell's collapse/overlay logic works unchanged). Carries an `aria-label` (default "Toggle navigation", override `toggle-label`) and `aria-expanded` (see state-sync contract below).
-  - **State-sync contract for `aria-expanded`:** the collapsed/open state lives on the **shell** (`sidenavCollapsed` / `sidenavOpen`), and rail state already round-trips to the sidenav via `data-rail` (`_updateRailAttr`). Extend the shell to reflect the not-rail collapse/open state onto the slotted sidenav the same way — reflect **`data-collapsed`** (static collapsed) and **`data-open`** (overlay open) onto the slotted `[slot="sidenav"]` element. The sidenav derives `aria-expanded` from these (expanded = visible/not-collapsed; for overlay, expanded = open). This is the only added state channel; no new public props.
+  - **State-sync contract for `aria-expanded`:** the collapsed/open state lives on the **shell** (`sidenavCollapsed` / `sidenavOpen`), and rail state already round-trips to the sidenav via `data-rail` (`_updateRailAttr`). Extend the shell to reflect the not-rail collapse/open state onto the slotted sidenav the same way — reflect **`data-collapsed`** (static collapsed) and **`data-sidenav-open`** (overlay open) onto the slotted `[slot="sidenav"]` element. The sidenav derives `aria-expanded` from these (expanded = visible/not-collapsed; for overlay, expanded = open). This is the only added state channel; no new public props.
   - Default icon = inline Tulpar **brand mark** SVG. Override via `slot="toggle-icon"` (core) / `toggleIcon` component (wrappers).
 - **Brand/wordmark** beside the toggle. Default = inline Tulpar **wordmark**. Override via `slot="brand"` (core) / `brand` (wrappers).
   - Trade-off (accepted): the WC ships Tulpar's own mark + wordmark as defaults (this is the reference shell); external consumers override. Keep the inlined SVGs minimal.
@@ -97,7 +97,7 @@ The richer per-framework icon ergonomics (passing a component) live in the wrapp
 
 | Event | Trigger | Handled by |
 |---|---|---|
-| `tulpar-menu-toggle` | built-in toggle button | shell (collapse/overlay) |
+| `tulpar-menu-toggle` | built-in toggle button (not emitted when `slot="header"` overrides the header — see §4.1) | shell (collapse/overlay) |
 | `tulpar-theme-toggle` | mode-selection control | **shell** (flips `dark`) |
 | `tulpar-config-click` | config button | app (wrapper output) |
 | `tulpar-settings-click` | settings button | app (no-op for now) |
