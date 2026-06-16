@@ -13,6 +13,10 @@ export class TulparSidenav extends LitElement {
 
   @property({ type: String, attribute: "nav-label" }) navLabel = "Main navigation";
 
+  @property({ type: String, reflect: true }) position: "left" | "right" = "left";
+  @property({ type: String, reflect: true }) density: "comfortable" | "compact" = "comfortable";
+  @property({ type: Boolean, attribute: "single-expand" }) singleExpand = false;
+
   private _renderItem(item: TulparNavItemData): unknown {
     if (item.type === "section") {
       return html`<tulpar-nav-section label=${item.label ?? nothing}>
@@ -53,11 +57,16 @@ export class TulparSidenav extends LitElement {
 
   override render() {
     return html`
-      <div class="header"><slot name="header"></slot></div>
+      <div class="header"><slot name="header"></slot><slot name="header-actions"></slot></div>
+      <div class="search"><slot name="search"></slot></div>
       <nav aria-label=${this.navLabel} @keydown=${this._onKeydown}>
         ${this.items?.map((i) => this._renderItem(i)) ?? nothing}
         <slot></slot>
       </nav>
+      <div class="utility">
+        <div class="utility-start"><slot name="utility-start"></slot></div>
+        <div class="utility-end"><slot name="utility-end"></slot></div>
+      </div>
       <div class="footer"><slot name="footer"></slot></div>
     `;
   }

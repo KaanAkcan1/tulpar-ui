@@ -55,6 +55,20 @@ describe("<tulpar-sidenav>", () => {
     expect(el.shadowRoot!.querySelector("tulpar-nav-section")).to.exist;
   });
 
+  it("reflects position and density attributes", async () => {
+    const el = await fixture<TulparSidenav>(
+      html`<tulpar-sidenav position="right" density="compact"></tulpar-sidenav>`,
+    );
+    expect(el.getAttribute("position")).to.equal("right");
+    expect(el.getAttribute("density")).to.equal("compact");
+  });
+
+  it("exposes utility-start, utility-end, search and footer slots", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav></tulpar-sidenav>`);
+    const names = [...el.shadowRoot!.querySelectorAll("slot")].map((s) => s.name);
+    expect(names).to.include.members(["search", "header-actions", "utility-start", "utility-end", "footer"]);
+  });
+
   it("moves focus between items with ArrowDown/ArrowUp", async () => {
     const el = await fixture<TulparSidenav>(html`
       <tulpar-sidenav>
