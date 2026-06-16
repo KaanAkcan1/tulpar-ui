@@ -30,10 +30,10 @@ export const accountStyles = css`
     border-radius: 0.375rem; /* squircle-ish */
     background: linear-gradient(
       135deg,
-      var(--tulpar-color-brand-default, #2563eb),
-      var(--tulpar-color-brand-subtle, #1d4ed8)
+      var(--tulpar-color-brand-active, #0b7e52),
+      var(--tulpar-color-brand-hover, #00a468)
     );
-    color: var(--tulpar-color-text-on-brand, #ffffff);
+    color: var(--tulpar-color-text-inverse, #f0f7f5);
     font-size: 0.6875rem; /* 11px */
     font-weight: 600;
     line-height: 1;
@@ -65,7 +65,7 @@ export const accountStyles = css`
     font-size: 0.8125rem; /* 13px */
     font-weight: 600;
     line-height: 1.25;
-    color: var(--tulpar-shell-sidenav-fg, #1e293b);
+    color: var(--tulpar-shell-sidenav-fg, #334155);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -76,7 +76,7 @@ export const accountStyles = css`
     font-size: 0.6875rem; /* 11px */
     font-weight: 400;
     line-height: 1.25;
-    color: var(--tulpar-shell-sidenav-fg-muted, #64748b);
+    color: var(--tulpar-shell-sidenav-fg-muted, #74777a);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -102,14 +102,14 @@ export const accountStyles = css`
     border: none;
     border-radius: var(--tulpar-radius-sm, 0.25rem);
     background: none;
-    color: var(--tulpar-shell-sidenav-fg-muted, #64748b);
+    color: var(--tulpar-shell-sidenav-fg-muted, #74777a);
     cursor: pointer;
     transition: background 120ms ease, color 120ms ease;
   }
 
   .account-icon-btn:hover {
     background: var(--tulpar-shell-sidenav-item-hover-bg, rgba(11, 8, 4, 0.06));
-    color: var(--tulpar-shell-sidenav-fg, #1e293b);
+    color: var(--tulpar-shell-sidenav-fg, #334155);
   }
 
   .account-icon-btn:focus-visible {
