@@ -82,7 +82,7 @@ describe("tulparLight.shell", () => {
   });
 
   it("item glow derived from tulpar[500] (#00c57a)", () => {
-    expect(tulparLight.shell.sidenav.item.glow).toBe("rgba(0, 197, 122, 0.50)");
+    expect(tulparLight.shell.sidenav.item.glow).toBe("rgba(0, 197, 122, 0.5)");
   });
 
   it("item countBg = colpan[100], countFg = kara[600], dot = tulpar[500]", () => {

@@ -198,22 +198,22 @@ export const tulparDark: SemanticTokens = {
     sidenav: {
       width: "17.5rem",
       railWidth: "4.5rem",
-      bg: c.mergen[950],
+      bg: c.mergen[950],  // unchanged: nav stays darker than content (mergen[950])
       fg: c.colpan[200],
       fgMuted: c.kara[400],
       border: c.mergen[800],
       edge: "rgba(255, 255, 255, 0.04)",     // NEW
-      scrollShadow: "rgba(0, 0, 0, 0.30)",   // NEW
+      scrollShadow: "rgba(0, 0, 0, 0.3)",    // NEW
       item: {
         height: "2.5rem",
-        heightCompact: "2.25rem",
         radius: "0.5rem",
+        heightCompact: "2.25rem",
         iconSize: "1.125rem",
         bgHover: c.mergen[900],
         bgActive: c.mergen[800],
         fgActive: c.tulpar[300],
         indicator: c.tulpar[400],
-        glow: "rgba(33, 217, 141, 0.50)",   // NEW — tulpar[400] @ 50%
+        glow: "rgba(33, 217, 141, 0.5)",    // NEW — tulpar[400] @ 50%
         badgeBg: c.tulpar[400],
         badgeFg: c.yagiz[950],
         countBg: c.mergen[800],             // NEW

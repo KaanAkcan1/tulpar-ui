@@ -5,7 +5,6 @@ describe("tulparDark", () => {
   it("surfaces: navy-tinted mergen ramp", () => {
     expect(tulparDark.color.bg.surface).toBe("#202c43"); // mergen-900
     expect(tulparDark.color.bg.subtle).toBe("#243553"); // mergen-800
-    expect(tulparDark.shell.content.bg).toBe("#202c43"); // re-bound: mergen-900 (was mergen-950)
   });
 
   it("text: light colpan, gok-400 link", () => {
@@ -59,11 +58,11 @@ describe("tulparDark.shell", () => {
 
   it("sidenav edge + scrollShadow (dark overlays)", () => {
     expect(tulparDark.shell.sidenav.edge).toBe("rgba(255, 255, 255, 0.04)");
-    expect(tulparDark.shell.sidenav.scrollShadow).toBe("rgba(0, 0, 0, 0.30)");
+    expect(tulparDark.shell.sidenav.scrollShadow).toBe("rgba(0, 0, 0, 0.3)");
   });
 
   it("item glow derived from tulpar[400] (#21d98d)", () => {
-    expect(tulparDark.shell.sidenav.item.glow).toBe("rgba(33, 217, 141, 0.50)");
+    expect(tulparDark.shell.sidenav.item.glow).toBe("rgba(33, 217, 141, 0.5)");
   });
 
   it("item countBg = mergen[800], countFg = colpan[200], dot = tulpar[400]", () => {

@@ -216,14 +216,14 @@ export const tulparLight: SemanticTokens = {
       scrollShadow: "rgba(11, 8, 4, 0.08)",  // NEW — yagiz[950] @ 8%
       item: {
         height: "2.5rem",          // re-bind: was 2.75rem
-        heightCompact: "2.25rem",  // NEW
         radius: "0.5rem",          // re-bind: was 0.375rem
+        heightCompact: "2.25rem",  // NEW
         iconSize: "1.125rem",      // NEW
         bgHover: c.colpan[100],
         bgActive: c.tulpar[50],
         fgActive: c.tulpar[700],
         indicator: c.tulpar[500],
-        glow: "rgba(0, 197, 122, 0.50)",   // NEW — tulpar[500] @ 50%
+        glow: "rgba(0, 197, 122, 0.5)",    // NEW — tulpar[500] @ 50%
         badgeBg: c.tulpar[500],
         badgeFg: c.yagiz[900],
         countBg: c.colpan[100],            // NEW
