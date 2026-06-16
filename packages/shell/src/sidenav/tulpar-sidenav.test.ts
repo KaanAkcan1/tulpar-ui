@@ -97,6 +97,21 @@ describe("<tulpar-sidenav>", () => {
     expect(document.activeElement).to.equal(items[0]);
   });
 
+  it("rail nav does not produce horizontal overflow", async () => {
+    const el = await fixture<TulparSidenav>(html`
+      <tulpar-sidenav data-rail>
+        <tulpar-nav-item href="/averylonglabelthatwouldoverflow" label="A very long label that would overflow"></tulpar-nav-item>
+      </tulpar-sidenav>
+    `);
+    await el.updateComplete;
+    const nav = el.shadowRoot!.querySelector("nav")!;
+    // Assert that the CSS rule is declared on the nav element.
+    // overflow-x:clip is set via inline stylesheet in the shadow root.
+    // getComputedStyle may resolve "clip" as "hidden" in some engines — check both.
+    const overflowX = getComputedStyle(nav).overflowX;
+    expect(overflowX === "clip" || overflowX === "hidden").to.be.true;
+  });
+
   it("Home/End move focus to first/last item", async () => {
     const el = await fixture<TulparSidenav>(html`
       <tulpar-sidenav>

@@ -141,6 +141,7 @@ export const navItemStyles = css`
 
   /* Rail flyout: show label/badge as hover tooltip when ancestor has [data-rail] */
   /* Note: :host-context works in Chromium (WTR target); Firefox fallback is v2 scope */
+  /* Flyout appears to the right of the icon by default (left-positioned sidenav) */
   :host-context([data-rail]) .label,
   :host-context([data-rail]) .badge,
   :host-context([data-rail]) .chevron {
@@ -159,4 +160,17 @@ export const navItemStyles = css`
   :host-context([data-rail]) a:focus-visible .label {
     opacity: 1;
   }
+  /* Mirror flyout to the left when sidenav is right-positioned
+     (flyout escapes to the left of the icon instead of right) */
+  :host-context([data-rail]):host-context([position="right"]) .label,
+  :host-context([data-rail]):host-context([position="right"]) .badge,
+  :host-context([data-rail]):host-context([position="right"]) .chevron {
+    inset-inline-start: auto;
+    inset-inline-end: calc(100% + 0.25rem);
+  }
+  /* TODO(v2): migrate to CSS Anchor Positioning (position-area) for true overflow-escape
+     flyouts once browser support is sufficient. The absolute approach works because
+     the nav has overflow-x:clip (not hidden), so the flyout is visually clipped at
+     the nav edge — the right-position mirror above ensures it opens toward the viewport
+     center. Full popover API integration is tracked as a follow-up. */
 `;
