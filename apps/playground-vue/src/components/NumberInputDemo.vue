@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { TulparNumberInput } from "@tulpar-ui/vue";
 
 // ─── Section list ─────────────────────────────────────────────────────────────
@@ -45,6 +45,13 @@ watchEffect(() => {
     (advancedRef.value as any).formatOptions = compactTRYOptions;
   }
 });
+
+// Real-world composition (order summary)
+const UNIT_PRICE = 12;
+const usd = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+const orderQty = ref<number | null>(3);
+const orderUnitDisplay = computed(() => usd.format(UNIT_PRICE));
+const orderTotalDisplay = computed(() => usd.format(UNIT_PRICE * (orderQty.value ?? 0)));
 
 // ─── Code snippets ────────────────────────────────────────────────────────────
 
@@ -117,6 +124,16 @@ watchEffect(() => {
 </script>
 
 <template>
+  <!-- ── Page header ───────────────────────────────────────────────────────── -->
+  <header class="page-header">
+    <span class="page-tag">Form</span>
+    <h1 class="page-title">NumberInput</h1>
+    <p class="page-lede">
+      The numeric field — locale-aware currency and percent formatting, min/max clamping,
+      integer-only mode, accelerating steppers, and rich keyboard control. Built on FormFieldBase.
+    </p>
+  </header>
+
   <!-- Sub-menu -->
   <div class="sub-menu">
     <button
@@ -320,9 +337,124 @@ watchEffect(() => {
     </div>
     <pre class="code"><code>{{ advancedCode }}</code></pre>
   </section>
+
+  <!-- ── In context — an order summary ────────────────────────────────────────── -->
+  <section v-if="activeSection === 'all'" class="demo-section">
+    <h3 class="demo-title">In context — an order summary</h3>
+    <p class="demo-desc">
+      A quantity stepper drives a live total — currency formatting, clamping, and two-way binding
+      composed into a real checkout row.
+    </p>
+    <div class="order-card">
+      <div class="order-line">
+        <div class="order-product">
+          <span class="order-name">Tulpar UI · Team license</span>
+          <span class="order-unit">{{ orderUnitDisplay }} / seat</span>
+        </div>
+        <TulparNumberInput
+          label="Seats"
+          :min="1"
+          :max="50"
+          :step="1"
+          v-model="orderQty"
+          :no-message-space="true"
+        />
+      </div>
+      <div class="order-total">
+        <span>Total</span>
+        <strong>{{ orderTotalDisplay }}</strong>
+      </div>
+    </div>
+  </section>
 </template>
 
 <style scoped>
+.page-header {
+  margin-bottom: 8px;
+}
+
+.page-tag {
+  display: inline-block;
+  margin-bottom: 14px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--tulpar-color-bg-subtle, #e9f1ef);
+  color: var(--tulpar-color-text-secondary, #57534e);
+}
+
+.page-title {
+  margin: 0 0 12px;
+  font-family: var(--tulpar-font-family-display, Georgia, serif);
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--tulpar-color-text-primary, #15110b);
+}
+
+.page-lede {
+  margin: 0;
+  font-size: 15px;
+  color: var(--tulpar-color-text-secondary, #57534e);
+  max-width: 640px;
+  line-height: 1.6;
+}
+
+.order-card {
+  max-width: 460px;
+  padding: 22px 24px;
+  border: 1px solid var(--tulpar-color-border-default, #d9e0df);
+  border-radius: 14px;
+  background: var(--tulpar-color-bg-elevated, #ffffff);
+  box-shadow: var(--tulpar-shadow-sm, 0 1px 2px rgb(0 0 0 / 0.06));
+}
+
+.order-line {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 18px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--tulpar-color-border-default, #d9e0df);
+}
+
+.order-product {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.order-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tulpar-color-text-primary, #15110b);
+}
+
+.order-unit {
+  font-size: 13px;
+  color: var(--tulpar-color-text-muted, #74777a);
+}
+
+.order-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--tulpar-color-text-secondary, #57534e);
+}
+
+.order-total strong {
+  font-family: var(--tulpar-font-family-display, Georgia, serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--tulpar-color-text-primary, #15110b);
+  font-variant-numeric: tabular-nums;
+}
+
 .sub-menu {
   display: flex;
   flex-wrap: wrap;

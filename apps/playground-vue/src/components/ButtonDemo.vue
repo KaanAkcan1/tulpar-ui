@@ -12,6 +12,7 @@ import {
   Settings,
   Save,
   Download,
+  Heart,
   Plus,
   Sparkles,
   Loader2,
@@ -276,11 +277,23 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
 
 <template>
   <div class="demo-page">
-    <header class="demo-page-header">
-      <p class="eyebrow">Tulpar UI · Vue · v0.6</p>
-      <h1 class="page-title">Button — full feature reference</h1>
-      <p class="page-lede">Live previews and copy-paste code for every Button capability.</p>
+    <header class="page-header">
+      <span class="page-tag">Core</span>
+      <h1 class="page-title">Button</h1>
+      <p class="page-lede">
+        The workhorse action element — nine severities, five variants, seven sizes, plus icons,
+        loading, polymorphism, and full keyboard-grouped navigation. Form-associated out of the box.
+      </p>
     </header>
+
+    <!-- ── Hero ─────────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <div class="hero">
+        <TulparButton severity="primary" size="lg" :icon="Check">Save changes</TulparButton>
+        <TulparButton severity="secondary" variant="outlined" size="lg">Cancel</TulparButton>
+        <TulparButton severity="premium" variant="tonal" size="lg" :icon="Crown">Upgrade</TulparButton>
+      </div>
+    </section>
 
     <!-- ── 1. Severity ──────────────────────────────────────────────────── -->
     <section class="doc-section">
@@ -709,29 +722,86 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
       </div>
       <pre class="code"><code>{{ slotEscapeHatchCode }}</code></pre>
     </section>
+
+    <!-- ── 20. In context — a real toolbar ─────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">In context — an editor toolbar</h2>
+      <p class="section-desc">
+        Buttons rarely live alone. Here they compose into a document toolbar: a primary save action,
+        secondary affordances, an icon-only group, and a destructive action — all on a real card
+        surface.
+      </p>
+      <div class="composition">
+        <div class="toolbar-card">
+          <div class="toolbar">
+            <div class="toolbar-group">
+              <TulparButton severity="primary" size="sm" :icon="Save">Save</TulparButton>
+              <TulparButton severity="secondary" variant="outlined" size="sm" :icon="Download"
+                >Export</TulparButton
+              >
+            </div>
+            <div class="toolbar-group">
+              <TulparButton
+                severity="secondary"
+                variant="ghost"
+                size="sm"
+                :icon="Settings"
+                tooltip="Settings"
+                aria-label="Settings"
+              />
+              <TulparButton
+                severity="secondary"
+                variant="ghost"
+                size="sm"
+                :icon="Heart"
+                tooltip="Favorite"
+                aria-label="Favorite"
+              />
+              <TulparButton
+                severity="danger"
+                variant="ghost"
+                size="sm"
+                :icon="Trash2"
+                tooltip="Delete document"
+                aria-label="Delete"
+              />
+            </div>
+          </div>
+          <p class="toolbar-doc-name">Untitled document</p>
+          <p class="toolbar-doc-body">
+            A representative composition — pairing severities, variants, and icon-only buttons the
+            way a product surface actually would.
+          </p>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
 <style scoped>
-.demo-page-header {
-  margin-bottom: 40px;
+.page-header {
+  margin-bottom: 12px;
 }
 
-.eyebrow {
-  margin: 0 0 8px;
-  font-size: 12px;
+.page-tag {
+  display: inline-block;
+  margin-bottom: 14px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--tulpar-color-text-muted, #74777a);
+  background: var(--tulpar-color-bg-subtle, #e9f1ef);
+  color: var(--tulpar-color-text-secondary, #57534e);
 }
 
 .page-title {
   margin: 0 0 12px;
   font-family: var(--tulpar-font-family-display, Georgia, serif);
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 600;
-  line-height: 1.15;
+  line-height: 1.1;
   color: var(--tulpar-color-text-primary, #15110b);
 }
 
@@ -739,8 +809,66 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
   margin: 0;
   font-size: 15px;
   color: var(--tulpar-color-text-secondary, #57534e);
-  max-width: 620px;
+  max-width: 640px;
   line-height: 1.6;
+}
+
+/* ── Hero ──────────────────────────────────────────────────────────────── */
+.hero {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  padding: 32px 28px;
+  border: 1px solid var(--tulpar-color-border-default, #d9e0df);
+  border-radius: 14px;
+  background: var(--tulpar-color-bg-subtle, #e9f1ef);
+}
+
+/* ── Real-world composition ────────────────────────────────────────────── */
+.composition {
+  display: flex;
+}
+
+.toolbar-card {
+  flex: 1;
+  padding: 18px;
+  border: 1px solid var(--tulpar-color-border-default, #d9e0df);
+  border-radius: 12px;
+  background: var(--tulpar-color-bg-elevated, #ffffff);
+  box-shadow: var(--tulpar-shadow-sm, 0 1px 2px rgb(0 0 0 / 0.06));
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--tulpar-color-border-default, #d9e0df);
+}
+
+.toolbar-group {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.toolbar-doc-name {
+  margin: 0 0 6px;
+  font-family: var(--tulpar-font-family-display, Georgia, serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--tulpar-color-text-primary, #15110b);
+}
+
+.toolbar-doc-body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--tulpar-color-text-secondary, #57534e);
 }
 
 .doc-section {
