@@ -30,3 +30,4 @@ export { TulparTopbarComponent } from "./shell/tulpar-topbar.component";
 export { TulparSidenavComponent } from "./shell/tulpar-sidenav.component";
 export type { TulparNavItemData } from "./shell/tulpar-sidenav.component";
 export { TulparNavItemComponent } from "./shell/tulpar-nav-item.component";
+export { TulparNavSectionComponent } from "./shell/tulpar-nav-section.component";

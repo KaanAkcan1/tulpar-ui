@@ -15,6 +15,10 @@ import "@tulpar-ui/shell";
       [attr.icon-class]="iconClass() ?? null"
       [attr.badge]="badge() ?? null"
       [attr.target]="target() ?? null"
+      [attr.count]="count() ?? null"
+      [attr.dot-label]="dotLabel() ?? null"
+      [attr.kbd]="kbd() ?? null"
+      [attr.dot]="dot() ? '' : null"
       [attr.active]="active() ? '' : null"
       [attr.disabled]="disabled() ? '' : null"
     >
@@ -30,4 +34,8 @@ export class TulparNavItemComponent {
   readonly active = input<boolean>(false);
   readonly disabled = input<boolean>(false);
   readonly target = input<string | undefined>(undefined);
+  readonly count = input<string | undefined>(undefined);
+  readonly dot = input<boolean>(false);
+  readonly dotLabel = input<string | undefined>(undefined);
+  readonly kbd = input<string | undefined>(undefined);
 }
