@@ -1,10 +1,13 @@
 import { LitElement, html, nothing } from "lit";
 import { property, state } from "lit/decorators.js";
+import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { navItemStyles } from "./tulpar-nav-item.styles";
 
 export interface TulparNavItemData {
   label: string;
   href?: string;
+  /** Raw SVG string rendered via unsafeSVG. Author-controlled markup, not user input. */
+  icon?: string;
   iconClass?: string;
   badge?: string;
   items?: TulparNavItemData[];
@@ -27,6 +30,8 @@ export class TulparNavItem extends LitElement {
 
   @property({ type: String }) href?: string;
   @property({ type: String }) label = "";
+  /** Raw SVG string rendered via unsafeSVG. `icon` is author-controlled markup, not user input. */
+  @property({ type: String }) icon?: string;
   @property({ type: String, attribute: "icon-class" }) iconClass?: string;
   @property({ type: String }) badge?: string;
   @property({ type: String }) target?: string;
@@ -104,6 +109,7 @@ export class TulparNavItem extends LitElement {
 
   private _renderInner() {
     return html`
+      ${this.icon ? html`<span class="icon-slot" aria-hidden="true">${unsafeSVG(this.icon)}</span>` : nothing}
       ${this.iconClass ? html`<i class=${this.iconClass} aria-hidden="true"></i>` : nothing}
       <slot name="icon"></slot>
       <span class="label">${this.label}</span>

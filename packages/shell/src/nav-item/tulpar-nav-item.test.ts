@@ -126,4 +126,11 @@ describe("<tulpar-nav-item>", () => {
     expect(a.getAttribute("rel")).to.contain("noopener");
     expect(el.shadowRoot!.querySelector(".external")).to.exist;
   });
+
+  it("renders an inline SVG icon from the icon string prop", async () => {
+    const el = await fixture<TulparNavItem>(
+      html`<tulpar-nav-item href="/x" label="X" icon='<svg class="probe"></svg>'></tulpar-nav-item>`,
+    );
+    expect(el.shadowRoot!.querySelector("svg.probe")).to.exist;
+  });
 });
