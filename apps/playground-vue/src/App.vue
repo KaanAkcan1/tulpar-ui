@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import {
+  BookOpen,
+  FormInput,
   Hash,
   Palette,
   SquareMousePointer,
@@ -37,15 +39,28 @@ const menu: TulparNavItemVueData[] = [
     label: "Components",
     items: [
       { label: "Button", href: "/button", icon: SquareMousePointer },
-      { label: "TextInput", href: "/text-input", icon: TextCursorInput },
-      { label: "Textarea", href: "/textarea", icon: WrapText },
-      { label: "NumberInput", href: "/number-input", icon: Hash },
+      // Collapsible group: a nav-item with its own `items` renders as an
+      // expandable group with a chevron. Demonstrates nesting + single-expand.
+      {
+        label: "Form Inputs",
+        icon: FormInput,
+        items: [
+          { label: "TextInput", href: "/text-input", icon: TextCursorInput },
+          { label: "Textarea", href: "/textarea", icon: WrapText },
+          { label: "NumberInput", href: "/number-input", icon: Hash },
+        ],
+      },
     ],
   },
   {
     type: "section",
     label: "Foundations",
     items: [{ label: "Colors", href: "/colors", icon: Palette }],
+  },
+  {
+    type: "section",
+    label: "Guides",
+    items: [{ label: "Sidebar & Theme", href: "/guide", icon: BookOpen }],
   },
 ];
 
