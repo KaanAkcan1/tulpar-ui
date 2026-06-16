@@ -11,10 +11,10 @@ export const navItemStyles = css`
     gap: 0.625rem;
     width: 100%;
     box-sizing: border-box;
-    min-height: var(--tulpar-shell-sidenav-item-height, 2.75rem);
+    min-height: var(--tulpar-shell-sidenav-item-height, 2.5rem);
     padding: 0 0.75rem;
     border: none;
-    border-radius: var(--tulpar-shell-sidenav-item-radius, 0.375rem);
+    border-radius: var(--tulpar-shell-sidenav-item-radius, 0.5rem);
     background: transparent;
     color: var(--tulpar-shell-sidenav-fg, #334155);
     font: inherit;
@@ -32,20 +32,19 @@ export const navItemStyles = css`
     outline: 2px solid var(--tulpar-color-focus-ring, #514ecf);
     outline-offset: -2px;
   }
-  a[aria-current="page"] {
-    background: var(--tulpar-shell-sidenav-item-bg-active, #eef2ff);
-    color: var(--tulpar-shell-sidenav-item-fg-active, #514ecf);
+  a[aria-current="page"],
+  button[aria-current="page"] {
+    background: var(--tulpar-shell-sidenav-item-bg-active, #deffea);
+    color: var(--tulpar-shell-sidenav-item-fg-active, #0b7e52);
+    font-weight: 600;
+    box-shadow:
+      inset 2px 0 0 -1px var(--tulpar-shell-sidenav-item-indicator, #00c57a),
+      inset 6px 0 8px -6px var(--tulpar-shell-sidenav-item-glow, rgba(0, 197, 122, 0.5));
   }
-  /* left:0 assumes vertical sidenav; rail mode overrides this in the shell container task */
-  a[aria-current="page"]::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 20%;
-    bottom: 20%;
-    width: 3px;
-    border-radius: 2px;
-    background: var(--tulpar-shell-sidenav-item-indicator, #514ecf);
+  a[aria-current="page"] .icon-slot,
+  a[aria-current="page"] ::slotted([slot="icon"]),
+  a[aria-current="page"] i {
+    color: var(--tulpar-shell-sidenav-item-indicator, #00c57a);
   }
   :host([disabled]) a,
   :host([disabled]) button {
@@ -62,6 +61,34 @@ export const navItemStyles = css`
     text-align: center;
     background: var(--tulpar-shell-sidenav-item-badge-bg, #514ecf);
     color: var(--tulpar-shell-sidenav-item-badge-fg, #f8fafc);
+  }
+  .count {
+    margin-inline-start: auto;
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    padding: 0.0625rem 0.5rem;
+    border-radius: 999px;
+    background: var(--tulpar-shell-sidenav-item-count-bg, #e9f1ef);
+    color: var(--tulpar-shell-sidenav-item-count-fg, #636568);
+  }
+  .kbd-hint {
+    margin-inline-start: auto;
+    font-family: var(--tulpar-font-family-mono, ui-monospace, monospace);
+    font-size: 0.6875rem;
+    color: var(--tulpar-shell-sidenav-fg-muted, #74777a);
+  }
+  .dot {
+    margin-inline-start: auto;
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border-radius: 50%;
+    background: var(--tulpar-shell-sidenav-item-dot, #00c57a);
+  }
+  .external {
+    margin-inline-start: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--tulpar-shell-sidenav-fg-muted, #74777a);
   }
   .label {
     flex: 1;
