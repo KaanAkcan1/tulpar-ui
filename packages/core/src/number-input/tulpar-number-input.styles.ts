@@ -31,13 +31,13 @@ export const numberInputStyles = css`
     border: none;
     padding: 0.125rem 0.25rem;
     cursor: pointer;
-    color: var(--tulpar-input-icon-default, #78716c);
+    color: var(--tulpar-input-icon-default, #74777a);
     line-height: 0;
     border-radius: 0.125rem;
   }
 
   .field-steppers button:hover:not([disabled]) {
-    background: var(--tulpar-input-bg-readonly, #fafaf9);
+    background: var(--tulpar-input-bg-readonly, #f0f7f5);
   }
 
   .field-steppers button[disabled] {

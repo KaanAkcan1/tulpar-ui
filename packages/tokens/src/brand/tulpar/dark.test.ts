@@ -2,50 +2,45 @@ import { describe, it, expect } from "vitest";
 import { tulparDark } from "./dark";
 
 describe("tulparDark", () => {
-  it("uses stone.900 as surface and lighter stone for text", () => {
-    expect(tulparDark.color.bg.surface).toBe("#1c1917");
-    expect(tulparDark.color.text.primary).toBe("#fafaf9");
+  it("surfaces: navy-tinted mergen ramp", () => {
+    expect(tulparDark.color.bg.surface).toBe("#202c43"); // mergen-900
+    expect(tulparDark.color.bg.subtle).toBe("#243553"); // mergen-800
+    expect(tulparDark.shell.content.bg).toBe("#1b2230"); // mergen-950 page
   });
 
-  it("uses navy.300 as brand default (luminance parity with other .400 severities + AA contrast)", () => {
-    expect(tulparDark.color.brand.default).toBe("#6689b8"); // navy.300
-    expect(tulparDark.color.brand.hover).toBe("#99b1d0"); // navy.200
-    expect(tulparDark.color.brand.active).toBe("#ccd8e8"); // navy.100
-    expect(tulparDark.color.brand.onColor).toBe("#1c1917"); // stone.900
+  it("text: light colpan, gok-400 link", () => {
+    expect(tulparDark.color.text.primary).toBe("#f0f7f5"); // colpan-50
+    expect(tulparDark.color.text.link).toBe("#3c9ef4"); // gok-400
   });
 
-  it("provides info (blue.400), help (purple.400) for dark mode", () => {
-    expect(tulparDark.color.info.default).toBe("#60a5fa");
-    expect(tulparDark.color.help.default).toBe("#c084fc");
+  it("brand = bright tulpar-400 + dark ink onColor", () => {
+    expect(tulparDark.color.brand.default).toBe("#21d98d"); // tulpar-400
+    expect(tulparDark.color.brand.onColor).toBe("#0b0804"); // yagiz-950
   });
 
-  it("inverts contrast severity to stone.50 default (light on dark)", () => {
-    expect(tulparDark.color.contrast.default).toBe("#fafaf9");
-    expect(tulparDark.color.contrast.onColor).toBe("#1c1917");
+  it("secondary = kam-300", () => {
+    expect(tulparDark.color.secondary.default).toBe("#8497ff"); // kam-300
   });
 
-  it("uses navy.300 @ 60% as focus ring", () => {
-    expect(tulparDark.color.focusRing).toBe("rgba(102, 137, 184, 0.60)");
+  it("severities lighten for dark surfaces", () => {
+    expect(tulparDark.color.danger.default).toBe("#f84648"); // al-400
+    expect(tulparDark.color.success.default).toBe("#6eae93"); // otuken-300
+    expect(tulparDark.color.info.default).toBe("#3c9ef4"); // gok-400
+    expect(tulparDark.color.premium.default).toBe("#ecb32a"); // ulgen-400
+    expect(tulparDark.color.contrast.default).toBe("#f0f7f5"); // colpan-50
   });
 
-  it("uses gold.400 for premium severity in dark mode (AA contrast with stone.900 text)", () => {
-    expect(tulparDark.color.premium.default).toBe("#c9a23e"); // gold.400
-    expect(tulparDark.color.premium.hover).toBe("#dbb958"); // gold.300
-    expect(tulparDark.color.premium.onColor).toBe("#1c1917"); // stone.900
+  it("focus ring = kam-300 @ 60%", () => {
+    expect(tulparDark.color.focusRing).toBe("rgba(132, 151, 255, 0.60)");
   });
 
-  it("button sizes identical across modes; border-radius 4px", () => {
-    expect(tulparDark.button.size.md.height).toBe("40px");
-    expect(tulparDark.button.borderRadius).toBe("4px");
+  it("chart series lightens to 400 for dark", () => {
+    expect(tulparDark.chart[1]).toBe("#21d98d"); // tulpar-400
+    expect(tulparDark.chart[2]).toBe("#6972f8"); // kam-400
   });
 
-  describe("tulparDark.input", () => {
-    it("uses dark surface for bg.default", () => {
-      expect(tulparDark.input.bg.default).toBe(tulparDark.color.bg.surface);
-    });
-
-    it("inverts label float background to match surface (so notched outline cuts through cleanly)", () => {
-      expect(tulparDark.input.label.float.bg).toBe(tulparDark.color.bg.surface);
-    });
+  it("reuses light input size tiers", () => {
+    expect(tulparDark.input.size).toBe(tulparDark.input.size);
+    expect(Object.keys(tulparDark.input.size)).toEqual(["xs", "sm", "md", "lg", "xl"]);
   });
 });

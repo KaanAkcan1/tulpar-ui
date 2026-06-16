@@ -5,7 +5,7 @@ export const formFieldBaseStyles = css`
     display: block;
     width: 100%;
     font-family: inherit;
-    color: var(--tulpar-input-text-default, #1c1917);
+    color: var(--tulpar-input-text-default, #15110b);
   }
 
   :host([disabled]) {
@@ -16,7 +16,7 @@ export const formFieldBaseStyles = css`
   .field-label {
     display: block;
     font-size: 0.875rem;
-    color: var(--tulpar-input-label-default, #44403c);
+    color: var(--tulpar-input-label-default, #27231d);
     margin-bottom: 0.25rem;
     line-height: 1.25;
   }
@@ -140,21 +140,21 @@ export const formFieldBaseStyles = css`
     padding: var(--field-resolved-padding-y) var(--field-resolved-padding-x);
     font-size: var(--field-resolved-font-size);
     background: var(--tulpar-input-bg-default, #fff);
-    color: var(--tulpar-input-text-default, #1c1917);
-    border: 1px solid var(--tulpar-input-border-default, #e7e5e4);
+    color: var(--tulpar-input-text-default, #15110b);
+    border: 1px solid var(--tulpar-input-border-default, #d9e0df);
     border-radius: var(--tulpar-input-radius, 0.375rem);
     position: relative;
   }
 
   :host([variant="filled"]) .control-row {
-    background: var(--tulpar-input-bg-readonly, #fafaf9);
+    background: var(--tulpar-input-bg-readonly, #f0f7f5);
     border-color: transparent;
   }
 
   :host([variant="underlined"]) .control-row {
     background: transparent;
     border: none;
-    border-bottom: 1px solid var(--tulpar-input-border-default, #e7e5e4);
+    border-bottom: 1px solid var(--tulpar-input-border-default, #d9e0df);
     border-radius: 0;
     padding-left: 0;
     padding-right: 0;
@@ -230,7 +230,7 @@ export const formFieldBaseStyles = css`
   [data-label-position="float"][data-has-value] .field-label--float {
     top: -0.125rem;
     transform: translateY(-100%) scale(0.85);
-    color: var(--tulpar-input-label-default, #44403c);
+    color: var(--tulpar-input-label-default, #27231d);
   }
 
   [data-label-position="float-in"] .control-row:focus-within ~ .field-label--float-in,
@@ -238,7 +238,7 @@ export const formFieldBaseStyles = css`
     top: 0.25rem;
     transform: none;
     font-size: 0.7rem;
-    color: var(--tulpar-input-label-default, #44403c);
+    color: var(--tulpar-input-label-default, #27231d);
   }
 
   [data-label-position="float-on"] .field-label--float-on {
@@ -248,7 +248,7 @@ export const formFieldBaseStyles = css`
     background: var(--tulpar-input-label-float-bg, #fff);
     padding: 0 0.25rem;
     font-size: 0.75rem;
-    color: var(--tulpar-input-label-default, #44403c);
+    color: var(--tulpar-input-label-default, #27231d);
   }
 
   /* Truncation for long labels in float modes (full text preserved for screen readers

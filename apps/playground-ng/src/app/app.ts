@@ -113,19 +113,19 @@ import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
 
       .brand-mark {
         font-size: 16px;
-        color: var(--tulpar-color-brand-default, #2563eb);
+        color: var(--tulpar-color-brand-default, #00c57a);
       }
 
       .brand-name {
         font-family: var(--tulpar-font-family-display, Georgia, serif);
         font-size: 17px;
         font-weight: 600;
-        color: var(--tulpar-color-text-primary, #1c1917);
+        color: var(--tulpar-color-text-primary, #15110b);
       }
 
       .brand-tag {
         font-size: 12px;
-        color: var(--tulpar-color-text-muted, #78716c);
+        color: var(--tulpar-color-text-muted, #74777a);
       }
 
       .settings-trigger {
@@ -134,27 +134,27 @@ import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
         gap: 8px;
         min-height: 40px;
         padding: 0 14px;
-        border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        border: 1px solid var(--tulpar-color-border-default, #d9e0df);
         border-radius: 8px;
-        background: var(--tulpar-color-bg-surface, #fafaf9);
-        color: var(--tulpar-color-text-primary, #1c1917);
+        background: var(--tulpar-color-bg-surface, #f0f7f5);
+        color: var(--tulpar-color-text-primary, #15110b);
         font-family: inherit;
         font-size: 13px;
         cursor: pointer;
       }
 
       .settings-trigger:hover {
-        background: var(--tulpar-color-bg-subtle, #f5f5f4);
+        background: var(--tulpar-color-bg-subtle, #e9f1ef);
       }
 
       .settings-trigger:focus-visible {
-        outline: 2px solid var(--tulpar-color-focus-ring, #1e3a8a);
+        outline: 2px solid var(--tulpar-color-focus-ring, rgba(81,78,207,.4));
         outline-offset: 2px;
       }
 
       .app-footer {
         font-size: 13px;
-        color: var(--tulpar-color-text-muted, #78716c);
+        color: var(--tulpar-color-text-muted, #74777a);
       }
 
       /* ── Aside settings panel ──────────────────────────────────────────── */
@@ -187,18 +187,18 @@ import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
         border: none;
         border-radius: 8px;
         background: transparent;
-        color: var(--tulpar-color-text-muted, #78716c);
+        color: var(--tulpar-color-text-muted, #74777a);
         font-size: 15px;
         cursor: pointer;
       }
 
       .settings-close:hover {
-        background: var(--tulpar-color-bg-subtle, #f5f5f4);
-        color: var(--tulpar-color-text-primary, #1c1917);
+        background: var(--tulpar-color-bg-subtle, #e9f1ef);
+        color: var(--tulpar-color-text-primary, #15110b);
       }
 
       .settings-close:focus-visible {
-        outline: 2px solid var(--tulpar-color-focus-ring, #1e3a8a);
+        outline: 2px solid var(--tulpar-color-focus-ring, rgba(81,78,207,.4));
         outline-offset: 2px;
       }
 
@@ -214,7 +214,7 @@ import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.04em;
-        color: var(--tulpar-color-text-muted, #78716c);
+        color: var(--tulpar-color-text-muted, #74777a);
       }
 
       .segmented {
@@ -222,7 +222,7 @@ import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
         gap: 4px;
         padding: 4px;
         border-radius: 10px;
-        background: var(--tulpar-color-bg-subtle, #f5f5f4);
+        background: var(--tulpar-color-bg-subtle, #e9f1ef);
       }
 
       .segmented label {
@@ -233,7 +233,7 @@ import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
         min-height: 40px;
         border-radius: 7px;
         font-size: 13px;
-        color: var(--tulpar-color-text-secondary, #44403c);
+        color: var(--tulpar-color-text-secondary, #27231d);
         cursor: pointer;
         user-select: none;
         transition:
@@ -242,12 +242,12 @@ import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
       }
 
       .segmented label:hover {
-        color: var(--tulpar-color-text-primary, #1c1917);
+        color: var(--tulpar-color-text-primary, #15110b);
       }
 
       .segmented label.on {
         background: var(--tulpar-color-bg-surface, #fff);
-        color: var(--tulpar-color-brand-default, #2563eb);
+        color: var(--tulpar-color-brand-default, #00c57a);
         font-weight: 600;
         box-shadow: var(--tulpar-shadow-sm, 0 1px 2px rgb(0 0 0 / 0.08));
       }
@@ -264,7 +264,7 @@ import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
       }
 
       .segmented label:focus-within {
-        outline: 2px solid var(--tulpar-color-focus-ring, #1e3a8a);
+        outline: 2px solid var(--tulpar-color-focus-ring, rgba(81,78,207,.4));
         outline-offset: 2px;
       }
 
@@ -278,7 +278,7 @@ import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
         margin: 0;
         font-size: 12px;
         line-height: 1.6;
-        color: var(--tulpar-color-text-muted, #78716c);
+        color: var(--tulpar-color-text-muted, #74777a);
       }
 
       .settings-hint code {
@@ -286,7 +286,7 @@ import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
         font-size: 11px;
         padding: 1px 5px;
         border-radius: 4px;
-        background: var(--tulpar-color-bg-subtle, #f5f5f4);
+        background: var(--tulpar-color-bg-subtle, #e9f1ef);
       }
     `,
   ],
@@ -316,6 +316,7 @@ export class App {
         { label: 'TextInput', href: '/text-input' },
         { label: 'Textarea', href: '/textarea' },
         { label: 'NumberInput', href: '/number-input' },
+        { label: 'Colors', href: '/colors' },
       ],
     },
   ];

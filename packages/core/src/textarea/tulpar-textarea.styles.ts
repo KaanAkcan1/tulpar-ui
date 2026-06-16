@@ -56,16 +56,16 @@ export const textareaStyles = css`
     align-items: center;
     justify-content: center;
     background: var(--tulpar-input-bg-default, #fff);
-    border: 1px solid var(--tulpar-input-border-default, #e7e5e4);
+    border: 1px solid var(--tulpar-input-border-default, #d9e0df);
     border-radius: 0.25rem;
     padding: 0.125rem 0.25rem;
     cursor: pointer;
-    color: var(--tulpar-input-icon-default, #78716c);
+    color: var(--tulpar-input-icon-default, #74777a);
   }
 
   .field-textarea-actions .field-copy-btn:hover,
   .field-textarea-actions .field-paste-btn:hover:not([disabled]) {
-    background: var(--tulpar-input-bg-readonly, #fafaf9);
+    background: var(--tulpar-input-bg-readonly, #f0f7f5);
   }
 
   .field-textarea-actions .field-paste-btn[disabled] {

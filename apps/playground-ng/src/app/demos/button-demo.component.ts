@@ -62,12 +62,12 @@ const SIZE_CODE = `<tulpar-button-ng size="xs">Extra Small</tulpar-button-ng>
 <tulpar-button-ng size="2xl">2XL</tulpar-button-ng>
 <tulpar-button-ng size="3xl">3XL</tulpar-button-ng>`;
 
-const COLOR_CODE = `<tulpar-button-ng color="gold">Gold</tulpar-button-ng>
-<tulpar-button-ng color="emerald">Emerald</tulpar-button-ng>
-<tulpar-button-ng color="rose">Rose</tulpar-button-ng>
-<tulpar-button-ng color="indigo">Indigo</tulpar-button-ng>
-<tulpar-button-ng color="cyan" variant="outlined">Cyan Outlined</tulpar-button-ng>
-<tulpar-button-ng color="purple" variant="tonal">Purple Tonal</tulpar-button-ng>`;
+const COLOR_CODE = `<tulpar-button-ng color="ulgen">Ulgen</tulpar-button-ng>
+<tulpar-button-ng color="otuken">Otuken</tulpar-button-ng>
+<tulpar-button-ng color="kizagan">Kizagan</tulpar-button-ng>
+<tulpar-button-ng color="kam">Kam</tulpar-button-ng>
+<tulpar-button-ng color="yersu" variant="outlined">Yersu Outlined</tulpar-button-ng>
+<tulpar-button-ng color="erlik" variant="tonal">Erlik Tonal</tulpar-button-ng>`;
 
 const SHAPE_CODE = `<!-- Default (rectangle) -->
 <tulpar-button-ng shape="default">Default</tulpar-button-ng>
@@ -247,7 +247,7 @@ const BUTTON_GROUP_CODE = `<!-- Horizontal group (ArrowLeft/Right navigation) --
   Stacked:    ArrowUp / ArrowDown
   Both:       Home (first) / End (last) -->`;
 
-const PREMIUM_CODE = `<!-- Solid premium — gold marketing CTA -->
+const PREMIUM_CODE = `<!-- Solid premium — ulgen antique-gold marketing CTA -->
 <tulpar-button-ng severity="premium">
   <lucide-angular slot="start" [img]="Crown" [size]="16"></lucide-angular>
   Upgrade to Pro
@@ -265,9 +265,9 @@ const PREMIUM_CODE = `<!-- Solid premium — gold marketing CTA -->
   Go Pro
 </tulpar-button-ng>
 
-<!-- premium = gold accent, distinct from primary (navy)
-     Light theme: gold.500 bg + dark text
-     Hover: brightens (gold.500 -> .400 -> .300) -->`;
+<!-- premium = ulgen antique-gold accent, distinct from primary (tulpar green)
+     Light theme: ulgen.500 bg + dark ink
+     Hover: brightens (ulgen.500 -> .400 -> .300) -->`;
 
 const ICON_PROP_CODE = `<!-- Pattern 2: [icon] accepts an Angular component class (Type<unknown>) -->
 <!-- The component is rendered via NgComponentOutlet in slot="start" -->
@@ -406,12 +406,12 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
         design-system color. Severity remains as a DOM hint for accessibility semantics.
       </p>
       <div class="preview">
-        <tulpar-button-ng color="gold">Gold</tulpar-button-ng>
-        <tulpar-button-ng color="emerald">Emerald</tulpar-button-ng>
-        <tulpar-button-ng color="rose">Rose</tulpar-button-ng>
-        <tulpar-button-ng color="indigo">Indigo</tulpar-button-ng>
-        <tulpar-button-ng color="cyan" variant="outlined">Cyan Outlined</tulpar-button-ng>
-        <tulpar-button-ng color="purple" variant="tonal">Purple Tonal</tulpar-button-ng>
+        <tulpar-button-ng color="ulgen">Ulgen</tulpar-button-ng>
+        <tulpar-button-ng color="otuken">Otuken</tulpar-button-ng>
+        <tulpar-button-ng color="kizagan">Kizagan</tulpar-button-ng>
+        <tulpar-button-ng color="kam">Kam</tulpar-button-ng>
+        <tulpar-button-ng color="yersu" variant="outlined">Yersu Outlined</tulpar-button-ng>
+        <tulpar-button-ng color="erlik" variant="tonal">Erlik Tonal</tulpar-button-ng>
       </div>
       <pre class="code"><code>{{ colorCode }}</code></pre>
     </section>
@@ -685,10 +685,11 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
 
     <!-- ── 16. Premium CTA ───────────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">16. Premium CTA — the gold marketing example</h2>
+      <h2 class="section-title">16. Premium CTA — the antique-gold marketing example</h2>
       <p class="section-desc">
-        <code class="inline-code">severity="premium"</code> is the gold accent for marketing
-        calls-to-action.
+        <code class="inline-code">severity="premium"</code> is the
+        <code class="inline-code">ulgen</code> antique-gold spirit — the accent for marketing
+        calls-to-action, distinct from <code class="inline-code">primary</code> (tulpar green).
       </p>
       <div class="preview preview--baseline">
         <tulpar-button-ng severity="premium">
@@ -796,7 +797,7 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
       .doc-section {
         padding-bottom: 48px;
         margin-bottom: 48px;
-        border-bottom: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        border-bottom: 1px solid var(--tulpar-color-border-default, #d9e0df);
       }
 
       .doc-section:last-child {
@@ -809,7 +810,7 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
         font-family: var(--tulpar-font-family-display, Georgia, serif);
         font-size: 26px;
         font-weight: 600;
-        color: var(--tulpar-color-text-primary, #1c1917);
+        color: var(--tulpar-color-text-primary, #15110b);
       }
 
       .section-desc {
@@ -821,8 +822,8 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
       }
 
       .preview {
-        background: var(--tulpar-color-bg-subtle, #f5f5f4);
-        border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        background: var(--tulpar-color-bg-subtle, #e9f1ef);
+        border: 1px solid var(--tulpar-color-border-default, #d9e0df);
         border-bottom: none;
         border-radius: 6px 6px 0 0;
         padding: 24px;
@@ -854,31 +855,31 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
         font-weight: 600;
         letter-spacing: 0.05em;
         text-transform: uppercase;
-        color: var(--tulpar-color-text-muted, #78716c);
+        color: var(--tulpar-color-text-muted, #74777a);
       }
 
       .code {
         margin: 0;
         padding: 16px 20px;
-        background: var(--tulpar-color-bg-inverse, #1c1917);
-        border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        background: var(--tulpar-color-bg-inverse, #15110b);
+        border: 1px solid var(--tulpar-color-border-default, #d9e0df);
         border-radius: 0 0 6px 6px;
         overflow-x: auto;
         font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
         font-size: 13px;
         line-height: 1.55;
-        color: #e7e5e4;
+        color: #d9e0df;
         white-space: pre;
       }
 
       .inline-code {
         font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
         font-size: 0.85em;
-        background: var(--tulpar-color-bg-subtle, #f5f5f4);
-        border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        background: var(--tulpar-color-bg-subtle, #e9f1ef);
+        border: 1px solid var(--tulpar-color-border-default, #d9e0df);
         border-radius: 3px;
         padding: 1px 5px;
-        color: var(--tulpar-color-text-primary, #1c1917);
+        color: var(--tulpar-color-text-primary, #15110b);
       }
 
       .demo-form {
@@ -891,10 +892,10 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
       .demo-input {
         height: 40px;
         padding: 0 12px;
-        border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        border: 1px solid var(--tulpar-color-border-default, #d9e0df);
         border-radius: 6px;
         background: var(--tulpar-color-bg-elevated, #ffffff);
-        color: var(--tulpar-color-text-primary, #1c1917);
+        color: var(--tulpar-color-text-primary, #15110b);
         font-family: var(--tulpar-font-family-ui, system-ui, sans-serif);
         font-size: 14px;
         min-width: 220px;
@@ -914,12 +915,12 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
       kbd {
         display: inline-block;
         padding: 1px 5px;
-        border: 1px solid var(--tulpar-color-border-default, #e7e5e4);
+        border: 1px solid var(--tulpar-color-border-default, #d9e0df);
         border-radius: 3px;
         font-family: 'JetBrains Mono', Consolas, monospace;
         font-size: 11px;
         background: var(--tulpar-color-bg-elevated, #ffffff);
-        color: var(--tulpar-color-text-primary, #1c1917);
+        color: var(--tulpar-color-text-primary, #15110b);
       }
 
       @keyframes spin {

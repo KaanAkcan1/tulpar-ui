@@ -40,7 +40,7 @@ describe("<tulpar-button>", () => {
       expect(el.severity).to.equal("danger");
     });
 
-    it("accepts all 8 severities", async () => {
+    it("accepts all 9 severities", async () => {
       const severities = [
         "primary",
         "secondary",
@@ -58,6 +58,21 @@ describe("<tulpar-button>", () => {
         );
         expect(el.severity).to.equal(s);
       }
+    });
+
+    it("secondary severity is wired to the dedicated secondary token (kam, not neutral)", () => {
+      // v0.7: secondary severity points at --tulpar-color-secondary-*, no longer
+      // the neutral (kara) role — so the two are now distinct. Token CSS isn't
+      // loaded in the test document, so inspect the stylesheet text directly
+      // (same approach as the variant hover/active scoping tests above).
+      const stripComments = (s: string) => s.replace(/\/\*[\s\S]*?\*\//g, "");
+      const css = stripComments(buttonStyles.cssText);
+      const secondaryRule = css.match(/:host\(\[severity="secondary"\]\)\s*\{([^}]*)\}/);
+      expect(secondaryRule, "secondary severity rule should exist").to.not.be.null;
+      const body = secondaryRule![1];
+      expect(body).to.contain("--tulpar-color-secondary-default");
+      expect(body).to.contain("--tulpar-color-secondary-on-color");
+      expect(body).to.not.contain("--tulpar-color-neutral-");
     });
   });
 
@@ -108,30 +123,30 @@ describe("<tulpar-button>", () => {
 
   describe("color override", () => {
     it("sets --_btn-color-default to primitive .700 when color is set", async () => {
-      const el = await fixture<TulparButton>(html`<tulpar-button color="gold">X</tulpar-button>`);
+      const el = await fixture<TulparButton>(html`<tulpar-button color="kam">X</tulpar-button>`);
       await el.updateComplete;
       const inline = el.style.getPropertyValue("--_btn-color-default");
-      expect(inline).to.contain("tulpar-primitive-color-gold-700");
+      expect(inline).to.contain("tulpar-primitive-color-kam-700");
     });
 
-    it("uses stone-900 onColor for light-luminance families (yellow, lime)", async () => {
-      const el = await fixture<TulparButton>(html`<tulpar-button color="yellow">X</tulpar-button>`);
+    it("uses yagiz-900 onColor for light/mid-luminance families (ulgen)", async () => {
+      const el = await fixture<TulparButton>(html`<tulpar-button color="ulgen">X</tulpar-button>`);
       await el.updateComplete;
       expect(el.style.getPropertyValue("--_btn-color-on")).to.contain(
-        "tulpar-primitive-color-stone-900",
+        "tulpar-primitive-color-yagiz-900",
       );
     });
 
-    it("uses stone-50 onColor for dark families (purple, navy, red)", async () => {
-      const el = await fixture<TulparButton>(html`<tulpar-button color="purple">X</tulpar-button>`);
+    it("uses colpan-50 onColor for dark families (kam)", async () => {
+      const el = await fixture<TulparButton>(html`<tulpar-button color="kam">X</tulpar-button>`);
       await el.updateComplete;
       expect(el.style.getPropertyValue("--_btn-color-on")).to.contain(
-        "tulpar-primitive-color-stone-50",
+        "tulpar-primitive-color-colpan-50",
       );
     });
 
     it("removes the color override when color attribute is unset", async () => {
-      const el = await fixture<TulparButton>(html`<tulpar-button color="purple">X</tulpar-button>`);
+      const el = await fixture<TulparButton>(html`<tulpar-button color="kam">X</tulpar-button>`);
       await el.updateComplete;
       expect(el.style.getPropertyValue("--_btn-color-default")).to.not.equal("");
       el.removeAttribute("color");

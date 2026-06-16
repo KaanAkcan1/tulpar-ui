@@ -155,7 +155,7 @@ sets \`inputmode="numeric"\` for mobile keyboards.
       step="1"
       style="max-width:280px; display:block;"
     ></tulpar-number-input>
-    <p style="font-size:12px; color:#78716c; margin-top:8px;">
+    <p style="font-size:12px; color:#74777a; margin-top:8px;">
       Press <kbd>.</kbd> to see the shake animation.
     </p>
   `,
@@ -241,7 +241,7 @@ export const HiddenSteppers: Story = {
         placeholder="Keyboard/scroll only"
       ></tulpar-number-input>
     </div>
-    <p style="font-size:12px; color:#78716c; margin-top:8px;">
+    <p style="font-size:12px; color:#74777a; margin-top:8px;">
       <code>hide-steppers</code> removes the ▲/▼ buttons — useful for compact
       layouts where arrow-key or direct typing is the primary input method.
     </p>
@@ -274,7 +274,7 @@ Default values are \`step-hold-delay=500\` and \`step-hold-interval=50\`.
       step="1"
       style="max-width:280px; display:block;"
     ></tulpar-number-input>
-    <p style="font-size:12px; color:#78716c; margin-top:8px;">
+    <p style="font-size:12px; color:#74777a; margin-top:8px;">
       Hold the ▲ button — value accelerates after 300 ms, repeating every 30 ms.
     </p>
   `,
@@ -310,7 +310,7 @@ Focus the field and try these keyboard shortcuts.
       step="1"
       style="max-width:280px; display:block;"
     ></tulpar-number-input>
-    <p style="font-size:12px; color:#78716c; margin-top:8px;">
+    <p style="font-size:12px; color:#74777a; margin-top:8px;">
       Focus then: ↑/↓ (+1), Shift+↑/↓ (+10), Ctrl+↑/↓ (+100), Home (→0), End (→1000).
     </p>
   `,

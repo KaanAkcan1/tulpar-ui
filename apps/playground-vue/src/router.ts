@@ -4,6 +4,7 @@ import ButtonDemo from "./components/ButtonDemo.vue";
 import TextInputDemo from "./components/TextInputDemo.vue";
 import TextareaDemo from "./components/TextareaDemo.vue";
 import NumberInputDemo from "./components/NumberInputDemo.vue";
+import ColorsDemo from "./components/ColorsDemo.vue";
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -17,6 +18,7 @@ export const router = createRouter({
       component: NumberInputDemo,
       meta: { title: "NumberInput — Tulpar UI" },
     },
+    { path: "/colors", component: ColorsDemo, meta: { title: "Colors — Tulpar UI" } },
     { path: "/:pathMatch(.*)*", redirect: "/button" },
   ],
 });

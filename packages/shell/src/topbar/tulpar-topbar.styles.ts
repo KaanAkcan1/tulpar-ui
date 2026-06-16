@@ -39,7 +39,7 @@ export const topbarStyles = css`
     background: var(--tulpar-shell-sidenav-item-bg-hover, #f1f5f9);
   }
   button.menu:focus-visible {
-    outline: 2px solid var(--tulpar-color-focus-ring, #1e3a8a);
+    outline: 2px solid var(--tulpar-color-focus-ring, #514ecf);
     outline-offset: 2px;
   }
 `;
