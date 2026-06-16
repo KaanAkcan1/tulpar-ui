@@ -11,6 +11,11 @@ export interface TulparNavItemData {
   disabled?: boolean;
   target?: string;
   active?: boolean;
+  type?: "item" | "section";
+  count?: string;
+  dot?: boolean;
+  dotLabel?: string;
+  kbd?: string;
 }
 
 export class TulparNavItem extends LitElement {
@@ -32,6 +37,10 @@ export class TulparNavItem extends LitElement {
    * Defaulting to false would permanently disable auto-activation.
    */
   @property({ type: Boolean }) active?: boolean;
+  @property({ type: String }) count?: string;
+  @property({ type: Boolean }) dot = false;
+  @property({ type: String, attribute: "dot-label" }) dotLabel?: string;
+  @property({ type: String }) kbd?: string;
 
   @state() private _expanded = false;
   @state() private _hasChildren = false;
@@ -86,7 +95,14 @@ export class TulparNavItem extends LitElement {
       ${this.iconClass ? html`<i class=${this.iconClass} aria-hidden="true"></i>` : nothing}
       <slot name="icon"></slot>
       <span class="label">${this.label}</span>
+      <slot name="trailing"></slot>
+      ${this.count ? html`<span class="count">${this.count}</span>` : nothing}
+      ${this.kbd ? html`<span class="kbd-hint">${this.kbd}</span>` : nothing}
       ${this.badge ? html`<span class="badge">${this.badge}</span>` : nothing}
+      ${this.dot ? html`<span class="dot" role="img" aria-label=${this.dotLabel ?? "status"}></span>` : nothing}
+      ${this.href && this.target === "_blank"
+        ? html`<span class="external" aria-hidden="true">↗</span>`
+        : nothing}
     `;
   }
 
@@ -95,6 +111,7 @@ export class TulparNavItem extends LitElement {
       ? html`<a
           href=${this.href}
           target=${this.target ?? nothing}
+          rel=${this.target === "_blank" ? "noopener noreferrer" : nothing}
           aria-current=${this._isActive ? "page" : nothing}
           tabindex=${this.disabled ? "-1" : nothing}
           @click=${this._onClick}

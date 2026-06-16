@@ -103,4 +103,27 @@ describe("<tulpar-nav-item>", () => {
     await el.updateComplete;
     expect(fired).to.be.false;
   });
+
+  it("renders a numeric count in the trailing area", async () => {
+    const el = await fixture<TulparNavItem>(
+      html`<tulpar-nav-item href="/i" label="Inbox" count="12"></tulpar-nav-item>`,
+    );
+    expect(el.shadowRoot!.querySelector(".count")!.textContent).to.equal("12");
+  });
+  it("renders a status dot with aria-label", async () => {
+    const el = await fixture<TulparNavItem>(
+      html`<tulpar-nav-item href="/i" label="Inbox" dot dot-label="3 unread"></tulpar-nav-item>`,
+    );
+    const dot = el.shadowRoot!.querySelector(".dot")!;
+    expect(dot).to.exist;
+    expect(dot.getAttribute("aria-label")).to.equal("3 unread");
+  });
+  it("adds rel=noopener and external glyph for target=_blank", async () => {
+    const el = await fixture<TulparNavItem>(
+      html`<tulpar-nav-item href="https://x.dev" label="Docs" target="_blank"></tulpar-nav-item>`,
+    );
+    const a = el.shadowRoot!.querySelector("a")!;
+    expect(a.getAttribute("rel")).to.contain("noopener");
+    expect(el.shadowRoot!.querySelector(".external")).to.exist;
+  });
 });
