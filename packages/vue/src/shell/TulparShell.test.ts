@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from "vitest";
-import { defineComponent, h } from "vue";
+import { defineComponent, h, markRaw } from "vue";
 import { mount } from "@vue/test-utils";
 import TulparShell from "./TulparShell.vue";
 import TulparTopbar from "./TulparTopbar.vue";
@@ -8,10 +8,12 @@ import TulparNavItem from "./TulparNavItem.vue";
 import TulparNavSection from "./TulparNavSection.vue";
 import type { TulparNavItemData } from "@tulpar-ui/shell";
 
-const IconStub = defineComponent({
-  name: "IconStub",
-  setup: () => () => h("svg", { "data-test-icon": "" }),
-});
+const IconStub = markRaw(
+  defineComponent({
+    name: "IconStub",
+    setup: () => () => h("svg", { "data-test-icon": "" }),
+  }),
+);
 
 describe("shell family Vue wrappers", () => {
   beforeAll(async () => {
