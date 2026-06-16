@@ -212,7 +212,7 @@ const buttonGroupCode = `<!-- Horizontal group (ArrowLeft/Right navigation) -->
   Stacked:    ArrowUp / ArrowDown
   Both:       Home (first) / End (last) -->`;
 
-const premiumCode = `<!-- Solid premium — gold marketing CTA -->
+const premiumCode = `<!-- Solid premium — ulgen antique-gold marketing CTA -->
 <TulparButton severity="premium" :icon="Crown">Upgrade to Pro</TulparButton>
 
 <!-- Tonal premium — softer CTA -->
@@ -221,9 +221,9 @@ const premiumCode = `<!-- Solid premium — gold marketing CTA -->
 <!-- Icon-size override for premium large CTA -->
 <TulparButton severity="premium" size="lg" :icon="Crown" :icon-size="24">Go Pro</TulparButton>
 
-<!-- premium = gold accent, distinct from primary (navy)
-     Light theme: gold.500 bg + dark text
-     Hover: brightens (gold.500 → .400 → .300) -->`;
+<!-- premium = ulgen antique-gold accent, distinct from primary (tulpar green)
+     Light theme: ulgen.500 bg + dark ink
+     Hover: brightens (ulgen.500 → .400 → .300) -->`;
 
 const tooltipCode = `<!-- Tooltip on icon-only button (fills the a11y gap) -->
 <TulparButton :icon="Settings" tooltip="Open settings" aria-label="Open settings" />
@@ -604,12 +604,12 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
 
     <!-- ── 16. Premium CTA ───────────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">16. Premium CTA — the gold marketing example</h2>
+      <h2 class="section-title">16. Premium CTA — the antique-gold marketing example</h2>
       <p class="section-desc">
-        <code class="inline-code">severity="premium"</code> is the gold accent for marketing
-        calls-to-action. Light theme: gold.500 background + dark text. Hover
-        <em>brightens</em> (gold.500 → .400 → .300) — intentionally distinct from
-        <code class="inline-code">primary</code> (navy), which darkens on hover.
+        <code class="inline-code">severity="premium"</code> is the <code class="inline-code">ulgen</code>
+        antique-gold spirit — the accent for marketing calls-to-action. Light theme: ulgen.500
+        background + dark ink. Hover <em>brightens</em> (ulgen.500 → .400 → .300) — intentionally
+        distinct from <code class="inline-code">primary</code> (tulpar green), which darkens on hover.
       </p>
       <div class="preview preview--baseline">
         <TulparButton severity="premium" :icon="Crown">Upgrade to Pro</TulparButton>

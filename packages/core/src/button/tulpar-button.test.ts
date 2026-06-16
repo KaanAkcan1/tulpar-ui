@@ -40,7 +40,7 @@ describe("<tulpar-button>", () => {
       expect(el.severity).to.equal("danger");
     });
 
-    it("accepts all 8 severities", async () => {
+    it("accepts all 9 severities", async () => {
       const severities = [
         "primary",
         "secondary",

@@ -247,7 +247,7 @@ const BUTTON_GROUP_CODE = `<!-- Horizontal group (ArrowLeft/Right navigation) --
   Stacked:    ArrowUp / ArrowDown
   Both:       Home (first) / End (last) -->`;
 
-const PREMIUM_CODE = `<!-- Solid premium — gold marketing CTA -->
+const PREMIUM_CODE = `<!-- Solid premium — ulgen antique-gold marketing CTA -->
 <tulpar-button-ng severity="premium">
   <lucide-angular slot="start" [img]="Crown" [size]="16"></lucide-angular>
   Upgrade to Pro
@@ -265,9 +265,9 @@ const PREMIUM_CODE = `<!-- Solid premium — gold marketing CTA -->
   Go Pro
 </tulpar-button-ng>
 
-<!-- premium = gold accent, distinct from primary (navy)
-     Light theme: gold.500 bg + dark text
-     Hover: brightens (gold.500 -> .400 -> .300) -->`;
+<!-- premium = ulgen antique-gold accent, distinct from primary (tulpar green)
+     Light theme: ulgen.500 bg + dark ink
+     Hover: brightens (ulgen.500 -> .400 -> .300) -->`;
 
 const ICON_PROP_CODE = `<!-- Pattern 2: [icon] accepts an Angular component class (Type<unknown>) -->
 <!-- The component is rendered via NgComponentOutlet in slot="start" -->
@@ -685,10 +685,11 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
 
     <!-- ── 16. Premium CTA ───────────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">16. Premium CTA — the gold marketing example</h2>
+      <h2 class="section-title">16. Premium CTA — the antique-gold marketing example</h2>
       <p class="section-desc">
-        <code class="inline-code">severity="premium"</code> is the gold accent for marketing
-        calls-to-action.
+        <code class="inline-code">severity="premium"</code> is the
+        <code class="inline-code">ulgen</code> antique-gold spirit — the accent for marketing
+        calls-to-action, distinct from <code class="inline-code">primary</code> (tulpar green).
       </p>
       <div class="preview preview--baseline">
         <tulpar-button-ng severity="premium">

@@ -93,9 +93,9 @@ const meta: Meta = {
     color: {
       control: "select",
       options: [
-        undefined, "navy", "gold", "stone", "slate",
-        "red", "orange", "amber", "yellow", "lime", "green", "emerald", "teal",
-        "cyan", "sky", "blue", "indigo", "violet", "purple", "fuchsia", "pink", "rose",
+        undefined, "al", "kizagan", "umay", "ilay", "erlik", "kam", "mergen",
+        "gok", "ay", "yersu", "tulpar", "otuken", "kayin", "ulgen", "kuyas",
+        "alaz", "burkut", "colpan", "ayzit", "boz", "kara", "yagiz",
       ],
     },
     "icon-position": { control: "select", options: ["start", "end", "top", "bottom"] },
