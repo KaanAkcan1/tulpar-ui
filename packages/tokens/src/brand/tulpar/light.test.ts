@@ -64,6 +64,34 @@ describe("tulparLight", () => {
   });
 });
 
+describe("tulparLight.shell", () => {
+  it("sidenav bg re-bound to white", () => {
+    expect(tulparLight.shell.sidenav.bg).toBe("#ffffff"); // c.white
+  });
+
+  it("sidenav item height + radius re-bound, new compact/iconSize", () => {
+    expect(tulparLight.shell.sidenav.item.height).toBe("2.5rem");
+    expect(tulparLight.shell.sidenav.item.radius).toBe("0.5rem");
+    expect(tulparLight.shell.sidenav.item.heightCompact).toBe("2.25rem");
+    expect(tulparLight.shell.sidenav.item.iconSize).toBe("1.125rem");
+  });
+
+  it("sidenav edge + scrollShadow derived from yagiz[950] (#0b0804)", () => {
+    expect(tulparLight.shell.sidenav.edge).toBe("rgba(11, 8, 4, 0.06)");
+    expect(tulparLight.shell.sidenav.scrollShadow).toBe("rgba(11, 8, 4, 0.08)");
+  });
+
+  it("item glow derived from tulpar[500] (#00c57a)", () => {
+    expect(tulparLight.shell.sidenav.item.glow).toBe("rgba(0, 197, 122, 0.50)");
+  });
+
+  it("item countBg = colpan[100], countFg = kara[600], dot = tulpar[500]", () => {
+    expect(tulparLight.shell.sidenav.item.countBg).toBe("#e9f1ef"); // colpan[100]
+    expect(tulparLight.shell.sidenav.item.countFg).toBe("#636568"); // kara[600]
+    expect(tulparLight.shell.sidenav.item.dot).toBe("#00c57a");     // tulpar[500]
+  });
+});
+
 describe("tulparLight.input", () => {
   it("uses surface bg + colpan border for default; kam focus", () => {
     expect(tulparLight.input.bg.default).toBe(tulparLight.color.bg.surface);

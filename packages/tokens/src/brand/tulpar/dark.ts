@@ -202,19 +202,27 @@ export const tulparDark: SemanticTokens = {
       fg: c.colpan[200],
       fgMuted: c.kara[400],
       border: c.mergen[800],
+      edge: "rgba(255, 255, 255, 0.04)",     // NEW
+      scrollShadow: "rgba(0, 0, 0, 0.30)",   // NEW
       item: {
-        height: "2.75rem",
-        radius: "0.375rem",
+        height: "2.5rem",
+        heightCompact: "2.25rem",
+        radius: "0.5rem",
+        iconSize: "1.125rem",
         bgHover: c.mergen[900],
         bgActive: c.mergen[800],
         fgActive: c.tulpar[300],
         indicator: c.tulpar[400],
+        glow: "rgba(33, 217, 141, 0.50)",   // NEW — tulpar[400] @ 50%
         badgeBg: c.tulpar[400],
         badgeFg: c.yagiz[950],
+        countBg: c.mergen[800],             // NEW
+        countFg: c.colpan[200],             // NEW
+        dot: c.tulpar[400],                 // NEW
       },
     },
     content: {
-      bg: c.mergen[950],
+      bg: c.mergen[900],          // re-bind: was mergen[950] (lift content above nav)
       maxWidth: "80rem",
       paddingCompact: "0.75rem",
       paddingComfortable: "1.5rem",

@@ -5,6 +5,12 @@ export interface ShellNavItemTokens {
   bgActive: string;
   fgActive: string;
   indicator: string;
+  glow: string;
+  heightCompact: string;
+  iconSize: string;
+  countBg: string;
+  countFg: string;
+  dot: string;
   badgeBg: string;
   badgeFg: string;
 }
@@ -18,6 +24,8 @@ export interface ShellTokens {
     fg: string;
     fgMuted: string;
     border: string;
+    edge: string;
+    scrollShadow: string;
     item: ShellNavItemTokens;
   };
   content: {

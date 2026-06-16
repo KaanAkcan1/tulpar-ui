@@ -5,7 +5,7 @@ describe("tulparDark", () => {
   it("surfaces: navy-tinted mergen ramp", () => {
     expect(tulparDark.color.bg.surface).toBe("#202c43"); // mergen-900
     expect(tulparDark.color.bg.subtle).toBe("#243553"); // mergen-800
-    expect(tulparDark.shell.content.bg).toBe("#1b2230"); // mergen-950 page
+    expect(tulparDark.shell.content.bg).toBe("#202c43"); // re-bound: mergen-900 (was mergen-950)
   });
 
   it("text: light colpan, gok-400 link", () => {
@@ -42,5 +42,33 @@ describe("tulparDark", () => {
   it("reuses light input size tiers", () => {
     expect(tulparDark.input.size).toBe(tulparDark.input.size);
     expect(Object.keys(tulparDark.input.size)).toEqual(["xs", "sm", "md", "lg", "xl"]);
+  });
+});
+
+describe("tulparDark.shell", () => {
+  it("content bg re-bound to mergen[900] (lifted above nav)", () => {
+    expect(tulparDark.shell.content.bg).toBe("#202c43"); // mergen[900]
+  });
+
+  it("sidenav item height + radius updated, new compact/iconSize", () => {
+    expect(tulparDark.shell.sidenav.item.height).toBe("2.5rem");
+    expect(tulparDark.shell.sidenav.item.radius).toBe("0.5rem");
+    expect(tulparDark.shell.sidenav.item.heightCompact).toBe("2.25rem");
+    expect(tulparDark.shell.sidenav.item.iconSize).toBe("1.125rem");
+  });
+
+  it("sidenav edge + scrollShadow (dark overlays)", () => {
+    expect(tulparDark.shell.sidenav.edge).toBe("rgba(255, 255, 255, 0.04)");
+    expect(tulparDark.shell.sidenav.scrollShadow).toBe("rgba(0, 0, 0, 0.30)");
+  });
+
+  it("item glow derived from tulpar[400] (#21d98d)", () => {
+    expect(tulparDark.shell.sidenav.item.glow).toBe("rgba(33, 217, 141, 0.50)");
+  });
+
+  it("item countBg = mergen[800], countFg = colpan[200], dot = tulpar[400]", () => {
+    expect(tulparDark.shell.sidenav.item.countBg).toBe("#243553"); // mergen[800]
+    expect(tulparDark.shell.sidenav.item.countFg).toBe("#d9e0df"); // colpan[200]
+    expect(tulparDark.shell.sidenav.item.dot).toBe("#21d98d");     // tulpar[400]
   });
 });
