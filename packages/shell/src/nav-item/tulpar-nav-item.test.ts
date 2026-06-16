@@ -1,5 +1,6 @@
 import { fixture, html, expect, oneEvent } from "@open-wc/testing";
 import "./tulpar-nav-item";
+import "../sidenav/tulpar-sidenav";
 import type { TulparNavItem } from "./tulpar-nav-item";
 
 describe("<tulpar-nav-item>", () => {
@@ -144,5 +145,34 @@ describe("<tulpar-nav-item>", () => {
     const fly = el.shadowRoot!.querySelector(".rail-flyout") as HTMLElement;
     expect(fly).to.exist;
     expect(getComputedStyle(fly).position).to.equal("fixed");
+  });
+
+  it("rail flyout on right-side sidenav is positioned to the LEFT of the item (B3-right)", async () => {
+    // Wrap the nav-item inside a position="right" sidenav so that
+    // closest("tulpar-sidenav")?.getAttribute("position") resolves to "right".
+    // We use a slotted item in light DOM so closest() can traverse the DOM tree.
+    const sidenav = await fixture<HTMLElement>(html`
+      <tulpar-sidenav position="right" data-rail style="position:fixed;right:0;top:0;width:60px;">
+        <tulpar-nav-item href="/x" label="Longish label" data-rail></tulpar-nav-item>
+      </tulpar-sidenav>
+    `);
+    await sidenav.updateComplete;
+    const navItem = sidenav.querySelector<TulparNavItem>("tulpar-nav-item")!;
+    await navItem.updateComplete;
+
+    // Trigger the flyout via pointerenter on the anchor inside shadow DOM.
+    const a = navItem.shadowRoot!.querySelector("a")!;
+    a.dispatchEvent(new Event("pointerenter"));
+    await navItem.updateComplete;
+
+    const fly = navItem.shadowRoot!.querySelector(".rail-flyout") as HTMLElement;
+    expect(fly).to.exist;
+
+    // The flyout should appear to the LEFT of the item.
+    // When rightSide=true, the component sets `right` (CSS) = window.innerWidth - rect.left + gap,
+    // which means the flyout's right edge is flush with (or near) the item's left edge.
+    // Verify: the inline style has a `right` value set (not `left`).
+    expect(fly.style.right).to.not.equal("");
+    expect(fly.style.left).to.equal("");
   });
 });

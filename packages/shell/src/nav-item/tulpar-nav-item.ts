@@ -91,10 +91,17 @@ export class TulparNavItem extends LitElement {
 
   private _showRailFlyout() {
     const rect = this.getBoundingClientRect();
-    const rightSide = this.getAttribute("data-sidenav-position") === "right";
+    // Walk up to the nearest sidenav to determine which side it is on.
+    // The old approach (reading data-sidenav-position on the nav-item itself)
+    // was dead code — that attribute is only set on <tulpar-shell>, not items.
+    const rightSide =
+      this.closest("tulpar-sidenav")?.getAttribute("position") === "right";
     const gap = 8; // px gap between item edge and flyout
     this._flyoutTop = rect.top;
     if (rightSide) {
+      // Flyout must appear to the LEFT of the item.
+      // Use CSS `right` anchored to the right viewport edge so the flyout
+      // extends leftward from the item's left edge.
       this._flyoutLeft = null;
       this._flyoutRight = window.innerWidth - rect.left + gap;
     } else {

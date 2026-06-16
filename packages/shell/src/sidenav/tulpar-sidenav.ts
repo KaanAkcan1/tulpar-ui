@@ -260,7 +260,12 @@ export class TulparSidenav extends LitElement {
   }
 
   override updated() {
-    this._reflectRail();
+    // Only sweep children when we're actually in rail mode.
+    // The data-rail toggle ON/OFF transition is already handled by
+    // attributeChangedCallback → _reflectRail(), so we only need to re-run
+    // here to pick up new items that were added while already railed
+    // (e.g. dynamic items change, slot content swap).
+    if (this.hasAttribute("data-rail")) this._reflectRail();
   }
 
   override disconnectedCallback() {
