@@ -1,4 +1,5 @@
 import { fixture, html, expect, oneEvent } from "@open-wc/testing";
+import type { LitElement } from "lit";
 import "./tulpar-sidenav";
 import "../nav-item/tulpar-nav-item";
 import type { TulparSidenav } from "./tulpar-sidenav";
@@ -294,5 +295,15 @@ describe("<tulpar-sidenav>", () => {
     el.querySelectorAll("tulpar-nav-item, tulpar-nav-section").forEach((n) => {
       expect(n.hasAttribute("data-rail")).to.be.true;
     });
+  });
+
+  it("forwards item.icon (SVG string) from items data to the nav-item", async () => {
+    const el = await fixture<TulparSidenav>(html`
+      <tulpar-sidenav .items=${[{ label: "Button", href: "/button", icon: '<svg class="probe"></svg>' }]}></tulpar-sidenav>
+    `);
+    await el.updateComplete;
+    const item = el.shadowRoot!.querySelector("tulpar-nav-item")!;
+    await (item as LitElement).updateComplete;
+    expect(item.shadowRoot!.querySelector("svg.probe")).to.exist;
   });
 });

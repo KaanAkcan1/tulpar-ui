@@ -120,6 +120,7 @@ export class TulparSidenav extends LitElement {
     return html`<tulpar-nav-item
       href=${item.href ?? nothing}
       label=${item.label}
+      icon=${item.icon ?? nothing}
       icon-class=${item.iconClass ?? nothing}
       badge=${item.badge ?? nothing}
       count=${item.count ?? nothing}
