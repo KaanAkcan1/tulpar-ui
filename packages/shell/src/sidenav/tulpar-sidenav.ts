@@ -64,6 +64,11 @@ export class TulparSidenav extends LitElement {
   /** True when the consumer has placed a [slot=header] child into light DOM. */
   @state() hasHeaderSlot = false;
 
+  /** True when a [slot=utility-start] child is present in light DOM. */
+  @state() _hasUtilityStart = false;
+  /** True when a [slot=utility-end] child is present in light DOM. */
+  @state() _hasUtilityEnd = false;
+
   private _attrObserver: MutationObserver | null = null;
 
   private _renderItem(item: TulparNavItemData): unknown {
@@ -153,11 +158,39 @@ export class TulparSidenav extends LitElement {
     }
   };
 
+  /**
+   * Called whenever the utility-start slot's assigned nodes change.
+   * Public so renderUtility() can bind it from parts/utility.ts.
+   */
+  _onUtilityStartSlotChange = (e?: Event) => {
+    const slot = e?.target as HTMLSlotElement | undefined;
+    if (slot) {
+      this._hasUtilityStart = slot.assignedElements().length > 0;
+    } else {
+      this._hasUtilityStart = !!this.querySelector(':scope > [slot="utility-start"]');
+    }
+  };
+
+  /**
+   * Called whenever the utility-end slot's assigned nodes change.
+   * Public so renderUtility() can bind it from parts/utility.ts.
+   */
+  _onUtilityEndSlotChange = (e?: Event) => {
+    const slot = e?.target as HTMLSlotElement | undefined;
+    if (slot) {
+      this._hasUtilityEnd = slot.assignedElements().length > 0;
+    } else {
+      this._hasUtilityEnd = !!this.querySelector(':scope > [slot="utility-end"]');
+    }
+  };
+
   override connectedCallback() {
     super.connectedCallback();
     this.addEventListener("tulpar-nav-item-expand", this._onItemExpand);
     // Detect initial state synchronously before first render
     this.hasHeaderSlot = !!this.querySelector(':scope > [slot="header"]');
+    this._hasUtilityStart = !!this.querySelector(':scope > [slot="utility-start"]');
+    this._hasUtilityEnd = !!this.querySelector(':scope > [slot="utility-end"]');
     this._attrObserver = new MutationObserver(() => {
       this.requestUpdate();
     });

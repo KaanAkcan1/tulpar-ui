@@ -66,61 +66,93 @@ const gearIcon = html`<svg
 /**
  * Renders the utility row at the bottom of the sidenav.
  *
- * Slot-vs-built-in precedence:
- * - The built-in cells (theme toggle, config) are rendered when the corresponding
- *   props are enabled (`showModeSelection`, `showConfig`).
- * - `<slot name="utility-start">` and `<slot name="utility-end">` are always
- *   rendered alongside the built-in cells as escape hatches. When a consumer
- *   places content in a slot, that content appears in the slot's position; the
- *   built-in cell next to it is still rendered (consumer may hide it via CSS or
- *   set the prop to false). Slots with no assigned content are invisible.
- * - The entire `.utility` region is omitted when both built-in cells are off
- *   (showModeSelection=false AND showConfig=false) AND no slot content is present
- *   — because the region would be empty. For simplicity (matching the tests),
- *   when both props are false the `.utility` element is not rendered at all.
+ * Slot-vs-built-in precedence (spec §4.3):
+ * - If `utility-start` slot is filled → render a `.util-cell` containing that slot;
+ *   the built-in theme toggle is suppressed entirely.
+ * - If `utility-start` slot is empty → render built-in `.util-theme` button when
+ *   `showModeSelection` is true; otherwise render nothing for that position.
+ * - Same mutual-exclusion logic applies to `utility-end` / built-in `.util-config`.
+ *
+ * Detection: `host._hasUtilityStart` / `host._hasUtilityEnd` are set synchronously
+ * in connectedCallback (via querySelector) and updated dynamically via @slotchange
+ * handlers bound below.
+ *
+ * The entire `.utility` container is omitted when no cell (built-in or slotted) is
+ * visible — i.e. both props are false AND no slot content is present.
  */
 export function renderUtility(host: TulparSidenav) {
-  const showBuiltin = host.showModeSelection || host.showConfig;
+  // Determine what to show in the "start" (left) cell:
+  // priority: slotted content > built-in > nothing
+  const startCell = host._hasUtilityStart
+    ? html`<div class="util-cell">
+        <slot
+          name="utility-start"
+          @slotchange=${host._onUtilityStartSlotChange}
+        ></slot>
+      </div>`
+    : host.showModeSelection
+      ? html`<button
+            class="util-theme util-btn"
+            type="button"
+            aria-label=${host.themeLabel}
+            @click=${() =>
+              host.dispatchEvent(
+                new CustomEvent("tulpar-theme-toggle", { bubbles: true, composed: true }),
+              )}
+          >
+            ${moonIcon}${sunIcon}
+            <span class="util-text">Theme</span>
+          </button>
+          <slot
+            name="utility-start"
+            style="display:none"
+            @slotchange=${host._onUtilityStartSlotChange}
+          ></slot>`
+      : html`<slot
+          name="utility-start"
+          style="display:none"
+          @slotchange=${host._onUtilityStartSlotChange}
+        ></slot>`;
 
-  if (!showBuiltin) {
+  // Determine what to show in the "end" (right) cell:
+  const endCell = host._hasUtilityEnd
+    ? html`<div class="util-cell">
+        <slot
+          name="utility-end"
+          @slotchange=${host._onUtilityEndSlotChange}
+        ></slot>
+      </div>`
+    : host.showConfig
+      ? html`<button
+            class="util-config util-btn"
+            type="button"
+            aria-label=${host.configLabel}
+            @click=${() =>
+              host.dispatchEvent(
+                new CustomEvent("tulpar-config-click", { bubbles: true, composed: true }),
+              )}
+          >
+            ${gearIcon}
+            <span class="util-text">${host.configText}</span>
+          </button>
+          <slot
+            name="utility-end"
+            style="display:none"
+            @slotchange=${host._onUtilityEndSlotChange}
+          ></slot>`
+      : html`<slot
+          name="utility-end"
+          style="display:none"
+          @slotchange=${host._onUtilityEndSlotChange}
+        ></slot>`;
+
+  // Determine whether the container should render at all.
+  // Show it when any visible cell exists.
+  const hasStart = host._hasUtilityStart || host.showModeSelection;
+  const hasEnd = host._hasUtilityEnd || host.showConfig;
+  if (!hasStart && !hasEnd) {
     return nothing;
   }
 
-  const themeCell = host.showModeSelection
-    ? html`<button
-        class="util-theme util-btn"
-        type="button"
-        aria-label=${host.themeLabel}
-        @click=${() =>
-          host.dispatchEvent(
-            new CustomEvent("tulpar-theme-toggle", { bubbles: true, composed: true }),
-          )}
-      >
-        ${moonIcon}${sunIcon}
-        <span class="util-text">Theme</span>
-      </button>`
-    : html`<slot name="utility-start"></slot>`;
-
-  const configCell = host.showConfig
-    ? html`<button
-        class="util-config util-btn"
-        type="button"
-        aria-label=${host.configLabel}
-        @click=${() =>
-          host.dispatchEvent(
-            new CustomEvent("tulpar-config-click", { bubbles: true, composed: true }),
-          )}
-      >
-        ${gearIcon}
-        <span class="util-text">${host.configText}</span>
-      </button>`
-    : nothing;
-
-  // Slots are always available as escape hatches alongside built-in cells
-  return html`<div class="utility">
-    ${themeCell}
-    <slot name="utility-start" style="display:none"></slot>
-    ${configCell}
-    <slot name="utility-end" style="display:none"></slot>
-  </div>`;
+  return html`<div class="utility">${startCell}${endCell}</div>`;
 }

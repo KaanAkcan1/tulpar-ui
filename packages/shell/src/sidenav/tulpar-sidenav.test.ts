@@ -213,6 +213,14 @@ describe("<tulpar-sidenav>", () => {
     expect(el.shadowRoot!.querySelector(".utility")).to.be.null;
   });
 
+  it("utility-start slot overrides the built-in theme cell", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav><button slot="utility-start" class="mine">x</button></tulpar-sidenav>`);
+    await el.updateComplete;
+    expect(el.shadowRoot!.querySelector(".util-theme")).to.be.null; // built-in suppressed
+    const slot = el.shadowRoot!.querySelector('slot[name="utility-start"]') as HTMLSlotElement;
+    expect(slot.assignedElements().some((n) => n.classList.contains("mine"))).to.be.true;
+  });
+
   // ── Chunk 4: rail utility icon-only (B2) ─────────────────────────────────
 
   it("rail makes theme toggle icon-only and hides config (B2)", async () => {

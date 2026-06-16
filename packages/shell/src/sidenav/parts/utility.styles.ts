@@ -4,14 +4,15 @@ export const utilityStyles = css`
   .utility {
     flex: none;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 0.5rem;
     padding: 0.5rem 0.625rem;
   }
 
-  /* When only one cell is visible (theme only, default) collapse to 1fr */
-  .utility:has(.util-config:only-of-type) {
-    grid-template-columns: 1fr;
+  /* When both cells are present, switch to two equal columns */
+  .utility:has(.util-cell + .util-cell),
+  .utility:has(.util-theme):has(.util-config) {
+    grid-template-columns: 1fr 1fr;
   }
 
   /* Utility cell buttons */
