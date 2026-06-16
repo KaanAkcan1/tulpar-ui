@@ -96,4 +96,40 @@ describe("<tulpar-sidenav>", () => {
     await el.updateComplete;
     expect(document.activeElement).to.equal(items[0]);
   });
+
+  it("Home/End move focus to first/last item", async () => {
+    const el = await fixture<TulparSidenav>(html`
+      <tulpar-sidenav>
+        <tulpar-nav-item href="/a" label="A"></tulpar-nav-item>
+        <tulpar-nav-item href="/b" label="B"></tulpar-nav-item>
+        <tulpar-nav-item href="/c" label="C"></tulpar-nav-item>
+      </tulpar-sidenav>
+    `);
+    const items = el.querySelectorAll("tulpar-nav-item");
+    (items[1] as HTMLElement).focus();
+    const nav = el.shadowRoot!.querySelector("nav")!;
+    nav.dispatchEvent(new KeyboardEvent("keydown", { key: "End", bubbles: true }));
+    expect(items[2].contains(document.activeElement)).to.be.true;
+    nav.dispatchEvent(new KeyboardEvent("keydown", { key: "Home", bubbles: true }));
+    expect(items[0].contains(document.activeElement)).to.be.true;
+  });
+
+  it("single-expand collapses sibling groups when one opens", async () => {
+    const el = await fixture<TulparSidenav>(html`
+      <tulpar-sidenav single-expand>
+        <tulpar-nav-item label="G1"><tulpar-nav-item href="/1" label="c1"></tulpar-nav-item></tulpar-nav-item>
+        <tulpar-nav-item label="G2"><tulpar-nav-item href="/2" label="c2"></tulpar-nav-item></tulpar-nav-item>
+      </tulpar-sidenav>
+    `);
+    // Use direct children only so we get G1 and G2, not the nested c1/c2
+    const [g1, g2] = [...el.children].filter(
+      (c) => c.tagName.toLowerCase() === "tulpar-nav-item",
+    ) as Element[];
+    (g1 as any).expand();
+    (g2 as any).expand();
+    await el.updateComplete;
+    expect((g1 as any)._expanded ?? g1.shadowRoot!.querySelector("button")!.getAttribute("aria-expanded")).to.satisfy(
+      (v: unknown) => v === false || v === "false",
+    );
+  });
 });

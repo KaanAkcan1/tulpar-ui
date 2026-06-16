@@ -2,6 +2,7 @@ import { LitElement, html, nothing } from "lit";
 import { property } from "lit/decorators.js";
 import { sidenavStyles } from "./tulpar-sidenav.styles";
 import type { TulparNavItemData } from "../nav-item/tulpar-nav-item";
+import type { TulparNavItem } from "../nav-item/tulpar-nav-item";
 import "../nav-item/tulpar-nav-item";
 import "../nav-section/tulpar-nav-section";
 
@@ -39,21 +40,67 @@ export class TulparSidenav extends LitElement {
     >`;
   }
 
-  private _onKeydown = (e: KeyboardEvent) => {
-    if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
-    const items = [
+  private _focusableItems(): HTMLElement[] {
+    return [
       ...this.querySelectorAll<HTMLElement>("tulpar-nav-item:not([disabled])"),
       ...(this.shadowRoot?.querySelectorAll<HTMLElement>("tulpar-nav-item:not([disabled])") ?? []),
     ].filter((i) => i.offsetParent !== null); // görünmeyen (kapalı grup) item'ları atla
-    const current = items.findIndex(
+  }
+
+  private _focusedItem(): TulparNavItem | null {
+    const items = this._focusableItems();
+    return (items.find(
       (i) => i.contains(document.activeElement) || i === document.activeElement,
-    );
-    if (current === -1) return;
-    e.preventDefault();
-    const next =
-      e.key === "ArrowDown" ? Math.min(current + 1, items.length - 1) : Math.max(current - 1, 0);
-    items[next].focus();
+    ) as TulparNavItem) ?? null;
+  }
+
+  private _onKeydown = (e: KeyboardEvent) => {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      const items = this._focusableItems();
+      const current = items.findIndex(
+        (i) => i.contains(document.activeElement) || i === document.activeElement,
+      );
+      if (current === -1) return;
+      e.preventDefault();
+      const next =
+        e.key === "ArrowDown" ? Math.min(current + 1, items.length - 1) : Math.max(current - 1, 0);
+      items[next].focus();
+      return;
+    }
+
+    if (e.key === "Home" || e.key === "End") {
+      e.preventDefault();
+      const list = this._focusableItems();
+      (e.key === "Home" ? list[0] : list[list.length - 1])?.focus();
+      return;
+    }
+
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+      const focused = this._focusedItem();
+      if (!focused) return;
+      e.preventDefault();
+      (e.key === "ArrowRight" ? focused.expand?.() : focused.collapse?.());
+      return;
+    }
   };
+
+  private _onItemExpand = (e: Event) => {
+    if (!this.singleExpand) return;
+    const opened = (e as CustomEvent).detail.item as TulparNavItem;
+    this.querySelectorAll<TulparNavItem>("tulpar-nav-item").forEach((it) => {
+      if (it !== opened && !it.contains(opened)) it.collapse?.();
+    });
+  };
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.addEventListener("tulpar-nav-item-expand", this._onItemExpand);
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener("tulpar-nav-item-expand", this._onItemExpand);
+  }
 
   override render() {
     return html`

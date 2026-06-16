@@ -86,8 +86,20 @@ export class TulparNavItem extends LitElement {
     if (!this.dispatchEvent(ev)) e.preventDefault();
   }
 
+  expand() {
+    if (!this._hasChildren || this._expanded) return;
+    this._expanded = true;
+    this.dispatchEvent(
+      new CustomEvent("tulpar-nav-item-expand", { bubbles: true, composed: true, detail: { item: this } }),
+    );
+  }
+
+  collapse() {
+    this._expanded = false;
+  }
+
   private _toggle() {
-    this._expanded = !this._expanded;
+    this._expanded ? this.collapse() : this.expand();
   }
 
   private _renderInner() {
