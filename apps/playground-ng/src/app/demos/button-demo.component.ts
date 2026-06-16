@@ -341,6 +341,31 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
+    <!-- ── Page header ─────────────────────────────────────────────────── -->
+    <header class="page-header">
+      <span class="page-tag">Core</span>
+      <h1 class="page-title">Button</h1>
+      <p class="page-lede">
+        The workhorse action element — nine severities, five variants, seven sizes, plus icons,
+        loading, polymorphism, and full keyboard-grouped navigation. Form-associated out of the box.
+      </p>
+    </header>
+
+    <!-- ── Hero ────────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <div class="hero">
+        <tulpar-button-ng severity="primary" size="lg">
+          <lucide-angular slot="start" [img]="Check" [size]="18"></lucide-angular>
+          Save changes
+        </tulpar-button-ng>
+        <tulpar-button-ng severity="secondary" variant="outlined" size="lg">Cancel</tulpar-button-ng>
+        <tulpar-button-ng severity="premium" variant="tonal" size="lg">
+          <lucide-angular slot="start" [img]="Crown" [size]="18"></lucide-angular>
+          Upgrade
+        </tulpar-button-ng>
+      </div>
+    </section>
+
     <!-- ── 1. Severity ─────────────────────────────────────────────────── -->
     <section class="doc-section">
       <h2 class="section-title">1. Severity</h2>
@@ -787,11 +812,167 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
       </div>
       <pre class="code"><code>{{ slotEscapeHatchCode }}</code></pre>
     </section>
+
+    <!-- ── 20. In context — a real toolbar ─────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">In context — an editor toolbar</h2>
+      <p class="section-desc">
+        Buttons rarely live alone. Here they compose into a document toolbar: a primary save action,
+        secondary affordances, an icon-only group, and a destructive action — all on a real card
+        surface.
+      </p>
+      <div class="composition">
+        <div class="toolbar-card">
+          <div class="toolbar">
+            <div class="toolbar-group">
+              <tulpar-button-ng severity="primary" size="sm">
+                <lucide-angular slot="start" [img]="Save" [size]="15"></lucide-angular>
+                Save
+              </tulpar-button-ng>
+              <tulpar-button-ng severity="secondary" variant="outlined" size="sm">
+                <lucide-angular slot="start" [img]="Download" [size]="15"></lucide-angular>
+                Export
+              </tulpar-button-ng>
+            </div>
+            <div class="toolbar-group">
+              <tulpar-button-ng
+                severity="secondary"
+                variant="ghost"
+                size="sm"
+                ariaLabel="Settings"
+                tooltip="Settings"
+                [iconOnly]="true"
+              >
+                <lucide-angular slot="start" [img]="Settings" [size]="16"></lucide-angular>
+              </tulpar-button-ng>
+              <tulpar-button-ng
+                severity="secondary"
+                variant="ghost"
+                size="sm"
+                ariaLabel="Favorite"
+                tooltip="Favorite"
+                [iconOnly]="true"
+              >
+                <lucide-angular slot="start" [img]="Heart" [size]="16"></lucide-angular>
+              </tulpar-button-ng>
+              <tulpar-button-ng
+                severity="danger"
+                variant="ghost"
+                size="sm"
+                ariaLabel="Delete"
+                tooltip="Delete document"
+                [iconOnly]="true"
+              >
+                <lucide-angular slot="start" [img]="Trash2" [size]="16"></lucide-angular>
+              </tulpar-button-ng>
+            </div>
+          </div>
+          <p class="toolbar-doc-name">Untitled document</p>
+          <p class="toolbar-doc-body">
+            A representative composition — pairing severities, variants, and icon-only buttons the
+            way a product surface actually would.
+          </p>
+        </div>
+      </div>
+    </section>
   `,
   styles: [
     `
       :host {
         display: block;
+      }
+
+      /* ── Page header ───────────────────────────────────────────────────── */
+      .page-header {
+        margin-bottom: 12px;
+      }
+
+      .page-tag {
+        display: inline-block;
+        margin-bottom: 14px;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        background: var(--tulpar-color-bg-subtle, #e9f1ef);
+        color: var(--tulpar-color-text-secondary, #57534e);
+      }
+
+      .page-title {
+        margin: 0 0 12px;
+        font-family: var(--tulpar-font-family-display, Georgia, serif);
+        font-size: 34px;
+        font-weight: 600;
+        line-height: 1.1;
+        color: var(--tulpar-color-text-primary, #15110b);
+      }
+
+      .page-lede {
+        margin: 0;
+        font-size: 15px;
+        color: var(--tulpar-color-text-secondary, #57534e);
+        max-width: 640px;
+        line-height: 1.6;
+      }
+
+      /* ── Hero ──────────────────────────────────────────────────────────── */
+      .hero {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        padding: 32px 28px;
+        border: 1px solid var(--tulpar-color-border-default, #d9e0df);
+        border-radius: 14px;
+        background: var(--tulpar-color-bg-subtle, #e9f1ef);
+      }
+
+      /* ── Real-world composition ────────────────────────────────────────── */
+      .composition {
+        display: flex;
+      }
+
+      .toolbar-card {
+        flex: 1;
+        padding: 18px;
+        border: 1px solid var(--tulpar-color-border-default, #d9e0df);
+        border-radius: 12px;
+        background: var(--tulpar-color-bg-elevated, #ffffff);
+        box-shadow: var(--tulpar-shadow-sm, 0 1px 2px rgb(0 0 0 / 0.06));
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 16px;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+        border-bottom: 1px solid var(--tulpar-color-border-default, #d9e0df);
+      }
+
+      .toolbar-group {
+        display: inline-flex;
+        gap: 6px;
+        align-items: center;
+      }
+
+      .toolbar-doc-name {
+        margin: 0 0 6px;
+        font-family: var(--tulpar-font-family-display, Georgia, serif);
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--tulpar-color-text-primary, #15110b);
+      }
+
+      .toolbar-doc-body {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.6;
+        color: var(--tulpar-color-text-secondary, #57534e);
       }
 
       .doc-section {
