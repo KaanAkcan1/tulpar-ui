@@ -1,13 +1,19 @@
 import { LitElement, html, nothing } from "lit";
 import { property } from "lit/decorators.js";
 import { sidenavStyles } from "./tulpar-sidenav.styles";
+import { headerStyles } from "./parts/header.styles";
+import { utilityStyles } from "./parts/utility.styles";
+import { accountStyles } from "./parts/account.styles";
+import { renderHeader } from "./parts/header";
+import { renderUtility } from "./parts/utility";
+import { renderAccount } from "./parts/account";
 import type { TulparNavItemData } from "../nav-item/tulpar-nav-item";
 import type { TulparNavItem } from "../nav-item/tulpar-nav-item";
 import "../nav-item/tulpar-nav-item";
 import "../nav-section/tulpar-nav-section";
 
 export class TulparSidenav extends LitElement {
-  static override styles = sidenavStyles;
+  static override styles = [sidenavStyles, headerStyles, utilityStyles, accountStyles];
 
   /** JSON menü verisi — slot ile birlikte kullanılabilir. */
   @property({ attribute: false }) items?: TulparNavItemData[];
@@ -104,17 +110,14 @@ export class TulparSidenav extends LitElement {
 
   override render() {
     return html`
-      <div class="header"><slot name="header"></slot><slot name="header-actions"></slot></div>
+      ${renderHeader(this)}
       <div class="search"><slot name="search"></slot></div>
       <nav aria-label=${this.navLabel} @keydown=${this._onKeydown}>
         ${this.items?.map((i) => this._renderItem(i)) ?? nothing}
         <slot></slot>
       </nav>
-      <div class="utility">
-        <div class="utility-start"><slot name="utility-start"></slot></div>
-        <div class="utility-end"><slot name="utility-end"></slot></div>
-      </div>
-      <div class="footer"><slot name="footer"></slot></div>
+      ${renderUtility(this)}
+      ${renderAccount(this)}
     `;
   }
 }

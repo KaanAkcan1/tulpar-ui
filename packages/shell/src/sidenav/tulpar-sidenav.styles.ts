@@ -46,14 +46,6 @@ export const sidenavStyles = css`
         bottom / 100% 0.5rem no-repeat;
     background-attachment: local, local, scroll, scroll;
   }
-  .header {
-    flex: none;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    padding: 0.75rem 0.875rem;
-  }
   .search {
     flex: none;
     padding: 0 0.75rem 0.5rem;
@@ -61,26 +53,8 @@ export const sidenavStyles = css`
   .search:empty {
     display: none;
   }
-  .utility {
-    flex: none;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-    padding: 0.5rem 0.625rem;
-  }
-  .footer {
-    flex: none;
-    padding: 0.625rem 0.75rem 0.75rem;
-    box-shadow: inset 0 1px 0 var(--tulpar-shell-sidenav-edge, rgba(11, 8, 4, 0.06));
-  }
 
   /* Rail mode: pass context down to slotted nav-items and nav-sections */
-  :host([data-rail]) .utility {
-    grid-template-columns: 1fr;
-  }
-  :host([data-rail]) .utility-end {
-    display: none;
-  }
   :host([data-rail]) ::slotted(tulpar-nav-item),
   :host([data-rail]) ::slotted(tulpar-nav-section) {
     --tulpar-nav-item-rail: 1;
