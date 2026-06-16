@@ -1,0 +1,8 @@
+import { svg } from "lit";
+
+/** Tulpar brand mark — logo artwork. Greens are primitives green.500/600/700. */
+export const brandMark = svg`<svg viewBox="0 0 256 256" width="24" height="24" aria-hidden="true">
+  <line x1="74" y1="110" x2="212" y2="64" stroke="#00c57a" stroke-width="30" stroke-linecap="round"/>
+  <line x1="62" y1="156" x2="176" y2="118" stroke="#00a468" stroke-width="30" stroke-linecap="round"/>
+  <line x1="50" y1="202" x2="140" y2="172" stroke="#0b7e52" stroke-width="30" stroke-linecap="round"/>
+</svg>`;
