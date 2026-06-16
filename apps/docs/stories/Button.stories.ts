@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/web-components";
-import { html } from "lit";
+import { html, nothing } from "lit";
 import "@tulpar-ui/core/button";
 
 /**
@@ -113,19 +113,73 @@ export default meta;
 
 type Story = StoryObj;
 
+/**
+ * **Playground** — every declared control is wired to a real observed attribute
+ * on `<tulpar-button>`, so changing severity, variant, size, shape, **color**,
+ * icon-position, loading-position, **justify**, **raised**, **block**,
+ * **icon-only** and **icon-separator** in the controls panel all visibly affect
+ * the rendered button. Toggle `icon-only` together with `severity="danger"` for
+ * the destructive icon button, or pick a `color` to override the severity hue.
+ */
 export const Default: Story = {
-  args: { severity: "primary", variant: "solid", size: "md" },
+  args: { severity: "primary", variant: "solid", size: "md", shape: "default" },
   render: (args) => html`
     <tulpar-button
-      severity=${args["severity"]}
-      variant=${args["variant"]}
-      size=${args["size"]}
-      shape=${args["shape"] ?? "default"}
+      severity=${args["severity"] ?? nothing}
+      variant=${args["variant"] ?? nothing}
+      size=${args["size"] ?? nothing}
+      shape=${args["shape"] ?? nothing}
+      color=${args["color"] ?? nothing}
+      icon-position=${args["icon-position"] ?? nothing}
+      loading-position=${args["loading-position"] ?? nothing}
+      justify=${args["justify"] ?? nothing}
+      ?raised=${args["raised"]}
+      ?block=${args["block"]}
       ?disabled=${args["disabled"]}
       ?loading=${args["loading"]}
+      ?icon-only=${args["iconOnly"]}
+      ?icon-separator=${args["icon-separator"]}
     >
+      <span slot="start">${checkIcon}</span>
       Button
     </tulpar-button>
+  `,
+};
+
+/**
+ * **CardActions** — a realistic composition: a settings card whose footer pairs
+ * a ghost "Cancel" with a primary "Save changes", plus a destructive icon-only
+ * action. Demonstrates how the button family reads inside real product UI.
+ */
+export const CardActions: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => html`
+    <div
+      style="max-width:420px; border:1px solid var(--tulpar-color-border-default,#d9e0df); border-radius:12px; background:var(--tulpar-color-bg-raised,#fff); overflow:hidden;"
+    >
+      <div style="padding:20px 20px 0;">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+          <div>
+            <h3 style="margin:0 0 4px; font-size:1.05rem;">Workspace settings</h3>
+            <p style="margin:0; font-size:0.85rem; color:var(--tulpar-color-text-secondary,#74777a);">
+              Manage how your team collaborates in this workspace.
+            </p>
+          </div>
+          <tulpar-button icon-only variant="ghost" severity="danger" aria-label="Delete workspace">
+            ${trashIcon}
+          </tulpar-button>
+        </div>
+      </div>
+      <div
+        style="display:flex; justify-content:flex-end; gap:8px; padding:16px 20px; margin-top:20px; border-top:1px solid var(--tulpar-color-border-default,#d9e0df); background:var(--tulpar-color-bg-surface,#f6f8f8);"
+      >
+        <tulpar-button variant="ghost" severity="secondary">Cancel</tulpar-button>
+        <tulpar-button severity="primary">
+          <span slot="start">${checkIcon}</span>
+          Save changes
+        </tulpar-button>
+      </div>
+    </div>
   `,
 };
 
