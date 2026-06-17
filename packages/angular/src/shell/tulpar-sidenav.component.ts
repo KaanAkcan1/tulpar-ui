@@ -2,8 +2,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
+  DestroyRef,
   ElementRef,
   type Type,
+  afterNextRender,
   computed,
   effect,
   inject,
@@ -202,6 +204,29 @@ export class TulparSidenavComponent {
       // `false` actually disables the search (an absent boolean attribute would
       // leave the element's `true` default in place).
       el.showSearch = this.showSearch();
+    });
+
+    // The shell reflects layout-state attributes onto the slotted element — but in
+    // Angular that slotted element is THIS wrapper host (`display: contents`), not
+    // the inner <tulpar-sidenav> that reads them. Mirror them down so rail/collapse
+    // actually reach the core element (Vue needs no equivalent: its root IS the
+    // core element). Without this, Angular rail mode renders broken.
+    const destroyRef = inject(DestroyRef);
+    afterNextRender(() => {
+      const wrapper = this.host.nativeElement;
+      const inner = wrapper.querySelector("tulpar-sidenav");
+      if (!inner) return;
+      const STATE_ATTRS = ["data-rail", "data-collapsed", "data-sidenav-open"];
+      const sync = () => {
+        for (const a of STATE_ATTRS) {
+          if (wrapper.hasAttribute(a)) inner.setAttribute(a, wrapper.getAttribute(a) ?? "");
+          else inner.removeAttribute(a);
+        }
+      };
+      sync();
+      const obs = new MutationObserver(sync);
+      obs.observe(wrapper, { attributes: true, attributeFilter: STATE_ATTRS });
+      destroyRef.onDestroy(() => obs.disconnect());
     });
   }
 }

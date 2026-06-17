@@ -154,6 +154,22 @@ describe("Shell family wrappers (smoke)", () => {
     expect(inner.getAttribute("user-name")).toBe("Ada Lovelace");
   });
 
+  it("mirrors shell layout-state attributes (data-rail) onto the inner element", async () => {
+    const fixture = TestBed.createComponent(Host);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const ng = fixture.nativeElement.querySelector("tulpar-sidenav-ng") as HTMLElement;
+    const inner = fixture.nativeElement.querySelector("tulpar-sidenav") as HTMLElement;
+    // The shell reflects data-rail onto the slotted (-ng, display:contents) host;
+    // the wrapper must mirror it down to the inner element that reads it.
+    ng.setAttribute("data-rail", "");
+    await new Promise((r) => setTimeout(r, 0)); // MutationObserver is async
+    expect(inner.hasAttribute("data-rail")).toBe(true);
+    ng.removeAttribute("data-rail");
+    await new Promise((r) => setTimeout(r, 0));
+    expect(inner.hasAttribute("data-rail")).toBe(false);
+  });
+
   it("sidenav outputs fire on tulpar-config-click / -settings-click / -logout", () => {
     const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();
