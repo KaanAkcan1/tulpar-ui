@@ -313,12 +313,23 @@ export const buttonStyles = css`
    * ============================================================ */
   :host([variant="solid"]) .btn,
   :host(:not([variant])) .btn {
-    border-color: var(--tulpar-button-surface-border, transparent);
-    box-shadow: var(--tulpar-button-shadow-rest);
+    border-color: var(--tulpar-button-surface-border, rgba(0, 0, 0, 0.08));
+    box-shadow: var(
+      --tulpar-button-shadow-rest,
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.16),
+      inset 0 -1px 0 0 rgba(0, 0, 0, 0.08),
+      0 1px 2px -1px rgba(10, 37, 64, 0.2),
+      0 4px 12px -3px rgba(10, 37, 64, 0.12)
+    );
   }
   :host([variant="solid"]) .btn:hover,
   :host(:not([variant])) .btn:hover {
-    box-shadow: var(--tulpar-button-shadow-hover);
+    box-shadow: var(
+      --tulpar-button-shadow-hover,
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.18),
+      0 2px 4px -1px rgba(10, 37, 64, 0.22),
+      0 8px 20px -4px rgba(10, 37, 64, 0.14)
+    );
   }
 
   /* ============================================================
@@ -378,7 +389,7 @@ export const buttonStyles = css`
   :host([variant="solid"]) .btn:active,
   :host(:not([variant])) .btn:active {
     transform: var(--_btn-press-transform);
-    box-shadow: var(--tulpar-button-shadow-press);
+    box-shadow: var(--tulpar-button-shadow-press, inset 0 1px 2px 0 rgba(0, 0, 0, 0.14));
     transition-duration: var(--tulpar-button-press-duration, 80ms);
   }
 
@@ -510,22 +521,25 @@ export const buttonStyles = css`
     visibility: visible;
   }
 
-  /* Loading — start/end: keep the icon slot's box (visibility:hidden so width
-     is preserved), overlay the spinner at that edge via absolute positioning
-     so it adds no inline box. Mirrors the center-mode mechanism. */
-  :host([loading][loading-position="start"]) .start,
-  :host([loading][loading-position="end"]) .end {
-    visibility: hidden;
+  /* Loading — start/end: the spinner sits inline at the start/end of the
+     content (via flex order), keeping the label visible beside it. The icon
+     slot is removed so the spinner replaces it. Absolute positioning was
+     tried but detaches the spinner from the centered label, so it stays
+     in-flow here. */
+  :host([loading][loading-position="start"]) .start {
+    display: none;
   }
-  :host([loading][loading-position="start"]) .spinner,
+  :host([loading][loading-position="start"]) .spinner {
+    display: inline-flex;
+    order: -1;
+  }
+  :host([loading][loading-position="end"]) .end {
+    display: none;
+  }
   :host([loading][loading-position="end"]) .spinner {
     display: inline-flex;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    order: 99;
   }
-  :host([loading][loading-position="start"]) .spinner { left: var(--_btn-padding-x); }
-  :host([loading][loading-position="end"]) .spinner { right: var(--_btn-padding-x); }
 
   /* Loading label */
   .loading-label-text {
@@ -590,17 +604,34 @@ export const buttonStyles = css`
    * Premium severity +1 light treatment
    * ============================================================ */
   :host([severity="premium"][variant="solid"]) .btn {
-    background-image: var(--tulpar-button-premium-sheen);
-    box-shadow: var(--tulpar-button-shadow-rest), var(--tulpar-button-premium-ambient);
+    background-image: var(
+      --tulpar-button-premium-sheen,
+      linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0) 42%)
+    );
+    box-shadow:
+      var(
+        --tulpar-button-shadow-rest,
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.16),
+        0 1px 2px -1px rgba(10, 37, 64, 0.2),
+        0 4px 12px -3px rgba(10, 37, 64, 0.12)
+      ),
+      var(--tulpar-button-premium-ambient, 0 6px 18px -4px rgba(10, 37, 64, 0.18));
   }
   /* Bug fix: premium static rule is (0,3,0) which outranks the base hover/press
      shadow rules (0,2,1). Add premium-specific state rules at (0,3,1) so hover
      and press shadows are visible on premium-solid buttons. */
   :host([severity="premium"][variant="solid"]) .btn:hover {
-    box-shadow: var(--tulpar-button-shadow-hover), var(--tulpar-button-premium-ambient);
+    box-shadow:
+      var(
+        --tulpar-button-shadow-hover,
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.18),
+        0 2px 4px -1px rgba(10, 37, 64, 0.22),
+        0 8px 20px -4px rgba(10, 37, 64, 0.14)
+      ),
+      var(--tulpar-button-premium-ambient, 0 6px 18px -4px rgba(10, 37, 64, 0.18));
   }
   :host([severity="premium"][variant="solid"]) .btn:active {
-    box-shadow: var(--tulpar-button-shadow-press);
+    box-shadow: var(--tulpar-button-shadow-press, inset 0 1px 2px 0 rgba(0, 0, 0, 0.14));
   }
 
   /* Bug fix: disabled premium-solid — the premium static rule (0,3,0) outranks

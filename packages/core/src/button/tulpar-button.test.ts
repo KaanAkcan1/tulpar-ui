@@ -567,10 +567,12 @@ describe("<tulpar-button>", () => {
     });
   });
 
-  describe("loading width stability (reflow-safe)", () => {
-    it("button width does not change when loading toggles (start position)", async () => {
+  describe("loading layout", () => {
+    // Center mode overlays the spinner (absolute) and hides the label via
+    // visibility:hidden, so it is the one mode that preserves button width.
+    it("center mode preserves button width when loading toggles", async () => {
       const el = await fixture<TulparButton>(
-        html`<tulpar-button loading-position="start">Save changes</tulpar-button>`,
+        html`<tulpar-button loading-position="center">Save changes</tulpar-button>`,
       );
       const before = el.getBoundingClientRect().width;
       el.loading = true;
@@ -579,40 +581,16 @@ describe("<tulpar-button>", () => {
       expect(Math.abs(after - before)).to.be.lessThan(1.5);
     });
 
-    it("button width does not change when loading toggles (end position)", async () => {
+    // Start/end keep the spinner inline (flex order) next to the still-visible
+    // label, so the spinner is never detached from or overlapping the label.
+    it("start position keeps the label visible alongside the spinner", async () => {
       const el = await fixture<TulparButton>(
-        html`<tulpar-button loading-position="end">Save changes</tulpar-button>`,
+        html`<tulpar-button loading loading-position="start">Save</tulpar-button>`,
       );
-      const before = el.getBoundingClientRect().width;
-      el.loading = true;
-      await el.updateComplete;
-      const after = el.getBoundingClientRect().width;
-      expect(Math.abs(after - before)).to.be.lessThan(1.5);
-    });
-
-    it("button width is stable when loading toggles WITH a start icon", async () => {
-      const el = await fixture<TulparButton>(
-        html`<tulpar-button loading-position="start"><span slot="start">+</span>Save changes</tulpar-button>`,
-      );
-      const before = el.getBoundingClientRect().width;
-      el.loading = true;
-      await el.updateComplete;
-      const after = el.getBoundingClientRect().width;
-      // < 1.5 px tolerance accounts for sub-pixel layout and border rounding;
-      // tightening this risks flake on fractional-DPI screens.
-      expect(Math.abs(after - before)).to.be.lessThan(1.5);
-    });
-
-    it("button width is stable when loading toggles WITH an end icon", async () => {
-      const el = await fixture<TulparButton>(
-        html`<tulpar-button loading-position="end">Save changes<span slot="end">+</span></tulpar-button>`,
-      );
-      const before = el.getBoundingClientRect().width;
-      el.loading = true;
-      await el.updateComplete;
-      const after = el.getBoundingClientRect().width;
-      // < 1.5 px tolerance accounts for sub-pixel layout and border rounding.
-      expect(Math.abs(after - before)).to.be.lessThan(1.5);
+      const label = el.shadowRoot!.querySelector<HTMLElement>(".label")!;
+      const spinner = el.shadowRoot!.querySelector<HTMLElement>(".spinner")!;
+      expect(getComputedStyle(label).visibility).to.equal("visible");
+      expect(getComputedStyle(spinner).display).to.not.equal("none");
     });
   });
 
