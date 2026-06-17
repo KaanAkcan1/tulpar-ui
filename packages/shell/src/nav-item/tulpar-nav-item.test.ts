@@ -377,6 +377,53 @@ describe("<tulpar-nav-item>", () => {
     expect((links[0] as HTMLAnchorElement).getAttribute("href")).to.equal("/text");
   });
 
+  it("rail flyout injects child + group icons (imperatively, no directive)", async () => {
+    const el = await fixture<TulparNavItem>(html`
+      <tulpar-nav-item label="Group" icon="<svg id='g'></svg>" data-rail>
+        <tulpar-nav-item href="/c1" label="C1" icon="<svg id='c1'></svg>"></tulpar-nav-item>
+        <tulpar-nav-item href="/c2" label="C2" icon="<svg id='c2'></svg>"></tulpar-nav-item>
+      </tulpar-nav-item>
+    `);
+    await el.updateComplete;
+    (el as unknown as { _showRailFlyout(): void })._showRailFlyout(); // visible → icons inject
+    await el.updateComplete;
+    const root = el.shadowRoot!;
+    expect(root.querySelector(".flyout-header-icon svg#g"), "group icon injected").to.exist;
+    const icons = root.querySelectorAll(".flyout-link-icon");
+    expect(icons[0].querySelector("svg#c1"), "child 1 icon").to.exist;
+    expect(icons[1].querySelector("svg#c2"), "child 2 icon").to.exist;
+  });
+
+  it("rail flyout stays open while the pointer is over it (hoverable, WCAG 1.4.13)", async () => {
+    const el = await fixture<TulparNavItem>(html`
+      <tulpar-nav-item label="Group" icon="<svg></svg>" data-rail
+        data-open-delay="10" data-close-delay="20">
+        <tulpar-nav-item href="/c" label="Child"></tulpar-nav-item>
+      </tulpar-nav-item>
+    `);
+    await el.updateComplete;
+    const trigger = el.shadowRoot!.querySelector("button") as HTMLElement;
+    const isOpen = () => {
+      const f = el.shadowRoot!.querySelector(".rail-flyout") as HTMLElement;
+      return f && f.style.display !== "none";
+    };
+    // Open via hover intent.
+    trigger.dispatchEvent(new PointerEvent("pointerenter"));
+    await new Promise((r) => setTimeout(r, 60));
+    expect(isOpen(), "open after intent").to.be.true;
+    // Leaving the trigger arms the close timer...
+    trigger.dispatchEvent(new PointerEvent("pointerleave"));
+    // ...but entering the flyout cancels it (hoverable).
+    const flyout = el.shadowRoot!.querySelector(".rail-flyout.is-group") as HTMLElement;
+    flyout.dispatchEvent(new PointerEvent("pointerenter"));
+    await new Promise((r) => setTimeout(r, 80)); // > close delay
+    expect(isOpen(), "stays open while hovered").to.be.true;
+    // Leaving the flyout finally closes it.
+    flyout.dispatchEvent(new PointerEvent("pointerleave"));
+    await new Promise((r) => setTimeout(r, 80));
+    expect(isOpen(), "closes after leaving the flyout").to.be.false;
+  });
+
   it("rail flyout child link auto-activates from current URL pathname", async () => {
     const el = await fixture<TulparNavItem>(html`
       <tulpar-nav-item label="Group" icon="<svg></svg>" data-rail>

@@ -160,56 +160,128 @@ export const navItemStyles = css`
     display: none;
   }
 
-  /* Group flyout panel (overrides base .rail-flyout tooltip defaults) */
+  /* Group flyout panel — a polished "section card" submenu */
   :host([data-rail]) .rail-flyout.is-group {
-    padding: 6px;
-    min-width: 200px;
-    max-width: 280px;
+    padding: 5px;
+    min-width: 224px;
+    max-width: 300px;
     white-space: normal;
     pointer-events: auto;
     overflow: visible;
-    border-radius: 0.5rem;
+    border-radius: 0.625rem;
     background: var(--tulpar-shell-sidenav-flyout-bg, #ffffff);
     border: 1px solid var(--tulpar-shell-sidenav-flyout-border, #d9e0df);
     box-shadow: var(--tulpar-shadow-flyout, 0 4px 6px -2px rgba(10, 37, 64, 0.1), 0 12px 28px -6px rgba(10, 37, 64, 0.14));
     display: flex;
     flex-direction: column;
-    gap: 2px;
   }
+  /* Invisible hover-bridge: spans the gap between the rail and the panel so the
+     pointer never crosses a dead zone (the panel's pointerenter keeps it open). */
+  :host([data-rail]) .rail-flyout.is-group::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    left: -10px;
+    width: 12px;
+  }
+  :host([data-rail]) .rail-flyout.is-group.is-right::before {
+    left: auto;
+    right: -10px;
+  }
+
+  /* Header: the group's icon + title (ties the panel to the rail icon you hovered) */
   :host([data-rail]) .rail-flyout.is-group .flyout-header {
     display: flex;
     align-items: center;
-    min-height: 1.75rem;
-    padding: 0 0.5rem 0.375rem;
-    margin-bottom: 2px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    color: var(--tulpar-shell-sidenav-flyout-header-fg, #636568);
+    gap: 0.5rem;
+    padding: 0.375rem 0.5rem 0.5rem;
+    margin-bottom: 4px;
     border-bottom: 1px solid var(--tulpar-shell-sidenav-flyout-divider, #d9e0df);
   }
-  :host([data-rail]) .rail-flyout.is-group .flyout-link {
-    display: flex;
+  :host([data-rail]) .rail-flyout.is-group .flyout-header-icon {
+    display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    min-height: 2rem;
-    padding: 0 0.5rem;
-    border-radius: 0.375rem;
+    justify-content: center;
+    flex: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    color: var(--tulpar-shell-sidenav-item-indicator, #00c57a);
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-header-icon:empty {
+    display: none;
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-header-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-header-label {
+    flex: 1;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.005em;
     color: var(--tulpar-shell-sidenav-fg, #27231d);
-    font-size: 0.875rem;
-    text-decoration: none;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    transition: background-color 120ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1));
+  }
+
+  :host([data-rail]) .rail-flyout.is-group .flyout-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  /* Child rows: icon + label, mirroring the inline nav-item rhythm */
+  :host([data-rail]) .rail-flyout.is-group .flyout-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: 2.125rem;
+    padding: 0 0.5rem;
+    border-radius: 0.4375rem;
+    color: var(--tulpar-shell-sidenav-fg, #27231d);
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition:
+      background-color 120ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1)),
+      color 120ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1));
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-link-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 1.0625rem;
+    height: 1.0625rem;
+    color: var(--tulpar-shell-sidenav-fg-muted, #74777a);
+    transition: color 120ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1));
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-link-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-link-label {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   :host([data-rail]) .rail-flyout.is-group .flyout-link:hover {
     background: var(--tulpar-shell-sidenav-item-bg-hover, #e9f1ef);
   }
+  :host([data-rail]) .rail-flyout.is-group .flyout-link:hover .flyout-link-icon {
+    color: var(--tulpar-shell-sidenav-fg, #27231d);
+  }
+  /* Active child mirrors the inline active treatment: accent bar + tinted bg + brand fg */
   :host([data-rail]) .rail-flyout.is-group .flyout-link[aria-current="page"] {
     background: var(--tulpar-shell-sidenav-item-bg-active, #deffea);
     color: var(--tulpar-shell-sidenav-item-fg-active, #0b7e52);
     font-weight: 600;
+    box-shadow: inset 2px 0 0 0 var(--tulpar-shell-sidenav-item-indicator, #00c57a);
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-link[aria-current="page"] .flyout-link-icon {
+    color: var(--tulpar-shell-sidenav-item-indicator, #00c57a);
   }
   :host([data-rail]) .rail-flyout.is-group .flyout-link:focus-visible {
     outline: 2px solid var(--tulpar-color-focus-ring, #514ecf);

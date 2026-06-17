@@ -21,6 +21,22 @@ export interface TulparNavItemData {
   kbd?: string;
 }
 
+/**
+ * Resolve a nav item's icon to an HTML string for the rail flyout.
+ * Priority: the string `icon` prop (core/data-driven) → the rendered `<svg>`
+ * inside a slotted `[slot="icon"]` (Angular/Vue component icons) → the slot's
+ * inner HTML as a fallback. Returns undefined when the item has no icon.
+ * The result is injected imperatively (not via a lit directive) so the flyout
+ * never depends on a single lit-html instance in the consumer bundle.
+ */
+function iconHTMLOf(n: TulparNavItem): string | undefined {
+  if (n.icon) return n.icon;
+  const slotted = n.querySelector<HTMLElement>(':scope > [slot="icon"]');
+  if (!slotted) return undefined;
+  const svg = slotted.querySelector("svg");
+  return (svg?.outerHTML ?? slotted.innerHTML) || undefined;
+}
+
 export class TulparNavItem extends LitElement {
   static override shadowRootOptions: ShadowRootInit = {
     ...LitElement.shadowRootOptions,
@@ -72,7 +88,12 @@ export class TulparNavItem extends LitElement {
   /** Caret Y offset relative to the flyout top, pinned to the trigger icon center. */
   @state() private _flyoutCaretY: number | null = null;
   /** Child model for the group flyout panel. */
-  @state() private _childModel: { href?: string; label: string; active: boolean }[] = [];
+  @state() private _childModel: {
+    href?: string;
+    label: string;
+    active: boolean;
+    iconHTML?: string;
+  }[] = [];
 
   private _onLocationChange = () => {
     this._urlActive = this.href != null && location.pathname === this.href;
@@ -144,7 +165,12 @@ export class TulparNavItem extends LitElement {
    * both on slotchange (initial/`_hasChildren`) and at flyout-open time so the
    * panel reflects the live route, not a stale snapshot.
    */
-  private _collectChildModel(): { href?: string; label: string; active: boolean }[] {
+  private _collectChildModel(): {
+    href?: string;
+    label: string;
+    active: boolean;
+    iconHTML?: string;
+  }[] {
     const slot = this.shadowRoot?.querySelector<HTMLSlotElement>(".children slot");
     const navItems: TulparNavItem[] = [];
     for (const el of slot?.assignedElements() ?? []) {
@@ -155,7 +181,13 @@ export class TulparNavItem extends LitElement {
       href: n.href,
       label: n.label,
       active: n.active ?? (n.href != null && location.pathname === n.href),
+      iconHTML: iconHTMLOf(n),
     }));
+  }
+
+  /** The group's own icon as HTML, for the flyout header. */
+  private _groupIconHTML(): string | undefined {
+    return iconHTMLOf(this);
   }
 
   private _showRailFlyout() {
@@ -245,6 +277,20 @@ export class TulparNavItem extends LitElement {
 
   private _onAnchorFocusOut = () => {
     if (this.hasAttribute("data-rail") && !this._pinned) this._onFlyoutHide();
+  };
+
+  // Keep the flyout open while the pointer is over it (or the gap bridge): cancel
+  // the pending close so travelling from the icon into the panel never dismisses
+  // it (WCAG 1.4.13 "hoverable"). The `::before` bridge extends this region across
+  // the 8px gap so there is no dead zone.
+  private _onFlyoutPointerEnter = () => {
+    this._clearTimers();
+  };
+
+  private _onFlyoutPointerLeave = () => {
+    if (this._pinned) return;
+    this._clearTimers();
+    this._closeTimer = window.setTimeout(() => this._onFlyoutHide(), this._closeDelay);
   };
 
   private _onAnchorClick = () => {
@@ -346,6 +392,27 @@ export class TulparNavItem extends LitElement {
     `;
   }
 
+  override updated() {
+    // Inject the group + child icons into the flyout imperatively. We capture the
+    // icon as an HTML string (string `icon` prop, or a slotted component's rendered
+    // <svg>) and set innerHTML here rather than using a lit directive (unsafeSVG),
+    // so the flyout never trips the cross-lit-instance directive crash. Re-injected
+    // on each render (idempotent) since Lit owns the placeholder spans.
+    if (!this._flyoutVisible || !this._hasChildren) return;
+    const root = this.shadowRoot;
+    if (!root) return;
+    const header = root.querySelector<HTMLElement>(".flyout-header-icon");
+    if (header) this._setIcon(header, this._groupIconHTML());
+    const iconSpans = root.querySelectorAll<HTMLElement>(".flyout-link-icon");
+    this._childModel.forEach((c, i) => this._setIcon(iconSpans[i], c.iconHTML));
+  }
+
+  private _setIcon(span: HTMLElement | undefined, htmlStr: string | undefined) {
+    if (!span) return;
+    const next = htmlStr ?? "";
+    if (span.innerHTML !== next) span.innerHTML = next;
+  }
+
   override render() {
     const isRail = this.hasAttribute("data-rail");
 
@@ -392,17 +459,26 @@ export class TulparNavItem extends LitElement {
               style=${this._flyoutPositionStyles(
                 this._flyoutCaretY != null ? `--flyout-caret-y:${this._flyoutCaretY}px` : "",
               )}
+              @pointerenter=${this._onFlyoutPointerEnter}
+              @pointerleave=${this._onFlyoutPointerLeave}
             >
               <span class="flyout-caret" aria-hidden="true"></span>
-              <div class="flyout-header">${this.label}</div>
-              ${this._childModel.map(
-                (c) => html`<a
-                  class="flyout-link"
-                  href=${c.href ?? nothing}
-                  aria-current=${c.active ? "page" : nothing}
-                  >${c.label}</a
-                >`,
-              )}
+              <div class="flyout-header">
+                <span class="flyout-header-icon" aria-hidden="true"></span>
+                <span class="flyout-header-label">${this.label}</span>
+              </div>
+              <div class="flyout-list">
+                ${this._childModel.map(
+                  (c) => html`<a
+                    class="flyout-link"
+                    href=${c.href ?? nothing}
+                    aria-current=${c.active ? "page" : nothing}
+                  >
+                    <span class="flyout-link-icon" aria-hidden="true"></span>
+                    <span class="flyout-link-label">${c.label}</span>
+                  </a>`,
+                )}
+              </div>
             </div>`
           : html`<span
               class="rail-flyout"
