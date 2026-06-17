@@ -140,7 +140,7 @@ export class TulparNavItem extends LitElement {
       // (e.g. a display:contents wrapper) that *contains* a nav item.
       return (
         el.matches("tulpar-nav-item, tulpar-nav-item-ng") ||
-        el.querySelector("tulpar-nav-item") != null
+        el.querySelector("tulpar-nav-item, tulpar-nav-item-ng") != null
       );
     });
   }
