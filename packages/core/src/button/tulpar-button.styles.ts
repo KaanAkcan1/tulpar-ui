@@ -327,6 +327,7 @@ export const buttonStyles = css`
   }
   :host([variant="solid"]) .btn:hover,
   :host(:not([variant])) .btn:hover {
+    transform: translateY(-1px);
     box-shadow: var(
       --tulpar-button-shadow-hover,
       inset 0 1px 0 0 rgba(255, 255, 255, 0.18),
@@ -671,10 +672,20 @@ export const buttonStyles = css`
   }
 
   /* ============================================================
-   * Tonal variant light top highlight
+   * Tonal variant light top highlight + hover lift
    * ============================================================ */
   :host([variant="tonal"]) .btn {
     box-shadow: inset 0 1px 0 0 color-mix(in oklch, white 8%, transparent);
+  }
+  :host([variant="tonal"]) .btn:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 0 color-mix(in oklch, white 8%, transparent),
+      0 6px 16px -5px color-mix(in oklch, var(--_btn-color-default) 32%, transparent);
+  }
+  /* active after hover so press (down) wins over lift (up) at equal specificity */
+  :host([variant="tonal"]) .btn:active {
+    transform: var(--_btn-press-transform);
   }
 
   /* ============================================================
