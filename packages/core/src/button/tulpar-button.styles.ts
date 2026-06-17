@@ -134,17 +134,26 @@ export const buttonStyles = css`
     line-height: 1;
     height: var(--_btn-height);
     padding: 0 var(--_btn-padding-x);
-    border-radius: var(--tulpar-button-border-radius, 4px);
+    border-radius: var(--_btn-radius, var(--tulpar-button-border-radius, 7px));
     border: var(--tulpar-button-border-width, 1px) solid transparent;
     cursor: inherit;
     text-decoration: none;
     user-select: none;
-    transition: var(--tulpar-transition-default, all 150ms ease);
+    transition-property: background-color, border-color, color, box-shadow, transform;
+    transition-duration: 140ms;
+    transition-timing-function: var(--tulpar-transition-ease-standard, cubic-bezier(0.2, 0, 0, 1));
     background: var(--_btn-bg, transparent);
     color: var(--_btn-fg, currentColor);
     border-color: var(--_btn-border, transparent);
     position: relative;
     box-sizing: border-box;
+  }
+
+  /* Weighted per-property durations for solid/raised (shadow lags, transform snaps) */
+  :host([raised]) .btn,
+  :host([variant="solid"]) .btn,
+  :host(:not([variant])) .btn {
+    transition-duration: 140ms, 140ms, 140ms, 200ms, 90ms;
   }
 
   :host([block]) .btn {
@@ -160,42 +169,56 @@ export const buttonStyles = css`
     --_btn-padding-x: var(--tulpar-button-size-xs-padding-x, 8px);
     --_btn-font-size: var(--tulpar-button-size-xs-font-size, 12px);
     --_btn-icon-size: 12px;
+    --_btn-radius: var(--tulpar-button-size-xs-radius, 7px);
+    letter-spacing: var(--tulpar-button-size-xs-letter-spacing, 0);
   }
   :host([size="sm"]) .btn {
     --_btn-height: var(--tulpar-button-size-sm-height, 32px);
     --_btn-padding-x: var(--tulpar-button-size-sm-padding-x, 12px);
     --_btn-font-size: var(--tulpar-button-size-sm-font-size, 14px);
     --_btn-icon-size: 14px;
+    --_btn-radius: var(--tulpar-button-size-sm-radius, 7px);
+    letter-spacing: var(--tulpar-button-size-sm-letter-spacing, 0);
   }
   :host([size="md"]) .btn {
     --_btn-height: var(--tulpar-button-size-md-height, 40px);
     --_btn-padding-x: var(--tulpar-button-size-md-padding-x, 16px);
     --_btn-font-size: var(--tulpar-button-size-md-font-size, 14px);
     --_btn-icon-size: 16px;
+    --_btn-radius: var(--tulpar-button-size-md-radius, 7px);
+    letter-spacing: var(--tulpar-button-size-md-letter-spacing, 0);
   }
   :host([size="lg"]) .btn {
     --_btn-height: var(--tulpar-button-size-lg-height, 48px);
     --_btn-padding-x: var(--tulpar-button-size-lg-padding-x, 20px);
     --_btn-font-size: var(--tulpar-button-size-lg-font-size, 16px);
     --_btn-icon-size: 18px;
+    --_btn-radius: var(--tulpar-button-size-lg-radius, 7px);
+    letter-spacing: var(--tulpar-button-size-lg-letter-spacing, 0);
   }
   :host([size="xl"]) .btn {
     --_btn-height: var(--tulpar-button-size-xl-height, 56px);
     --_btn-padding-x: var(--tulpar-button-size-xl-padding-x, 24px);
     --_btn-font-size: var(--tulpar-button-size-xl-font-size, 18px);
     --_btn-icon-size: 20px;
+    --_btn-radius: var(--tulpar-button-size-xl-radius, 7px);
+    letter-spacing: var(--tulpar-button-size-xl-letter-spacing, 0);
   }
   :host([size="2xl"]) .btn {
     --_btn-height: var(--tulpar-button-size-2xl-height, 64px);
     --_btn-padding-x: var(--tulpar-button-size-2xl-padding-x, 28px);
     --_btn-font-size: var(--tulpar-button-size-2xl-font-size, 20px);
     --_btn-icon-size: 24px;
+    --_btn-radius: var(--tulpar-button-size-2xl-radius, 7px);
+    letter-spacing: var(--tulpar-button-size-2xl-letter-spacing, 0);
   }
   :host([size="3xl"]) .btn {
     --_btn-height: var(--tulpar-button-size-3xl-height, 72px);
     --_btn-padding-x: var(--tulpar-button-size-3xl-padding-x, 32px);
     --_btn-font-size: var(--tulpar-button-size-3xl-font-size, 24px);
     --_btn-icon-size: 28px;
+    --_btn-radius: var(--tulpar-button-size-3xl-radius, 7px);
+    letter-spacing: var(--tulpar-button-size-3xl-letter-spacing, 0);
   }
 
   /* ============================================================
@@ -280,6 +303,19 @@ export const buttonStyles = css`
   }
 
   /* ============================================================
+   * Solid surface treatment + self-border
+   * ============================================================ */
+  :host([variant="solid"]) .btn,
+  :host(:not([variant])) .btn {
+    border-color: var(--tulpar-button-surface-border, transparent);
+    box-shadow: var(--tulpar-button-shadow-rest);
+  }
+  :host([variant="solid"]) .btn:hover,
+  :host(:not([variant])) .btn:hover {
+    box-shadow: var(--tulpar-button-shadow-hover);
+  }
+
+  /* ============================================================
    * Shape
    * ============================================================ */
   :host([shape="round"]) .btn {
@@ -296,10 +332,7 @@ export const buttonStyles = css`
    * Modifiers — raised, justify, icon-position
    * ============================================================ */
   :host([raised]) .btn {
-    box-shadow: var(
-      --tulpar-button-shadow-raised,
-      var(--tulpar-shadow-md, 0 1px 3px rgba(10, 37, 64, 0.08), 0 8px 24px rgba(10, 37, 64, 0.06))
-    );
+    box-shadow: var(--tulpar-button-shadow-raised, var(--tulpar-shadow-md));
   }
 
   :host([justify="start"]) .btn {
@@ -331,6 +364,26 @@ export const buttonStyles = css`
   }
   :host([icon-position="bottom"]) .btn {
     flex-direction: column-reverse;
+  }
+
+  /* ============================================================
+   * Press depression (active wins over hover wins over raised wins over rest)
+   * ============================================================ */
+  :host([variant="solid"]) .btn:active,
+  :host(:not([variant])) .btn:active {
+    transform: translateY(0.5px) scale(0.985);
+    box-shadow: var(--tulpar-button-shadow-press);
+    transition-duration: var(--tulpar-button-press-duration, 80ms);
+  }
+  :host([variant="outlined"]) .btn:active,
+  :host([variant="ghost"]) .btn:active {
+    transform: translateY(0.5px) scale(0.985);
+  }
+
+  /* Optional hover lift for outlined/ghost */
+  :host([variant="outlined"]) .btn:hover,
+  :host([variant="ghost"]) .btn:hover {
+    transform: translateY(-1px);
   }
 
   /* ============================================================
@@ -395,7 +448,11 @@ export const buttonStyles = css`
    * ============================================================ */
   :host([disabled]) .btn,
   :host([data-disabled]) .btn {
-    opacity: 0.5;
+    background: var(--tulpar-button-disabled-bg);
+    color: var(--tulpar-button-disabled-fg);
+    border-color: var(--tulpar-button-disabled-border);
+    box-shadow: none;
+    transform: none;
     cursor: not-allowed;
   }
   :host([disabled]) .btn {
@@ -421,7 +478,7 @@ export const buttonStyles = css`
     border: 2px solid currentColor;
     border-top-color: transparent;
     border-radius: 50%;
-    animation: tulpar-button-spin 600ms linear infinite;
+    animation: tulpar-button-spin var(--tulpar-button-spinner-duration, 600ms) linear infinite;
     display: inline-block;
   }
 
@@ -485,6 +542,9 @@ export const buttonStyles = css`
     .btn {
       transition: none;
     }
+    .btn:active {
+      transform: none;
+    }
   }
 
   /* ============================================================
@@ -510,6 +570,21 @@ export const buttonStyles = css`
   :host([icon-only]) .label,
   :host([icon-only]) .end {
     display: none;
+  }
+
+  /* ============================================================
+   * Premium severity +1 light treatment
+   * ============================================================ */
+  :host([severity="premium"][variant="solid"]) .btn {
+    background-image: var(--tulpar-button-premium-sheen);
+    box-shadow: var(--tulpar-button-shadow-rest), var(--tulpar-button-premium-ambient);
+  }
+
+  /* ============================================================
+   * Tonal variant light top highlight
+   * ============================================================ */
+  :host([variant="tonal"]) .btn {
+    box-shadow: inset 0 1px 0 0 color-mix(in oklch, white 8%, transparent);
   }
 
   /* ============================================================
@@ -572,14 +647,14 @@ export const buttonStyles = css`
   :host([data-group-orientation="stacked"][data-group-position="first"]) .btn {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    border-top-left-radius: var(--tulpar-button-border-radius, 4px);
-    border-top-right-radius: var(--tulpar-button-border-radius, 4px);
+    border-top-left-radius: var(--_btn-radius, var(--tulpar-button-border-radius, 7px));
+    border-top-right-radius: var(--_btn-radius, var(--tulpar-button-border-radius, 7px));
   }
   :host([data-group-orientation="stacked"][data-group-position="last"]) .btn {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
-    border-bottom-left-radius: var(--tulpar-button-border-radius, 4px);
-    border-bottom-right-radius: var(--tulpar-button-border-radius, 4px);
+    border-bottom-left-radius: var(--_btn-radius, var(--tulpar-button-border-radius, 7px));
+    border-bottom-right-radius: var(--_btn-radius, var(--tulpar-button-border-radius, 7px));
   }
   :host([data-group-orientation="stacked"][data-group-position="middle"]),
   :host([data-group-orientation="stacked"][data-group-position="last"]) {

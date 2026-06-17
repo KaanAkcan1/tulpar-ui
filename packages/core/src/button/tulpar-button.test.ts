@@ -408,6 +408,29 @@ describe("<tulpar-button>", () => {
     });
   });
 
+  describe("v0.7 polish", () => {
+    it("does NOT use opacity:0.5 for disabled (uses designed tokens)", async () => {
+      const el = await fixture<TulparButton>(html`<tulpar-button disabled>X</tulpar-button>`);
+      const btn = el.shadowRoot!.querySelector("button")!;
+      const opacity = getComputedStyle(btn).opacity;
+      expect(opacity).to.equal("1"); // disabled conveyed by color tokens, not opacity
+    });
+    it("transition is split per-property (not `all`)", () => {
+      const cssText = buttonStyles.cssText; // existing tests use .cssText directly
+      expect(cssText).to.not.match(/transition:\s*var\(--tulpar-transition-default/);
+      expect(cssText).to.match(/transition-property:\s*background-color/);
+      expect(cssText).to.match(/transition-timing-function:\s*var\(--tulpar-transition-ease-standard/);
+    });
+    it("focus ring stays on outline (box-shadow not hijacked for focus)", () => {
+      const cssText = buttonStyles.cssText;
+      expect(cssText).to.match(/focus-visible[\s\S]*?outline:/);
+    });
+    it("grouped buttons keep the per-size radius on outer corners (not hardcoded 4px)", () => {
+      const cssText = buttonStyles.cssText;
+      expect(cssText).to.not.match(/border-top-left-radius:\s*var\(--tulpar-button-border-radius,\s*4px\)/);
+    });
+  });
+
   describe("tooltip", () => {
     it("renders a tooltip span when tooltip attribute is set", async () => {
       const el = await fixture<TulparButton>(
