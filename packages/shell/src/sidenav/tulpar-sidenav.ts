@@ -198,6 +198,19 @@ export class TulparSidenav extends LitElement {
     }
   };
 
+  private _onRailFlyoutOpen = (e: Event) => {
+    const opened = (e as CustomEvent).detail.item as TulparNavItem;
+    const all = [
+      ...this.querySelectorAll<TulparNavItem>("tulpar-nav-item"),
+      ...(this.shadowRoot?.querySelectorAll<TulparNavItem>("tulpar-nav-item") ?? []),
+    ];
+    all.forEach((it) => {
+      if (it !== opened && typeof (it as unknown as { closeRailFlyout?: () => void }).closeRailFlyout === "function") {
+        (it as unknown as { closeRailFlyout: () => void }).closeRailFlyout();
+      }
+    });
+  };
+
   private _onItemExpand = (e: Event) => {
     if (!this.singleExpand) return;
     const opened = (e as CustomEvent).detail.item as TulparNavItem;
@@ -261,6 +274,7 @@ export class TulparSidenav extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
     this.addEventListener("tulpar-nav-item-expand", this._onItemExpand);
+    this.addEventListener("tulpar-rail-flyout-open", this._onRailFlyoutOpen);
     // Detect initial state synchronously before first render
     this.hasHeaderSlot = !!this.querySelector(':scope > [slot="header"]');
     this._hasUtilityStart = !!this.querySelector(':scope > [slot="utility-start"]');
@@ -299,6 +313,7 @@ export class TulparSidenav extends LitElement {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.removeEventListener("tulpar-nav-item-expand", this._onItemExpand);
+    this.removeEventListener("tulpar-rail-flyout-open", this._onRailFlyoutOpen);
     this._darkObserver?.disconnect();
     this._darkObserver = null;
     this._attrObserver?.disconnect();

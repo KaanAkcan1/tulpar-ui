@@ -218,6 +218,10 @@ export class TulparNavItem extends LitElement {
     if (!this.dispatchEvent(ev)) e.preventDefault();
   }
 
+  closeRailFlyout() {
+    if (this._flyoutVisible || this._pinned) this._onFlyoutHide();
+  }
+
   expand() {
     if (!this._hasChildren || this._expanded) return;
     this._expanded = true;

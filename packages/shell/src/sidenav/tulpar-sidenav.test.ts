@@ -322,6 +322,30 @@ describe("<tulpar-sidenav>", () => {
     expect(el.hasAttribute("data-dark")).to.be.false;
   });
 
+  it("only one rail flyout is open at a time", async () => {
+    const el = await fixture<TulparSidenav>(html`
+      <tulpar-sidenav data-rail>
+        <tulpar-nav-item label="A" icon="<svg></svg>">
+          <tulpar-nav-item href="/a1" label="A1"></tulpar-nav-item>
+        </tulpar-nav-item>
+        <tulpar-nav-item label="B" icon="<svg></svg>">
+          <tulpar-nav-item href="/b1" label="B1"></tulpar-nav-item>
+        </tulpar-nav-item>
+      </tulpar-sidenav>
+    `);
+    await el.updateComplete;
+    const [a, b] = el.querySelectorAll("tulpar-nav-item[label]") as unknown as TulparNavItem[];
+    (a as unknown as { _showRailFlyout(): void })._showRailFlyout();
+    (b as unknown as { _showRailFlyout(): void })._showRailFlyout();
+    await el.updateComplete;
+    const open = (n: Element) => {
+      const f = n.shadowRoot!.querySelector(".rail-flyout") as HTMLElement;
+      return f && f.style.display !== "none";
+    };
+    expect(open(a), "A closed when B opened").to.be.false;
+    expect(open(b), "B open").to.be.true;
+  });
+
   it("theme toggle shows the target mode label, overridable, synced to dark mode", async () => {
     document.documentElement.classList.remove("dark");
     const el = await fixture<TulparSidenav>(
