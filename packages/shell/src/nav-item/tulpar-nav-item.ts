@@ -111,6 +111,10 @@ export class TulparNavItem extends LitElement {
       this.closest("tulpar-sidenav")?.getAttribute("position") === "right";
     const gap = 8; // px gap between item edge and flyout
     this._flyoutTop = rect.top;
+    // Caret points at the trigger icon's vertical center, relative to the flyout's
+    // fixed top. When the panel is shifted up to fit, the caret stays on the icon.
+    const iconCenter = rect.top + rect.height / 2;
+    this._flyoutCaretY = iconCenter - this._flyoutTop;
     if (rightSide) {
       // Flyout must appear to the LEFT of the item.
       // Use CSS `right` anchored to the right viewport edge so the flyout

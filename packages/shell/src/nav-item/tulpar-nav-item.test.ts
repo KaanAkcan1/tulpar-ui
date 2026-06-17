@@ -222,6 +222,23 @@ describe("<tulpar-nav-item>", () => {
     expect(getComputedStyle(childGroup).display).to.not.equal("none");
   });
 
+  it("pins the caret Y to the trigger icon center", async () => {
+    const el = await fixture<TulparNavItem>(html`
+      <tulpar-nav-item label="Group" icon="<svg></svg>" data-rail>
+        <tulpar-nav-item href="/c" label="Child"></tulpar-nav-item>
+      </tulpar-nav-item>
+    `);
+    await el.updateComplete;
+    // Show the flyout via the public hover entry (simulate pointerenter on the anchor)
+    const trigger = el.shadowRoot!.querySelector("a, button") as HTMLElement;
+    trigger.dispatchEvent(new PointerEvent("pointerenter"));
+    // open immediately for the test (intent timer covered separately) — call internal show
+    (el as unknown as { _showRailFlyout(): void })._showRailFlyout();
+    await el.updateComplete;
+    const flyout = el.shadowRoot!.querySelector(".rail-flyout.is-group") as HTMLElement;
+    expect(flyout.style.getPropertyValue("--flyout-caret-y")).to.match(/\d+px/);
+  });
+
   it("rail group shows a flyout panel with header + child links", async () => {
     const el = await fixture<TulparNavItem>(html`
       <tulpar-nav-item label="Form Inputs" icon="<svg></svg>" data-rail>
