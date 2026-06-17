@@ -303,6 +303,23 @@ export class TulparNavItem extends LitElement {
     this._closeTimer = window.setTimeout(() => this._onFlyoutHide(), this._closeDelay);
   };
 
+  // Flyout child links navigate like the inline links: dispatch the cancelable
+  // `tulpar-navigate` so an app router can intercept (preventDefault + SPA nav).
+  // Without this, the plain <a href> does a native navigation (full reload), which
+  // — in rail, where the flyout is the only way to navigate — resets app state.
+  private _onFlyoutLinkClick = (e: MouseEvent) => {
+    const href = (e.currentTarget as HTMLAnchorElement).getAttribute("href");
+    if (href == null) return;
+    const ev = new CustomEvent("tulpar-navigate", {
+      bubbles: true,
+      composed: true,
+      cancelable: true,
+      detail: { href, item: this },
+    });
+    if (!this.dispatchEvent(ev)) e.preventDefault();
+    this._onFlyoutHide();
+  };
+
   private _onAnchorClick = () => {
     if (!this.hasAttribute("data-rail") || !this._hasChildren) return;
     // pin/unpin; on touch this is the only way to open
@@ -490,6 +507,7 @@ export class TulparNavItem extends LitElement {
                     class="flyout-link"
                     href=${c.href ?? nothing}
                     aria-current=${c.active ? "page" : nothing}
+                    @click=${this._onFlyoutLinkClick}
                   >
                     <span class="flyout-link-icon" aria-hidden="true"></span>
                     <span class="flyout-link-label">${c.label}</span>

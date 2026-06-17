@@ -453,6 +453,30 @@ describe("<tulpar-nav-item>", () => {
     expect(btn.classList.contains("is-active-trail")).to.be.false;
   });
 
+  it("rail flyout link dispatches tulpar-navigate and closes the flyout", async () => {
+    const el = await fixture<TulparNavItem>(html`
+      <tulpar-nav-item label="Group" icon="<svg></svg>" data-rail>
+        <tulpar-nav-item href="/text" label="TextInput"></tulpar-nav-item>
+      </tulpar-nav-item>
+    `);
+    await el.updateComplete;
+    (el as unknown as { _showRailFlyout(): void })._showRailFlyout();
+    await el.updateComplete;
+    let navHref: string | undefined;
+    el.addEventListener("tulpar-navigate", (e) => {
+      navHref = (e as CustomEvent).detail.href;
+      e.preventDefault(); // app handles routing → native nav suppressed
+    });
+    const link = el.shadowRoot!.querySelector(".flyout-link") as HTMLAnchorElement;
+    const ev = new MouseEvent("click", { bubbles: true, cancelable: true });
+    link.dispatchEvent(ev);
+    await el.updateComplete;
+    expect(navHref, "tulpar-navigate fired with href").to.equal("/text");
+    expect(ev.defaultPrevented, "native nav suppressed when app handles it").to.be.true;
+    const flyout = el.shadowRoot!.querySelector(".rail-flyout.is-group") as HTMLElement;
+    expect(flyout.style.display, "flyout closed after click").to.equal("none");
+  });
+
   it("rail flyout child link auto-activates from current URL pathname", async () => {
     const el = await fixture<TulparNavItem>(html`
       <tulpar-nav-item label="Group" icon="<svg></svg>" data-rail>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import {
   BookOpen,
   FormInput,
@@ -11,6 +12,24 @@ import {
 } from "lucide-vue-next";
 import { TulparShell, TulparTopbar, TulparSidenav } from "@tulpar-ui/vue";
 import type { ShellSidenavMode, TulparNavItemVueData } from "@tulpar-ui/vue";
+
+// SPA navigation: sidenav links (inline AND rail flyout) dispatch the cancelable
+// `tulpar-navigate` event (composed → reaches window). Intercept it, prevent the
+// native full-page navigation, and route via vue-router so app state (sidenav
+// mode, collapsed, dark) survives. Then notify the web components to refresh
+// their active state (they listen for `tulpar-location-changed`).
+const router = useRouter();
+const onNavigate = (e: Event) => {
+  const ce = e as CustomEvent<{ href?: string }>;
+  const href = ce.detail?.href;
+  if (!href) return;
+  ce.preventDefault();
+  void router.push(href).then(() => {
+    window.dispatchEvent(new Event("tulpar-location-changed"));
+  });
+};
+onMounted(() => window.addEventListener("tulpar-navigate", onNavigate));
+onUnmounted(() => window.removeEventListener("tulpar-navigate", onNavigate));
 
 type SidenavPosition = "left" | "right";
 type SidenavDensity = "comfortable" | "compact";

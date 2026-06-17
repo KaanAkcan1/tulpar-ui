@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
 import { LucideAngularModule, type LucideIconData } from 'lucide-angular';
 import {
   BookOpen,
@@ -104,6 +104,7 @@ class IconGuide {
       persistKey="playground-ng-shell"
       [dark]="dark()"
       [(asideOpen)]="asideOpen"
+      (tulpar-navigate)="onNavigate($event)"
     >
       <!-- ── Topbar ───────────────────────────────────────────────────────── -->
       <tulpar-topbar-ng slot="topbar">
@@ -371,6 +372,25 @@ class IconGuide {
   ],
 })
 export class App {
+  private readonly router = inject(Router);
+
+  /**
+   * SPA navigation: the sidenav links (inline AND rail flyout) dispatch the
+   * cancelable `tulpar-navigate` event. Intercept it, prevent the native full-page
+   * navigation, and route via the Angular Router so app state (sidenav mode,
+   * collapsed, dark) survives. Then notify the web components to refresh their
+   * active state (they listen for `tulpar-location-changed`).
+   */
+  onNavigate(e: Event) {
+    const ce = e as CustomEvent<{ href?: string }>;
+    const href = ce.detail?.href;
+    if (!href) return;
+    ce.preventDefault();
+    void this.router.navigateByUrl(href).then(() => {
+      window.dispatchEvent(new Event('tulpar-location-changed'));
+    });
+  }
+
   /** Initial dark-mode state — the built-in sidenav toggle flips it from here on. */
   readonly dark = signal(false);
 
