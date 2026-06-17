@@ -261,6 +261,32 @@ export const navItemStyles = css`
     opacity: 1;
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    :host([data-rail]) .rail-flyout.is-group {
+      animation: tulpar-flyout-in 140ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1)) both;
+    }
+    :host([data-rail]) .rail-flyout.is-group.is-right {
+      animation-name: tulpar-flyout-in-right;
+    }
+    @keyframes tulpar-flyout-in {
+      from { opacity: 0; transform: translateX(-6px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes tulpar-flyout-in-right {
+      from { opacity: 0; transform: translateX(6px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :host([data-rail]) .rail-flyout.is-group {
+      animation: tulpar-flyout-fade 80ms linear both;
+    }
+    @keyframes tulpar-flyout-fade {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+  }
+
   /* Rail flyout: fixed-position label tooltip that escapes overflow-x:clip (B3) */
   .rail-flyout {
     position: fixed;
