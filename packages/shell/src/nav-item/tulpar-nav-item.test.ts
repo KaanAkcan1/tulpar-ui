@@ -139,8 +139,8 @@ describe("<tulpar-nav-item>", () => {
     const el = await fixture<TulparNavItem>(html`<tulpar-nav-item href="/x" label="Longish label"></tulpar-nav-item>`);
     el.setAttribute("data-rail", "");
     await el.updateComplete;
-    const a = el.shadowRoot!.querySelector("a")!;
-    a.dispatchEvent(new Event("pointerenter"));
+    // Bypass intent timer — test is about positioning, not timing.
+    (el as unknown as { _showRailFlyout(): void })._showRailFlyout();
     await el.updateComplete;
     const fly = el.shadowRoot!.querySelector(".rail-flyout") as HTMLElement;
     expect(fly).to.exist;
@@ -222,6 +222,61 @@ describe("<tulpar-nav-item>", () => {
     expect(getComputedStyle(childGroup).display).to.not.equal("none");
   });
 
+  it("opens the rail flyout after a hover-intent delay, closes after a grace delay", async () => {
+    const el = await fixture<TulparNavItem>(html`
+      <tulpar-nav-item label="Group" icon="<svg></svg>" data-rail
+        data-open-delay="10" data-close-delay="20">
+        <tulpar-nav-item href="/c" label="Child"></tulpar-nav-item>
+      </tulpar-nav-item>
+    `);
+    await el.updateComplete;
+    const trigger = el.shadowRoot!.querySelector("a, button") as HTMLElement;
+    const isOpen = () => {
+      const f = el.shadowRoot!.querySelector(".rail-flyout") as HTMLElement;
+      return f && f.style.display !== "none";
+    };
+    trigger.dispatchEvent(new PointerEvent("pointerenter"));
+    expect(isOpen(), "not open immediately on hover").to.be.false;
+    await new Promise((r) => setTimeout(r, 60)); // 6× open delay
+    expect(isOpen(), "open after intent delay").to.be.true;
+    trigger.dispatchEvent(new PointerEvent("pointerleave"));
+    expect(isOpen(), "still open during grace").to.be.true;
+    await new Promise((r) => setTimeout(r, 80)); // 4× close delay
+    expect(isOpen(), "closed after grace").to.be.false;
+  });
+
+  it("opens the rail flyout immediately on focus", async () => {
+    const el = await fixture<TulparNavItem>(html`
+      <tulpar-nav-item label="Group" icon="<svg></svg>" data-rail>
+        <tulpar-nav-item href="/c" label="Child"></tulpar-nav-item>
+      </tulpar-nav-item>
+    `);
+    await el.updateComplete;
+    const trigger = el.shadowRoot!.querySelector("a, button") as HTMLElement;
+    trigger.dispatchEvent(new FocusEvent("focusin"));
+    await el.updateComplete;
+    const f = el.shadowRoot!.querySelector(".rail-flyout") as HTMLElement;
+    expect(f.style.display).to.not.equal("none");
+  });
+
+  it("click pins the flyout open (does not navigate the group)", async () => {
+    const el = await fixture<TulparNavItem>(html`
+      <tulpar-nav-item label="Group" icon="<svg></svg>" data-rail>
+        <tulpar-nav-item href="/c" label="Child"></tulpar-nav-item>
+      </tulpar-nav-item>
+    `);
+    await el.updateComplete;
+    const trigger = el.shadowRoot!.querySelector("button") as HTMLElement;
+    trigger.click();
+    await el.updateComplete;
+    const f = el.shadowRoot!.querySelector(".rail-flyout") as HTMLElement;
+    expect(f.style.display).to.not.equal("none");
+    // leaving does NOT close a pinned flyout
+    trigger.dispatchEvent(new PointerEvent("pointerleave"));
+    await new Promise((r) => setTimeout(r, 280));
+    expect(f.style.display).to.not.equal("none");
+  });
+
   it("pins the caret Y to the trigger icon center", async () => {
     const el = await fixture<TulparNavItem>(html`
       <tulpar-nav-item label="Group" icon="<svg></svg>" data-rail>
@@ -268,9 +323,8 @@ describe("<tulpar-nav-item>", () => {
     const navItem = sidenav.querySelector<TulparNavItem>("tulpar-nav-item")!;
     await navItem.updateComplete;
 
-    // Trigger the flyout via pointerenter on the anchor inside shadow DOM.
-    const a = navItem.shadowRoot!.querySelector("a")!;
-    a.dispatchEvent(new Event("pointerenter"));
+    // Trigger the flyout directly (bypasses intent timer; timer tested separately).
+    (navItem as unknown as { _showRailFlyout(): void })._showRailFlyout();
     await navItem.updateComplete;
 
     const fly = navItem.shadowRoot!.querySelector(".rail-flyout") as HTMLElement;

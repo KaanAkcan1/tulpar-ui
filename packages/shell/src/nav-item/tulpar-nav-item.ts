@@ -88,12 +88,15 @@ export class TulparNavItem extends LitElement {
     window.removeEventListener("popstate", this._onLocationChange);
     window.removeEventListener("tulpar-location-changed", this._onLocationChange);
     this._detachFlyoutListeners();
+    this._clearTimers();
   }
 
   // ── Rail flyout: fixed-position escape from overflow-x:clip ─────────────
 
   private _onFlyoutHide = () => {
     this._flyoutVisible = false;
+    this._pinned = false;
+    this._clearTimers();
     this._detachFlyoutListeners();
   };
 
@@ -125,25 +128,63 @@ export class TulparNavItem extends LitElement {
       this._flyoutRight = null;
       this._flyoutLeft = rect.right + gap;
     }
+    this.dispatchEvent(new CustomEvent("tulpar-rail-flyout-open", { bubbles: true, composed: true, detail: { item: this } }));
     this._flyoutVisible = true;
     window.addEventListener("scroll", this._onFlyoutHide, { capture: true, passive: true });
     window.addEventListener("resize", this._onFlyoutHide, { passive: true });
   }
 
+  private _openTimer?: number;
+  private _closeTimer?: number;
+  private _pinned = false;
+  private static readonly OPEN_DELAY = 120;
+  private static readonly CLOSE_DELAY = 240;
+
+  // Test seam: attributes override the delays so timer tests stay deterministic.
+  private get _openDelay() {
+    const v = Number(this.getAttribute("data-open-delay"));
+    return Number.isFinite(v) && v >= 0 ? v : TulparNavItem.OPEN_DELAY;
+  }
+  private get _closeDelay() {
+    const v = Number(this.getAttribute("data-close-delay"));
+    return Number.isFinite(v) && v > 0 ? v : TulparNavItem.CLOSE_DELAY;
+  }
+
+  private get _coarsePointer() {
+    return window.matchMedia?.("(pointer: coarse)").matches ?? false;
+  }
+
+  private _clearTimers() {
+    if (this._openTimer) { clearTimeout(this._openTimer); this._openTimer = undefined; }
+    if (this._closeTimer) { clearTimeout(this._closeTimer); this._closeTimer = undefined; }
+  }
+
   private _onAnchorPointerEnter = () => {
-    if (this.hasAttribute("data-rail")) this._showRailFlyout();
+    if (!this.hasAttribute("data-rail") || this._coarsePointer) return;
+    this._clearTimers();
+    this._openTimer = window.setTimeout(() => this._showRailFlyout(), this._openDelay);
   };
 
   private _onAnchorPointerLeave = () => {
-    if (this.hasAttribute("data-rail")) this._onFlyoutHide();
+    if (!this.hasAttribute("data-rail") || this._pinned) return;
+    this._clearTimers();
+    this._closeTimer = window.setTimeout(() => this._onFlyoutHide(), this._closeDelay);
   };
 
   private _onAnchorFocusIn = () => {
-    if (this.hasAttribute("data-rail")) this._showRailFlyout();
+    if (this.hasAttribute("data-rail")) this._showRailFlyout(); // focus = instant
   };
 
   private _onAnchorFocusOut = () => {
-    if (this.hasAttribute("data-rail")) this._onFlyoutHide();
+    if (this.hasAttribute("data-rail") && !this._pinned) this._onFlyoutHide();
+  };
+
+  private _onAnchorClick = () => {
+    if (!this.hasAttribute("data-rail") || !this._hasChildren) return;
+    // pin/unpin; on touch this is the only way to open
+    this._pinned = !this._pinned;
+    if (this._pinned) this._showRailFlyout();
+    else this._onFlyoutHide();
   };
 
   private get _isActive(): boolean {
@@ -230,7 +271,7 @@ export class TulparNavItem extends LitElement {
       : html`<button
           type="button"
           aria-expanded=${this._hasChildren ? String(this._expanded) : nothing}
-          @click=${this._hasChildren ? this._toggle : nothing}
+          @click=${this._hasChildren ? (isRail ? this._onAnchorClick : this._toggle) : nothing}
           @pointerenter=${this._onAnchorPointerEnter}
           @pointerleave=${this._onAnchorPointerLeave}
           @focusin=${this._onAnchorFocusIn}
