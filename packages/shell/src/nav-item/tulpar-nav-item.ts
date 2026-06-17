@@ -1,6 +1,5 @@
 import { LitElement, html, nothing } from "lit";
 import { property, state } from "lit/decorators.js";
-import { styleMap } from "lit/directives/style-map.js";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { navItemStyles } from "./tulpar-nav-item.styles";
 
@@ -309,15 +308,25 @@ export class TulparNavItem extends LitElement {
     this._expanded ? this.collapse() : this.expand();
   }
 
-  /** Shared fixed-position style object for both the group flyout and the leaf tooltip. */
-  private _flyoutPositionStyles(): Record<string, string> {
-    return {
-      position: "fixed",
-      top: `${this._flyoutTop}px`,
-      ...(this._flyoutLeft !== null ? { left: `${this._flyoutLeft}px` } : {}),
-      ...(this._flyoutRight !== null ? { right: `${this._flyoutRight}px` } : {}),
-      display: this._flyoutVisible ? "" : "none",
-    };
+  /**
+   * Shared fixed-position style STRING for both the group flyout and the leaf
+   * tooltip. Returns a plain CSS string (bound via `style=${...}`) rather than the
+   * `styleMap` directive on purpose: a directive instance created by one copy of
+   * lit-html throws `currentDirective._$initialize is not a function` if the
+   * element is rendered by a second copy (which can happen in consumer bundlers
+   * that don't dedupe lit). A plain string has no such cross-instance dependency.
+   * @param extra optional trailing declarations (e.g. the caret custom property)
+   */
+  private _flyoutPositionStyles(extra = ""): string {
+    const parts = [
+      "position:fixed",
+      `top:${this._flyoutTop}px`,
+      this._flyoutLeft !== null ? `left:${this._flyoutLeft}px` : "",
+      this._flyoutRight !== null ? `right:${this._flyoutRight}px` : "",
+      this._flyoutVisible ? "" : "display:none",
+      extra,
+    ];
+    return parts.filter(Boolean).join(";");
   }
 
   private _renderInner() {
@@ -380,10 +389,9 @@ export class TulparNavItem extends LitElement {
               class="rail-flyout is-group ${this.closest("tulpar-sidenav")?.getAttribute("position") === "right" ? "is-right" : ""}"
               role="group"
               aria-label=${this.label}
-              style=${styleMap({
-                ...this._flyoutPositionStyles(),
-                ...(this._flyoutCaretY != null ? { "--flyout-caret-y": `${this._flyoutCaretY}px` } : {}),
-              })}
+              style=${this._flyoutPositionStyles(
+                this._flyoutCaretY != null ? `--flyout-caret-y:${this._flyoutCaretY}px` : "",
+              )}
             >
               <span class="flyout-caret" aria-hidden="true"></span>
               <div class="flyout-header">${this.label}</div>
@@ -398,7 +406,7 @@ export class TulparNavItem extends LitElement {
             </div>`
           : html`<span
               class="rail-flyout"
-              style=${styleMap(this._flyoutPositionStyles())}
+              style=${this._flyoutPositionStyles()}
               aria-hidden="true"
               >${this.label}</span
             >`

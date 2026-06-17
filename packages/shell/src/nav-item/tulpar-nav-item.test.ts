@@ -355,6 +355,10 @@ describe("<tulpar-nav-item>", () => {
     await el.updateComplete;
     const flyout = el.shadowRoot!.querySelector(".rail-flyout.is-group") as HTMLElement;
     expect(flyout.style.getPropertyValue("--flyout-caret-y")).to.match(/\d+px/);
+    // Position is bound as a plain CSS string (not the styleMap directive) so the
+    // component never trips the cross-lit-instance "currentDirective._$initialize"
+    // crash in consumer bundlers that don't dedupe lit-html.
+    expect(flyout.getAttribute("style")).to.be.a("string").and.contain("position:fixed");
   });
 
   it("rail group shows a flyout panel with header + child links", async () => {
