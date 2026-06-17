@@ -424,6 +424,32 @@ describe("<tulpar-nav-item>", () => {
     expect(isOpen(), "closes after leaving the flyout").to.be.false;
   });
 
+  it("rail group shows active-trail when a child matches the current route", async () => {
+    const el = await fixture<TulparNavItem>(html`
+      <tulpar-nav-item label="Group" icon="<svg></svg>" data-rail>
+        <tulpar-nav-item href="/other" label="Other"></tulpar-nav-item>
+        <tulpar-nav-item href="${location.pathname}" label="Here"></tulpar-nav-item>
+      </tulpar-nav-item>
+    `);
+    await el.updateComplete;
+    await el.updateComplete;
+    const btn = el.shadowRoot!.querySelector("button")!;
+    expect(btn.classList.contains("is-active-trail"), "group icon marked active-trail").to.be.true;
+  });
+
+  it("rail group has NO active-trail when no child matches the route", async () => {
+    const el = await fixture<TulparNavItem>(html`
+      <tulpar-nav-item label="Group" icon="<svg></svg>" data-rail>
+        <tulpar-nav-item href="/nope-a" label="A"></tulpar-nav-item>
+        <tulpar-nav-item href="/nope-b" label="B"></tulpar-nav-item>
+      </tulpar-nav-item>
+    `);
+    await el.updateComplete;
+    await el.updateComplete;
+    const btn = el.shadowRoot!.querySelector("button")!;
+    expect(btn.classList.contains("is-active-trail")).to.be.false;
+  });
+
   it("rail flyout child link auto-activates from current URL pathname", async () => {
     const el = await fixture<TulparNavItem>(html`
       <tulpar-nav-item label="Group" icon="<svg></svg>" data-rail>

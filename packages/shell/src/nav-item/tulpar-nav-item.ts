@@ -95,8 +95,17 @@ export class TulparNavItem extends LitElement {
     iconHTML?: string;
   }[] = [];
 
+  /** True when the current route matches one of this group's children (active-trail). */
+  @state() private _hasActiveChild = false;
+
   private _onLocationChange = () => {
     this._urlActive = this.href != null && location.pathname === this.href;
+    // Keep the active-trail in sync as the route changes (a group with no href is
+    // never active itself, but its rail icon must light up when a child is current).
+    if (this._hasChildren) {
+      this._childModel = this._collectChildModel();
+      this._hasActiveChild = this._childModel.some((c) => c.active);
+    }
   };
 
   /** Guard: prevents focusin from re-opening the flyout when focus returns after keyboard close. */
@@ -194,6 +203,7 @@ export class TulparNavItem extends LitElement {
     // Rebuild the child model so flyout links reflect the current route, not a
     // stale slotchange-time snapshot.
     this._childModel = this._collectChildModel();
+    this._hasActiveChild = this._childModel.some((c) => c.active);
     const rect = this.getBoundingClientRect();
     // Walk up to the nearest sidenav to determine which side it is on.
     // The old approach (reading data-sidenav-position on the nav-item itself)
@@ -314,6 +324,7 @@ export class TulparNavItem extends LitElement {
   private _onSlotChange() {
     this._childModel = this._collectChildModel();
     this._hasChildren = this._childModel.length > 0;
+    this._hasActiveChild = this._childModel.some((c) => c.active);
   }
 
   private _onClick(e: MouseEvent) {
@@ -432,6 +443,7 @@ export class TulparNavItem extends LitElement {
         >`
       : html`<button
           type="button"
+          class=${this._hasActiveChild ? "is-active-trail" : nothing}
           aria-expanded=${this._hasChildren
             ? String(isRail ? this._flyoutVisible : this._expanded)
             : nothing}

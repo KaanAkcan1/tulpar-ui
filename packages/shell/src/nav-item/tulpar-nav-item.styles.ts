@@ -317,19 +317,41 @@ export const navItemStyles = css`
   :host([data-rail]) .chevron.rail-cue {
     display: block;
     position: absolute;
-    right: calc(50% - (var(--tulpar-shell-sidenav-item-height, 2.5rem) / 2) + 2px);
-    bottom: calc(50% - (var(--tulpar-shell-sidenav-item-height, 2.5rem) / 2) + 2px);
+    right: calc(50% - (var(--tulpar-shell-sidenav-item-height, 2.5rem) / 2) + 1px);
+    bottom: calc(50% - (var(--tulpar-shell-sidenav-item-height, 2.5rem) / 2) + 1px);
     margin: 0;
-    font-size: 0.6875rem;
+    font-size: 0.8125rem;
     line-height: 1;
     color: var(--tulpar-shell-sidenav-rail-cue, #74777a);
-    opacity: 0.5;
+    opacity: 0.7;
     transform: none;
-    transition: opacity 120ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1));
+    transition:
+      opacity 120ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1)),
+      color 120ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1));
     pointer-events: none;
   }
   :host([data-rail]) a:hover .chevron.rail-cue,
   :host([data-rail]) button:hover .chevron.rail-cue {
+    opacity: 1;
+  }
+
+  /* Active-trail: a rail group whose current route is one of its children gets the
+     same active treatment as an active leaf (tinted pill + accent bar + brand icon),
+     so at rest you can see which group contains the page you're on. */
+  :host([data-rail]) button.is-active-trail {
+    background: var(--tulpar-shell-sidenav-item-bg-active, #deffea);
+    color: var(--tulpar-shell-sidenav-item-fg-active, #0b7e52);
+    box-shadow:
+      inset 2px 0 0 -1px var(--tulpar-shell-sidenav-item-indicator, #00c57a),
+      inset 6px 0 8px -6px var(--tulpar-shell-sidenav-item-glow, rgba(0, 197, 122, 0.5));
+  }
+  :host([data-rail]) button.is-active-trail .icon-slot,
+  :host([data-rail]) button.is-active-trail i,
+  :host([data-rail]) button.is-active-trail ::slotted([slot="icon"]) {
+    color: var(--tulpar-shell-sidenav-item-indicator, #00c57a);
+  }
+  :host([data-rail]) button.is-active-trail .chevron.rail-cue {
+    color: var(--tulpar-shell-sidenav-item-indicator, #00c57a);
     opacity: 1;
   }
 
