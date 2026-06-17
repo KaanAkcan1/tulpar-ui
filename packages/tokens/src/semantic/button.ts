@@ -10,7 +10,15 @@ export interface ButtonSizeTokens {
 }
 
 export interface ButtonTokens {
-  size: { xs: ButtonSizeTokens; sm: ButtonSizeTokens; md: ButtonSizeTokens; lg: ButtonSizeTokens; xl: ButtonSizeTokens; "2xl": ButtonSizeTokens; "3xl": ButtonSizeTokens; };
+  size: {
+    xs: ButtonSizeTokens;
+    sm: ButtonSizeTokens;
+    md: ButtonSizeTokens;
+    lg: ButtonSizeTokens;
+    xl: ButtonSizeTokens;
+    "2xl": ButtonSizeTokens;
+    "3xl": ButtonSizeTokens;
+  };
   borderRadius: string;
   borderWidth: string;
   fontWeight: number;

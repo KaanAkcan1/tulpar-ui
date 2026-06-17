@@ -144,8 +144,8 @@ export const tulparLight: SemanticTokens = {
     borderWidth: "1px",
     fontWeight: primitiveTypography.fontWeight.medium,
     iconGap: "8px",
-    pressDuration: "80ms",
-    spinnerDuration: "600ms",
+    pressDuration: "80ms",    // button-specific; faster than primitive scale for tactile press
+    spinnerDuration: "600ms", // button-specific; no primitive-scale equivalent
     disabled: { bg: c.colpan[100], fg: c.kara[500], border: c.colpan[200] },
     surfaceHighlight: "rgba(255, 255, 255, 0.16)",
     surfaceShade: "rgba(0, 0, 0, 0.08)",
@@ -153,14 +153,17 @@ export const tulparLight: SemanticTokens = {
     shadow: {
       rest:
         "inset 0 1px 0 0 var(--tulpar-button-surface-highlight), " +
+        "inset 0 -1px 0 0 var(--tulpar-button-surface-shade), " +
         "0 1px 2px -1px color-mix(in oklch, var(--_btn-color-default) 55%, black 40%), " +
         "0 4px 12px -3px color-mix(in oklch, var(--_btn-color-default) 30%, transparent)",
       hover:
         "inset 0 1px 0 0 var(--tulpar-button-surface-highlight), " +
+        "inset 0 -1px 0 0 var(--tulpar-button-surface-shade), " +
         "0 2px 4px -1px color-mix(in oklch, var(--_btn-color-default) 55%, black 40%), " +
         "0 8px 20px -4px color-mix(in oklch, var(--_btn-color-default) 34%, transparent)",
       raised:
         "inset 0 1px 0 0 var(--tulpar-button-surface-highlight), " +
+        "inset 0 -1px 0 0 var(--tulpar-button-surface-shade), " +
         "0 2px 6px -1px color-mix(in oklch, var(--_btn-color-default) 50%, black 40%), " +
         "0 12px 28px -6px color-mix(in oklch, var(--_btn-color-default) 38%, transparent)",
       press:
@@ -182,7 +185,7 @@ export const tulparLight: SemanticTokens = {
 
   transition: {
     default: `all ${primitiveTransition.duration.fast} ${primitiveTransition.easing.standard}`,
-    easeStandard: "cubic-bezier(0.2, 0, 0, 1)",
+    easeStandard: primitiveTransition.easing.emphasized,
   },
 
   input: {
