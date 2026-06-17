@@ -381,15 +381,17 @@ export const buttonStyles = css`
     box-shadow: var(--tulpar-button-shadow-press);
     transition-duration: var(--tulpar-button-press-duration, 80ms);
   }
-  :host([variant="outlined"]) .btn:active,
-  :host([variant="ghost"]) .btn:active {
-    transform: var(--_btn-press-transform);
-  }
 
-  /* Optional hover lift for outlined/ghost */
+  /* Optional hover lift for outlined/ghost — must come BEFORE the :active rule
+     so that at equal specificity (0,2,1) the :active rule below wins when the
+     button is pressed (both :hover and :active match simultaneously). */
   :host([variant="outlined"]) .btn:hover,
   :host([variant="ghost"]) .btn:hover {
     transform: translateY(-1px);
+  }
+  :host([variant="outlined"]) .btn:active,
+  :host([variant="ghost"]) .btn:active {
+    transform: var(--_btn-press-transform);
   }
 
   /* ============================================================
@@ -608,6 +610,21 @@ export const buttonStyles = css`
   :host([data-disabled][severity="premium"][variant="solid"]) .btn {
     background-image: none;
     box-shadow: none;
+  }
+
+  /* Bug fix: data-disabled hover/active neutralizer — the soft-disabled host
+     keeps pointer-events so hover/active pseudo-classes still fire. The base
+     state rules (0,2,1) and premium state rules (0,3,1) both outrank the
+     disabled reset (0,2,0), so a soft-disabled button still shows hover shadow
+     and press depression. These rules match at (0,2,1) / (0,4,1) respectively
+     and win by later source order to neutralize all interactive state changes. */
+  :host([data-disabled]) .btn:hover,
+  :host([data-disabled]) .btn:active,
+  :host([data-disabled][severity="premium"][variant="solid"]) .btn:hover,
+  :host([data-disabled][severity="premium"][variant="solid"]) .btn:active {
+    background-image: none;
+    box-shadow: none;
+    transform: none;
   }
 
   /* ============================================================

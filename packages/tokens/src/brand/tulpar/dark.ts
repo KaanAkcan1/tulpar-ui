@@ -142,7 +142,7 @@ export const tulparDark: SemanticTokens = {
     iconGap: "8px",
     pressDuration: "80ms",    // button-specific; faster than primitive scale for tactile press
     spinnerDuration: "600ms", // button-specific; no primitive-scale equivalent
-    disabled: { bg: c.mergen[800], fg: c.kara[500], border: c.mergen[800] },
+    disabled: { bg: c.mergen[800], fg: c.kara[400], border: c.mergen[800] },
     surfaceHighlight: "rgba(255, 255, 255, 0.22)",
     surfaceShade: "rgba(0, 0, 0, 0.18)",
     surfaceBorder: "color-mix(in oklch, var(--_btn-color-default) 88%, black)",
