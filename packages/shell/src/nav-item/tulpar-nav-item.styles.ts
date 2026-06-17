@@ -245,8 +245,8 @@ export const navItemStyles = css`
   :host([data-rail]) .chevron.rail-cue {
     display: block;
     position: absolute;
-    right: calc(50% - 20px + 2px);
-    bottom: calc(50% - 20px + 2px);
+    right: calc(50% - (var(--tulpar-shell-sidenav-item-height, 2.5rem) / 2) + 2px);
+    bottom: calc(50% - (var(--tulpar-shell-sidenav-item-height, 2.5rem) / 2) + 2px);
     margin: 0;
     font-size: 0.6875rem;
     line-height: 1;

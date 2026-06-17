@@ -205,9 +205,7 @@ export class TulparSidenav extends LitElement {
       ...(this.shadowRoot?.querySelectorAll<TulparNavItem>("tulpar-nav-item") ?? []),
     ];
     all.forEach((it) => {
-      if (it !== opened && typeof (it as unknown as { closeRailFlyout?: () => void }).closeRailFlyout === "function") {
-        (it as unknown as { closeRailFlyout: () => void }).closeRailFlyout();
-      }
+      if (it !== opened) it.closeRailFlyout();
     });
   };
 

@@ -73,7 +73,7 @@ export class TulparNavItem extends LitElement {
   /** Caret Y offset relative to the flyout top, pinned to the trigger icon center. */
   @state() private _flyoutCaretY: number | null = null;
   /** Child model for the group flyout panel. */
-  @state() private _childModel: { href?: string; label: string; active?: boolean }[] = [];
+  @state() private _childModel: { href?: string; label: string; active: boolean }[] = [];
 
   private _onLocationChange = () => {
     this._urlActive = this.href != null && location.pathname === this.href;
@@ -133,7 +133,31 @@ export class TulparNavItem extends LitElement {
     window.removeEventListener("resize", this._onFlyoutHide);
   }
 
+  /**
+   * Collects the child model for the group flyout from slotted nav-items,
+   * resolving each child's active state the same way the child resolves its
+   * own `aria-current` (explicit `active` attr, else URL auto-match). Called
+   * both on slotchange (initial/`_hasChildren`) and at flyout-open time so the
+   * panel reflects the live route, not a stale snapshot.
+   */
+  private _collectChildModel(): { href?: string; label: string; active: boolean }[] {
+    const slot = this.shadowRoot?.querySelector<HTMLSlotElement>(".children slot");
+    const navItems: TulparNavItem[] = [];
+    for (const el of slot?.assignedElements() ?? []) {
+      if (el.matches("tulpar-nav-item")) navItems.push(el as TulparNavItem);
+      else el.querySelectorAll?.("tulpar-nav-item").forEach((n) => navItems.push(n as TulparNavItem));
+    }
+    return navItems.map((n) => ({
+      href: n.href,
+      label: n.label,
+      active: n.active ?? (n.href != null && location.pathname === n.href),
+    }));
+  }
+
   private _showRailFlyout() {
+    // Rebuild the child model so flyout links reflect the current route, not a
+    // stale slotchange-time snapshot.
+    this._childModel = this._collectChildModel();
     const rect = this.getBoundingClientRect();
     // Walk up to the nearest sidenav to determine which side it is on.
     // The old approach (reading data-sidenav-position on the nav-item itself)
@@ -142,6 +166,9 @@ export class TulparNavItem extends LitElement {
       this.closest("tulpar-sidenav")?.getAttribute("position") === "right";
     const gap = 8; // px gap between item edge and flyout
     // Vertical clamp: top-align to trigger; shift up if panel would overflow viewport bottom.
+    // Heuristic height estimate (header ~28px + rows ~32px each + padding ~16px),
+    // rounded to 44/row+1; may over/under-reserve. A post-render scrollHeight
+    // measure (rAF) would be exact — deferred as a future improvement.
     const estHeight = 44 * (this._childModel.length + 1) + 16;
     const maxTop = window.innerHeight - estHeight - 8;
     const clampedTop = Math.max(8, Math.min(rect.top, maxTop));
@@ -221,26 +248,22 @@ export class TulparNavItem extends LitElement {
     // pin/unpin; on touch this is the only way to open
     this._pinned = !this._pinned;
     if (this._pinned) this._showRailFlyout();
-    else this._onFlyoutHide();
+    else {
+      // Mirror the Escape handler: swallow the next focusin so the still-focused
+      // trigger doesn't immediately reopen the flyout. Consumed single-shot in
+      // _onAnchorFocusIn.
+      this._onFlyoutHide();
+      this._suppressNextFocusOpen = true;
+    }
   };
 
   private get _isActive(): boolean {
     return this.active ?? this._urlActive;
   }
 
-  private _onSlotChange(e: Event) {
-    const slot = e.target as HTMLSlotElement;
-    const navItems: TulparNavItem[] = [];
-    for (const el of slot.assignedElements()) {
-      if (el.matches("tulpar-nav-item")) navItems.push(el as TulparNavItem);
-      else el.querySelectorAll?.("tulpar-nav-item").forEach((n) => navItems.push(n as TulparNavItem));
-    }
-    this._hasChildren = navItems.length > 0;
-    this._childModel = navItems.map((n) => ({
-      href: n.href,
-      label: n.label,
-      active: n.active ?? false,
-    }));
+  private _onSlotChange() {
+    this._childModel = this._collectChildModel();
+    this._hasChildren = this._childModel.length > 0;
   }
 
   private _onClick(e: MouseEvent) {
@@ -273,6 +296,17 @@ export class TulparNavItem extends LitElement {
 
   private _toggle() {
     this._expanded ? this.collapse() : this.expand();
+  }
+
+  /** Shared fixed-position style object for both the group flyout and the leaf tooltip. */
+  private _flyoutPositionStyles(): Record<string, string> {
+    return {
+      position: "fixed",
+      top: `${this._flyoutTop}px`,
+      ...(this._flyoutLeft !== null ? { left: `${this._flyoutLeft}px` } : {}),
+      ...(this._flyoutRight !== null ? { right: `${this._flyoutRight}px` } : {}),
+      display: this._flyoutVisible ? "" : "none",
+    };
   }
 
   private _renderInner() {
@@ -336,12 +370,8 @@ export class TulparNavItem extends LitElement {
               role="group"
               aria-label=${this.label}
               style=${styleMap({
-                position: "fixed",
-                top: `${this._flyoutTop}px`,
-                ...(this._flyoutLeft !== null ? { left: `${this._flyoutLeft}px` } : {}),
-                ...(this._flyoutRight !== null ? { right: `${this._flyoutRight}px` } : {}),
+                ...this._flyoutPositionStyles(),
                 ...(this._flyoutCaretY != null ? { "--flyout-caret-y": `${this._flyoutCaretY}px` } : {}),
-                display: this._flyoutVisible ? "" : "none",
               })}
             >
               <span class="flyout-caret" aria-hidden="true"></span>
@@ -357,13 +387,7 @@ export class TulparNavItem extends LitElement {
             </div>`
           : html`<span
               class="rail-flyout"
-              style=${styleMap({
-                position: "fixed",
-                top: `${this._flyoutTop}px`,
-                ...(this._flyoutLeft !== null ? { left: `${this._flyoutLeft}px` } : {}),
-                ...(this._flyoutRight !== null ? { right: `${this._flyoutRight}px` } : {}),
-                display: this._flyoutVisible ? "" : "none",
-              })}
+              style=${styleMap(this._flyoutPositionStyles())}
               aria-hidden="true"
               >${this.label}</span
             >`

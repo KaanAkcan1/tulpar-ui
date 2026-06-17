@@ -343,6 +343,22 @@ describe("<tulpar-nav-item>", () => {
     expect((links[0] as HTMLAnchorElement).getAttribute("href")).to.equal("/text");
   });
 
+  it("rail flyout child link auto-activates from current URL pathname", async () => {
+    const el = await fixture<TulparNavItem>(html`
+      <tulpar-nav-item label="Group" icon="<svg></svg>" data-rail>
+        <tulpar-nav-item href="/other" label="Other"></tulpar-nav-item>
+        <tulpar-nav-item href="${location.pathname}" label="Here"></tulpar-nav-item>
+      </tulpar-nav-item>
+    `);
+    await el.updateComplete;
+    // Open the flyout so the model is rebuilt against the live route.
+    (el as unknown as { _showRailFlyout(): void })._showRailFlyout();
+    await el.updateComplete;
+    const links = el.shadowRoot!.querySelectorAll(".flyout-link");
+    expect(links[0].getAttribute("aria-current"), "non-matching child").to.be.null;
+    expect(links[1].getAttribute("aria-current"), "URL-matching child").to.equal("page");
+  });
+
   it("rail flyout on right-side sidenav is positioned to the LEFT of the item (B3-right)", async () => {
     // Wrap the nav-item inside a position="right" sidenav so that
     // closest("tulpar-sidenav")?.getAttribute("position") resolves to "right".
