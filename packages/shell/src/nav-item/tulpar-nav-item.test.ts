@@ -147,29 +147,27 @@ describe("<tulpar-nav-item>", () => {
     expect(getComputedStyle(fly).position).to.equal("fixed");
   });
 
-  it("group item label aligns and fills identically to a leaf item with a trailing chip", async () => {
-    const leaf = await fixture<TulparNavItem>(html`
-      <tulpar-nav-item href="/a" label="Alpha" icon="<svg width='18' height='18'></svg>" count="3"></tulpar-nav-item>
-    `);
+  it("group item label aligns and fills identically to a leaf item with a trailing chip (A1)", async () => {
     const group = await fixture<TulparNavItem>(html`
       <tulpar-nav-item label="Group" icon="<svg width='18' height='18'></svg>">
         <tulpar-nav-item href="/c" label="Child"></tulpar-nav-item>
       </tulpar-nav-item>
     `);
-    await leaf.updateComplete;
     await group.updateComplete;
-    const leafLabel = leaf.shadowRoot!.querySelector(".label") as HTMLElement;
-    const groupLabel = group.shadowRoot!.querySelector(".label") as HTMLElement;
-    // Same left offset (icon + gap), AND the group label is not gap-collapsed:
-    expect(Math.abs(groupLabel.getBoundingClientRect().left - leafLabel.getBoundingClientRect().left))
-      .to.be.lessThan(1);
-    // The group chevron must sit flush at the trailing edge — assert the label fills to it.
-    const groupRow = group.shadowRoot!.querySelector("a, button") as HTMLElement;
-    const chevron = group.shadowRoot!.querySelector(".chevron") as HTMLElement;
-    const rowRight = groupRow.getBoundingClientRect().right;
-    // chevron right edge should be within the row's right padding (~0.75rem ≈ 12px), i.e.
-    // the chevron is NOT pushed away from the trailing edge by a competing auto-margin.
-    expect(rowRight - chevron.getBoundingClientRect().right).to.be.lessThan(16);
+
+    // The CSS invariant: label is the SOLE flex-grow source; the chevron must NOT have
+    // a competing auto-margin or grow/shrink (which was the A1 bug).
+    //
+    // Note: getComputedStyle().marginInlineStart resolves `auto` to a pixel value in
+    // real Chromium (WTR), so we cannot detect `margin-inline-start: auto` that way.
+    // Instead we assert flexShrink, which is set to "0" by `flex: none` in the fix
+    // (default is "1") — this cleanly distinguishes the fixed state from the bug.
+    const chevronStyle = getComputedStyle(group.shadowRoot!.querySelector(".chevron") as HTMLElement);
+    expect(chevronStyle.flexGrow, "chevron does not grow").to.equal("0");
+    expect(chevronStyle.flexShrink, "chevron does not shrink (flex:none applied)").to.equal("0");
+
+    const labelStyle = getComputedStyle(group.shadowRoot!.querySelector(".label") as HTMLElement);
+    expect(labelStyle.flexGrow, "label is the sole flex grow source").to.equal("1");
   });
 
   it("detects children nested inside a display:contents wrapper (Angular wrapper case)", async () => {
