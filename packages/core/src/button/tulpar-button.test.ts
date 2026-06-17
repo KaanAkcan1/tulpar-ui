@@ -567,6 +567,30 @@ describe("<tulpar-button>", () => {
     });
   });
 
+  describe("loading width stability (reflow-safe)", () => {
+    it("button width does not change when loading toggles (start position)", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button loading-position="start">Save changes</tulpar-button>`,
+      );
+      const before = el.getBoundingClientRect().width;
+      el.loading = true;
+      await el.updateComplete;
+      const after = el.getBoundingClientRect().width;
+      expect(Math.abs(after - before)).to.be.lessThan(1.5);
+    });
+
+    it("button width does not change when loading toggles (end position)", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button loading-position="end">Save changes</tulpar-button>`,
+      );
+      const before = el.getBoundingClientRect().width;
+      el.loading = true;
+      await el.updateComplete;
+      const after = el.getBoundingClientRect().width;
+      expect(Math.abs(after - before)).to.be.lessThan(1.5);
+    });
+  });
+
   describe("form value parity", () => {
     it("carries name/value into FormData on submit", async () => {
       let captured: FormData | null = null;

@@ -508,23 +508,22 @@ export const buttonStyles = css`
     visibility: visible;
   }
 
-  /* Loading — start: spinner takes start slot's position, hide start slot */
-  :host([loading][loading-position="start"]) .start {
-    display: none;
-  }
-  :host([loading][loading-position="start"]) .spinner {
-    display: inline-flex;
-    order: -1;
-  }
-
-  /* Loading — end: spinner takes end slot's position, hide end slot */
+  /* Loading — start/end: keep the icon slot's box (visibility:hidden so width
+     is preserved), overlay the spinner at that edge via absolute positioning
+     so it adds no inline box. Mirrors the center-mode mechanism. */
+  :host([loading][loading-position="start"]) .start,
   :host([loading][loading-position="end"]) .end {
-    display: none;
+    visibility: hidden;
   }
+  :host([loading][loading-position="start"]) .spinner,
   :host([loading][loading-position="end"]) .spinner {
     display: inline-flex;
-    order: 99;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
   }
+  :host([loading][loading-position="start"]) .spinner { left: var(--_btn-padding-x); }
+  :host([loading][loading-position="end"]) .spinner { right: var(--_btn-padding-x); }
 
   /* Loading label */
   .loading-label-text {
@@ -542,9 +541,12 @@ export const buttonStyles = css`
       transform: rotate(360deg);
     }
   }
+  @keyframes tulpar-button-pulse {
+    50% { opacity: 0.4; }
+  }
   @media (prefers-reduced-motion: reduce) {
     .spinner .default-spinner {
-      animation-duration: 1500ms;
+      animation: tulpar-button-pulse 1.2s ease-in-out infinite;
     }
     .btn {
       transition: none;
