@@ -11,6 +11,7 @@ concurrency:
 
 jobs:
   deploy:
+    name: build & deploy sites
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
