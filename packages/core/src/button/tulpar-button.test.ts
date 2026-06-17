@@ -589,6 +589,31 @@ describe("<tulpar-button>", () => {
       const after = el.getBoundingClientRect().width;
       expect(Math.abs(after - before)).to.be.lessThan(1.5);
     });
+
+    it("button width is stable when loading toggles WITH a start icon", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button loading-position="start"><span slot="start">+</span>Save changes</tulpar-button>`,
+      );
+      const before = el.getBoundingClientRect().width;
+      el.loading = true;
+      await el.updateComplete;
+      const after = el.getBoundingClientRect().width;
+      // < 1.5 px tolerance accounts for sub-pixel layout and border rounding;
+      // tightening this risks flake on fractional-DPI screens.
+      expect(Math.abs(after - before)).to.be.lessThan(1.5);
+    });
+
+    it("button width is stable when loading toggles WITH an end icon", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button loading-position="end">Save changes<span slot="end">+</span></tulpar-button>`,
+      );
+      const before = el.getBoundingClientRect().width;
+      el.loading = true;
+      await el.updateComplete;
+      const after = el.getBoundingClientRect().width;
+      // < 1.5 px tolerance accounts for sub-pixel layout and border rounding.
+      expect(Math.abs(after - before)).to.be.lessThan(1.5);
+    });
   });
 
   describe("form value parity", () => {
