@@ -56,11 +56,11 @@ describe("tulparLight", () => {
     expect(tulparLight.chart[8]).toBe("#8fb31c"); // kayin
   });
 
-  it("provides all 7 button sizes with 4px border radius", () => {
+  it("provides all 7 button sizes with 7px border radius (v0.7 update)", () => {
     const sizes = ["xs", "sm", "md", "lg", "xl", "2xl", "3xl"] as const;
     sizes.forEach((s) => expect(tulparLight.button.size[s].height).toBeDefined());
     expect(tulparLight.button.size.md.height).toBe("40px");
-    expect(tulparLight.button.borderRadius).toBe("4px");
+    expect(tulparLight.button.borderRadius).toBe("7px");
   });
 });
 
@@ -106,5 +106,28 @@ describe("tulparLight.input", () => {
 
   it("ships 5 size tiers (xs..xl)", () => {
     expect(Object.keys(tulparLight.input.size)).toEqual(["xs", "sm", "md", "lg", "xl"]);
+  });
+});
+
+describe("tulparLight v0.7 button polish", () => {
+  it("v0.7 polish: motion + press tokens", () => {
+    expect(tulparLight.transition.easeStandard).toBe("cubic-bezier(0.2, 0, 0, 1)");
+    expect(tulparLight.button.pressDuration).toBe("80ms");
+    expect(tulparLight.button.spinnerDuration).toBe("600ms");
+  });
+  it("v0.7 polish: radius scales 5→12 across sizes", () => {
+    expect(tulparLight.button.size.xs.radius).toBe("5px");
+    expect(tulparLight.button.size.md.radius).toBe("7px");
+    expect(tulparLight.button.size["3xl"].radius).toBe("12px");
+  });
+  it("v0.7 polish: disabled is designed muted, not opacity", () => {
+    expect(tulparLight.button.disabled.bg).toBe("#e9f1ef"); // colpan-100
+    expect(tulparLight.button.disabled.fg).toBe("#74777a"); // kara-500
+    expect(tulparLight.button.disabled.border).toBe("#d9e0df"); // colpan-200
+  });
+  it("v0.7 polish: surface + shadow tokens reference the accent var", () => {
+    expect(tulparLight.button.surfaceHighlight).toContain("rgba(255, 255, 255");
+    expect(tulparLight.button.shadow.rest).toContain("var(--_btn-color-default)");
+    expect(tulparLight.button.shadow.press).toContain("inset");
   });
 });

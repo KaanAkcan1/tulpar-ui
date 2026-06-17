@@ -3,6 +3,10 @@ export interface ButtonSizeTokens {
   paddingX: string;
   fontSize: string;
   iconSize: string;
+  /** Corner radius, scales with size so optical roundness holds. */
+  radius: string;
+  /** Letter-spacing; ~0 at small, slightly negative at large. */
+  letterSpacing: string;
 }
 
 export interface ButtonTokens {
@@ -19,4 +23,12 @@ export interface ButtonTokens {
   borderWidth: string;
   fontWeight: number;
   iconGap: string;
+  pressDuration: string;
+  spinnerDuration: string;
+  disabled: { bg: string; fg: string; border: string };
+  surfaceHighlight: string;
+  surfaceShade: string;
+  surfaceBorder: string;
+  shadow: { rest: string; hover: string; raised: string; press: string };
+  premium: { sheen: string; ambient: string };
 }

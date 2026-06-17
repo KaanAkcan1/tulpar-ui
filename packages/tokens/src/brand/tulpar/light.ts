@@ -132,18 +132,47 @@ export const tulparLight: SemanticTokens = {
 
   button: {
     size: {
-      xs: { height: "24px", paddingX: "8px", fontSize: "12px", iconSize: "12px" },
-      sm: { height: "32px", paddingX: "12px", fontSize: "14px", iconSize: "14px" },
-      md: { height: "40px", paddingX: "16px", fontSize: "14px", iconSize: "16px" },
-      lg: { height: "48px", paddingX: "20px", fontSize: "16px", iconSize: "18px" },
-      xl: { height: "56px", paddingX: "24px", fontSize: "18px", iconSize: "20px" },
-      "2xl": { height: "64px", paddingX: "28px", fontSize: "20px", iconSize: "24px" },
-      "3xl": { height: "72px", paddingX: "32px", fontSize: "24px", iconSize: "28px" },
+      xs:    { height: "24px", paddingX: "8px",  fontSize: "12px", iconSize: "12px", radius: "5px",  letterSpacing: "0" },
+      sm:    { height: "32px", paddingX: "12px", fontSize: "14px", iconSize: "14px", radius: "6px",  letterSpacing: "0" },
+      md:    { height: "40px", paddingX: "16px", fontSize: "14px", iconSize: "16px", radius: "7px",  letterSpacing: "0" },
+      lg:    { height: "48px", paddingX: "20px", fontSize: "16px", iconSize: "18px", radius: "8px",  letterSpacing: "-0.006em" },
+      xl:    { height: "56px", paddingX: "24px", fontSize: "18px", iconSize: "20px", radius: "9px",  letterSpacing: "-0.008em" },
+      "2xl": { height: "64px", paddingX: "28px", fontSize: "20px", iconSize: "24px", radius: "10px", letterSpacing: "-0.01em" },
+      "3xl": { height: "72px", paddingX: "32px", fontSize: "24px", iconSize: "28px", radius: "12px", letterSpacing: "-0.01em" },
     },
-    borderRadius: "4px",
+    borderRadius: "7px",
     borderWidth: "1px",
     fontWeight: primitiveTypography.fontWeight.medium,
     iconGap: "8px",
+    pressDuration: "80ms",    // button-specific; faster than primitive scale for tactile press
+    spinnerDuration: "600ms", // button-specific; no primitive-scale equivalent
+    disabled: { bg: c.colpan[100], fg: c.kara[500], border: c.colpan[200] },
+    surfaceHighlight: "rgba(255, 255, 255, 0.18)",
+    surfaceShade: "rgba(0, 0, 0, 0.12)",
+    surfaceBorder: "color-mix(in oklch, var(--_btn-color-default) 85%, black)",
+    shadow: {
+      rest:
+        "inset 0 1px 0 0 var(--tulpar-button-surface-highlight), " +
+        "inset 0 -1px 0 0 var(--tulpar-button-surface-shade), " +
+        "0 1px 2px -1px color-mix(in oklch, var(--_btn-color-default) 60%, black 30%), " +
+        "0 5px 14px -3px color-mix(in oklch, var(--_btn-color-default) 42%, transparent)",
+      hover:
+        "inset 0 1px 0 0 var(--tulpar-button-surface-highlight), " +
+        "inset 0 -1px 0 0 var(--tulpar-button-surface-shade), " +
+        "0 2px 5px -1px color-mix(in oklch, var(--_btn-color-default) 60%, black 30%), " +
+        "0 10px 24px -5px color-mix(in oklch, var(--_btn-color-default) 46%, transparent)",
+      raised:
+        "inset 0 1px 0 0 var(--tulpar-button-surface-highlight), " +
+        "inset 0 -1px 0 0 var(--tulpar-button-surface-shade), " +
+        "0 2px 6px -1px color-mix(in oklch, var(--_btn-color-default) 55%, black 30%), " +
+        "0 16px 32px -8px color-mix(in oklch, var(--_btn-color-default) 48%, transparent)",
+      press:
+        "inset 0 1px 3px 0 color-mix(in oklch, black 22%, transparent)",
+    },
+    premium: {
+      sheen: "linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0) 42%)",
+      ambient: "0 6px 18px -4px color-mix(in oklch, var(--_btn-color-default) 45%, transparent)",
+    },
   },
 
   font: {
@@ -156,6 +185,7 @@ export const tulparLight: SemanticTokens = {
 
   transition: {
     default: `all ${primitiveTransition.duration.fast} ${primitiveTransition.easing.standard}`,
+    easeStandard: primitiveTransition.easing.emphasized,
   },
 
   input: {

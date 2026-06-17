@@ -28,6 +28,11 @@ export const buttonStyles = css`
     /* Default icon size — sized rules below override per size attr. */
     --_btn-icon-size: 16px;
 
+    /* Default press transform — overridden to none by the reduced-motion
+       media query via a host-level var, so all :active rules read the
+       updated value without needing to win a specificity war. */
+    --_btn-press-transform: translateY(0.5px) scale(0.985);
+
     /* Default separator color — variant rules override (solid uses
        rgba on white text; link uses transparent). */
     --_btn-separator: var(--tulpar-color-border-default, ${FB_BORDER});
@@ -134,17 +139,27 @@ export const buttonStyles = css`
     line-height: 1;
     height: var(--_btn-height);
     padding: 0 var(--_btn-padding-x);
-    border-radius: var(--tulpar-button-border-radius, 4px);
+    border-radius: var(--_btn-radius, var(--tulpar-button-border-radius, 7px));
     border: var(--tulpar-button-border-width, 1px) solid transparent;
     cursor: inherit;
     text-decoration: none;
     user-select: none;
-    transition: var(--tulpar-transition-default, all 150ms ease);
+    transition-property: background-color, border-color, color, box-shadow, transform;
+    transition-duration: 140ms;
+    transition-timing-function: var(--tulpar-transition-ease-standard, cubic-bezier(0.2, 0, 0, 1));
     background: var(--_btn-bg, transparent);
     color: var(--_btn-fg, currentColor);
     border-color: var(--_btn-border, transparent);
     position: relative;
     box-sizing: border-box;
+  }
+
+  /* Weighted per-property durations for solid/raised (shadow lags, transform snaps) */
+  /* order: background-color, border-color, color, box-shadow (lags, 200ms), transform (snaps, 90ms) */
+  :host([raised]) .btn,
+  :host([variant="solid"]) .btn,
+  :host(:not([variant])) .btn {
+    transition-duration: 140ms, 140ms, 140ms, 200ms, 90ms;
   }
 
   :host([block]) .btn {
@@ -160,42 +175,56 @@ export const buttonStyles = css`
     --_btn-padding-x: var(--tulpar-button-size-xs-padding-x, 8px);
     --_btn-font-size: var(--tulpar-button-size-xs-font-size, 12px);
     --_btn-icon-size: 12px;
+    --_btn-radius: var(--tulpar-button-size-xs-radius, 7px);
+    letter-spacing: var(--tulpar-button-size-xs-letter-spacing, 0);
   }
   :host([size="sm"]) .btn {
     --_btn-height: var(--tulpar-button-size-sm-height, 32px);
     --_btn-padding-x: var(--tulpar-button-size-sm-padding-x, 12px);
     --_btn-font-size: var(--tulpar-button-size-sm-font-size, 14px);
     --_btn-icon-size: 14px;
+    --_btn-radius: var(--tulpar-button-size-sm-radius, 7px);
+    letter-spacing: var(--tulpar-button-size-sm-letter-spacing, 0);
   }
   :host([size="md"]) .btn {
     --_btn-height: var(--tulpar-button-size-md-height, 40px);
     --_btn-padding-x: var(--tulpar-button-size-md-padding-x, 16px);
     --_btn-font-size: var(--tulpar-button-size-md-font-size, 14px);
     --_btn-icon-size: 16px;
+    --_btn-radius: var(--tulpar-button-size-md-radius, 7px);
+    letter-spacing: var(--tulpar-button-size-md-letter-spacing, 0);
   }
   :host([size="lg"]) .btn {
     --_btn-height: var(--tulpar-button-size-lg-height, 48px);
     --_btn-padding-x: var(--tulpar-button-size-lg-padding-x, 20px);
     --_btn-font-size: var(--tulpar-button-size-lg-font-size, 16px);
     --_btn-icon-size: 18px;
+    --_btn-radius: var(--tulpar-button-size-lg-radius, 7px);
+    letter-spacing: var(--tulpar-button-size-lg-letter-spacing, 0);
   }
   :host([size="xl"]) .btn {
     --_btn-height: var(--tulpar-button-size-xl-height, 56px);
     --_btn-padding-x: var(--tulpar-button-size-xl-padding-x, 24px);
     --_btn-font-size: var(--tulpar-button-size-xl-font-size, 18px);
     --_btn-icon-size: 20px;
+    --_btn-radius: var(--tulpar-button-size-xl-radius, 7px);
+    letter-spacing: var(--tulpar-button-size-xl-letter-spacing, 0);
   }
   :host([size="2xl"]) .btn {
     --_btn-height: var(--tulpar-button-size-2xl-height, 64px);
     --_btn-padding-x: var(--tulpar-button-size-2xl-padding-x, 28px);
     --_btn-font-size: var(--tulpar-button-size-2xl-font-size, 20px);
     --_btn-icon-size: 24px;
+    --_btn-radius: var(--tulpar-button-size-2xl-radius, 7px);
+    letter-spacing: var(--tulpar-button-size-2xl-letter-spacing, 0);
   }
   :host([size="3xl"]) .btn {
     --_btn-height: var(--tulpar-button-size-3xl-height, 72px);
     --_btn-padding-x: var(--tulpar-button-size-3xl-padding-x, 32px);
     --_btn-font-size: var(--tulpar-button-size-3xl-font-size, 24px);
     --_btn-icon-size: 28px;
+    --_btn-radius: var(--tulpar-button-size-3xl-radius, 7px);
+    letter-spacing: var(--tulpar-button-size-3xl-letter-spacing, 0);
   }
 
   /* ============================================================
@@ -280,6 +309,35 @@ export const buttonStyles = css`
   }
 
   /* ============================================================
+   * Solid surface treatment + self-border
+   * ============================================================ */
+  :host([variant="solid"]) .btn,
+  :host(:not([variant])) .btn {
+    border-color: var(
+      --tulpar-button-surface-border,
+      color-mix(in oklch, var(--_btn-color-default) 85%, black)
+    );
+    box-shadow: var(
+      --tulpar-button-shadow-rest,
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.18),
+      inset 0 -1px 0 0 rgba(0, 0, 0, 0.12),
+      0 1px 2px -1px color-mix(in oklch, var(--_btn-color-default) 60%, black 30%),
+      0 5px 14px -3px color-mix(in oklch, var(--_btn-color-default) 42%, transparent)
+    );
+  }
+  :host([variant="solid"]) .btn:hover,
+  :host(:not([variant])) .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(
+      --tulpar-button-shadow-hover,
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.18),
+      inset 0 -1px 0 0 rgba(0, 0, 0, 0.12),
+      0 2px 5px -1px color-mix(in oklch, var(--_btn-color-default) 60%, black 30%),
+      0 10px 24px -5px color-mix(in oklch, var(--_btn-color-default) 46%, transparent)
+    );
+  }
+
+  /* ============================================================
    * Shape
    * ============================================================ */
   :host([shape="round"]) .btn {
@@ -296,10 +354,7 @@ export const buttonStyles = css`
    * Modifiers — raised, justify, icon-position
    * ============================================================ */
   :host([raised]) .btn {
-    box-shadow: var(
-      --tulpar-button-shadow-raised,
-      var(--tulpar-shadow-md, 0 1px 3px rgba(10, 37, 64, 0.08), 0 8px 24px rgba(10, 37, 64, 0.06))
-    );
+    box-shadow: var(--tulpar-button-shadow-raised, var(--tulpar-shadow-md));
   }
 
   :host([justify="start"]) .btn {
@@ -331,6 +386,28 @@ export const buttonStyles = css`
   }
   :host([icon-position="bottom"]) .btn {
     flex-direction: column-reverse;
+  }
+
+  /* ============================================================
+   * Press depression (active wins over hover wins over raised wins over rest)
+   * ============================================================ */
+  :host([variant="solid"]) .btn:active,
+  :host(:not([variant])) .btn:active {
+    transform: var(--_btn-press-transform);
+    box-shadow: var(--tulpar-button-shadow-press, inset 0 1px 3px 0 rgba(0, 0, 0, 0.22));
+    transition-duration: var(--tulpar-button-press-duration, 80ms);
+  }
+
+  /* Optional hover lift for outlined/ghost — must come BEFORE the :active rule
+     so that at equal specificity (0,2,1) the :active rule below wins when the
+     button is pressed (both :hover and :active match simultaneously). */
+  :host([variant="outlined"]) .btn:hover,
+  :host([variant="ghost"]) .btn:hover {
+    transform: translateY(-1px);
+  }
+  :host([variant="outlined"]) .btn:active,
+  :host([variant="ghost"]) .btn:active {
+    transform: var(--_btn-press-transform);
   }
 
   /* ============================================================
@@ -395,7 +472,12 @@ export const buttonStyles = css`
    * ============================================================ */
   :host([disabled]) .btn,
   :host([data-disabled]) .btn {
-    opacity: 0.5;
+    background: var(--tulpar-button-disabled-bg);
+    background-image: none;
+    color: var(--tulpar-button-disabled-fg);
+    border-color: var(--tulpar-button-disabled-border);
+    box-shadow: none;
+    transform: none;
     cursor: not-allowed;
   }
   :host([disabled]) .btn {
@@ -421,7 +503,7 @@ export const buttonStyles = css`
     border: 2px solid currentColor;
     border-top-color: transparent;
     border-radius: 50%;
-    animation: tulpar-button-spin 600ms linear infinite;
+    animation: tulpar-button-spin var(--tulpar-button-spinner-duration, 600ms) linear infinite;
     display: inline-block;
   }
 
@@ -444,7 +526,11 @@ export const buttonStyles = css`
     visibility: visible;
   }
 
-  /* Loading — start: spinner takes start slot's position, hide start slot */
+  /* Loading — start/end: the spinner sits inline at the start/end of the
+     content (via flex order), keeping the label visible beside it. The icon
+     slot is removed so the spinner replaces it. Absolute positioning was
+     tried but detaches the spinner from the centered label, so it stays
+     in-flow here. */
   :host([loading][loading-position="start"]) .start {
     display: none;
   }
@@ -452,8 +538,6 @@ export const buttonStyles = css`
     display: inline-flex;
     order: -1;
   }
-
-  /* Loading — end: spinner takes end slot's position, hide end slot */
   :host([loading][loading-position="end"]) .end {
     display: none;
   }
@@ -478,12 +562,21 @@ export const buttonStyles = css`
       transform: rotate(360deg);
     }
   }
+  @keyframes tulpar-button-pulse {
+    50% { opacity: 0.4; }
+  }
   @media (prefers-reduced-motion: reduce) {
     .spinner .default-spinner {
-      animation-duration: 1500ms;
+      animation: tulpar-button-pulse 1.2s ease-in-out infinite;
     }
     .btn {
       transition: none;
+    }
+    /* Override the press transform var at the host level — because all :active
+       rules read transform via var(--_btn-press-transform), setting it to none
+       here wins without needing to out-specificity any individual :active rule. */
+    :host {
+      --_btn-press-transform: none;
     }
   }
 
@@ -510,6 +603,89 @@ export const buttonStyles = css`
   :host([icon-only]) .label,
   :host([icon-only]) .end {
     display: none;
+  }
+
+  /* ============================================================
+   * Premium severity +1 light treatment
+   * ============================================================ */
+  :host([severity="premium"][variant="solid"]) .btn {
+    background-image: var(
+      --tulpar-button-premium-sheen,
+      linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0) 42%)
+    );
+    box-shadow:
+      var(
+        --tulpar-button-shadow-rest,
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.18),
+        inset 0 -1px 0 0 rgba(0, 0, 0, 0.12),
+        0 1px 2px -1px color-mix(in oklch, var(--_btn-color-default) 60%, black 30%),
+        0 5px 14px -3px color-mix(in oklch, var(--_btn-color-default) 42%, transparent)
+      ),
+      var(
+        --tulpar-button-premium-ambient,
+        0 6px 18px -4px color-mix(in oklch, var(--_btn-color-default) 45%, transparent)
+      );
+  }
+  /* Bug fix: premium static rule is (0,3,0) which outranks the base hover/press
+     shadow rules (0,2,1). Add premium-specific state rules at (0,3,1) so hover
+     and press shadows are visible on premium-solid buttons. */
+  :host([severity="premium"][variant="solid"]) .btn:hover {
+    box-shadow:
+      var(
+        --tulpar-button-shadow-hover,
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.18),
+        inset 0 -1px 0 0 rgba(0, 0, 0, 0.12),
+        0 2px 5px -1px color-mix(in oklch, var(--_btn-color-default) 60%, black 30%),
+        0 10px 24px -5px color-mix(in oklch, var(--_btn-color-default) 46%, transparent)
+      ),
+      var(
+        --tulpar-button-premium-ambient,
+        0 6px 18px -4px color-mix(in oklch, var(--_btn-color-default) 45%, transparent)
+      );
+  }
+  :host([severity="premium"][variant="solid"]) .btn:active {
+    box-shadow: var(--tulpar-button-shadow-press, inset 0 1px 3px 0 rgba(0, 0, 0, 0.22));
+  }
+
+  /* Bug fix: disabled premium-solid — the premium static rule (0,3,0) outranks
+     the disabled rule (0,2,0), so premium-disabled still shows sheen + glow.
+     Reset both at (0,4,0) so disabled always reads as inert. */
+  :host([disabled][severity="premium"][variant="solid"]) .btn,
+  :host([data-disabled][severity="premium"][variant="solid"]) .btn {
+    background-image: none;
+    box-shadow: none;
+  }
+
+  /* Bug fix: data-disabled hover/active neutralizer — the soft-disabled host
+     keeps pointer-events so hover/active pseudo-classes still fire. The base
+     state rules (0,2,1) and premium state rules (0,3,1) both outrank the
+     disabled reset (0,2,0), so a soft-disabled button still shows hover shadow
+     and press depression. These rules match at (0,2,1) / (0,4,1) respectively
+     and win by later source order to neutralize all interactive state changes. */
+  :host([data-disabled]) .btn:hover,
+  :host([data-disabled]) .btn:active,
+  :host([data-disabled][severity="premium"][variant="solid"]) .btn:hover,
+  :host([data-disabled][severity="premium"][variant="solid"]) .btn:active {
+    background-image: none;
+    box-shadow: none;
+    transform: none;
+  }
+
+  /* ============================================================
+   * Tonal variant light top highlight + hover lift
+   * ============================================================ */
+  :host([variant="tonal"]) .btn {
+    box-shadow: inset 0 1px 0 0 color-mix(in oklch, white 8%, transparent);
+  }
+  :host([variant="tonal"]) .btn:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 0 color-mix(in oklch, white 8%, transparent),
+      0 6px 16px -5px color-mix(in oklch, var(--_btn-color-default) 32%, transparent);
+  }
+  /* active after hover so press (down) wins over lift (up) at equal specificity */
+  :host([variant="tonal"]) .btn:active {
+    transform: var(--_btn-press-transform);
   }
 
   /* ============================================================
@@ -572,14 +748,14 @@ export const buttonStyles = css`
   :host([data-group-orientation="stacked"][data-group-position="first"]) .btn {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    border-top-left-radius: var(--tulpar-button-border-radius, 4px);
-    border-top-right-radius: var(--tulpar-button-border-radius, 4px);
+    border-top-left-radius: var(--_btn-radius, var(--tulpar-button-border-radius, 7px));
+    border-top-right-radius: var(--_btn-radius, var(--tulpar-button-border-radius, 7px));
   }
   :host([data-group-orientation="stacked"][data-group-position="last"]) .btn {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
-    border-bottom-left-radius: var(--tulpar-button-border-radius, 4px);
-    border-bottom-right-radius: var(--tulpar-button-border-radius, 4px);
+    border-bottom-left-radius: var(--_btn-radius, var(--tulpar-button-border-radius, 7px));
+    border-bottom-right-radius: var(--_btn-radius, var(--tulpar-button-border-radius, 7px));
   }
   :host([data-group-orientation="stacked"][data-group-position="middle"]),
   :host([data-group-orientation="stacked"][data-group-position="last"]) {

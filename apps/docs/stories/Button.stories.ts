@@ -538,6 +538,154 @@ export const IconOnlyAutoDetect: Story = {
   `,
 };
 
+// ─── v0.7 additions ───────────────────────────────────────────────────────────
+// InteractionStates, Premium, RadiusScale demonstrate the v0.7 button polish:
+// surface physics, press feedback, hover lift, semantic disabled, radius scale,
+// premium +1 light, and reflow-safe loading spinner.
+
+/**
+ * **InteractionStates** — rest / hover / active / focus / disabled / loading
+ * laid out side by side for `solid`, `outlined`, and `ghost`.
+ *
+ * Hover/active/focus are interaction-driven — the viewer triggers them by
+ * hovering or clicking. `disabled` and `loading` are static so they are always
+ * visible without interaction.
+ */
+export const InteractionStates: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => html`
+    <style>
+      .state-grid {
+        display: grid;
+        grid-template-columns: 80px repeat(6, auto);
+        align-items: center;
+        gap: 12px 16px;
+        font-size: 11px;
+        font-family: monospace;
+        color: var(--tulpar-color-text-secondary, #74777a);
+      }
+      .state-grid .header { font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    </style>
+    <div class="state-grid">
+      <span class="header">variant</span>
+      <span class="header">rest</span>
+      <span class="header">hover →</span>
+      <span class="header">active ↓</span>
+      <span class="header">focus ⌨</span>
+      <span class="header">disabled</span>
+      <span class="header">loading</span>
+
+      <span>solid</span>
+      <tulpar-button severity="primary">Save</tulpar-button>
+      <tulpar-button severity="primary">Save</tulpar-button>
+      <tulpar-button severity="primary">Save</tulpar-button>
+      <tulpar-button severity="primary">Save</tulpar-button>
+      <tulpar-button severity="primary" disabled>Save</tulpar-button>
+      <tulpar-button severity="primary" loading>Save</tulpar-button>
+
+      <span>outlined</span>
+      <tulpar-button severity="primary" variant="outlined">Save</tulpar-button>
+      <tulpar-button severity="primary" variant="outlined">Save</tulpar-button>
+      <tulpar-button severity="primary" variant="outlined">Save</tulpar-button>
+      <tulpar-button severity="primary" variant="outlined">Save</tulpar-button>
+      <tulpar-button severity="primary" variant="outlined" disabled>Save</tulpar-button>
+      <tulpar-button severity="primary" variant="outlined" loading>Save</tulpar-button>
+
+      <span>ghost</span>
+      <tulpar-button severity="primary" variant="ghost">Save</tulpar-button>
+      <tulpar-button severity="primary" variant="ghost">Save</tulpar-button>
+      <tulpar-button severity="primary" variant="ghost">Save</tulpar-button>
+      <tulpar-button severity="primary" variant="ghost">Save</tulpar-button>
+      <tulpar-button severity="primary" variant="ghost" disabled>Save</tulpar-button>
+      <tulpar-button severity="primary" variant="ghost" loading>Save</tulpar-button>
+    </div>
+    <p style="margin-top:16px; font-size:12px; color:var(--tulpar-color-text-secondary,#74777a);">
+      Hover the <em>hover</em> column buttons and press the <em>active</em> column buttons to
+      see lift / depression transitions. The <em>disabled</em> and <em>loading</em> columns
+      are always static — v0.7 uses semantic disabled (not <code>opacity:0.5</code>).
+    </p>
+  `,
+};
+
+/**
+ * **Premium** — `severity="premium"` with `variant="solid"` demonstrating the
+ * v0.7 +1 light surface treatment: tonal top highlight + elevated ambient shadow.
+ */
+export const Premium: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => html`
+    <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+      <tulpar-button severity="premium">
+        <span slot="start">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </span>
+        Upgrade to Pro
+      </tulpar-button>
+      <tulpar-button severity="premium" size="lg">
+        <span slot="start">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </span>
+        Go Premium
+      </tulpar-button>
+      <tulpar-button severity="premium" variant="outlined">Premium outlined</tulpar-button>
+      <tulpar-button severity="premium" variant="tonal">Premium tonal</tulpar-button>
+      <tulpar-button severity="premium" raised>Premium raised</tulpar-button>
+    </div>
+    <p style="margin-top:12px; font-size:12px; color:var(--tulpar-color-text-secondary,#74777a);">
+      v0.7 premium solid: tonal top highlight + brand-tinted ambient shadow.
+      Raised adds an extra shadow layer. Outlined/tonal share the same hue.
+    </p>
+  `,
+};
+
+/**
+ * **RadiusScale** — all sizes rendered together to show the 5→12 px radius
+ * ramp (xs:5px → sm:6px → md:7px → lg:8px → xl:9px → 2xl:10px → 3xl:12px).
+ */
+export const RadiusScale: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => html`
+    <div style="display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap;">
+      <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+        <tulpar-button size="xs" severity="primary">xs</tulpar-button>
+        <span style="font-size:11px; font-family:monospace; color:var(--tulpar-color-text-secondary,#74777a);">r=5px</span>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+        <tulpar-button size="sm" severity="primary">sm</tulpar-button>
+        <span style="font-size:11px; font-family:monospace; color:var(--tulpar-color-text-secondary,#74777a);">r=6px</span>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+        <tulpar-button size="md" severity="primary">md</tulpar-button>
+        <span style="font-size:11px; font-family:monospace; color:var(--tulpar-color-text-secondary,#74777a);">r=7px</span>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+        <tulpar-button size="lg" severity="primary">lg</tulpar-button>
+        <span style="font-size:11px; font-family:monospace; color:var(--tulpar-color-text-secondary,#74777a);">r=8px</span>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+        <tulpar-button size="xl" severity="primary">xl</tulpar-button>
+        <span style="font-size:11px; font-family:monospace; color:var(--tulpar-color-text-secondary,#74777a);">r=9px</span>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+        <tulpar-button size="2xl" severity="primary">2xl</tulpar-button>
+        <span style="font-size:11px; font-family:monospace; color:var(--tulpar-color-text-secondary,#74777a);">r=10px</span>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+        <tulpar-button size="3xl" severity="primary">3xl</tulpar-button>
+        <span style="font-size:11px; font-family:monospace; color:var(--tulpar-color-text-secondary,#74777a);">r=12px</span>
+      </div>
+    </div>
+    <p style="margin-top:12px; font-size:12px; color:var(--tulpar-color-text-secondary,#74777a);">
+      v0.7 per-size radius ramp — 5 → 6 → 7 → 8 → 9 → 10 → 12 px (xs→3xl).
+      Driven by <code>--tulpar-button-radius-{size}</code> tokens.
+    </p>
+  `,
+};
+
 /**
  * **WithTooltip** — string tooltip shown on hover and `:focus-visible`.
  * Rendered natively by the core Web Component via `tooltip` attribute.
