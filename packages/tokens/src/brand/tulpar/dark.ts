@@ -1,6 +1,7 @@
 import { primitiveColor as c } from "../../primitive/color";
 import { primitiveTypography } from "../../primitive/typography";
 import { primitiveTransition } from "../../primitive/transition";
+import { primitiveShadow } from "../../primitive/shadow";
 import type { SemanticTokens } from "../../semantic/types";
 import { tulparLight } from "./light";
 
@@ -204,6 +205,11 @@ export const tulparDark: SemanticTokens = {
       border: c.mergen[800],
       edge: "rgba(255, 255, 255, 0.04)",     // NEW
       scrollShadow: "rgba(0, 0, 0, 0.3)",    // NEW
+      flyoutBg: c.mergen[800],
+      flyoutBorder: c.mergen[700],
+      flyoutHeaderFg: c.kara[400],
+      flyoutDivider: c.mergen[700],
+      railCue: c.kara[400],
       item: {
         height: "2.5rem",
         radius: "0.5rem",
@@ -231,5 +237,12 @@ export const tulparDark: SemanticTokens = {
     aside: { width: "22rem", bg: c.mergen[900], border: c.mergen[800] },
     mask: { bg: "rgb(11 8 4 / 0.6)" }, // yagiz-950
     z: { topbar: "100", mask: "150", sidenav: "200", aside: "300" },
+  },
+
+  easing: { decelerate: primitiveTransition.easing.decelerate },
+  shadow: {
+    sm: primitiveShadow.sm,
+    md: primitiveShadow.md,
+    flyout: "0 2px 4px rgba(0, 0, 0, 0.32), 0 8px 20px rgba(0, 0, 0, 0.28)",
   },
 };

@@ -29,6 +29,11 @@ export interface ShellTokens {
     border: string;
     edge: string;
     scrollShadow: string;
+    flyoutBg: string;
+    flyoutBorder: string;
+    flyoutHeaderFg: string;
+    flyoutDivider: string;
+    railCue: string;
     item: ShellNavItemTokens;
   };
   content: {

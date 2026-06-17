@@ -18,6 +18,9 @@ export type { FontTokens, TransitionTokens } from "./common";
 export type { ShellTokens, ShellNavItemTokens } from "./shell";
 export type { ChartTokens } from "./chart";
 
+export interface EasingTokens { decelerate: string }
+export interface ShadowTokens { sm: string; md: string; flyout: string }
+
 export interface SemanticTokens {
   color: ColorTokens;
   chart: ChartTokens;
@@ -26,4 +29,6 @@ export interface SemanticTokens {
   font: FontTokens;
   transition: TransitionTokens;
   shell: ShellTokens;
+  easing: EasingTokens;
+  shadow: ShadowTokens;
 }
