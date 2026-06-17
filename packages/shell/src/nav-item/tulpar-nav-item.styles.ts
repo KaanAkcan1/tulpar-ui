@@ -18,6 +18,10 @@ export const navItemStyles = css`
     background: transparent;
     color: var(--tulpar-shell-sidenav-fg, #334155);
     font: inherit;
+    /* button elements default to text-align:center, which the .label inherits and
+       centers a group item's text. Force start alignment so group (button) rows
+       match leaf (anchor) rows. */
+    text-align: start;
     text-decoration: none;
     cursor: pointer;
     position: relative;

@@ -148,27 +148,30 @@ describe("<tulpar-nav-item>", () => {
     expect(getComputedStyle(fly).position).to.equal("fixed");
   });
 
-  it("group item label aligns and fills identically to a leaf item with a trailing chip (A1)", async () => {
+  it("group item label is start-aligned like a leaf, not centered by the button (A1)", async () => {
+    // The real A1 bug: a group renders as <button>, whose UA `text-align: center`
+    // is inherited by .label and centers the text, while a leaf <a> stays start.
     const group = await fixture<TulparNavItem>(html`
       <tulpar-nav-item label="Group" icon="<svg width='18' height='18'></svg>">
         <tulpar-nav-item href="/c" label="Child"></tulpar-nav-item>
       </tulpar-nav-item>
     `);
+    const leaf = await fixture<TulparNavItem>(
+      html`<tulpar-nav-item href="/a" label="Alpha" icon="<svg width='18' height='18'></svg>"></tulpar-nav-item>`,
+    );
     await group.updateComplete;
+    await leaf.updateComplete;
 
-    // The CSS invariant: label is the SOLE flex-grow source; the chevron must NOT have
-    // a competing auto-margin or grow/shrink (which was the A1 bug).
-    //
-    // Note: getComputedStyle().marginInlineStart resolves `auto` to a pixel value in
-    // real Chromium (WTR), so we cannot detect `margin-inline-start: auto` that way.
-    // Instead we assert flexShrink, which is set to "0" by `flex: none` in the fix
-    // (default is "1") — this cleanly distinguishes the fixed state from the bug.
+    const groupLabel = getComputedStyle(group.shadowRoot!.querySelector(".label") as HTMLElement);
+    const leafLabel = getComputedStyle(leaf.shadowRoot!.querySelector(".label") as HTMLElement);
+    // Both must resolve to the same start alignment (not "center").
+    expect(groupLabel.textAlign, "group label not centered").to.not.equal("center");
+    expect(groupLabel.textAlign, "group label matches leaf alignment").to.equal(leafLabel.textAlign);
+
+    // Label remains the sole flex-grow source (chevron must not grow/shrink).
     const chevronStyle = getComputedStyle(group.shadowRoot!.querySelector(".chevron") as HTMLElement);
     expect(chevronStyle.flexGrow, "chevron does not grow").to.equal("0");
-    expect(chevronStyle.flexShrink, "chevron does not shrink (flex:none applied)").to.equal("0");
-
-    const labelStyle = getComputedStyle(group.shadowRoot!.querySelector(".label") as HTMLElement);
-    expect(labelStyle.flexGrow, "label is the sole flex grow source").to.equal("1");
+    expect(groupLabel.flexGrow, "label is the sole flex grow source").to.equal("1");
   });
 
   it("detects children nested inside a display:contents wrapper (Angular wrapper case)", async () => {
