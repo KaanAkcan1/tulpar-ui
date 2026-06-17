@@ -71,3 +71,12 @@ describe("tulparDark.shell", () => {
     expect(tulparDark.shell.sidenav.item.dot).toBe("#21d98d");     // tulpar[400]
   });
 });
+
+describe("tulparDark v0.7 button polish", () => {
+  it("v0.7 polish: dark surface highlight is stronger, disabled uses mergen", () => {
+    expect(tulparDark.button.surfaceHighlight).toBe("rgba(255, 255, 255, 0.22)");
+    expect(tulparDark.button.disabled.bg).toBe("#243553"); // mergen-800
+    expect(tulparDark.transition.easeStandard).toBe("cubic-bezier(0.2, 0, 0, 1)");
+    expect(tulparDark.button.size.md.radius).toBe("7px");
+  });
+});
