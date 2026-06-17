@@ -340,5 +340,6 @@ describe("<tulpar-sidenav>", () => {
     await el.updateComplete;
     expect(text()).to.equal("Aydınlık");
     document.documentElement.classList.remove("dark"); // cleanup
+    await aTimeout(0); await el.updateComplete;
   });
 });

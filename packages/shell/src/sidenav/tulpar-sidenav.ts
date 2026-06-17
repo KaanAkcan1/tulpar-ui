@@ -118,6 +118,10 @@ export class TulparSidenav extends LitElement {
   private _darkObserver: MutationObserver | null = null;
 
   private _syncDark = () => {
+    // Dual-write is intentional: `_dark` (@state) drives the template re-render,
+    // and `data-dark` on the host is the CSS hook for `:host([data-dark])` (icon
+    // swap). We don't use `@property({reflect:true})` because that would expose
+    // `data-dark` as public API; here it's an internal, derived mirror only.
     const dark = document.documentElement.classList.contains("dark");
     if (dark !== this._dark) {
       this._dark = dark;
