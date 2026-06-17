@@ -180,8 +180,11 @@ describe("<tulpar-shell>", () => {
 
   // ── Task 7.1 ──────────────────────────────────────────────────────────────
   it("reflects collapsed/open state onto the slotted sidenav", async () => {
-    const el = await fixture<TulparShell>(html`<tulpar-shell sidenav-mode="static"><div slot="sidenav"></div></tulpar-shell>`);
-    el.sidenavCollapsed = true; await el.updateComplete;
+    const el = await fixture<TulparShell>(
+      html`<tulpar-shell sidenav-mode="static"><div slot="sidenav"></div></tulpar-shell>`,
+    );
+    el.sidenavCollapsed = true;
+    await el.updateComplete;
     expect(el.querySelector('[slot="sidenav"]')!.hasAttribute("data-collapsed")).to.be.true;
   });
 
@@ -196,7 +199,9 @@ describe("<tulpar-shell>", () => {
 
   // ── Task 7.3 ──────────────────────────────────────────────────────────────
   it("over-topbar layout puts sidenav before topbar in the grid", async () => {
-    const el = await fixture<TulparShell>(html`<tulpar-shell sidenav-layout="over-topbar"></tulpar-shell>`);
+    const el = await fixture<TulparShell>(
+      html`<tulpar-shell sidenav-layout="over-topbar"></tulpar-shell>`,
+    );
     expect(el.getAttribute("sidenav-layout")).to.equal("over-topbar");
     const areas = getComputedStyle(el).gridTemplateAreas;
     expect(areas.indexOf("sidenav")).to.be.lessThan(areas.indexOf("topbar"));
@@ -204,8 +209,11 @@ describe("<tulpar-shell>", () => {
 
   // ── Task 7.4 ──────────────────────────────────────────────────────────────
   it("shows a floating reopen button when static+collapsed and emits toggle", async () => {
-    const el = await fixture<TulparShell>(html`<tulpar-shell sidenav-mode="static"></tulpar-shell>`);
-    el.sidenavCollapsed = true; await el.updateComplete;
+    const el = await fixture<TulparShell>(
+      html`<tulpar-shell sidenav-mode="static"></tulpar-shell>`,
+    );
+    el.sidenavCollapsed = true;
+    await el.updateComplete;
     const fab = el.shadowRoot!.querySelector(".sidenav-fab") as HTMLButtonElement;
     expect(fab).to.exist;
     setTimeout(() => fab.click());
@@ -219,12 +227,15 @@ describe("<tulpar-shell>", () => {
     const el = await fixture<TulparShell>(
       html`<tulpar-shell sidenav-mode="rail" mobile-breakpoint="(max-width: 0px)"></tulpar-shell>`,
     );
-    el.sidenavCollapsed = true; await el.updateComplete;
+    el.sidenavCollapsed = true;
+    await el.updateComplete;
     expect(el.shadowRoot!.querySelector(".sidenav-fab")).to.be.null;
   });
 
   it("shows the floating button when overlay sidenav is closed", async () => {
-    const el = await fixture<TulparShell>(html`<tulpar-shell sidenav-mode="overlay"></tulpar-shell>`);
+    const el = await fixture<TulparShell>(
+      html`<tulpar-shell sidenav-mode="overlay"></tulpar-shell>`,
+    );
     await el.updateComplete;
     expect(el.shadowRoot!.querySelector(".sidenav-fab")).to.exist;
   });

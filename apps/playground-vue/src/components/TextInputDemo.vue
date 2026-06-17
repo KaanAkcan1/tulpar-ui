@@ -474,8 +474,8 @@ const statesCode = `<TulparTextInput label="Disabled" :disabled="true" value="Ca
   <section v-if="activeSection === 'all'" class="demo-section">
     <h3 class="demo-title">In context — a sign-in card</h3>
     <p class="demo-desc">
-      The fields composed into a realistic auth card on an elevated surface — float labels, a
-      typed email, a password field, and validation messaging working together.
+      The fields composed into a realistic auth card on an elevated surface — float labels, a typed
+      email, a password field, and validation messaging working together.
     </p>
     <div class="form-card">
       <h4 class="form-card-title">Welcome back</h4>

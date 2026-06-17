@@ -115,7 +115,8 @@ const SECTIONS = [
       <h1 class="page-title">TextInput</h1>
       <p class="page-lede">
         The single-line text field — six input types, four variants, five sizes, floating labels,
-        validation states, masks, and copy/paste/clear affordances. Built on the shared FormFieldBase.
+        validation states, masks, and copy/paste/clear affordances. Built on the shared
+        FormFieldBase.
       </p>
     </header>
 

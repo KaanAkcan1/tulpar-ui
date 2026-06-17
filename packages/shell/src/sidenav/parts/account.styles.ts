@@ -104,7 +104,9 @@ export const accountStyles = css`
     background: none;
     color: var(--tulpar-shell-sidenav-fg-muted, #74777a);
     cursor: pointer;
-    transition: background 120ms ease, color 120ms ease;
+    transition:
+      background 120ms ease,
+      color 120ms ease;
   }
 
   .account-icon-btn:hover {

@@ -70,15 +70,8 @@ export function renderAccount(host: TulparSidenav) {
 
   // ── Avatar ───────────────────────────────────────────────────────────────
   const avatar = host.profileImage
-    ? html`<img
-        class="account-avatar-img"
-        src=${host.profileImage}
-        alt=""
-        aria-hidden="true"
-      />`
-    : html`<span class="account-avatar" aria-hidden="true"
-        >${initials(host.userName)}</span
-      >`;
+    ? html`<img class="account-avatar-img" src=${host.profileImage} alt="" aria-hidden="true" />`
+    : html`<span class="account-avatar" aria-hidden="true">${initials(host.userName)}</span>`;
 
   // ── Meta (name + role) ───────────────────────────────────────────────────
   const nameLine = host.userName
@@ -110,9 +103,7 @@ export function renderAccount(host: TulparSidenav) {
         type="button"
         aria-label=${host.logoutLabel}
         @click=${() =>
-          host.dispatchEvent(
-            new CustomEvent("tulpar-logout", { bubbles: true, composed: true }),
-          )}
+          host.dispatchEvent(new CustomEvent("tulpar-logout", { bubbles: true, composed: true }))}
       >
         <slot name="logout-icon">${logoutIcon}</slot>
       </button>`
@@ -121,18 +112,9 @@ export function renderAccount(host: TulparSidenav) {
   const hasActions = host.showSettings || host.showLogout;
 
   return html`<div class="account">
-    ${avatar}
-    ${hasMeta
-      ? html`<div class="account-meta">${nameLine}${roleLine}</div>`
-      : nothing}
-    ${hasActions
-      ? html`<div class="account-actions">${settingsBtn}${logoutBtn}</div>`
-      : nothing}
+    ${avatar} ${hasMeta ? html`<div class="account-meta">${nameLine}${roleLine}</div>` : nothing}
+    ${hasActions ? html`<div class="account-actions">${settingsBtn}${logoutBtn}</div>` : nothing}
     <!-- Hidden detection slot so dynamic footer fill flips _hasFooterSlot -->
-    <slot
-      name="footer"
-      style="display:none"
-      @slotchange=${host._onFooterSlotChange}
-    ></slot>
+    <slot name="footer" style="display:none" @slotchange=${host._onFooterSlotChange}></slot>
   </div>`;
 }

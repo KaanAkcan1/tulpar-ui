@@ -68,7 +68,8 @@ const SECTIONS = [
       <h1 class="page-title">Textarea</h1>
       <p class="page-lede">
         The multi-line text field — autosizing rows, resize control, a live character counter,
-        copy/paste affordances, and the full validation-state set. Built on the shared FormFieldBase.
+        copy/paste affordances, and the full validation-state set. Built on the shared
+        FormFieldBase.
       </p>
     </header>
 
@@ -326,7 +327,9 @@ const SECTIONS = [
             placeholder="Share your thoughts…"
           ></tulpar-textarea-ng>
           <div class="composer-actions">
-            <tulpar-button-ng severity="secondary" variant="ghost" size="sm">Cancel</tulpar-button-ng>
+            <tulpar-button-ng severity="secondary" variant="ghost" size="sm"
+              >Cancel</tulpar-button-ng
+            >
             <tulpar-button-ng
               severity="primary"
               size="sm"

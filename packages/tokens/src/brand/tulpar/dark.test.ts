@@ -68,7 +68,7 @@ describe("tulparDark.shell", () => {
   it("item countBg = mergen[800], countFg = colpan[200], dot = tulpar[400]", () => {
     expect(tulparDark.shell.sidenav.item.countBg).toBe("#243553"); // mergen[800]
     expect(tulparDark.shell.sidenav.item.countFg).toBe("#d9e0df"); // colpan[200]
-    expect(tulparDark.shell.sidenav.item.dot).toBe("#21d98d");     // tulpar[400]
+    expect(tulparDark.shell.sidenav.item.dot).toBe("#21d98d"); // tulpar[400]
   });
 });
 

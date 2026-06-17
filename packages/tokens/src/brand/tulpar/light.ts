@@ -132,19 +132,68 @@ export const tulparLight: SemanticTokens = {
 
   button: {
     size: {
-      xs:    { height: "24px", paddingX: "8px",  fontSize: "12px", iconSize: "12px", radius: "5px",  letterSpacing: "0" },
-      sm:    { height: "32px", paddingX: "12px", fontSize: "14px", iconSize: "14px", radius: "6px",  letterSpacing: "0" },
-      md:    { height: "40px", paddingX: "16px", fontSize: "14px", iconSize: "16px", radius: "7px",  letterSpacing: "0" },
-      lg:    { height: "48px", paddingX: "20px", fontSize: "16px", iconSize: "18px", radius: "8px",  letterSpacing: "-0.006em" },
-      xl:    { height: "56px", paddingX: "24px", fontSize: "18px", iconSize: "20px", radius: "9px",  letterSpacing: "-0.008em" },
-      "2xl": { height: "64px", paddingX: "28px", fontSize: "20px", iconSize: "24px", radius: "10px", letterSpacing: "-0.01em" },
-      "3xl": { height: "72px", paddingX: "32px", fontSize: "24px", iconSize: "28px", radius: "12px", letterSpacing: "-0.01em" },
+      xs: {
+        height: "24px",
+        paddingX: "8px",
+        fontSize: "12px",
+        iconSize: "12px",
+        radius: "5px",
+        letterSpacing: "0",
+      },
+      sm: {
+        height: "32px",
+        paddingX: "12px",
+        fontSize: "14px",
+        iconSize: "14px",
+        radius: "6px",
+        letterSpacing: "0",
+      },
+      md: {
+        height: "40px",
+        paddingX: "16px",
+        fontSize: "14px",
+        iconSize: "16px",
+        radius: "7px",
+        letterSpacing: "0",
+      },
+      lg: {
+        height: "48px",
+        paddingX: "20px",
+        fontSize: "16px",
+        iconSize: "18px",
+        radius: "8px",
+        letterSpacing: "-0.006em",
+      },
+      xl: {
+        height: "56px",
+        paddingX: "24px",
+        fontSize: "18px",
+        iconSize: "20px",
+        radius: "9px",
+        letterSpacing: "-0.008em",
+      },
+      "2xl": {
+        height: "64px",
+        paddingX: "28px",
+        fontSize: "20px",
+        iconSize: "24px",
+        radius: "10px",
+        letterSpacing: "-0.01em",
+      },
+      "3xl": {
+        height: "72px",
+        paddingX: "32px",
+        fontSize: "24px",
+        iconSize: "28px",
+        radius: "12px",
+        letterSpacing: "-0.01em",
+      },
     },
     borderRadius: "7px",
     borderWidth: "1px",
     fontWeight: primitiveTypography.fontWeight.medium,
     iconGap: "8px",
-    pressDuration: "80ms",    // button-specific; faster than primitive scale for tactile press
+    pressDuration: "80ms", // button-specific; faster than primitive scale for tactile press
     spinnerDuration: "600ms", // button-specific; no primitive-scale equivalent
     disabled: { bg: c.colpan[100], fg: c.kara[500], border: c.colpan[200] },
     surfaceHighlight: "rgba(255, 255, 255, 0.18)",
@@ -166,8 +215,7 @@ export const tulparLight: SemanticTokens = {
         "inset 0 -1px 0 0 var(--tulpar-button-surface-shade), " +
         "0 2px 6px -1px color-mix(in oklch, var(--_btn-color-default) 55%, black 30%), " +
         "0 16px 32px -8px color-mix(in oklch, var(--_btn-color-default) 48%, transparent)",
-      press:
-        "inset 0 1px 3px 0 color-mix(in oklch, black 22%, transparent)",
+      press: "inset 0 1px 3px 0 color-mix(in oklch, black 22%, transparent)",
     },
     premium: {
       sheen: "linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0) 42%)",
@@ -225,11 +273,36 @@ export const tulparLight: SemanticTokens = {
     },
     radius: "0.375rem",
     size: {
-      xs: { height: "1.5rem", paddingX: "0.5rem", paddingY: "0.125rem", fontSize: primitiveTypography.fontSize.xs },
-      sm: { height: "1.75rem", paddingX: "0.625rem", paddingY: "0.25rem", fontSize: primitiveTypography.fontSize.sm },
-      md: { height: "2.25rem", paddingX: "0.75rem", paddingY: "0.375rem", fontSize: primitiveTypography.fontSize.sm },
-      lg: { height: "2.75rem", paddingX: "0.875rem", paddingY: "0.5rem", fontSize: primitiveTypography.fontSize.md },
-      xl: { height: "3.25rem", paddingX: "1rem", paddingY: "0.625rem", fontSize: primitiveTypography.fontSize.lg },
+      xs: {
+        height: "1.5rem",
+        paddingX: "0.5rem",
+        paddingY: "0.125rem",
+        fontSize: primitiveTypography.fontSize.xs,
+      },
+      sm: {
+        height: "1.75rem",
+        paddingX: "0.625rem",
+        paddingY: "0.25rem",
+        fontSize: primitiveTypography.fontSize.sm,
+      },
+      md: {
+        height: "2.25rem",
+        paddingX: "0.75rem",
+        paddingY: "0.375rem",
+        fontSize: primitiveTypography.fontSize.sm,
+      },
+      lg: {
+        height: "2.75rem",
+        paddingX: "0.875rem",
+        paddingY: "0.5rem",
+        fontSize: primitiveTypography.fontSize.md,
+      },
+      xl: {
+        height: "3.25rem",
+        paddingX: "1rem",
+        paddingY: "0.625rem",
+        fontSize: primitiveTypography.fontSize.lg,
+      },
     },
     messageRowHeight: "1.25rem",
   },
@@ -239,32 +312,32 @@ export const tulparLight: SemanticTokens = {
     sidenav: {
       width: "17.5rem",
       railWidth: "4.5rem",
-      bg: c.white,                 // re-bind: was colpan[50]
+      bg: c.white, // re-bind: was colpan[50]
       fg: c.yagiz[700],
       fgMuted: c.kara[500],
       border: c.colpan[200],
-      edge: "rgba(11, 8, 4, 0.06)",          // NEW — yagiz[950] @ 6%
-      scrollShadow: "rgba(11, 8, 4, 0.08)",  // NEW — yagiz[950] @ 8%
+      edge: "rgba(11, 8, 4, 0.06)", // NEW — yagiz[950] @ 6%
+      scrollShadow: "rgba(11, 8, 4, 0.08)", // NEW — yagiz[950] @ 8%
       flyoutBg: c.white,
       flyoutBorder: c.colpan[200],
       flyoutHeaderFg: c.kara[600],
       flyoutDivider: c.colpan[200],
       railCue: c.kara[500],
       item: {
-        height: "2.5rem",          // re-bind: was 2.75rem
-        radius: "0.5rem",          // re-bind: was 0.375rem
-        heightCompact: "2.25rem",  // NEW
-        iconSize: "1.125rem",      // NEW
+        height: "2.5rem", // re-bind: was 2.75rem
+        radius: "0.5rem", // re-bind: was 0.375rem
+        heightCompact: "2.25rem", // NEW
+        iconSize: "1.125rem", // NEW
         bgHover: c.colpan[100],
         bgActive: c.tulpar[50],
         fgActive: c.tulpar[700],
         indicator: c.tulpar[500],
-        glow: "rgba(0, 197, 122, 0.5)",    // NEW — tulpar[500] @ 50%
+        glow: "rgba(0, 197, 122, 0.5)", // NEW — tulpar[500] @ 50%
         badgeBg: c.tulpar[500],
         badgeFg: c.yagiz[900],
-        countBg: c.colpan[100],            // NEW
-        countFg: c.kara[600],              // NEW
-        dot: c.tulpar[500],                // NEW
+        countBg: c.colpan[100], // NEW
+        countFg: c.kara[600], // NEW
+        dot: c.tulpar[500], // NEW
       },
     },
     content: {

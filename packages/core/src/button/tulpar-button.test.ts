@@ -419,7 +419,9 @@ describe("<tulpar-button>", () => {
       const cssText = buttonStyles.cssText; // existing tests use .cssText directly
       expect(cssText).to.not.match(/transition:\s*var\(--tulpar-transition-default/);
       expect(cssText).to.match(/transition-property:\s*background-color/);
-      expect(cssText).to.match(/transition-timing-function:\s*var\(--tulpar-transition-ease-standard/);
+      expect(cssText).to.match(
+        /transition-timing-function:\s*var\(--tulpar-transition-ease-standard/,
+      );
     });
     it("focus ring stays on outline (box-shadow not hijacked for focus)", () => {
       const cssText = buttonStyles.cssText;
@@ -427,7 +429,9 @@ describe("<tulpar-button>", () => {
     });
     it("grouped buttons keep the per-size radius on outer corners (not hardcoded 4px)", () => {
       const cssText = buttonStyles.cssText;
-      expect(cssText).to.not.match(/border-top-left-radius:\s*var\(--tulpar-button-border-radius,\s*4px\)/);
+      expect(cssText).to.not.match(
+        /border-top-left-radius:\s*var\(--tulpar-button-border-radius,\s*4px\)/,
+      );
     });
   });
 

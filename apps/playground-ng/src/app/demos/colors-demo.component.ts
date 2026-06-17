@@ -93,7 +93,8 @@ const SURFACES: { role: string; varName: string }[] = [
         @for (fam of families; track fam.name) {
           <div class="row">
             <div class="row-head">
-              <strong>{{ fam.name }}</strong><span>{{ fam.story }}</span>
+              <strong>{{ fam.name }}</strong
+              ><span>{{ fam.story }}</span>
             </div>
             <div class="ramp">
               @for (stop of stops; track stop) {
@@ -115,8 +116,8 @@ const SURFACES: { role: string; varName: string }[] = [
     <section class="doc-section">
       <h2 class="section-title">Semantic roles</h2>
       <p class="section-desc">
-        Components only ever reference semantic tokens — never raw primitives. This is the layer that
-        lets a brand or mode swap repaint the whole system.
+        Components only ever reference semantic tokens — never raw primitives. This is the layer
+        that lets a brand or mode swap repaint the whole system.
       </p>
       <div class="token-grid">
         @for (s of semantics; track s.role) {
@@ -135,7 +136,8 @@ const SURFACES: { role: string; varName: string }[] = [
     <section class="doc-section">
       <h2 class="section-title">Surfaces &amp; borders</h2>
       <p class="section-desc">
-        The neutral chrome tokens that build cards, panels, and dividers — mode-aware out of the box.
+        The neutral chrome tokens that build cards, panels, and dividers — mode-aware out of the
+        box.
       </p>
       <div class="token-grid">
         @for (s of surfaces; track s.role) {

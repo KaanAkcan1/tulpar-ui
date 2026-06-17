@@ -98,9 +98,7 @@ export class TulparShell extends LitElement {
   private _onFabClick = () => {
     // Dispatch tulpar-menu-toggle so listeners (including ourselves) react,
     // and the event is observable by tests and external consumers.
-    this.dispatchEvent(
-      new CustomEvent("tulpar-menu-toggle", { bubbles: true, composed: true }),
-    );
+    this.dispatchEvent(new CustomEvent("tulpar-menu-toggle", { bubbles: true, composed: true }));
   };
 
   private _onMenuToggle = () => {
@@ -255,7 +253,9 @@ export class TulparShell extends LitElement {
     return html`
       <a class="skip-link" href="#tulpar-shell-content">Skip to content</a>
       <div class="topbar"><slot name="topbar"></slot></div>
-      <div class="sidenav"><slot name="sidenav" @slotchange=${this._observeSidenavSlot}></slot></div>
+      <div class="sidenav">
+        <slot name="sidenav" @slotchange=${this._observeSidenavSlot}></slot>
+      </div>
       <main id="tulpar-shell-content">
         <div class="content-box"><slot></slot></div>
       </main>
@@ -267,7 +267,9 @@ export class TulparShell extends LitElement {
         <slot name="aside"></slot>
       </div>
       ${showFab
-        ? html`<button class="sidenav-fab" aria-label="Open navigation" @click=${this._onFabClick}>${brandMark}</button>`
+        ? html`<button class="sidenav-fab" aria-label="Open navigation" @click=${this._onFabClick}>
+            ${brandMark}
+          </button>`
         : nothing}
     `;
   }

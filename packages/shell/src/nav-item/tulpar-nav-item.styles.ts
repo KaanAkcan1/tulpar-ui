@@ -142,12 +142,19 @@ export const navItemStyles = css`
         transparent
       );
       opacity: 0;
-      animation: tulpar-nav-ignite 260ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1)) 1;
+      animation: tulpar-nav-ignite 260ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1))
+        1;
       pointer-events: none;
     }
     @keyframes tulpar-nav-ignite {
-      from { transform: translateY(100%); opacity: 0.8; }
-      to { transform: translateY(0); opacity: 0; }
+      from {
+        transform: translateY(100%);
+        opacity: 0.8;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 0;
+      }
     }
   }
 
@@ -179,7 +186,11 @@ export const navItemStyles = css`
     border-radius: 0.625rem;
     background: var(--tulpar-shell-sidenav-flyout-bg, #ffffff);
     border: 1px solid var(--tulpar-shell-sidenav-flyout-border, #d9e0df);
-    box-shadow: var(--tulpar-shadow-flyout, 0 4px 6px -2px rgba(10, 37, 64, 0.1), 0 12px 28px -6px rgba(10, 37, 64, 0.14));
+    box-shadow: var(
+      --tulpar-shadow-flyout,
+      0 4px 6px -2px rgba(10, 37, 64, 0.1),
+      0 12px 28px -6px rgba(10, 37, 64, 0.14)
+    );
     display: flex;
     flex-direction: column;
   }
@@ -365,18 +376,31 @@ export const navItemStyles = css`
 
   @media (prefers-reduced-motion: no-preference) {
     :host([data-rail]) .rail-flyout.is-group {
-      animation: tulpar-flyout-in 140ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1)) both;
+      animation: tulpar-flyout-in 140ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1))
+        both;
     }
     :host([data-rail]) .rail-flyout.is-group.is-right {
       animation-name: tulpar-flyout-in-right;
     }
     @keyframes tulpar-flyout-in {
-      from { opacity: 0; transform: translateX(-6px); }
-      to   { opacity: 1; transform: translateX(0); }
+      from {
+        opacity: 0;
+        transform: translateX(-6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
     @keyframes tulpar-flyout-in-right {
-      from { opacity: 0; transform: translateX(6px); }
-      to   { opacity: 1; transform: translateX(0); }
+      from {
+        opacity: 0;
+        transform: translateX(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -384,8 +408,12 @@ export const navItemStyles = css`
       animation: tulpar-flyout-fade 80ms linear both;
     }
     @keyframes tulpar-flyout-fade {
-      from { opacity: 0; }
-      to   { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
     }
   }
 

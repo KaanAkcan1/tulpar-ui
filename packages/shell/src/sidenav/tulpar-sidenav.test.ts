@@ -178,7 +178,13 @@ describe("<tulpar-sidenav>", () => {
   it("exposes utility-start, utility-end, search and footer slots", async () => {
     const el = await fixture<TulparSidenav>(html`<tulpar-sidenav></tulpar-sidenav>`);
     const names = [...el.shadowRoot!.querySelectorAll("slot")].map((s) => s.name);
-    expect(names).to.include.members(["search", "header-actions", "utility-start", "utility-end", "footer"]);
+    expect(names).to.include.members([
+      "search",
+      "header-actions",
+      "utility-start",
+      "utility-end",
+      "footer",
+    ]);
   });
 
   it("moves focus between items with ArrowDown/ArrowUp", async () => {
@@ -212,7 +218,10 @@ describe("<tulpar-sidenav>", () => {
   it("rail nav does not produce horizontal overflow", async () => {
     const el = await fixture<TulparSidenav>(html`
       <tulpar-sidenav data-rail>
-        <tulpar-nav-item href="/averylonglabelthatwouldoverflow" label="A very long label that would overflow"></tulpar-nav-item>
+        <tulpar-nav-item
+          href="/averylonglabelthatwouldoverflow"
+          label="A very long label that would overflow"
+        ></tulpar-nav-item>
       </tulpar-sidenav>
     `);
     await el.updateComplete;
@@ -244,8 +253,12 @@ describe("<tulpar-sidenav>", () => {
   it("single-expand collapses sibling groups when one opens", async () => {
     const el = await fixture<TulparSidenav>(html`
       <tulpar-sidenav single-expand>
-        <tulpar-nav-item label="G1"><tulpar-nav-item href="/1" label="c1"></tulpar-nav-item></tulpar-nav-item>
-        <tulpar-nav-item label="G2"><tulpar-nav-item href="/2" label="c2"></tulpar-nav-item></tulpar-nav-item>
+        <tulpar-nav-item label="G1"
+          ><tulpar-nav-item href="/1" label="c1"></tulpar-nav-item
+        ></tulpar-nav-item>
+        <tulpar-nav-item label="G2"
+          ><tulpar-nav-item href="/2" label="c2"></tulpar-nav-item
+        ></tulpar-nav-item>
       </tulpar-sidenav>
     `);
     // Use direct children only so we get G1 and G2, not the nested c1/c2
@@ -270,19 +283,27 @@ describe("<tulpar-sidenav>", () => {
 
   it("toggle button reflects aria-expanded from data-collapsed (initial)", async () => {
     const el = await fixture<TulparSidenav>(html`<tulpar-sidenav data-collapsed></tulpar-sidenav>`);
-    expect(el.shadowRoot!.querySelector(".sidenav-toggle")!.getAttribute("aria-expanded")).to.equal("false");
+    expect(el.shadowRoot!.querySelector(".sidenav-toggle")!.getAttribute("aria-expanded")).to.equal(
+      "false",
+    );
   });
 
   it("toggle aria-expanded updates live when data-collapsed mutates (MutationObserver)", async () => {
     const el = await fixture<TulparSidenav>(html`<tulpar-sidenav></tulpar-sidenav>`);
-    expect(el.shadowRoot!.querySelector(".sidenav-toggle")!.getAttribute("aria-expanded")).to.equal("true");
+    expect(el.shadowRoot!.querySelector(".sidenav-toggle")!.getAttribute("aria-expanded")).to.equal(
+      "true",
+    );
     el.toggleAttribute("data-collapsed", true);
     await el.updateComplete;
-    expect(el.shadowRoot!.querySelector(".sidenav-toggle")!.getAttribute("aria-expanded")).to.equal("false");
+    expect(el.shadowRoot!.querySelector(".sidenav-toggle")!.getAttribute("aria-expanded")).to.equal(
+      "false",
+    );
   });
 
   it("does not render built-in toggle/brand when slot=header is provided", async () => {
-    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav><div slot="header">custom</div></tulpar-sidenav>`);
+    const el = await fixture<TulparSidenav>(
+      html`<tulpar-sidenav><div slot="header">custom</div></tulpar-sidenav>`,
+    );
     expect(el.shadowRoot!.querySelector(".sidenav-toggle")).to.be.null;
   });
 
@@ -306,12 +327,15 @@ describe("<tulpar-sidenav>", () => {
   });
   it("hides mode-selection when showModeSelection is false", async () => {
     const el = await fixture<TulparSidenav>(html`<tulpar-sidenav></tulpar-sidenav>`);
-    el.showModeSelection = false; await el.updateComplete;
+    el.showModeSelection = false;
+    await el.updateComplete;
     expect(el.shadowRoot!.querySelector(".util-theme")).to.be.null;
   });
   it("renders config button with config-text when showConfig and emits tulpar-config-click", async () => {
     const el = await fixture<TulparSidenav>(html`<tulpar-sidenav></tulpar-sidenav>`);
-    el.showConfig = true; el.configText = "Tweak"; await el.updateComplete;
+    el.showConfig = true;
+    el.configText = "Tweak";
+    await el.updateComplete;
     const c = el.shadowRoot!.querySelector(".util-config") as HTMLButtonElement;
     expect(c).to.exist;
     expect(c.textContent).to.contain("Tweak");
@@ -320,12 +344,16 @@ describe("<tulpar-sidenav>", () => {
   });
   it("omits the utility region entirely when both are off", async () => {
     const el = await fixture<TulparSidenav>(html`<tulpar-sidenav></tulpar-sidenav>`);
-    el.showModeSelection = false; el.showConfig = false; await el.updateComplete;
+    el.showModeSelection = false;
+    el.showConfig = false;
+    await el.updateComplete;
     expect(el.shadowRoot!.querySelector(".utility")).to.be.null;
   });
 
   it("utility-start slot overrides the built-in theme cell", async () => {
-    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav><button slot="utility-start" class="mine">x</button></tulpar-sidenav>`);
+    const el = await fixture<TulparSidenav>(
+      html`<tulpar-sidenav><button slot="utility-start" class="mine">x</button></tulpar-sidenav>`,
+    );
     await el.updateComplete;
     expect(el.shadowRoot!.querySelector(".util-theme")).to.be.null; // built-in suppressed
     const slot = el.shadowRoot!.querySelector('slot[name="utility-start"]') as HTMLSlotElement;
@@ -336,28 +364,38 @@ describe("<tulpar-sidenav>", () => {
 
   it("rail makes theme toggle icon-only and hides config (B2)", async () => {
     const el = await fixture<TulparSidenav>(html`<tulpar-sidenav data-rail></tulpar-sidenav>`);
-    el.showConfig = true; await el.updateComplete;
+    el.showConfig = true;
+    await el.updateComplete;
     const text = el.shadowRoot!.querySelector(".util-theme .util-text") as HTMLElement;
     expect(getComputedStyle(text).display).to.equal("none");
-    expect(getComputedStyle(el.shadowRoot!.querySelector(".util-config") as HTMLElement).display).to.equal("none");
+    expect(
+      getComputedStyle(el.shadowRoot!.querySelector(".util-config") as HTMLElement).display,
+    ).to.equal("none");
   });
 
   // ── Chunk 5: built-in account block ─────────────────────────────────────
 
   it("shows account block by default with initials from user-name", async () => {
-    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav user-name="Kaan Akcan" user-role="Owner"></tulpar-sidenav>`);
+    const el = await fixture<TulparSidenav>(
+      html`<tulpar-sidenav user-name="Kaan Akcan" user-role="Owner"></tulpar-sidenav>`,
+    );
     expect(el.shadowRoot!.querySelector(".account")).to.exist;
     expect(el.shadowRoot!.querySelector(".account-avatar")!.textContent!.trim()).to.equal("KA");
     expect(el.shadowRoot!.querySelector(".account-name")!.textContent).to.contain("Kaan Akcan");
     expect(el.shadowRoot!.querySelector(".account-role")!.textContent).to.contain("Owner");
   });
   it("uses profile image when provided", async () => {
-    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav user-name="Kaan" profile-image="/a.png"></tulpar-sidenav>`);
+    const el = await fixture<TulparSidenav>(
+      html`<tulpar-sidenav user-name="Kaan" profile-image="/a.png"></tulpar-sidenav>`,
+    );
     expect(el.shadowRoot!.querySelector("img.account-avatar-img")).to.exist;
   });
   it("hides the whole block when show-account-block=false", async () => {
-    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav user-name="Kaan"></tulpar-sidenav>`);
-    el.showAccountBlock = false; await el.updateComplete;
+    const el = await fixture<TulparSidenav>(
+      html`<tulpar-sidenav user-name="Kaan"></tulpar-sidenav>`,
+    );
+    el.showAccountBlock = false;
+    await el.updateComplete;
     expect(el.shadowRoot!.querySelector(".account")).to.be.null;
   });
   it("omits the name line when userName is absent (graceful empty)", async () => {
@@ -366,8 +404,11 @@ describe("<tulpar-sidenav>", () => {
     expect(el.shadowRoot!.querySelector(".account-name")).to.be.null;
   });
   it("logout shows by default and emits tulpar-logout; settings opt-in emits tulpar-settings-click", async () => {
-    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav user-name="Kaan"></tulpar-sidenav>`);
-    el.showSettings = true; await el.updateComplete;
+    const el = await fixture<TulparSidenav>(
+      html`<tulpar-sidenav user-name="Kaan"></tulpar-sidenav>`,
+    );
+    el.showSettings = true;
+    await el.updateComplete;
     const logout = el.shadowRoot!.querySelector(".account-logout") as HTMLButtonElement;
     setTimeout(() => logout.click());
     expect(await oneEvent(el, "tulpar-logout")).to.exist;
@@ -376,7 +417,11 @@ describe("<tulpar-sidenav>", () => {
     expect(await oneEvent(el, "tulpar-settings-click")).to.exist;
   });
   it("footer slot overrides the built-in account block", async () => {
-    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav user-name="Kaan"><div slot="footer" class="mine">x</div></tulpar-sidenav>`);
+    const el = await fixture<TulparSidenav>(
+      html`<tulpar-sidenav user-name="Kaan"
+        ><div slot="footer" class="mine">x</div></tulpar-sidenav
+      >`,
+    );
     await el.updateComplete;
     expect(el.shadowRoot!.querySelector(".account")).to.be.null;
     expect(el.shadowRoot!.querySelector('slot[name="footer"]')).to.exist;
@@ -385,10 +430,17 @@ describe("<tulpar-sidenav>", () => {
   // ── Chunk 5.2: rail account = avatar only ───────────────────────────────
 
   it("rail account shows avatar only (meta + actions hidden)", async () => {
-    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav data-rail user-name="Kaan"></tulpar-sidenav>`);
-    el.showSettings = true; await el.updateComplete;
-    expect(getComputedStyle(el.shadowRoot!.querySelector(".account-meta") as HTMLElement).display).to.equal("none");
-    expect(getComputedStyle(el.shadowRoot!.querySelector(".account-actions") as HTMLElement).display).to.equal("none");
+    const el = await fixture<TulparSidenav>(
+      html`<tulpar-sidenav data-rail user-name="Kaan"></tulpar-sidenav>`,
+    );
+    el.showSettings = true;
+    await el.updateComplete;
+    expect(
+      getComputedStyle(el.shadowRoot!.querySelector(".account-meta") as HTMLElement).display,
+    ).to.equal("none");
+    expect(
+      getComputedStyle(el.shadowRoot!.querySelector(".account-actions") as HTMLElement).display,
+    ).to.equal("none");
     expect(el.shadowRoot!.querySelector(".account-avatar, .account-avatar-img")).to.exist;
   });
 
@@ -397,7 +449,9 @@ describe("<tulpar-sidenav>", () => {
   it("reflects data-rail onto slotted nav-items and nav-sections", async () => {
     const el = await fixture<TulparSidenav>(html`
       <tulpar-sidenav data-rail>
-        <tulpar-nav-section label="S"><tulpar-nav-item href="/a" label="A"></tulpar-nav-item></tulpar-nav-section>
+        <tulpar-nav-section label="S"
+          ><tulpar-nav-item href="/a" label="A"></tulpar-nav-item
+        ></tulpar-nav-section>
         <tulpar-nav-item href="/b" label="B"></tulpar-nav-item>
       </tulpar-sidenav>
     `);
@@ -409,7 +463,9 @@ describe("<tulpar-sidenav>", () => {
 
   it("forwards item.icon (SVG string) from items data to the nav-item", async () => {
     const el = await fixture<TulparSidenav>(html`
-      <tulpar-sidenav .items=${[{ label: "Button", href: "/button", icon: '<svg class="probe"></svg>' }]}></tulpar-sidenav>
+      <tulpar-sidenav
+        .items=${[{ label: "Button", href: "/button", icon: '<svg class="probe"></svg>' }]}
+      ></tulpar-sidenav>
     `);
     await el.updateComplete;
     const item = el.shadowRoot!.querySelector("tulpar-nav-item")!;
@@ -425,10 +481,12 @@ describe("<tulpar-sidenav>", () => {
     await el.updateComplete;
     expect(el.hasAttribute("data-dark")).to.be.false;
     document.documentElement.classList.add("dark");
-    await aTimeout(0); await el.updateComplete;
+    await aTimeout(0);
+    await el.updateComplete;
     expect(el.hasAttribute("data-dark")).to.be.true;
     document.documentElement.classList.remove("dark"); // cleanup
-    await aTimeout(0); await el.updateComplete;
+    await aTimeout(0);
+    await el.updateComplete;
     expect(el.hasAttribute("data-dark")).to.be.false;
   });
 
@@ -467,13 +525,15 @@ describe("<tulpar-sidenav>", () => {
     expect(text()).to.equal("Dark");
     // dark mode: label = "Light"
     document.documentElement.classList.add("dark");
-    await aTimeout(0); await el.updateComplete;
+    await aTimeout(0);
+    await el.updateComplete;
     expect(text()).to.equal("Light");
     // overridable
     el.setAttribute("theme-text-light", "Aydınlık");
     await el.updateComplete;
     expect(text()).to.equal("Aydınlık");
     document.documentElement.classList.remove("dark"); // cleanup
-    await aTimeout(0); await el.updateComplete;
+    await aTimeout(0);
+    await el.updateComplete;
   });
 });

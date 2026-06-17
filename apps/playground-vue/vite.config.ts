@@ -30,11 +30,6 @@ export default defineConfig({
   // component JS change as we develop, and the pre-bundle cache holds onto
   // stale versions. Source resolution + HMR pick up changes immediately.
   optimizeDeps: {
-    exclude: [
-      "@tulpar-ui/tokens",
-      "@tulpar-ui/core",
-      "@tulpar-ui/shell",
-      "@tulpar-ui/vue",
-    ],
+    exclude: ["@tulpar-ui/tokens", "@tulpar-ui/core", "@tulpar-ui/shell", "@tulpar-ui/vue"],
   },
 });

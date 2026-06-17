@@ -3,10 +3,7 @@ import { TestBed } from "@angular/core/testing";
 import { Component, signal } from "@angular/core";
 import { TulparShellComponent } from "./tulpar-shell.component";
 import { TulparTopbarComponent } from "./tulpar-topbar.component";
-import {
-  TulparSidenavComponent,
-  type TulparNavItemNgData,
-} from "./tulpar-sidenav.component";
+import { TulparSidenavComponent, type TulparNavItemNgData } from "./tulpar-sidenav.component";
 import { TulparNavItemComponent } from "./tulpar-nav-item.component";
 import { TulparNavSectionComponent } from "./tulpar-nav-section.component";
 

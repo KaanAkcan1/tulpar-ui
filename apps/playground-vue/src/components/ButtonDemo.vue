@@ -291,7 +291,9 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
       <div class="hero">
         <TulparButton severity="primary" size="lg" :icon="Check">Save changes</TulparButton>
         <TulparButton severity="secondary" variant="outlined" size="lg">Cancel</TulparButton>
-        <TulparButton severity="premium" variant="tonal" size="lg" :icon="Crown">Upgrade</TulparButton>
+        <TulparButton severity="premium" variant="tonal" size="lg" :icon="Crown"
+          >Upgrade</TulparButton
+        >
       </div>
     </section>
 
@@ -619,10 +621,11 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
     <section class="doc-section">
       <h2 class="section-title">16. Premium CTA — the antique-gold marketing example</h2>
       <p class="section-desc">
-        <code class="inline-code">severity="premium"</code> is the <code class="inline-code">ulgen</code>
-        antique-gold spirit — the accent for marketing calls-to-action. Light theme: ulgen.500
-        background + dark ink. Hover <em>brightens</em> (ulgen.500 → .400 → .300) — intentionally
-        distinct from <code class="inline-code">primary</code> (tulpar green), which darkens on hover.
+        <code class="inline-code">severity="premium"</code> is the
+        <code class="inline-code">ulgen</code> antique-gold spirit — the accent for marketing
+        calls-to-action. Light theme: ulgen.500 background + dark ink. Hover
+        <em>brightens</em> (ulgen.500 → .400 → .300) — intentionally distinct from
+        <code class="inline-code">primary</code> (tulpar green), which darkens on hover.
       </p>
       <div class="preview preview--baseline">
         <TulparButton severity="premium" :icon="Crown">Upgrade to Pro</TulparButton>

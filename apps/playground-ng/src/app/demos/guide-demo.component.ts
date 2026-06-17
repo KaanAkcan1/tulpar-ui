@@ -83,10 +83,9 @@ const THEME_SNIPPET = `<!-- show-mode-selection is ON by default. The sidenav re
       <span class="page-tag">Guide</span>
       <h1 class="page-title">Sidebar &amp; Theme</h1>
       <p class="page-lede">
-        The Tulpar shell sidebar is self-contained and prop-driven: brand, nav,
-        the Dark/Light toggle, the utility row and the account block all render
-        from inputs — no app markup. Slots remain as escape hatches when you need
-        custom chrome.
+        The Tulpar shell sidebar is self-contained and prop-driven: brand, nav, the Dark/Light
+        toggle, the utility row and the account block all render from inputs — no app markup. Slots
+        remain as escape hatches when you need custom chrome.
       </p>
     </header>
 
@@ -94,10 +93,9 @@ const THEME_SNIPPET = `<!-- show-mode-selection is ON by default. The sidenav re
     <section class="doc-section">
       <h2 class="section-title">Overview</h2>
       <p class="section-desc">
-        Drive the whole sidebar from a single <code>[items]</code> array plus a
-        handful of feature flags. Everything below is optional; sensible defaults
-        ship out of the box. Reach for slots only when a prop cannot express what
-        you need.
+        Drive the whole sidebar from a single <code>[items]</code> array plus a handful of feature
+        flags. Everything below is optional; sensible defaults ship out of the box. Reach for slots
+        only when a prop cannot express what you need.
       </p>
       <pre class="code"><code>{{ shellSnippet }}</code></pre>
     </section>
@@ -106,10 +104,9 @@ const THEME_SNIPPET = `<!-- show-mode-selection is ON by default. The sidenav re
     <section class="doc-section">
       <h2 class="section-title">Theme — Dark / Light</h2>
       <p class="section-desc">
-        A built-in theme toggle ships via <code>show-mode-selection</code>
-        (default <strong>on</strong>). It emits <code>tulpar-theme-toggle</code>
-        and the shell flips the <code>.dark</code> class automatically. You do not
-        wire the event — it just works.
+        A built-in theme toggle ships via <code>show-mode-selection</code> (default
+        <strong>on</strong>). It emits <code>tulpar-theme-toggle</code> and the shell flips the
+        <code>.dark</code> class automatically. You do not wire the event — it just works.
       </p>
       <pre class="code"><code>{{ themeSnippet }}</code></pre>
     </section>
@@ -118,24 +115,24 @@ const THEME_SNIPPET = `<!-- show-mode-selection is ON by default. The sidenav re
     <section class="doc-section">
       <h2 class="section-title">Menu &amp; items API</h2>
       <p class="section-desc">
-        Each entry is a <code>TulparNavItemNgData</code>. Use
-        <code>type: 'section'</code> for a non-interactive group heading; give any
-        item its own <code>items</code> to make it a collapsible group with a
-        chevron. Per-item adornments: <code>icon</code>, <code>count</code>,
-        <code>badge</code>, <code>dot</code>, <code>kbd</code>.
+        Each entry is a <code>TulparNavItemNgData</code>. Use <code>type: 'section'</code> for a
+        non-interactive group heading; give any item its own <code>items</code> to make it a
+        collapsible group with a chevron. Per-item adornments: <code>icon</code>,
+        <code>count</code>, <code>badge</code>, <code>dot</code>, <code>kbd</code>.
       </p>
       <dl class="def">
         @for (r of itemProps; track r.name) {
           <div class="def-row">
-            <dt><code>{{ r.name }}</code> <span class="def-type">{{ r.type }}</span></dt>
+            <dt>
+              <code>{{ r.name }}</code> <span class="def-type">{{ r.type }}</span>
+            </dt>
             <dd>{{ r.desc }}</dd>
           </div>
         }
       </dl>
       <p class="section-desc">
-        In the wrappers, <code>icon</code> is a framework component (a lucide
-        component in Angular/Vue). In core <code>@tulpar-ui/shell</code>, it is a
-        raw SVG string.
+        In the wrappers, <code>icon</code> is a framework component (a lucide component in
+        Angular/Vue). In core <code>@tulpar-ui/shell</code>, it is a raw SVG string.
       </p>
       <pre class="code"><code>{{ menuSnippet }}</code></pre>
     </section>
@@ -143,13 +140,13 @@ const THEME_SNIPPET = `<!-- show-mode-selection is ON by default. The sidenav re
     <!-- ── Utility row ──────────────────────────────────────────────────── -->
     <section class="doc-section">
       <h2 class="section-title">Utility row</h2>
-      <p class="section-desc">
-        An optional action row above the account block.
-      </p>
+      <p class="section-desc">An optional action row above the account block.</p>
       <dl class="def">
         @for (r of utilityProps; track r.name) {
           <div class="def-row">
-            <dt><code>{{ r.name }}</code> <span class="def-type">{{ r.type }}</span></dt>
+            <dt>
+              <code>{{ r.name }}</code> <span class="def-type">{{ r.type }}</span>
+            </dt>
             <dd>{{ r.desc }}</dd>
           </div>
         }
@@ -161,13 +158,15 @@ const THEME_SNIPPET = `<!-- show-mode-selection is ON by default. The sidenav re
       <h2 class="section-title">Account block</h2>
       <p class="section-desc">
         The signed-in user card at the foot of the sidebar.
-        <code>profile-image</code> falls back to initials derived from
-        <code>user-name</code> when omitted.
+        <code>profile-image</code> falls back to initials derived from <code>user-name</code> when
+        omitted.
       </p>
       <dl class="def">
         @for (r of accountProps; track r.name) {
           <div class="def-row">
-            <dt><code>{{ r.name }}</code> <span class="def-type">{{ r.type }}</span></dt>
+            <dt>
+              <code>{{ r.name }}</code> <span class="def-type">{{ r.type }}</span>
+            </dt>
             <dd>{{ r.desc }}</dd>
           </div>
         }
@@ -180,7 +179,9 @@ const THEME_SNIPPET = `<!-- show-mode-selection is ON by default. The sidenav re
       <dl class="def">
         @for (r of layoutProps; track r.name) {
           <div class="def-row">
-            <dt><code>{{ r.name }}</code> <span class="def-type">{{ r.type }}</span></dt>
+            <dt>
+              <code>{{ r.name }}</code> <span class="def-type">{{ r.type }}</span>
+            </dt>
             <dd>{{ r.desc }}</dd>
           </div>
         }
@@ -191,13 +192,15 @@ const THEME_SNIPPET = `<!-- show-mode-selection is ON by default. The sidenav re
     <section class="doc-section">
       <h2 class="section-title">Slots — escape hatches</h2>
       <p class="section-desc">
-        Reach for a slot only when a prop cannot express your need. Project custom
-        markup with <code>slot="…"</code>.
+        Reach for a slot only when a prop cannot express your need. Project custom markup with
+        <code>slot="…"</code>.
       </p>
       <dl class="def">
         @for (r of slots; track r.name) {
           <div class="def-row">
-            <dt><code>{{ r.name }}</code></dt>
+            <dt>
+              <code>{{ r.name }}</code>
+            </dt>
             <dd>{{ r.desc }}</dd>
           </div>
         }
@@ -208,13 +211,15 @@ const THEME_SNIPPET = `<!-- show-mode-selection is ON by default. The sidenav re
     <section class="doc-section">
       <h2 class="section-title">Accessibility labels</h2>
       <p class="section-desc">
-        Override the accessible names of the built-in controls (e.g. for
-        localisation). All default to sensible English strings.
+        Override the accessible names of the built-in controls (e.g. for localisation). All default
+        to sensible English strings.
       </p>
       <dl class="def">
         @for (r of a11yLabels; track r.name) {
           <div class="def-row">
-            <dt><code>{{ r.name }}</code></dt>
+            <dt>
+              <code>{{ r.name }}</code>
+            </dt>
             <dd>{{ r.desc }}</dd>
           </div>
         }
@@ -386,7 +391,11 @@ export class GuideDemoComponent {
 
   readonly itemProps: PropRow[] = [
     { name: 'label', type: 'string', desc: 'Visible text for the item or section.' },
-    { name: 'href', type: 'string?', desc: 'Navigation target. Omit on a collapsible group parent.' },
+    {
+      name: 'href',
+      type: 'string?',
+      desc: 'Navigation target. Omit on a collapsible group parent.',
+    },
     {
       name: 'type',
       type: "'item' | 'section'",
@@ -410,19 +419,35 @@ export class GuideDemoComponent {
   ];
 
   readonly utilityProps: PropRow[] = [
-    { name: 'show-config', type: 'boolean', desc: 'Show the configurator action in the utility row.' },
+    {
+      name: 'show-config',
+      type: 'boolean',
+      desc: 'Show the configurator action in the utility row.',
+    },
     { name: 'config-text', type: 'string', desc: 'Label for the configurator action.' },
-    { name: 'config (event)', type: 'void', desc: 'Emitted when the configurator action is activated.' },
+    {
+      name: 'config (event)',
+      type: 'void',
+      desc: 'Emitted when the configurator action is activated.',
+    },
   ];
 
   readonly accountProps: PropRow[] = [
     { name: 'show-account-block', type: 'boolean', desc: 'Show the account card. Default on.' },
     { name: 'user-name', type: 'string', desc: 'Display name; also seeds the initials fallback.' },
     { name: 'user-role', type: 'string', desc: 'Secondary line under the name.' },
-    { name: 'profile-image', type: 'string', desc: 'Avatar URL; falls back to initials when absent.' },
+    {
+      name: 'profile-image',
+      type: 'string',
+      desc: 'Avatar URL; falls back to initials when absent.',
+    },
     { name: 'show-settings', type: 'boolean', desc: 'Show the settings action.' },
     { name: 'show-logout', type: 'boolean', desc: 'Show the logout action.' },
-    { name: 'settings / logout (events)', type: 'void', desc: 'Emitted when the respective action fires.' },
+    {
+      name: 'settings / logout (events)',
+      type: 'void',
+      desc: 'Emitted when the respective action fires.',
+    },
   ];
 
   readonly layoutProps: PropRow[] = [

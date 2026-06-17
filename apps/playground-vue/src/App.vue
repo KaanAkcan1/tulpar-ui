@@ -226,9 +226,9 @@ function onLogout() {
 
       <p class="settings-hint">
         Brand, navigation, the Dark/Light toggle and the account block are all rendered by
-        <code>&lt;TulparSidenav&gt;</code> from props — no app markup. Sidenav mode persists
-        across reloads via <code>persist-key</code>; the rest reset on reload. Close with Esc,
-        the ✕, or the backdrop.
+        <code>&lt;TulparSidenav&gt;</code> from props — no app markup. Sidenav mode persists across
+        reloads via <code>persist-key</code>; the rest reset on reload. Close with Esc, the ✕, or
+        the backdrop.
       </p>
     </section>
   </TulparShell>

@@ -88,7 +88,7 @@ describe("tulparLight.shell", () => {
   it("item countBg = colpan[100], countFg = kara[600], dot = tulpar[500]", () => {
     expect(tulparLight.shell.sidenav.item.countBg).toBe("#e9f1ef"); // colpan[100]
     expect(tulparLight.shell.sidenav.item.countFg).toBe("#636568"); // kara[600]
-    expect(tulparLight.shell.sidenav.item.dot).toBe("#00c57a");     // tulpar[500]
+    expect(tulparLight.shell.sidenav.item.dot).toBe("#00c57a"); // tulpar[500]
   });
 });
 

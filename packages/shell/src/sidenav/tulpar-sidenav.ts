@@ -15,7 +15,13 @@ import "../nav-item/tulpar-nav-item";
 import "../nav-section/tulpar-nav-section";
 
 export class TulparSidenav extends LitElement {
-  static override styles = [sidenavStyles, headerStyles, utilityStyles, accountStyles, searchStyles];
+  static override styles = [
+    sidenavStyles,
+    headerStyles,
+    utilityStyles,
+    accountStyles,
+    searchStyles,
+  ];
 
   /**
    * Tell the browser (and Lit) to observe these non-declared attributes so that
@@ -25,12 +31,7 @@ export class TulparSidenav extends LitElement {
    * safety net for external mutations that may bypass attributeChangedCallback.
    */
   static override get observedAttributes() {
-    return [
-      ...super.observedAttributes,
-      "data-collapsed",
-      "data-sidenav-open",
-      "data-rail",
-    ];
+    return [...super.observedAttributes, "data-collapsed", "data-sidenav-open", "data-rail"];
   }
 
   override attributeChangedCallback(name: string, oldVal: string | null, newVal: string | null) {
@@ -54,9 +55,9 @@ export class TulparSidenav extends LitElement {
     this.querySelectorAll("tulpar-nav-item, tulpar-nav-section").forEach((n) =>
       n.toggleAttribute("data-rail", on),
     );
-    this.shadowRoot?.querySelectorAll("tulpar-nav-item, tulpar-nav-section").forEach((n) =>
-      n.toggleAttribute("data-rail", on),
-    );
+    this.shadowRoot
+      ?.querySelectorAll("tulpar-nav-item, tulpar-nav-section")
+      .forEach((n) => n.toggleAttribute("data-rail", on));
   }
 
   /** JSON menü verisi — slot ile birlikte kullanılabilir. */
@@ -185,9 +186,11 @@ export class TulparSidenav extends LitElement {
 
   private _focusedItem(): TulparNavItem | null {
     const items = this._focusableItems();
-    return (items.find(
-      (i) => i.contains(document.activeElement) || i === document.activeElement,
-    ) as TulparNavItem) ?? null;
+    return (
+      (items.find(
+        (i) => i.contains(document.activeElement) || i === document.activeElement,
+      ) as TulparNavItem) ?? null
+    );
   }
 
   private _onKeydown = (e: KeyboardEvent) => {
@@ -215,7 +218,7 @@ export class TulparSidenav extends LitElement {
       const focused = this._focusedItem();
       if (!focused) return;
       e.preventDefault();
-      (e.key === "ArrowRight" ? focused.expand?.() : focused.collapse?.());
+      e.key === "ArrowRight" ? focused.expand?.() : focused.collapse?.();
       return;
     }
   };
@@ -484,8 +487,7 @@ export class TulparSidenav extends LitElement {
 
   override render() {
     return html`
-      ${renderHeader(this)}
-      ${renderSearch(this)}
+      ${renderHeader(this)} ${renderSearch(this)}
       <nav aria-label=${this.navLabel} @keydown=${this._onKeydown}>
         ${this.items?.map((i) => this._renderItem(i)) ?? nothing}
         <slot @slotchange=${this._onDefaultSlotChange}></slot>
@@ -493,8 +495,7 @@ export class TulparSidenav extends LitElement {
           ? html`<div class="no-results" role="status">${this.searchEmptyText}</div>`
           : nothing}
       </nav>
-      ${renderUtility(this)}
-      ${renderAccount(this)}
+      ${renderUtility(this)} ${renderAccount(this)}
     `;
   }
 }

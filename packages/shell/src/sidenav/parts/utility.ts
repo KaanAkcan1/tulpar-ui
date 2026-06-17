@@ -85,10 +85,7 @@ export function renderUtility(host: TulparSidenav) {
   // priority: slotted content > built-in > nothing
   const startCell = host._hasUtilityStart
     ? html`<div class="util-cell">
-        <slot
-          name="utility-start"
-          @slotchange=${host._onUtilityStartSlotChange}
-        ></slot>
+        <slot name="utility-start" @slotchange=${host._onUtilityStartSlotChange}></slot>
       </div>`
     : host.showModeSelection
       ? html`<button
@@ -101,7 +98,9 @@ export function renderUtility(host: TulparSidenav) {
               )}
           >
             ${moonIcon}${sunIcon}
-            <span class="util-text">${host.hasAttribute("data-dark") ? host.themeTextLight : host.themeTextDark}</span>
+            <span class="util-text"
+              >${host.hasAttribute("data-dark") ? host.themeTextLight : host.themeTextDark}</span
+            >
           </button>
           <slot
             name="utility-start"
@@ -117,10 +116,7 @@ export function renderUtility(host: TulparSidenav) {
   // Determine what to show in the "end" (right) cell:
   const endCell = host._hasUtilityEnd
     ? html`<div class="util-cell">
-        <slot
-          name="utility-end"
-          @slotchange=${host._onUtilityEndSlotChange}
-        ></slot>
+        <slot name="utility-end" @slotchange=${host._onUtilityEndSlotChange}></slot>
       </div>`
     : host.showConfig
       ? html`<button

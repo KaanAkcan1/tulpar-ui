@@ -131,13 +131,19 @@ describe("<tulpar-nav-item>", () => {
 
   it("renders an inline SVG icon from the icon string prop", async () => {
     const el = await fixture<TulparNavItem>(
-      html`<tulpar-nav-item href="/x" label="X" icon='<svg class="probe"></svg>'></tulpar-nav-item>`,
+      html`<tulpar-nav-item
+        href="/x"
+        label="X"
+        icon='<svg class="probe"></svg>'
+      ></tulpar-nav-item>`,
     );
     expect(el.shadowRoot!.querySelector("svg.probe")).to.exist;
   });
 
   it("rail flyout uses fixed positioning to escape the clipped nav (B3)", async () => {
-    const el = await fixture<TulparNavItem>(html`<tulpar-nav-item href="/x" label="Longish label"></tulpar-nav-item>`);
+    const el = await fixture<TulparNavItem>(
+      html`<tulpar-nav-item href="/x" label="Longish label"></tulpar-nav-item>`,
+    );
     el.setAttribute("data-rail", "");
     await el.updateComplete;
     // Bypass intent timer — test is about positioning, not timing.
@@ -157,7 +163,11 @@ describe("<tulpar-nav-item>", () => {
       </tulpar-nav-item>
     `);
     const leaf = await fixture<TulparNavItem>(
-      html`<tulpar-nav-item href="/a" label="Alpha" icon="<svg width='18' height='18'></svg>"></tulpar-nav-item>`,
+      html`<tulpar-nav-item
+        href="/a"
+        label="Alpha"
+        icon="<svg width='18' height='18'></svg>"
+      ></tulpar-nav-item>`,
     );
     await group.updateComplete;
     await leaf.updateComplete;
@@ -166,10 +176,14 @@ describe("<tulpar-nav-item>", () => {
     const leafLabel = getComputedStyle(leaf.shadowRoot!.querySelector(".label") as HTMLElement);
     // Both must resolve to the same start alignment (not "center").
     expect(groupLabel.textAlign, "group label not centered").to.not.equal("center");
-    expect(groupLabel.textAlign, "group label matches leaf alignment").to.equal(leafLabel.textAlign);
+    expect(groupLabel.textAlign, "group label matches leaf alignment").to.equal(
+      leafLabel.textAlign,
+    );
 
     // Label remains the sole flex-grow source (chevron must not grow/shrink).
-    const chevronStyle = getComputedStyle(group.shadowRoot!.querySelector(".chevron") as HTMLElement);
+    const chevronStyle = getComputedStyle(
+      group.shadowRoot!.querySelector(".chevron") as HTMLElement,
+    );
     expect(chevronStyle.flexGrow, "chevron does not grow").to.equal("0");
     expect(groupLabel.flexGrow, "label is the sole flex grow source").to.equal("1");
   });
@@ -257,9 +271,7 @@ describe("<tulpar-nav-item>", () => {
     const group = el.querySelector("tulpar-nav-item") as TulparNavItem;
     await group.updateComplete;
     group.shadowRoot!.querySelector<HTMLElement>("button")!.focus();
-    group.dispatchEvent(
-      new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }),
-    );
+    group.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
     await group.updateComplete;
     // Flyout opened (rail aria-expanded true), but leaving rail must show the
     // group still collapsed — inline _expanded was never mutated.
@@ -290,8 +302,13 @@ describe("<tulpar-nav-item>", () => {
 
   it("opens the rail flyout after a hover-intent delay, closes after a grace delay", async () => {
     const el = await fixture<TulparNavItem>(html`
-      <tulpar-nav-item label="Group" icon="<svg></svg>" data-rail
-        data-open-delay="10" data-close-delay="20">
+      <tulpar-nav-item
+        label="Group"
+        icon="<svg></svg>"
+        data-rail
+        data-open-delay="10"
+        data-close-delay="20"
+      >
         <tulpar-nav-item href="/c" label="Child"></tulpar-nav-item>
       </tulpar-nav-item>
     `);
@@ -399,8 +416,13 @@ describe("<tulpar-nav-item>", () => {
 
   it("rail flyout stays open while the pointer is over it (hoverable, WCAG 1.4.13)", async () => {
     const el = await fixture<TulparNavItem>(html`
-      <tulpar-nav-item label="Group" icon="<svg></svg>" data-rail
-        data-open-delay="10" data-close-delay="20">
+      <tulpar-nav-item
+        label="Group"
+        icon="<svg></svg>"
+        data-rail
+        data-open-delay="10"
+        data-close-delay="20"
+      >
         <tulpar-nav-item href="/c" label="Child"></tulpar-nav-item>
       </tulpar-nav-item>
     `);

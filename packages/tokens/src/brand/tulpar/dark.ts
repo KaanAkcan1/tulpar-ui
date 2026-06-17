@@ -128,19 +128,68 @@ export const tulparDark: SemanticTokens = {
 
   button: {
     size: {
-      xs:    { height: "24px", paddingX: "8px",  fontSize: "12px", iconSize: "12px", radius: "5px",  letterSpacing: "0" },
-      sm:    { height: "32px", paddingX: "12px", fontSize: "14px", iconSize: "14px", radius: "6px",  letterSpacing: "0" },
-      md:    { height: "40px", paddingX: "16px", fontSize: "14px", iconSize: "16px", radius: "7px",  letterSpacing: "0" },
-      lg:    { height: "48px", paddingX: "20px", fontSize: "16px", iconSize: "18px", radius: "8px",  letterSpacing: "-0.006em" },
-      xl:    { height: "56px", paddingX: "24px", fontSize: "18px", iconSize: "20px", radius: "9px",  letterSpacing: "-0.008em" },
-      "2xl": { height: "64px", paddingX: "28px", fontSize: "20px", iconSize: "24px", radius: "10px", letterSpacing: "-0.01em" },
-      "3xl": { height: "72px", paddingX: "32px", fontSize: "24px", iconSize: "28px", radius: "12px", letterSpacing: "-0.01em" },
+      xs: {
+        height: "24px",
+        paddingX: "8px",
+        fontSize: "12px",
+        iconSize: "12px",
+        radius: "5px",
+        letterSpacing: "0",
+      },
+      sm: {
+        height: "32px",
+        paddingX: "12px",
+        fontSize: "14px",
+        iconSize: "14px",
+        radius: "6px",
+        letterSpacing: "0",
+      },
+      md: {
+        height: "40px",
+        paddingX: "16px",
+        fontSize: "14px",
+        iconSize: "16px",
+        radius: "7px",
+        letterSpacing: "0",
+      },
+      lg: {
+        height: "48px",
+        paddingX: "20px",
+        fontSize: "16px",
+        iconSize: "18px",
+        radius: "8px",
+        letterSpacing: "-0.006em",
+      },
+      xl: {
+        height: "56px",
+        paddingX: "24px",
+        fontSize: "18px",
+        iconSize: "20px",
+        radius: "9px",
+        letterSpacing: "-0.008em",
+      },
+      "2xl": {
+        height: "64px",
+        paddingX: "28px",
+        fontSize: "20px",
+        iconSize: "24px",
+        radius: "10px",
+        letterSpacing: "-0.01em",
+      },
+      "3xl": {
+        height: "72px",
+        paddingX: "32px",
+        fontSize: "24px",
+        iconSize: "28px",
+        radius: "12px",
+        letterSpacing: "-0.01em",
+      },
     },
     borderRadius: "7px",
     borderWidth: "1px",
     fontWeight: primitiveTypography.fontWeight.medium,
     iconGap: "8px",
-    pressDuration: "80ms",    // button-specific; faster than primitive scale for tactile press
+    pressDuration: "80ms", // button-specific; faster than primitive scale for tactile press
     spinnerDuration: "600ms", // button-specific; no primitive-scale equivalent
     disabled: { bg: c.mergen[800], fg: c.kara[400], border: c.mergen[800] },
     surfaceHighlight: "rgba(255, 255, 255, 0.22)",
@@ -162,8 +211,7 @@ export const tulparDark: SemanticTokens = {
         "inset 0 -1px 0 0 var(--tulpar-button-surface-shade), " +
         "0 2px 6px -1px color-mix(in oklch, var(--_btn-color-default) 55%, black 30%), " +
         "0 16px 32px -8px color-mix(in oklch, var(--_btn-color-default) 54%, transparent)",
-      press:
-        "inset 0 1px 3px 0 color-mix(in oklch, black 26%, transparent)",
+      press: "inset 0 1px 3px 0 color-mix(in oklch, black 26%, transparent)",
     },
     premium: {
       sheen: "linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0) 42%)",
@@ -229,12 +277,12 @@ export const tulparDark: SemanticTokens = {
     sidenav: {
       width: "17.5rem",
       railWidth: "4.5rem",
-      bg: c.mergen[950],  // unchanged: nav stays darker than content (mergen[950])
+      bg: c.mergen[950], // unchanged: nav stays darker than content (mergen[950])
       fg: c.colpan[200],
       fgMuted: c.kara[400],
       border: c.mergen[800],
-      edge: "rgba(255, 255, 255, 0.04)",     // NEW
-      scrollShadow: "rgba(0, 0, 0, 0.3)",    // NEW
+      edge: "rgba(255, 255, 255, 0.04)", // NEW
+      scrollShadow: "rgba(0, 0, 0, 0.3)", // NEW
       flyoutBg: c.mergen[800],
       flyoutBorder: c.mergen[700],
       flyoutHeaderFg: c.kara[400],
@@ -249,16 +297,16 @@ export const tulparDark: SemanticTokens = {
         bgActive: c.mergen[800],
         fgActive: c.tulpar[300],
         indicator: c.tulpar[400],
-        glow: "rgba(33, 217, 141, 0.5)",    // NEW — tulpar[400] @ 50%
+        glow: "rgba(33, 217, 141, 0.5)", // NEW — tulpar[400] @ 50%
         badgeBg: c.tulpar[400],
         badgeFg: c.yagiz[950],
-        countBg: c.mergen[800],             // NEW
-        countFg: c.colpan[200],             // NEW
-        dot: c.tulpar[400],                 // NEW
+        countBg: c.mergen[800], // NEW
+        countFg: c.colpan[200], // NEW
+        dot: c.tulpar[400], // NEW
       },
     },
     content: {
-      bg: c.mergen[900],          // re-bind: was mergen[950] (lift content above nav)
+      bg: c.mergen[900], // re-bind: was mergen[950] (lift content above nav)
       maxWidth: "80rem",
       paddingCompact: "0.75rem",
       paddingComfortable: "1.5rem",

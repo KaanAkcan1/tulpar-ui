@@ -5,9 +5,28 @@ const HEX_RE = /^#[0-9a-f]{6}$/i;
 const STOPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] as const;
 
 const FAMILIES = [
-  "al", "kizagan", "umay", "ilay", "erlik", "kam", "mergen", "gok", "ay",
-  "yersu", "tulpar", "otuken", "kayin", "ulgen", "kuyas", "alaz", "burkut",
-  "colpan", "ayzit", "boz", "kara", "yagiz",
+  "al",
+  "kizagan",
+  "umay",
+  "ilay",
+  "erlik",
+  "kam",
+  "mergen",
+  "gok",
+  "ay",
+  "yersu",
+  "tulpar",
+  "otuken",
+  "kayin",
+  "ulgen",
+  "kuyas",
+  "alaz",
+  "burkut",
+  "colpan",
+  "ayzit",
+  "boz",
+  "kara",
+  "yagiz",
 ] as const;
 
 describe("primitiveColor", () => {
@@ -43,9 +62,30 @@ describe("primitiveColor", () => {
   });
 
   it("does NOT expose the deprecated navy/gold/stone/slate or Tailwind families", () => {
-    const removed = ["navy", "gold", "stone", "slate", "red", "blue", "green",
-      "amber", "purple", "emerald", "teal", "sky", "indigo", "violet",
-      "fuchsia", "pink", "rose", "orange", "yellow", "lime", "cyan", "gray"];
+    const removed = [
+      "navy",
+      "gold",
+      "stone",
+      "slate",
+      "red",
+      "blue",
+      "green",
+      "amber",
+      "purple",
+      "emerald",
+      "teal",
+      "sky",
+      "indigo",
+      "violet",
+      "fuchsia",
+      "pink",
+      "rose",
+      "orange",
+      "yellow",
+      "lime",
+      "cyan",
+      "gray",
+    ];
     for (const name of removed) {
       expect((primitiveColor as Record<string, unknown>)[name], name).toBeUndefined();
     }

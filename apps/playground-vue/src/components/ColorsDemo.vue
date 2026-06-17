@@ -119,8 +119,8 @@ const CHART = [1, 2, 3, 4, 5, 6, 7, 8] as const;
     <section class="doc-section">
       <h2 class="section-title">Semantic roles</h2>
       <p class="section-desc">
-        Components only ever reference semantic tokens — never raw primitives. This is the layer that
-        lets a brand or mode swap repaint the whole system.
+        Components only ever reference semantic tokens — never raw primitives. This is the layer
+        that lets a brand or mode swap repaint the whole system.
       </p>
       <div class="token-grid">
         <div v-for="s in SEMANTICS" :key="s.role" class="token-card">
@@ -137,7 +137,8 @@ const CHART = [1, 2, 3, 4, 5, 6, 7, 8] as const;
     <section class="doc-section">
       <h2 class="section-title">Surfaces &amp; borders</h2>
       <p class="section-desc">
-        The neutral chrome tokens that build cards, panels, and dividers — mode-aware out of the box.
+        The neutral chrome tokens that build cards, panels, and dividers — mode-aware out of the
+        box.
       </p>
       <div class="token-grid">
         <div v-for="s in SURFACES" :key="s.role" class="token-card">

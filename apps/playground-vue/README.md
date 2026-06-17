@@ -29,7 +29,7 @@ pnpm --filter playground-vue dev    # localhost:5273
 > Vite must treat `tulpar-` elements as custom elements:
 >
 > ```ts
-> vue({ template: { compilerOptions: { isCustomElement: (tag) => tag.startsWith("tulpar-") } } })
+> vue({ template: { compilerOptions: { isCustomElement: (tag) => tag.startsWith("tulpar-") } } });
 > ```
 
 See the root [README](../../README.md) and [CLAUDE.md](../../CLAUDE.md) for the

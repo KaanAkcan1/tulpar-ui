@@ -371,8 +371,8 @@ const SECTIONS = [
       <section class="demo-section">
         <h3 class="demo-title">In context — an order summary</h3>
         <p class="demo-desc">
-          A quantity stepper drives a live total — currency formatting, clamping, and two-way binding
-          composed into a real checkout row.
+          A quantity stepper drives a live total — currency formatting, clamping, and two-way
+          binding composed into a real checkout row.
         </p>
         <div class="order-card">
           <div class="order-line">

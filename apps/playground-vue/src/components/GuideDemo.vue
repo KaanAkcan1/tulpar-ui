@@ -71,7 +71,11 @@ const itemProps: PropRow[] = [
     type: "TulparNavItemVueData[]?",
     desc: "Children. On a section: grouped entries. On an item: turns it into a collapsible group with a chevron.",
   },
-  { name: "icon", type: "Component | string", desc: "Lucide component (wrapper) or raw SVG string (core)." },
+  {
+    name: "icon",
+    type: "Component | string",
+    desc: "Lucide component (wrapper) or raw SVG string (core).",
+  },
   { name: "count", type: "string?", desc: "Numeric pill aligned to the trailing edge." },
   { name: "badge", type: "string?", desc: 'Short text badge (e.g. "New", "Beta").' },
   { name: "dot", type: "boolean?", desc: "Small status dot; pair with dotLabel for a11y." },
@@ -80,7 +84,11 @@ const itemProps: PropRow[] = [
 ];
 
 const utilityProps: PropRow[] = [
-  { name: "show-config", type: "boolean", desc: "Show the configurator action in the utility row." },
+  {
+    name: "show-config",
+    type: "boolean",
+    desc: "Show the configurator action in the utility row.",
+  },
   { name: "config-text", type: "string", desc: "Label for the configurator action." },
   { name: "@config", type: "void", desc: "Emitted when the configurator action is activated." },
 ];
@@ -89,7 +97,11 @@ const accountProps: PropRow[] = [
   { name: "show-account-block", type: "boolean", desc: "Show the account card. Default on." },
   { name: "user-name", type: "string", desc: "Display name; also seeds the initials fallback." },
   { name: "user-role", type: "string", desc: "Secondary line under the name." },
-  { name: "profile-image", type: "string", desc: "Avatar URL; falls back to initials when absent." },
+  {
+    name: "profile-image",
+    type: "string",
+    desc: "Avatar URL; falls back to initials when absent.",
+  },
   { name: "show-settings", type: "boolean", desc: "Show the settings action." },
   { name: "show-logout", type: "boolean", desc: "Show the logout action." },
   { name: "@settings / @logout", type: "void", desc: "Emitted when the respective action fires." },
@@ -102,7 +114,11 @@ const layoutProps: PropRow[] = [
     desc: "Whether the sidebar sits beneath the topbar or runs full-height beside it.",
   },
   { name: "position", type: "'left' | 'right'", desc: "Which edge the sidebar docks to." },
-  { name: "density", type: "'comfortable' | 'compact'", desc: "Row height / padding scale for the nav." },
+  {
+    name: "density",
+    type: "'comfortable' | 'compact'",
+    desc: "Row height / padding scale for the nav.",
+  },
   {
     name: "single-expand",
     type: "boolean",
@@ -174,7 +190,9 @@ const a11yLabels: PropRow[] = [
       </p>
       <dl class="def">
         <div v-for="r in itemProps" :key="r.name" class="def-row">
-          <dt><code>{{ r.name }}</code> <span class="def-type">{{ r.type }}</span></dt>
+          <dt>
+            <code>{{ r.name }}</code> <span class="def-type">{{ r.type }}</span>
+          </dt>
           <dd>{{ r.desc }}</dd>
         </div>
       </dl>
@@ -191,7 +209,9 @@ const a11yLabels: PropRow[] = [
       <p class="section-desc">An optional action row above the account block.</p>
       <dl class="def">
         <div v-for="r in utilityProps" :key="r.name" class="def-row">
-          <dt><code>{{ r.name }}</code> <span class="def-type">{{ r.type }}</span></dt>
+          <dt>
+            <code>{{ r.name }}</code> <span class="def-type">{{ r.type }}</span>
+          </dt>
           <dd>{{ r.desc }}</dd>
         </div>
       </dl>
@@ -206,7 +226,9 @@ const a11yLabels: PropRow[] = [
       </p>
       <dl class="def">
         <div v-for="r in accountProps" :key="r.name" class="def-row">
-          <dt><code>{{ r.name }}</code> <span class="def-type">{{ r.type }}</span></dt>
+          <dt>
+            <code>{{ r.name }}</code> <span class="def-type">{{ r.type }}</span>
+          </dt>
           <dd>{{ r.desc }}</dd>
         </div>
       </dl>
@@ -217,7 +239,9 @@ const a11yLabels: PropRow[] = [
       <h2 class="section-title">Layout</h2>
       <dl class="def">
         <div v-for="r in layoutProps" :key="r.name" class="def-row">
-          <dt><code>{{ r.name }}</code> <span class="def-type">{{ r.type }}</span></dt>
+          <dt>
+            <code>{{ r.name }}</code> <span class="def-type">{{ r.type }}</span>
+          </dt>
           <dd>{{ r.desc }}</dd>
         </div>
       </dl>
@@ -232,7 +256,9 @@ const a11yLabels: PropRow[] = [
       </p>
       <dl class="def">
         <div v-for="r in slots" :key="r.name" class="def-row">
-          <dt><code>{{ r.name }}</code></dt>
+          <dt>
+            <code>{{ r.name }}</code>
+          </dt>
           <dd>{{ r.desc }}</dd>
         </div>
       </dl>
@@ -247,7 +273,9 @@ const a11yLabels: PropRow[] = [
       </p>
       <dl class="def">
         <div v-for="r in a11yLabels" :key="r.name" class="def-row">
-          <dt><code>{{ r.name }}</code></dt>
+          <dt>
+            <code>{{ r.name }}</code>
+          </dt>
           <dd>{{ r.desc }}</dd>
         </div>
       </dl>

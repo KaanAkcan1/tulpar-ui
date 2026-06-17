@@ -46,12 +46,7 @@ function hasComponentIcon(items: TulparNavItemNgData[] | undefined): boolean {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [
-    NgComponentOutlet,
-    NgTemplateOutlet,
-    TulparNavItemComponent,
-    TulparNavSectionComponent,
-  ],
+  imports: [NgComponentOutlet, NgTemplateOutlet, TulparNavItemComponent, TulparNavSectionComponent],
   styles: [":host { display: contents; }"],
   template: `
     <tulpar-sidenav
@@ -89,7 +84,10 @@ function hasComponentIcon(items: TulparNavItemNgData[] | undefined): boolean {
       <ng-content select="[slot='utility-end']" />
       @if (renderItemsInLightDom()) {
         @for (item of items(); track $index) {
-          <ng-container [ngTemplateOutlet]="itemTpl" [ngTemplateOutletContext]="{ $implicit: item }" />
+          <ng-container
+            [ngTemplateOutlet]="itemTpl"
+            [ngTemplateOutletContext]="{ $implicit: item }"
+          />
         }
       }
       <ng-content />

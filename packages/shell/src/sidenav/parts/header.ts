@@ -20,7 +20,9 @@ export function renderHeader(host: TulparSidenav) {
       aria-label=${host.toggleLabel}
       aria-expanded=${expanded}
       @click=${() =>
-        host.dispatchEvent(new CustomEvent("tulpar-menu-toggle", { bubbles: true, composed: true }))}
+        host.dispatchEvent(
+          new CustomEvent("tulpar-menu-toggle", { bubbles: true, composed: true }),
+        )}
     >
       ${brandMark}
     </button>

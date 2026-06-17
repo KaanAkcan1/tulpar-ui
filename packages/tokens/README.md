@@ -28,18 +28,18 @@ element from Turkic mythology:
 
 The semantic layer binds intents to those families:
 
-| Intent | Family |
-|---|---|
-| brand | `tulpar` |
-| secondary | `kam` |
-| success | `otuken` |
-| danger | `al` |
-| warn | `kuyas` |
-| info | `gok` |
-| help | `erlik` |
-| premium | `ulgen` |
-| neutral | `kara` |
-| contrast | `yagiz` |
+| Intent    | Family   |
+| --------- | -------- |
+| brand     | `tulpar` |
+| secondary | `kam`    |
+| success   | `otuken` |
+| danger    | `al`     |
+| warn      | `kuyas`  |
+| info      | `gok`    |
+| help      | `erlik`  |
+| premium   | `ulgen`  |
+| neutral   | `kara`   |
+| contrast  | `yagiz`  |
 
 Surfaces, text, and focus:
 

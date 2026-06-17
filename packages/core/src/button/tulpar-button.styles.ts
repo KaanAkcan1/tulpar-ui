@@ -563,7 +563,9 @@ export const buttonStyles = css`
     }
   }
   @keyframes tulpar-button-pulse {
-    50% { opacity: 0.4; }
+    50% {
+      opacity: 0.4;
+    }
   }
   @media (prefers-reduced-motion: reduce) {
     .spinner .default-spinner {

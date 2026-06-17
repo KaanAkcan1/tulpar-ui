@@ -184,7 +184,8 @@ export class TulparNavItem extends LitElement {
     const navItems: TulparNavItem[] = [];
     for (const el of slot?.assignedElements() ?? []) {
       if (el.matches("tulpar-nav-item")) navItems.push(el as TulparNavItem);
-      else el.querySelectorAll?.("tulpar-nav-item").forEach((n) => navItems.push(n as TulparNavItem));
+      else
+        el.querySelectorAll?.("tulpar-nav-item").forEach((n) => navItems.push(n as TulparNavItem));
     }
     return navItems.map((n) => ({
       href: n.href,
@@ -208,8 +209,7 @@ export class TulparNavItem extends LitElement {
     // Walk up to the nearest sidenav to determine which side it is on.
     // The old approach (reading data-sidenav-position on the nav-item itself)
     // was dead code — that attribute is only set on <tulpar-shell>, not items.
-    const rightSide =
-      this.closest("tulpar-sidenav")?.getAttribute("position") === "right";
+    const rightSide = this.closest("tulpar-sidenav")?.getAttribute("position") === "right";
     const gap = 8; // px gap between item edge and flyout
     // Vertical clamp: top-align to trigger; shift up if panel would overflow viewport bottom.
     // Heuristic height estimate (header ~28px + rows ~32px each + padding ~16px),
@@ -233,7 +233,13 @@ export class TulparNavItem extends LitElement {
       this._flyoutRight = null;
       this._flyoutLeft = rect.right + gap;
     }
-    this.dispatchEvent(new CustomEvent("tulpar-rail-flyout-open", { bubbles: true, composed: true, detail: { item: this } }));
+    this.dispatchEvent(
+      new CustomEvent("tulpar-rail-flyout-open", {
+        bubbles: true,
+        composed: true,
+        detail: { item: this },
+      }),
+    );
     this._flyoutVisible = true;
     window.addEventListener("scroll", this._onFlyoutHide, { capture: true, passive: true });
     window.addEventListener("resize", this._onFlyoutHide, { passive: true });
@@ -260,8 +266,14 @@ export class TulparNavItem extends LitElement {
   }
 
   private _clearTimers() {
-    if (this._openTimer) { clearTimeout(this._openTimer); this._openTimer = undefined; }
-    if (this._closeTimer) { clearTimeout(this._closeTimer); this._closeTimer = undefined; }
+    if (this._openTimer) {
+      clearTimeout(this._openTimer);
+      this._openTimer = undefined;
+    }
+    if (this._closeTimer) {
+      clearTimeout(this._closeTimer);
+      this._closeTimer = undefined;
+    }
   }
 
   private _onAnchorPointerEnter = () => {
@@ -374,7 +386,11 @@ export class TulparNavItem extends LitElement {
     if (!this._hasChildren || this._expanded) return;
     this._expanded = true;
     this.dispatchEvent(
-      new CustomEvent("tulpar-nav-item-expand", { bubbles: true, composed: true, detail: { item: this } }),
+      new CustomEvent("tulpar-nav-item-expand", {
+        bubbles: true,
+        composed: true,
+        detail: { item: this },
+      }),
     );
   }
 
@@ -410,7 +426,9 @@ export class TulparNavItem extends LitElement {
 
   private _renderInner() {
     return html`
-      ${this.icon ? html`<span class="icon-slot" aria-hidden="true">${unsafeSVG(this.icon)}</span>` : nothing}
+      ${this.icon
+        ? html`<span class="icon-slot" aria-hidden="true">${unsafeSVG(this.icon)}</span>`
+        : nothing}
       ${this.iconClass ? html`<i class=${this.iconClass} aria-hidden="true"></i>` : nothing}
       <slot name="icon"></slot>
       <span class="label">${this.label}</span>
@@ -418,7 +436,9 @@ export class TulparNavItem extends LitElement {
       ${this.count ? html`<span class="count">${this.count}</span>` : nothing}
       ${this.kbd ? html`<span class="kbd-hint">${this.kbd}</span>` : nothing}
       ${this.badge ? html`<span class="badge">${this.badge}</span>` : nothing}
-      ${this.dot ? html`<span class="dot" role="img" aria-label=${this.dotLabel ?? "status"}></span>` : nothing}
+      ${this.dot
+        ? html`<span class="dot" role="img" aria-label=${this.dotLabel ?? "status"}></span>`
+        : nothing}
       ${this.href && this.target === "_blank"
         ? html`<span class="external" aria-hidden="true">↗</span>`
         : nothing}
@@ -478,7 +498,9 @@ export class TulparNavItem extends LitElement {
           @focusout=${this._onAnchorFocusOut}
         >
           ${this._renderInner()}
-          ${this._hasChildren ? html`<span class="chevron ${isRail ? "rail-cue" : ""}" aria-hidden="true">›</span>` : nothing}
+          ${this._hasChildren
+            ? html`<span class="chevron ${isRail ? "rail-cue" : ""}" aria-hidden="true">›</span>`
+            : nothing}
         </button>`;
 
     return html`
@@ -487,7 +509,11 @@ export class TulparNavItem extends LitElement {
         ? this._hasChildren
           ? html`<div
               id=${this._flyoutId}
-              class="rail-flyout is-group ${this.closest("tulpar-sidenav")?.getAttribute("position") === "right" ? "is-right" : ""}"
+              class="rail-flyout is-group ${this.closest("tulpar-sidenav")?.getAttribute(
+                "position",
+              ) === "right"
+                ? "is-right"
+                : ""}"
               role="group"
               aria-label=${this.label}
               style=${this._flyoutPositionStyles(
@@ -503,22 +529,20 @@ export class TulparNavItem extends LitElement {
               </div>
               <div class="flyout-list">
                 ${this._childModel.map(
-                  (c) => html`<a
-                    class="flyout-link"
-                    href=${c.href ?? nothing}
-                    aria-current=${c.active ? "page" : nothing}
-                    @click=${this._onFlyoutLinkClick}
-                  >
-                    <span class="flyout-link-icon" aria-hidden="true"></span>
-                    <span class="flyout-link-label">${c.label}</span>
-                  </a>`,
+                  (c) =>
+                    html`<a
+                      class="flyout-link"
+                      href=${c.href ?? nothing}
+                      aria-current=${c.active ? "page" : nothing}
+                      @click=${this._onFlyoutLinkClick}
+                    >
+                      <span class="flyout-link-icon" aria-hidden="true"></span>
+                      <span class="flyout-link-label">${c.label}</span>
+                    </a>`,
                 )}
               </div>
             </div>`
-          : html`<span
-              class="rail-flyout"
-              style=${this._flyoutPositionStyles()}
-              aria-hidden="true"
+          : html`<span class="rail-flyout" style=${this._flyoutPositionStyles()} aria-hidden="true"
               >${this.label}</span
             >`
         : nothing}

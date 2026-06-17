@@ -216,10 +216,10 @@ class IconGuide {
         </fieldset>
 
         <p class="settings-hint">
-          Brand, navigation, the Dark/Light toggle and the account block are all
-          rendered by <code>&lt;tulpar-sidenav-ng&gt;</code> from props — no app markup.
-          Sidenav mode persists across reloads via <code>persistKey</code>; the rest
-          reset on reload. Close with Esc, the ✕, or the backdrop.
+          Brand, navigation, the Dark/Light toggle and the account block are all rendered by
+          <code>&lt;tulpar-sidenav-ng&gt;</code> from props — no app markup. Sidenav mode persists
+          across reloads via <code>persistKey</code>; the rest reset on reload. Close with Esc, the
+          ✕, or the backdrop.
         </p>
       </section>
     </tulpar-shell-ng>

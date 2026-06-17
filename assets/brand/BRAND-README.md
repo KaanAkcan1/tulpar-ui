@@ -3,15 +3,17 @@
 Bu kit **TulparUi** wordmark varyasyonu için bağımsız ve eksiksizdir.
 
 ## Renk paleti (design token eşleşmesi)
-| Token | Hex | Kullanım |
-|---|---|---|
-| tulpar-200 | #8CF5C6 | Mint vurgu, dark zeminde ikincil metin |
-| tulpar-500 | #00C57A | **Primary** — marka rengi, "Ui" wordmark |
-| tulpar-600 | #00A468 | Hover, orta stratum |
-| tulpar-700 | #0B7E52 | Active, alt stratum |
+
+| Token      | Hex     | Kullanım                                        |
+| ---------- | ------- | ----------------------------------------------- |
+| tulpar-200 | #8CF5C6 | Mint vurgu, dark zeminde ikincil metin          |
+| tulpar-500 | #00C57A | **Primary** — marka rengi, "Ui" wordmark        |
+| tulpar-600 | #00A468 | Hover, orta stratum                             |
+| tulpar-700 | #0B7E52 | Active, alt stratum                             |
 | tulpar-950 | #07291F | Zemin, koyu yüzeyler, "Tulpar" wordmark (light) |
 
 ## Dosyalar
+
 - `svg/` — Master vektörler: icon, mono siyah/beyaz, badge, TulparUi lockup light/dark, TulparUi wordmark (metinler path'e çevrildi)
 - `png/` — npm avatar 512, GitHub avatar 500, apple-touch-icon 180, PWA 192/512, favicon.ico (16/32/48)
 - `social/` — GitHub social preview 1280×640, OG image 1200×630, README banner 1280×320 (TulparUi ile)
@@ -22,6 +24,7 @@ Bu kit **TulparUi** wordmark varyasyonu için bağımsız ve eksiksizdir.
 > olarak yine "tulparUi" render eder; bu yalnız diskteki ad konvansiyonudur.
 
 ## Kullanım kuralları
+
 1. Min. boyut: icon 16px, lockup 96px genişlik.
 2. Koruma alanı: işaretin her yanında en az bir stratum kalınlığı boşluk.
 3. Açı (−18.4°), kademe ve stratum sırası değiştirilmez; işaret döndürülmez, yansıtılmaz.

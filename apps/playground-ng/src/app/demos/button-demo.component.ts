@@ -358,7 +358,9 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
           <lucide-angular slot="start" [img]="Check" [size]="18"></lucide-angular>
           Save changes
         </tulpar-button-ng>
-        <tulpar-button-ng severity="secondary" variant="outlined" size="lg">Cancel</tulpar-button-ng>
+        <tulpar-button-ng severity="secondary" variant="outlined" size="lg"
+          >Cancel</tulpar-button-ng
+        >
         <tulpar-button-ng severity="premium" variant="tonal" size="lg">
           <lucide-angular slot="start" [img]="Crown" [size]="18"></lucide-angular>
           Upgrade
