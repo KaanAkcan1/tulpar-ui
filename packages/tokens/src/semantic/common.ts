@@ -8,6 +8,8 @@ export interface FontTokens {
 
 export interface TransitionTokens {
   default: string;
+  /** Signature ease-out curve for component micro-interactions. */
+  easeStandard: string;
 }
 
 /**
