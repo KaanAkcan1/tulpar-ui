@@ -111,6 +111,16 @@ const statesCode = `<TulparTextInput label="Disabled" :disabled="true" value="Ca
 </script>
 
 <template>
+  <!-- ── Page header ───────────────────────────────────────────────────────── -->
+  <header class="page-header">
+    <span class="page-tag">Form</span>
+    <h1 class="page-title">TextInput</h1>
+    <p class="page-lede">
+      The single-line text field — six input types, four variants, five sizes, floating labels,
+      validation states, masks, and copy/paste/clear affordances. Built on the shared FormFieldBase.
+    </p>
+  </header>
+
   <!-- Sub-menu -->
   <div class="sub-menu">
     <button
@@ -459,9 +469,98 @@ const statesCode = `<TulparTextInput label="Disabled" :disabled="true" value="Ca
     </div>
     <pre class="code"><code>{{ statesCode }}</code></pre>
   </section>
+
+  <!-- ── In context — a sign-in card ──────────────────────────────────────────── -->
+  <section v-if="activeSection === 'all'" class="demo-section">
+    <h3 class="demo-title">In context — a sign-in card</h3>
+    <p class="demo-desc">
+      The fields composed into a realistic auth card on an elevated surface — float labels, a
+      typed email, a password field, and validation messaging working together.
+    </p>
+    <div class="form-card">
+      <h4 class="form-card-title">Welcome back</h4>
+      <p class="form-card-sub">Sign in to your workspace to continue.</p>
+      <TulparTextInput
+        type="email"
+        label="Email"
+        label-position="float"
+        autocomplete="email"
+        :required="true"
+        placeholder="you@example.com"
+      />
+      <TulparTextInput
+        type="password"
+        label="Password"
+        label-position="float"
+        autocomplete="current-password"
+        :required="true"
+        helper-text="At least 8 characters"
+      />
+    </div>
+  </section>
 </template>
 
 <style scoped>
+.page-header {
+  margin-bottom: 8px;
+}
+
+.page-tag {
+  display: inline-block;
+  margin-bottom: 14px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--tulpar-color-bg-subtle, #e9f1ef);
+  color: var(--tulpar-color-text-secondary, #57534e);
+}
+
+.page-title {
+  margin: 0 0 12px;
+  font-family: var(--tulpar-font-family-display, Georgia, serif);
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--tulpar-color-text-primary, #15110b);
+}
+
+.page-lede {
+  margin: 0;
+  font-size: 15px;
+  color: var(--tulpar-color-text-secondary, #57534e);
+  max-width: 640px;
+  line-height: 1.6;
+}
+
+.form-card {
+  max-width: 420px;
+  padding: 28px;
+  border: 1px solid var(--tulpar-color-border-default, #d9e0df);
+  border-radius: 14px;
+  background: var(--tulpar-color-bg-elevated, #ffffff);
+  box-shadow: var(--tulpar-shadow-sm, 0 1px 2px rgb(0 0 0 / 0.06));
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-card-title {
+  margin: 0;
+  font-family: var(--tulpar-font-family-display, Georgia, serif);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--tulpar-color-text-primary, #15110b);
+}
+
+.form-card-sub {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: var(--tulpar-color-text-secondary, #57534e);
+}
+
 .sub-menu {
   display: flex;
   flex-wrap: wrap;

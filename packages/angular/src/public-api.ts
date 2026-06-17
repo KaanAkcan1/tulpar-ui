@@ -28,5 +28,6 @@ export { TulparShellComponent } from "./shell/tulpar-shell.component";
 export type { ShellSidenavMode, ShellState } from "./shell/tulpar-shell.component";
 export { TulparTopbarComponent } from "./shell/tulpar-topbar.component";
 export { TulparSidenavComponent } from "./shell/tulpar-sidenav.component";
-export type { TulparNavItemData } from "./shell/tulpar-sidenav.component";
+export type { TulparNavItemData, TulparNavItemNgData } from "./shell/tulpar-sidenav.component";
 export { TulparNavItemComponent } from "./shell/tulpar-nav-item.component";
+export { TulparNavSectionComponent } from "./shell/tulpar-nav-section.component";

@@ -15,6 +15,7 @@ interface RouterLike {
 
 interface Props {
   sidenavMode?: ShellSidenavMode;
+  sidenavLayout?: "under-topbar" | "over-topbar";
   mobileBreakpoint?: string;
   sidenavCollapsed?: boolean;
   asideOpen?: boolean;
@@ -27,6 +28,7 @@ interface Props {
 
 const {
   sidenavMode = "static",
+  sidenavLayout = "under-topbar",
   mobileBreakpoint = "(max-width: 991px)",
   contentWidth = "fluid",
   contentPadding = "comfortable",
@@ -88,6 +90,7 @@ function onNavigate(e: Event) {
   <tulpar-shell
     ref="el"
     :sidenav-mode="sidenavMode"
+    :sidenav-layout="sidenavLayout"
     :mobile-breakpoint="mobileBreakpoint"
     :sidenav-collapsed="sidenavCollapsed || undefined"
     :aside-open="asideOpen || undefined"

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
-import { TulparTextareaComponent } from '@tulpar-ui/angular';
+import { TulparTextareaComponent, TulparButtonComponent } from '@tulpar-ui/angular';
 
 // ─── Code snippets ────────────────────────────────────────────────────────────
 
@@ -58,10 +58,20 @@ const SECTIONS = [
 @Component({
   selector: 'app-textarea-demo',
   standalone: true,
-  imports: [TulparTextareaComponent],
+  imports: [TulparTextareaComponent, TulparButtonComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
+    <!-- ── Page header ─────────────────────────────────────────────────────── -->
+    <header class="page-header">
+      <span class="page-tag">Form</span>
+      <h1 class="page-title">Textarea</h1>
+      <p class="page-lede">
+        The multi-line text field — autosizing rows, resize control, a live character counter,
+        copy/paste affordances, and the full validation-state set. Built on the shared FormFieldBase.
+      </p>
+    </header>
+
     <!-- Sub-menu -->
     <div class="sub-menu">
       <button
@@ -289,11 +299,126 @@ const SECTIONS = [
         <pre class="code"><code>{{ sizesVariantsCode }}</code></pre>
       </section>
     }
+
+    <!-- ── In context — a comment composer ──────────────────────────────────── -->
+    @if (activeSection() === 'all') {
+      <section class="demo-section">
+        <h3 class="demo-title">In context — a comment composer</h3>
+        <p class="demo-desc">
+          Autosize, a live counter, and a submit action composed into a realistic comment box on an
+          elevated surface.
+        </p>
+        <div class="composer-card">
+          <div class="composer-head">
+            <span class="composer-avatar" aria-hidden="true">KA</span>
+            <span class="composer-name">Kaan Akcan</span>
+          </div>
+          <tulpar-textarea-ng
+            label="Add a comment"
+            labelPosition="none"
+            [autosize]="true"
+            [minRows]="2"
+            [maxRows]="8"
+            [showCount]="true"
+            [maxLength]="500"
+            [value]="composerBody()"
+            (valueChange)="composerBody.set($event)"
+            placeholder="Share your thoughts…"
+          ></tulpar-textarea-ng>
+          <div class="composer-actions">
+            <tulpar-button-ng severity="secondary" variant="ghost" size="sm">Cancel</tulpar-button-ng>
+            <tulpar-button-ng
+              severity="primary"
+              size="sm"
+              [disabled]="composerBody().trim().length === 0"
+              >Post comment</tulpar-button-ng
+            >
+          </div>
+        </div>
+      </section>
+    }
   `,
   styles: [
     `
       :host {
         display: block;
+      }
+
+      .page-header {
+        margin-bottom: 8px;
+      }
+
+      .page-tag {
+        display: inline-block;
+        margin-bottom: 14px;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        background: var(--tulpar-color-bg-subtle, #e9f1ef);
+        color: var(--tulpar-color-text-secondary, #57534e);
+      }
+
+      .page-title {
+        margin: 0 0 12px;
+        font-family: var(--tulpar-font-family-display, Georgia, serif);
+        font-size: 34px;
+        font-weight: 600;
+        line-height: 1.1;
+        color: var(--tulpar-color-text-primary, #15110b);
+      }
+
+      .page-lede {
+        margin: 0;
+        font-size: 15px;
+        color: var(--tulpar-color-text-secondary, #57534e);
+        max-width: 640px;
+        line-height: 1.6;
+      }
+
+      .composer-card {
+        max-width: 560px;
+        padding: 20px 22px;
+        border: 1px solid var(--tulpar-color-border-default, #d9e0df);
+        border-radius: 14px;
+        background: var(--tulpar-color-bg-elevated, #ffffff);
+        box-shadow: var(--tulpar-shadow-sm, 0 1px 2px rgb(0 0 0 / 0.06));
+      }
+
+      .composer-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+
+      .composer-avatar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        flex: none;
+        border-radius: 999px;
+        background: var(--tulpar-color-brand-default, #00c57a);
+        color: var(--tulpar-color-brand-on-color, #07291f);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .composer-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--tulpar-color-text-primary, #15110b);
+      }
+
+      .composer-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 14px;
       }
 
       .sub-menu {
@@ -401,6 +526,7 @@ export class TextareaDemoComponent {
   activeSection = signal<string>('all');
 
   counterBody = signal('');
+  composerBody = signal('');
 
   readonly basicsCode = BASICS_CODE;
   readonly autosizeCode = AUTOSIZE_CODE;

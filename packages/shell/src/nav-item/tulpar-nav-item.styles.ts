@@ -4,6 +4,10 @@ export const navItemStyles = css`
   :host {
     display: block;
   }
+  /* Filtered out by the sidenav search. */
+  :host([data-search-hidden]) {
+    display: none;
+  }
   a,
   button {
     display: flex;
@@ -11,13 +15,17 @@ export const navItemStyles = css`
     gap: 0.625rem;
     width: 100%;
     box-sizing: border-box;
-    min-height: var(--tulpar-shell-sidenav-item-height, 2.75rem);
+    min-height: var(--tulpar-shell-sidenav-item-height, 2.5rem);
     padding: 0 0.75rem;
     border: none;
-    border-radius: var(--tulpar-shell-sidenav-item-radius, 0.375rem);
+    border-radius: var(--tulpar-shell-sidenav-item-radius, 0.5rem);
     background: transparent;
     color: var(--tulpar-shell-sidenav-fg, #334155);
     font: inherit;
+    /* button elements default to text-align:center, which the .label inherits and
+       centers a group item's text. Force start alignment so group (button) rows
+       match leaf (anchor) rows. */
+    text-align: start;
     text-decoration: none;
     cursor: pointer;
     position: relative;
@@ -32,20 +40,19 @@ export const navItemStyles = css`
     outline: 2px solid var(--tulpar-color-focus-ring, #514ecf);
     outline-offset: -2px;
   }
-  a[aria-current="page"] {
-    background: var(--tulpar-shell-sidenav-item-bg-active, #eef2ff);
-    color: var(--tulpar-shell-sidenav-item-fg-active, #514ecf);
+  a[aria-current="page"],
+  button[aria-current="page"] {
+    background: var(--tulpar-shell-sidenav-item-bg-active, #deffea);
+    color: var(--tulpar-shell-sidenav-item-fg-active, #0b7e52);
+    font-weight: 600;
+    box-shadow:
+      inset 2px 0 0 -1px var(--tulpar-shell-sidenav-item-indicator, #00c57a),
+      inset 6px 0 8px -6px var(--tulpar-shell-sidenav-item-glow, rgba(0, 197, 122, 0.5));
   }
-  /* left:0 assumes vertical sidenav; rail mode overrides this in the shell container task */
-  a[aria-current="page"]::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 20%;
-    bottom: 20%;
-    width: 3px;
-    border-radius: 2px;
-    background: var(--tulpar-shell-sidenav-item-indicator, #514ecf);
+  a[aria-current="page"] .icon-slot,
+  a[aria-current="page"] ::slotted([slot="icon"]),
+  a[aria-current="page"] i {
+    color: var(--tulpar-shell-sidenav-item-indicator, #00c57a);
   }
   :host([disabled]) a,
   :host([disabled]) button {
@@ -63,6 +70,34 @@ export const navItemStyles = css`
     background: var(--tulpar-shell-sidenav-item-badge-bg, #514ecf);
     color: var(--tulpar-shell-sidenav-item-badge-fg, #f8fafc);
   }
+  .count {
+    margin-inline-start: auto;
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    padding: 0.0625rem 0.5rem;
+    border-radius: 999px;
+    background: var(--tulpar-shell-sidenav-item-count-bg, #e9f1ef);
+    color: var(--tulpar-shell-sidenav-item-count-fg, #636568);
+  }
+  .kbd-hint {
+    margin-inline-start: auto;
+    font-family: var(--tulpar-font-family-mono, ui-monospace, monospace);
+    font-size: 0.6875rem;
+    color: var(--tulpar-shell-sidenav-fg-muted, #74777a);
+  }
+  .dot {
+    margin-inline-start: auto;
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border-radius: 50%;
+    background: var(--tulpar-shell-sidenav-item-dot, #00c57a);
+  }
+  .external {
+    margin-inline-start: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--tulpar-shell-sidenav-fg-muted, #74777a);
+  }
   .label {
     flex: 1;
     overflow: hidden;
@@ -70,7 +105,11 @@ export const navItemStyles = css`
     white-space: nowrap;
   }
   .chevron {
-    margin-inline-start: auto;
+    /* label (flex:1) is the SOLE slack source — keeps the group label flush to the
+       icon, pixel-identical to a leaf item. The chevron rides at row end via flex
+       order, not a competing auto-margin. */
+    margin-inline-start: 0;
+    flex: none;
     transition: transform 150ms ease-out;
   }
   button[aria-expanded="true"] .chevron {
@@ -90,25 +129,278 @@ export const navItemStyles = css`
       transition: none;
     }
   }
+  @media (prefers-reduced-motion: no-preference) {
+    a[aria-current="page"]::after {
+      content: "";
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+      width: 6px;
+      background: linear-gradient(
+        to top,
+        var(--tulpar-shell-sidenav-item-indicator, #00c57a),
+        transparent
+      );
+      opacity: 0;
+      animation: tulpar-nav-ignite 260ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1)) 1;
+      pointer-events: none;
+    }
+    @keyframes tulpar-nav-ignite {
+      from { transform: translateY(100%); opacity: 0.8; }
+      to { transform: translateY(0); opacity: 0; }
+    }
+  }
 
-  /* Rail flyout: show label/badge as hover tooltip when ancestor has [data-rail] */
-  /* Note: :host-context works in Chromium (WTR target); Firefox fallback is v2 scope */
-  :host-context([data-rail]) .label,
-  :host-context([data-rail]) .badge,
-  :host-context([data-rail]) .chevron {
+  /* Rail mode: hide the inline label/badge/chevron — they show via the JS-positioned .rail-flyout */
+  :host([data-rail]) .label,
+  :host([data-rail]) .badge,
+  :host([data-rail]) .chevron,
+  :host([data-rail]) .count,
+  :host([data-rail]) .kbd-hint,
+  :host([data-rail]) .dot,
+  :host([data-rail]) .external {
+    display: none;
+  }
+
+  /* Rail: inline children never render in the strip — they appear in the flyout.
+     Expanded state is preserved (not toggled), so leaving rail restores it. */
+  :host([data-rail]) .children {
+    display: none;
+  }
+
+  /* Group flyout panel — a polished "section card" submenu */
+  :host([data-rail]) .rail-flyout.is-group {
+    padding: 5px;
+    min-width: 224px;
+    max-width: 300px;
+    white-space: normal;
+    pointer-events: auto;
+    overflow: visible;
+    border-radius: 0.625rem;
+    background: var(--tulpar-shell-sidenav-flyout-bg, #ffffff);
+    border: 1px solid var(--tulpar-shell-sidenav-flyout-border, #d9e0df);
+    box-shadow: var(--tulpar-shadow-flyout, 0 4px 6px -2px rgba(10, 37, 64, 0.1), 0 12px 28px -6px rgba(10, 37, 64, 0.14));
+    display: flex;
+    flex-direction: column;
+  }
+  /* Invisible hover-bridge: spans the gap between the rail and the panel so the
+     pointer never crosses a dead zone (the panel's pointerenter keeps it open). */
+  :host([data-rail]) .rail-flyout.is-group::before {
+    content: "";
     position: absolute;
-    inset-inline-start: calc(100% + 0.25rem);
+    inset-block: 0;
+    left: -10px;
+    width: 12px;
+  }
+  :host([data-rail]) .rail-flyout.is-group.is-right::before {
+    left: auto;
+    right: -10px;
+  }
+
+  /* Header: the group's icon + title (ties the panel to the rail icon you hovered) */
+  :host([data-rail]) .rail-flyout.is-group .flyout-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.5rem 0.5rem;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--tulpar-shell-sidenav-flyout-divider, #d9e0df);
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-header-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    color: var(--tulpar-shell-sidenav-item-indicator, #00c57a);
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-header-icon:empty {
+    display: none;
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-header-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-header-label {
+    flex: 1;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    color: var(--tulpar-shell-sidenav-fg, #27231d);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  :host([data-rail]) .rail-flyout.is-group .flyout-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  /* Child rows: icon + label, mirroring the inline nav-item rhythm */
+  :host([data-rail]) .rail-flyout.is-group .flyout-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: 2.125rem;
+    padding: 0 0.5rem;
+    border-radius: 0.4375rem;
+    color: var(--tulpar-shell-sidenav-fg, #27231d);
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition:
+      background-color 120ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1)),
+      color 120ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1));
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-link-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 1.0625rem;
+    height: 1.0625rem;
+    color: var(--tulpar-shell-sidenav-fg-muted, #74777a);
+    transition: color 120ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1));
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-link-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-link-label {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-link:hover {
+    background: var(--tulpar-shell-sidenav-item-bg-hover, #e9f1ef);
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-link:hover .flyout-link-icon {
+    color: var(--tulpar-shell-sidenav-fg, #27231d);
+  }
+  /* Active child mirrors the inline active treatment: accent bar + tinted bg + brand fg */
+  :host([data-rail]) .rail-flyout.is-group .flyout-link[aria-current="page"] {
+    background: var(--tulpar-shell-sidenav-item-bg-active, #deffea);
+    color: var(--tulpar-shell-sidenav-item-fg-active, #0b7e52);
+    font-weight: 600;
+    box-shadow: inset 2px 0 0 0 var(--tulpar-shell-sidenav-item-indicator, #00c57a);
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-link[aria-current="page"] .flyout-link-icon {
+    color: var(--tulpar-shell-sidenav-item-indicator, #00c57a);
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-link:focus-visible {
+    outline: 2px solid var(--tulpar-color-focus-ring, #514ecf);
+    outline-offset: -2px;
+  }
+
+  /* Caret notch (rotated square; fill + 1px border) */
+  :host([data-rail]) .rail-flyout.is-group .flyout-caret {
+    position: absolute;
+    top: var(--flyout-caret-y, 20px);
+    width: 8px;
+    height: 8px;
+    transform: translateY(-50%) rotate(45deg);
+    background: var(--tulpar-shell-sidenav-flyout-bg, #ffffff);
+    left: -5px;
+    border-left: 1px solid var(--tulpar-shell-sidenav-flyout-border, #d9e0df);
+    border-top: 1px solid var(--tulpar-shell-sidenav-flyout-border, #d9e0df);
+  }
+  :host([data-rail]) .rail-flyout.is-group.is-right .flyout-caret {
+    left: auto;
+    right: -5px;
+    border-left: none;
+    border-top: none;
+    border-right: 1px solid var(--tulpar-shell-sidenav-flyout-border, #d9e0df);
+    border-bottom: 1px solid var(--tulpar-shell-sidenav-flyout-border, #d9e0df);
+  }
+
+  /* Chevron discoverability cue on group icons */
+  :host([data-rail]) a,
+  :host([data-rail]) button {
+    justify-content: center;
+  }
+  :host([data-rail]) .chevron.rail-cue {
+    display: block;
+    position: absolute;
+    right: calc(50% - (var(--tulpar-shell-sidenav-item-height, 2.5rem) / 2) + 1px);
+    bottom: calc(50% - (var(--tulpar-shell-sidenav-item-height, 2.5rem) / 2) + 1px);
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1;
+    color: var(--tulpar-shell-sidenav-rail-cue, #74777a);
+    opacity: 0.7;
+    transform: none;
+    transition:
+      opacity 120ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1)),
+      color 120ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1));
+    pointer-events: none;
+  }
+  :host([data-rail]) a:hover .chevron.rail-cue,
+  :host([data-rail]) button:hover .chevron.rail-cue {
+    opacity: 1;
+  }
+
+  /* Active-trail: a rail group whose current route is one of its children gets the
+     same active treatment as an active leaf (tinted pill + accent bar + brand icon),
+     so at rest you can see which group contains the page you're on. */
+  :host([data-rail]) button.is-active-trail {
+    background: var(--tulpar-shell-sidenav-item-bg-active, #deffea);
+    color: var(--tulpar-shell-sidenav-item-fg-active, #0b7e52);
+    box-shadow:
+      inset 2px 0 0 -1px var(--tulpar-shell-sidenav-item-indicator, #00c57a),
+      inset 6px 0 8px -6px var(--tulpar-shell-sidenav-item-glow, rgba(0, 197, 122, 0.5));
+  }
+  :host([data-rail]) button.is-active-trail .icon-slot,
+  :host([data-rail]) button.is-active-trail i,
+  :host([data-rail]) button.is-active-trail ::slotted([slot="icon"]) {
+    color: var(--tulpar-shell-sidenav-item-indicator, #00c57a);
+  }
+  :host([data-rail]) button.is-active-trail .chevron.rail-cue {
+    color: var(--tulpar-shell-sidenav-item-indicator, #00c57a);
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :host([data-rail]) .rail-flyout.is-group {
+      animation: tulpar-flyout-in 140ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1)) both;
+    }
+    :host([data-rail]) .rail-flyout.is-group.is-right {
+      animation-name: tulpar-flyout-in-right;
+    }
+    @keyframes tulpar-flyout-in {
+      from { opacity: 0; transform: translateX(-6px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes tulpar-flyout-in-right {
+      from { opacity: 0; transform: translateX(6px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :host([data-rail]) .rail-flyout.is-group {
+      animation: tulpar-flyout-fade 80ms linear both;
+    }
+    @keyframes tulpar-flyout-fade {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+  }
+
+  /* Rail flyout: fixed-position label tooltip that escapes overflow-x:clip (B3) */
+  .rail-flyout {
+    position: fixed;
+    z-index: var(--tulpar-shell-z-aside, 300);
     background: var(--tulpar-shell-sidenav-bg, #f8fafc);
     border: 1px solid var(--tulpar-shell-sidenav-border, #e2e8f0);
     border-radius: 0.375rem;
     padding: 0.375rem 0.625rem;
     white-space: nowrap;
-    opacity: 0;
     pointer-events: none;
-    z-index: var(--tulpar-shell-z-sidenav, 200);
-  }
-  :host-context([data-rail]) a:hover .label,
-  :host-context([data-rail]) a:focus-visible .label {
-    opacity: 1;
+    box-shadow: 0 2px 8px var(--tulpar-shadow-sm, rgba(11, 8, 4, 0.08));
+    font-size: 0.875rem;
+    color: var(--tulpar-shell-sidenav-fg, #334155);
   }
 `;

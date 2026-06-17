@@ -490,18 +490,31 @@
   --tulpar-shell-topbar-border: #d9e0df;
   --tulpar-shell-sidenav-width: 17.5rem;
   --tulpar-shell-sidenav-rail-width: 4.5rem;
-  --tulpar-shell-sidenav-bg: #f0f7f5;
+  --tulpar-shell-sidenav-bg: #ffffff;
   --tulpar-shell-sidenav-fg: #27231d;
   --tulpar-shell-sidenav-fg-muted: #74777a;
   --tulpar-shell-sidenav-border: #d9e0df;
-  --tulpar-shell-sidenav-item-height: 2.75rem;
-  --tulpar-shell-sidenav-item-radius: 0.375rem;
+  --tulpar-shell-sidenav-edge: rgba(11, 8, 4, 0.06);
+  --tulpar-shell-sidenav-scroll-shadow: rgba(11, 8, 4, 0.08);
+  --tulpar-shell-sidenav-flyout-bg: #ffffff;
+  --tulpar-shell-sidenav-flyout-border: #d9e0df;
+  --tulpar-shell-sidenav-flyout-header-fg: #636568;
+  --tulpar-shell-sidenav-flyout-divider: #d9e0df;
+  --tulpar-shell-sidenav-rail-cue: #74777a;
+  --tulpar-shell-sidenav-item-height: 2.5rem;
+  --tulpar-shell-sidenav-item-radius: 0.5rem;
+  --tulpar-shell-sidenav-item-height-compact: 2.25rem;
+  --tulpar-shell-sidenav-item-icon-size: 1.125rem;
   --tulpar-shell-sidenav-item-bg-hover: #e9f1ef;
   --tulpar-shell-sidenav-item-bg-active: #deffea;
   --tulpar-shell-sidenav-item-fg-active: #0b7e52;
   --tulpar-shell-sidenav-item-indicator: #00c57a;
+  --tulpar-shell-sidenav-item-glow: rgba(0, 197, 122, 0.5);
   --tulpar-shell-sidenav-item-badge-bg: #00c57a;
   --tulpar-shell-sidenav-item-badge-fg: #15110b;
+  --tulpar-shell-sidenav-item-count-bg: #e9f1ef;
+  --tulpar-shell-sidenav-item-count-fg: #636568;
+  --tulpar-shell-sidenav-item-dot: #00c57a;
   --tulpar-shell-content-bg: #e9f1ef;
   --tulpar-shell-content-max-width: 80rem;
   --tulpar-shell-content-padding-compact: 0.75rem;
@@ -517,6 +530,10 @@
   --tulpar-shell-z-mask: 150;
   --tulpar-shell-z-sidenav: 200;
   --tulpar-shell-z-aside: 300;
+  --tulpar-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --tulpar-shadow-sm: 0 1px 3px rgba(10, 37, 64, 0.06), 0 2px 6px rgba(10, 37, 64, 0.04);
+  --tulpar-shadow-md: 0 1px 3px rgba(10, 37, 64, 0.08), 0 8px 24px rgba(10, 37, 64, 0.06);
+  --tulpar-shadow-flyout: 0 4px 6px -2px rgba(10, 37, 64, 0.10), 0 12px 28px -6px rgba(10, 37, 64, 0.14);
 }
 
 [data-brand="tulpar"] {
@@ -697,18 +714,31 @@
   --tulpar-shell-topbar-border: #d9e0df;
   --tulpar-shell-sidenav-width: 17.5rem;
   --tulpar-shell-sidenav-rail-width: 4.5rem;
-  --tulpar-shell-sidenav-bg: #f0f7f5;
+  --tulpar-shell-sidenav-bg: #ffffff;
   --tulpar-shell-sidenav-fg: #27231d;
   --tulpar-shell-sidenav-fg-muted: #74777a;
   --tulpar-shell-sidenav-border: #d9e0df;
-  --tulpar-shell-sidenav-item-height: 2.75rem;
-  --tulpar-shell-sidenav-item-radius: 0.375rem;
+  --tulpar-shell-sidenav-edge: rgba(11, 8, 4, 0.06);
+  --tulpar-shell-sidenav-scroll-shadow: rgba(11, 8, 4, 0.08);
+  --tulpar-shell-sidenav-flyout-bg: #ffffff;
+  --tulpar-shell-sidenav-flyout-border: #d9e0df;
+  --tulpar-shell-sidenav-flyout-header-fg: #636568;
+  --tulpar-shell-sidenav-flyout-divider: #d9e0df;
+  --tulpar-shell-sidenav-rail-cue: #74777a;
+  --tulpar-shell-sidenav-item-height: 2.5rem;
+  --tulpar-shell-sidenav-item-radius: 0.5rem;
+  --tulpar-shell-sidenav-item-height-compact: 2.25rem;
+  --tulpar-shell-sidenav-item-icon-size: 1.125rem;
   --tulpar-shell-sidenav-item-bg-hover: #e9f1ef;
   --tulpar-shell-sidenav-item-bg-active: #deffea;
   --tulpar-shell-sidenav-item-fg-active: #0b7e52;
   --tulpar-shell-sidenav-item-indicator: #00c57a;
+  --tulpar-shell-sidenav-item-glow: rgba(0, 197, 122, 0.5);
   --tulpar-shell-sidenav-item-badge-bg: #00c57a;
   --tulpar-shell-sidenav-item-badge-fg: #15110b;
+  --tulpar-shell-sidenav-item-count-bg: #e9f1ef;
+  --tulpar-shell-sidenav-item-count-fg: #636568;
+  --tulpar-shell-sidenav-item-dot: #00c57a;
   --tulpar-shell-content-bg: #e9f1ef;
   --tulpar-shell-content-max-width: 80rem;
   --tulpar-shell-content-padding-compact: 0.75rem;
@@ -724,6 +754,10 @@
   --tulpar-shell-z-mask: 150;
   --tulpar-shell-z-sidenav: 200;
   --tulpar-shell-z-aside: 300;
+  --tulpar-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --tulpar-shadow-sm: 0 1px 3px rgba(10, 37, 64, 0.06), 0 2px 6px rgba(10, 37, 64, 0.04);
+  --tulpar-shadow-md: 0 1px 3px rgba(10, 37, 64, 0.08), 0 8px 24px rgba(10, 37, 64, 0.06);
+  --tulpar-shadow-flyout: 0 4px 6px -2px rgba(10, 37, 64, 0.10), 0 12px 28px -6px rgba(10, 37, 64, 0.14);
 }
 
 .dark {
@@ -908,15 +942,28 @@
   --tulpar-shell-sidenav-fg: #d9e0df;
   --tulpar-shell-sidenav-fg-muted: #909396;
   --tulpar-shell-sidenav-border: #243553;
-  --tulpar-shell-sidenav-item-height: 2.75rem;
-  --tulpar-shell-sidenav-item-radius: 0.375rem;
+  --tulpar-shell-sidenav-edge: rgba(255, 255, 255, 0.04);
+  --tulpar-shell-sidenav-scroll-shadow: rgba(0, 0, 0, 0.3);
+  --tulpar-shell-sidenav-flyout-bg: #243553;
+  --tulpar-shell-sidenav-flyout-border: #283d64;
+  --tulpar-shell-sidenav-flyout-header-fg: #909396;
+  --tulpar-shell-sidenav-flyout-divider: #283d64;
+  --tulpar-shell-sidenav-rail-cue: #909396;
+  --tulpar-shell-sidenav-item-height: 2.5rem;
+  --tulpar-shell-sidenav-item-radius: 0.5rem;
+  --tulpar-shell-sidenav-item-height-compact: 2.25rem;
+  --tulpar-shell-sidenav-item-icon-size: 1.125rem;
   --tulpar-shell-sidenav-item-bg-hover: #202c43;
   --tulpar-shell-sidenav-item-bg-active: #243553;
   --tulpar-shell-sidenav-item-fg-active: #4ee9a6;
   --tulpar-shell-sidenav-item-indicator: #21d98d;
+  --tulpar-shell-sidenav-item-glow: rgba(33, 217, 141, 0.5);
   --tulpar-shell-sidenav-item-badge-bg: #21d98d;
   --tulpar-shell-sidenav-item-badge-fg: #0b0804;
-  --tulpar-shell-content-bg: #1b2230;
+  --tulpar-shell-sidenav-item-count-bg: #243553;
+  --tulpar-shell-sidenav-item-count-fg: #d9e0df;
+  --tulpar-shell-sidenav-item-dot: #21d98d;
+  --tulpar-shell-content-bg: #202c43;
   --tulpar-shell-content-max-width: 80rem;
   --tulpar-shell-content-padding-compact: 0.75rem;
   --tulpar-shell-content-padding-comfortable: 1.5rem;
@@ -931,6 +978,10 @@
   --tulpar-shell-z-mask: 150;
   --tulpar-shell-z-sidenav: 200;
   --tulpar-shell-z-aside: 300;
+  --tulpar-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --tulpar-shadow-sm: 0 1px 3px rgba(10, 37, 64, 0.06), 0 2px 6px rgba(10, 37, 64, 0.04);
+  --tulpar-shadow-md: 0 1px 3px rgba(10, 37, 64, 0.08), 0 8px 24px rgba(10, 37, 64, 0.06);
+  --tulpar-shadow-flyout: 0 2px 4px rgba(0, 0, 0, 0.32), 0 8px 20px rgba(0, 0, 0, 0.28);
 }
 
 [data-brand="tulpar"].dark {
@@ -1115,15 +1166,28 @@
   --tulpar-shell-sidenav-fg: #d9e0df;
   --tulpar-shell-sidenav-fg-muted: #909396;
   --tulpar-shell-sidenav-border: #243553;
-  --tulpar-shell-sidenav-item-height: 2.75rem;
-  --tulpar-shell-sidenav-item-radius: 0.375rem;
+  --tulpar-shell-sidenav-edge: rgba(255, 255, 255, 0.04);
+  --tulpar-shell-sidenav-scroll-shadow: rgba(0, 0, 0, 0.3);
+  --tulpar-shell-sidenav-flyout-bg: #243553;
+  --tulpar-shell-sidenav-flyout-border: #283d64;
+  --tulpar-shell-sidenav-flyout-header-fg: #909396;
+  --tulpar-shell-sidenav-flyout-divider: #283d64;
+  --tulpar-shell-sidenav-rail-cue: #909396;
+  --tulpar-shell-sidenav-item-height: 2.5rem;
+  --tulpar-shell-sidenav-item-radius: 0.5rem;
+  --tulpar-shell-sidenav-item-height-compact: 2.25rem;
+  --tulpar-shell-sidenav-item-icon-size: 1.125rem;
   --tulpar-shell-sidenav-item-bg-hover: #202c43;
   --tulpar-shell-sidenav-item-bg-active: #243553;
   --tulpar-shell-sidenav-item-fg-active: #4ee9a6;
   --tulpar-shell-sidenav-item-indicator: #21d98d;
+  --tulpar-shell-sidenav-item-glow: rgba(33, 217, 141, 0.5);
   --tulpar-shell-sidenav-item-badge-bg: #21d98d;
   --tulpar-shell-sidenav-item-badge-fg: #0b0804;
-  --tulpar-shell-content-bg: #1b2230;
+  --tulpar-shell-sidenav-item-count-bg: #243553;
+  --tulpar-shell-sidenav-item-count-fg: #d9e0df;
+  --tulpar-shell-sidenav-item-dot: #21d98d;
+  --tulpar-shell-content-bg: #202c43;
   --tulpar-shell-content-max-width: 80rem;
   --tulpar-shell-content-padding-compact: 0.75rem;
   --tulpar-shell-content-padding-comfortable: 1.5rem;
@@ -1138,6 +1202,10 @@
   --tulpar-shell-z-mask: 150;
   --tulpar-shell-z-sidenav: 200;
   --tulpar-shell-z-aside: 300;
+  --tulpar-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --tulpar-shadow-sm: 0 1px 3px rgba(10, 37, 64, 0.06), 0 2px 6px rgba(10, 37, 64, 0.04);
+  --tulpar-shadow-md: 0 1px 3px rgba(10, 37, 64, 0.08), 0 8px 24px rgba(10, 37, 64, 0.06);
+  --tulpar-shadow-flyout: 0 2px 4px rgba(0, 0, 0, 0.32), 0 8px 20px rgba(0, 0, 0, 0.28);
 }
 
 .dark [data-brand="tulpar"] {
@@ -1322,15 +1390,28 @@
   --tulpar-shell-sidenav-fg: #d9e0df;
   --tulpar-shell-sidenav-fg-muted: #909396;
   --tulpar-shell-sidenav-border: #243553;
-  --tulpar-shell-sidenav-item-height: 2.75rem;
-  --tulpar-shell-sidenav-item-radius: 0.375rem;
+  --tulpar-shell-sidenav-edge: rgba(255, 255, 255, 0.04);
+  --tulpar-shell-sidenav-scroll-shadow: rgba(0, 0, 0, 0.3);
+  --tulpar-shell-sidenav-flyout-bg: #243553;
+  --tulpar-shell-sidenav-flyout-border: #283d64;
+  --tulpar-shell-sidenav-flyout-header-fg: #909396;
+  --tulpar-shell-sidenav-flyout-divider: #283d64;
+  --tulpar-shell-sidenav-rail-cue: #909396;
+  --tulpar-shell-sidenav-item-height: 2.5rem;
+  --tulpar-shell-sidenav-item-radius: 0.5rem;
+  --tulpar-shell-sidenav-item-height-compact: 2.25rem;
+  --tulpar-shell-sidenav-item-icon-size: 1.125rem;
   --tulpar-shell-sidenav-item-bg-hover: #202c43;
   --tulpar-shell-sidenav-item-bg-active: #243553;
   --tulpar-shell-sidenav-item-fg-active: #4ee9a6;
   --tulpar-shell-sidenav-item-indicator: #21d98d;
+  --tulpar-shell-sidenav-item-glow: rgba(33, 217, 141, 0.5);
   --tulpar-shell-sidenav-item-badge-bg: #21d98d;
   --tulpar-shell-sidenav-item-badge-fg: #0b0804;
-  --tulpar-shell-content-bg: #1b2230;
+  --tulpar-shell-sidenav-item-count-bg: #243553;
+  --tulpar-shell-sidenav-item-count-fg: #d9e0df;
+  --tulpar-shell-sidenav-item-dot: #21d98d;
+  --tulpar-shell-content-bg: #202c43;
   --tulpar-shell-content-max-width: 80rem;
   --tulpar-shell-content-padding-compact: 0.75rem;
   --tulpar-shell-content-padding-comfortable: 1.5rem;
@@ -1345,4 +1426,8 @@
   --tulpar-shell-z-mask: 150;
   --tulpar-shell-z-sidenav: 200;
   --tulpar-shell-z-aside: 300;
+  --tulpar-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --tulpar-shadow-sm: 0 1px 3px rgba(10, 37, 64, 0.06), 0 2px 6px rgba(10, 37, 64, 0.04);
+  --tulpar-shadow-md: 0 1px 3px rgba(10, 37, 64, 0.08), 0 8px 24px rgba(10, 37, 64, 0.06);
+  --tulpar-shadow-flyout: 0 2px 4px rgba(0, 0, 0, 0.32), 0 8px 20px rgba(0, 0, 0, 0.28);
 }

@@ -1,4 +1,5 @@
 import { LitElement, html, nothing } from "lit";
+import { brandMark } from "../_internal/brand-mark";
 import { property, state } from "lit/decorators.js";
 import { shellStyles } from "./tulpar-shell.styles";
 
@@ -41,10 +42,15 @@ export class TulparShell extends LitElement {
   @property({ type: Boolean })
   dark = false;
 
+  /** Controls sidenav vertical extent relative to topbar */
+  @property({ type: String, reflect: true, attribute: "sidenav-layout" })
+  sidenavLayout: "under-topbar" | "over-topbar" = "under-topbar";
+
   @state() private _isMobile = false;
 
   private _mql?: MediaQueryList;
   private _lastFocused: HTMLElement | null = null;
+  private _sidenavObserver?: MutationObserver;
 
   private _onMql = (e: MediaQueryListEvent | MediaQueryList) => {
     this._isMobile = e.matches;
@@ -70,6 +76,10 @@ export class TulparShell extends LitElement {
     this._onMql(this._mql);
     document.addEventListener("keydown", this._onKeydown);
     this.addEventListener("tulpar-menu-toggle", this._onMenuToggle);
+    this.addEventListener("tulpar-theme-toggle", this._onThemeToggle);
+    // Watch the sidenav slot for position attribute changes
+    this._sidenavObserver = new MutationObserver(() => this._syncSidenavPosition());
+    this._observeSidenavSlot();
   }
 
   override disconnectedCallback() {
@@ -77,7 +87,21 @@ export class TulparShell extends LitElement {
     this._mql?.removeEventListener("change", this._onMql);
     document.removeEventListener("keydown", this._onKeydown);
     this.removeEventListener("tulpar-menu-toggle", this._onMenuToggle);
+    this.removeEventListener("tulpar-theme-toggle", this._onThemeToggle);
+    this._sidenavObserver?.disconnect();
   }
+
+  private _onThemeToggle = () => {
+    this.dark = !this.dark;
+  };
+
+  private _onFabClick = () => {
+    // Dispatch tulpar-menu-toggle so listeners (including ourselves) react,
+    // and the event is observable by tests and external consumers.
+    this.dispatchEvent(
+      new CustomEvent("tulpar-menu-toggle", { bubbles: true, composed: true }),
+    );
+  };
 
   private _onMenuToggle = () => {
     // Mobile always forces overlay behaviour regardless of sidenavMode
@@ -144,9 +168,14 @@ export class TulparShell extends LitElement {
       this.toggleAttribute("data-collapsed", this.sidenavCollapsed);
       // Rail mode: propagate data-rail to slotted sidenav
       this._updateRailAttr();
+      this._updateStateAttrs();
+    }
+    if (changed.has("sidenavOpen")) {
+      this._updateStateAttrs();
     }
     if (changed.has("sidenavMode")) {
       this._updateRailAttr();
+      this._updateStateAttrs();
     }
     if (changed.has("dark")) {
       const apply = () => document.documentElement.classList.toggle("dark", this.dark);
@@ -169,12 +198,42 @@ export class TulparShell extends LitElement {
     }
   }
 
+  private _syncSidenavPosition() {
+    const sidenav = this.querySelector("[slot='sidenav']");
+    const pos = sidenav?.getAttribute("position") ?? "left";
+    if (pos === "right") {
+      this.setAttribute("data-sidenav-position", "right");
+    } else {
+      this.removeAttribute("data-sidenav-position");
+    }
+  }
+
+  private _observeSidenavSlot() {
+    // Re-observe whenever the slotted sidenav element changes
+    this._sidenavObserver?.disconnect();
+    const sidenav = this.querySelector("[slot='sidenav']");
+    if (sidenav) {
+      this._sidenavObserver?.observe(sidenav, { attributes: true, attributeFilter: ["position"] });
+    }
+    this._syncSidenavPosition();
+    this._updateStateAttrs();
+  }
+
   private _updateRailAttr() {
     const isRail = this.sidenavMode === "rail" && this.sidenavCollapsed;
     const sidenav = this.querySelector("[slot='sidenav']");
     if (sidenav) {
       sidenav.toggleAttribute("data-rail", isRail);
     }
+  }
+
+  /** Reflect collapsed/open state attributes onto the slotted sidenav element. */
+  private _updateStateAttrs() {
+    const sidenav = this.querySelector("[slot='sidenav']");
+    if (!sidenav) return;
+    const collapsed = this.sidenavMode === "static" && this.sidenavCollapsed;
+    sidenav.toggleAttribute("data-collapsed", collapsed);
+    sidenav.toggleAttribute("data-sidenav-open", this.sidenavOpen);
   }
 
   private _onMaskClick() {
@@ -190,10 +249,13 @@ export class TulparShell extends LitElement {
   override render() {
     const overlayActive = (this._isMobile || this.sidenavMode === "overlay") && this.sidenavOpen;
     const maskVisible = overlayActive || this.asideOpen;
+    const showFab =
+      (this.sidenavMode === "static" && this.sidenavCollapsed) ||
+      ((this._isMobile || this.sidenavMode === "overlay") && !this.sidenavOpen);
     return html`
       <a class="skip-link" href="#tulpar-shell-content">Skip to content</a>
       <div class="topbar"><slot name="topbar"></slot></div>
-      <div class="sidenav"><slot name="sidenav"></slot></div>
+      <div class="sidenav"><slot name="sidenav" @slotchange=${this._observeSidenavSlot}></slot></div>
       <main id="tulpar-shell-content">
         <div class="content-box"><slot></slot></div>
       </main>
@@ -204,6 +266,9 @@ export class TulparShell extends LitElement {
       <div class="aside" role="complementary" ?inert=${!this.asideOpen}>
         <slot name="aside"></slot>
       </div>
+      ${showFab
+        ? html`<button class="sidenav-fab" aria-label="Open navigation" @click=${this._onFabClick}>${brandMark}</button>`
+        : nothing}
     `;
   }
 }

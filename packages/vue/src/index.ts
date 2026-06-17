@@ -27,5 +27,7 @@ export { default as TulparNumberInput } from "./number-input/TulparNumberInput.v
 export { default as TulparShell } from "./shell/TulparShell.vue";
 export { default as TulparTopbar } from "./shell/TulparTopbar.vue";
 export { default as TulparSidenav } from "./shell/TulparSidenav.vue";
+export type { TulparNavItemVueData } from "./shell/TulparSidenav.vue";
 export { default as TulparNavItem } from "./shell/TulparNavItem.vue";
+export { default as TulparNavSection } from "./shell/TulparNavSection.vue";
 export type { ShellSidenavMode, ShellState, TulparNavItemData } from "@tulpar-ui/shell";

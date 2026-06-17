@@ -4,10 +4,10 @@ const STOPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] as const;
 
 const FAMILIES: { name: string; story: string }[] = [
   { name: 'al', story: 'Al Ruhu · danger' },
-  { name: 'kizagan', story: 'Kızagan Tengri · kritik vurgu' },
+  { name: 'kizagan', story: 'Kızagan Tengri · critical accent' },
   { name: 'umay', story: 'Umay Ana · highlights' },
-  { name: 'ilay', story: 'İlay · kategorik / charts' },
-  { name: 'erlik', story: 'Erlik Han · help / premium-depth' },
+  { name: 'ilay', story: 'İlay · categorical / charts' },
+  { name: 'erlik', story: 'Erlik Han · help / premium depth' },
   { name: 'kam', story: 'Kam · secondary / focus' },
   { name: 'mergen', story: 'Mergen Han · dark surfaces' },
   { name: 'gok', story: 'Gök Tengri · info / link' },
@@ -40,23 +40,68 @@ const SEMANTICS: { role: string; varName: string }[] = [
   { role: 'contrast', varName: '--tulpar-color-contrast-default' },
 ];
 
+const SURFACES: { role: string; varName: string }[] = [
+  { role: 'bg / default', varName: '--tulpar-color-bg-default' },
+  { role: 'bg / surface', varName: '--tulpar-color-bg-surface' },
+  { role: 'bg / subtle', varName: '--tulpar-color-bg-subtle' },
+  { role: 'bg / muted', varName: '--tulpar-color-bg-muted' },
+  { role: 'bg / elevated', varName: '--tulpar-color-bg-elevated' },
+  { role: 'border / default', varName: '--tulpar-color-border-default' },
+];
+
 @Component({
   selector: 'app-colors-demo',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="colors">
-      <h1>Chromatic Mythology</h1>
-      <p class="lede">22 aile · tek OKLCH merdiveni · Türk/Altay mitolojisi.</p>
+    <!-- ── Page header ─────────────────────────────────────────────────────── -->
+    <header class="page-header">
+      <span class="page-tag">Foundation</span>
+      <h1 class="page-title">Colors</h1>
+      <p class="page-lede">
+        Chromatic Mythology — 22 color families on a single OKLCH ladder, drawn from Turkic/Altaic
+        myth. Every semantic role binds to one of these primitives per brand and mode.
+      </p>
+    </header>
 
-      <h2>Palet</h2>
+    <!-- ── Hero: signature spirits ─────────────────────────────────────────── -->
+    <section class="doc-section">
+      <div class="hero">
+        @for (h of heroFamilies; track h.name) {
+          <div class="hero-card">
+            <div
+              class="hero-swatch"
+              [style.background]="'var(--tulpar-primitive-color-' + h.name + '-500)'"
+            ></div>
+            <div class="hero-meta">
+              <strong>{{ h.name }}</strong>
+              <span>{{ h.story }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- ── Full palette ────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">Palette</h2>
+      <p class="section-desc">
+        Each family runs the same 11-stop ladder ({{ stops[0] }}–{{ stops[stops.length - 1] }}).
+        Hover a swatch for its token name.
+      </p>
       <div class="grid">
         @for (fam of families; track fam.name) {
           <div class="row">
-            <div class="row-head"><strong>{{ fam.name }}</strong><span>{{ fam.story }}</span></div>
+            <div class="row-head">
+              <strong>{{ fam.name }}</strong><span>{{ fam.story }}</span>
+            </div>
             <div class="ramp">
               @for (stop of stops; track stop) {
-                <div class="swatch" [style.background]="'var(--tulpar-primitive-color-' + fam.name + '-' + stop + ')'" [title]="fam.name + '-' + stop">
+                <div
+                  class="swatch"
+                  [style.background]="'var(--tulpar-primitive-color-' + fam.name + '-' + stop + ')'"
+                  [title]="fam.name + '-' + stop"
+                >
                   <span class="stop">{{ stop }}</span>
                 </div>
               }
@@ -64,44 +109,305 @@ const SEMANTICS: { role: string; varName: string }[] = [
           </div>
         }
       </div>
+    </section>
 
-      <h2>Semantik roller</h2>
-      <div class="legend">
+    <!-- ── Semantic roles ──────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">Semantic roles</h2>
+      <p class="section-desc">
+        Components only ever reference semantic tokens — never raw primitives. This is the layer that
+        lets a brand or mode swap repaint the whole system.
+      </p>
+      <div class="token-grid">
         @for (s of semantics; track s.role) {
-          <div class="chip"><span class="dot" [style.background]="'var(' + s.varName + ')'"></span><span>{{ s.role }}</span></div>
+          <div class="token-card">
+            <span class="token-dot" [style.background]="'var(' + s.varName + ')'"></span>
+            <span class="token-meta">
+              <strong>{{ s.role }}</strong>
+              <code>{{ s.varName }}</code>
+            </span>
+          </div>
         }
       </div>
+    </section>
 
-      <h2>Chart kategorik seri</h2>
+    <!-- ── Surfaces & borders ──────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">Surfaces &amp; borders</h2>
+      <p class="section-desc">
+        The neutral chrome tokens that build cards, panels, and dividers — mode-aware out of the box.
+      </p>
+      <div class="token-grid">
+        @for (s of surfaces; track s.role) {
+          <div class="token-card">
+            <span
+              class="token-dot token-dot--bordered"
+              [style.background]="'var(' + s.varName + ')'"
+            ></span>
+            <span class="token-meta">
+              <strong>{{ s.role }}</strong>
+              <code>{{ s.varName }}</code>
+            </span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- ── Chart series ────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">Chart categorical series</h2>
+      <p class="section-desc">
+        Eight distinguishable hues for data visualization, ordered for maximum adjacent contrast.
+      </p>
       <div class="chart-row">
         @for (n of chart; track n) {
-          <span class="chart-cell" [style.background]="'var(--tulpar-chart-' + n + ')'" [title]="'chart-' + n">{{ n }}</span>
+          <span
+            class="chart-cell"
+            [style.background]="'var(--tulpar-chart-' + n + ')'"
+            [title]="'chart-' + n"
+            >{{ n }}</span
+          >
         }
       </div>
     </section>
   `,
-  styles: [`
-    .colors { padding: 24px; max-width: 1100px; }
-    h1 { font-family: var(--tulpar-font-family-display, serif); margin: 0 0 4px; }
-    .lede { color: var(--tulpar-color-text-muted, #74777a); margin: 0 0 24px; }
-    h2 { margin: 28px 0 12px; font-size: 15px; text-transform: uppercase; letter-spacing: .05em; color: var(--tulpar-color-text-secondary, #27231d); }
-    .grid { display: flex; flex-direction: column; gap: 10px; }
-    .row-head { display: flex; gap: 10px; align-items: baseline; margin-bottom: 4px; }
-    .row-head strong { font-family: var(--tulpar-font-family-mono, monospace); }
-    .row-head span { font-size: 12px; color: var(--tulpar-color-text-muted, #74777a); }
-    .ramp { display: grid; grid-template-columns: repeat(11, 1fr); border-radius: 8px; overflow: hidden; }
-    .swatch { aspect-ratio: 2 / 1; display: flex; align-items: flex-end; padding: 3px 5px; }
-    .stop { font-size: 9px; color: rgba(255,255,255,.7); mix-blend-mode: difference; }
-    .legend { display: flex; flex-wrap: wrap; gap: 10px; }
-    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--tulpar-color-border-default, #d9e0df); border-radius: 999px; font-size: 13px; }
-    .dot { width: 14px; height: 14px; border-radius: 50%; }
-    .chart-row { display: flex; gap: 4px; }
-    .chart-cell { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 6px; color: #fff; mix-blend-mode: difference; font-size: 12px; }
-  `],
+  styles: [
+    `
+      :host {
+        display: block;
+      }
+
+      /* ── Page header ───────────────────────────────────────────────────── */
+      .page-header {
+        margin-bottom: 40px;
+      }
+
+      .page-tag {
+        display: inline-block;
+        margin-bottom: 14px;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        background: var(--tulpar-color-bg-subtle, #e9f1ef);
+        color: var(--tulpar-color-text-secondary, #57534e);
+      }
+
+      .page-title {
+        margin: 0 0 12px;
+        font-family: var(--tulpar-font-family-display, Georgia, serif);
+        font-size: 34px;
+        font-weight: 600;
+        line-height: 1.1;
+        color: var(--tulpar-color-text-primary, #15110b);
+      }
+
+      .page-lede {
+        margin: 0;
+        font-size: 15px;
+        color: var(--tulpar-color-text-secondary, #57534e);
+        max-width: 640px;
+        line-height: 1.6;
+      }
+
+      /* ── Sections ──────────────────────────────────────────────────────── */
+      .doc-section {
+        padding-bottom: 44px;
+        margin-bottom: 44px;
+        border-bottom: 1px solid var(--tulpar-color-border-default, #d9e0df);
+      }
+
+      .doc-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+      }
+
+      .section-title {
+        margin: 0 0 10px;
+        font-family: var(--tulpar-font-family-display, Georgia, serif);
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--tulpar-color-text-primary, #15110b);
+      }
+
+      .section-desc {
+        margin: 0 0 22px;
+        font-size: 14px;
+        color: var(--tulpar-color-text-secondary, #57534e);
+        max-width: 640px;
+        line-height: 1.6;
+      }
+
+      /* ── Hero ──────────────────────────────────────────────────────────── */
+      .hero {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 14px;
+      }
+
+      .hero-card {
+        border: 1px solid var(--tulpar-color-border-default, #d9e0df);
+        border-radius: 12px;
+        overflow: hidden;
+        background: var(--tulpar-color-bg-elevated, #ffffff);
+      }
+
+      .hero-swatch {
+        height: 76px;
+      }
+
+      .hero-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding: 10px 12px;
+      }
+
+      .hero-meta strong {
+        font-family: var(--tulpar-font-family-mono, ui-monospace, monospace);
+        font-size: 13px;
+        color: var(--tulpar-color-text-primary, #15110b);
+      }
+
+      .hero-meta span {
+        font-size: 11px;
+        color: var(--tulpar-color-text-muted, #74777a);
+      }
+
+      /* ── Palette grid ──────────────────────────────────────────────────── */
+      .grid {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .row-head {
+        display: flex;
+        gap: 10px;
+        align-items: baseline;
+        margin-bottom: 5px;
+      }
+
+      .row-head strong {
+        font-family: var(--tulpar-font-family-mono, ui-monospace, monospace);
+        font-size: 13px;
+        color: var(--tulpar-color-text-primary, #15110b);
+      }
+
+      .row-head span {
+        font-size: 12px;
+        color: var(--tulpar-color-text-muted, #74777a);
+      }
+
+      .ramp {
+        display: grid;
+        grid-template-columns: repeat(11, 1fr);
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid var(--tulpar-color-border-default, #d9e0df);
+      }
+
+      .swatch {
+        aspect-ratio: 2 / 1;
+        display: flex;
+        align-items: flex-end;
+        padding: 3px 5px;
+      }
+
+      .stop {
+        font-size: 9px;
+        color: rgba(255, 255, 255, 0.75);
+        mix-blend-mode: difference;
+      }
+
+      /* ── Token cards (semantic + surfaces) ─────────────────────────────── */
+      .token-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 10px;
+      }
+
+      .token-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        border: 1px solid var(--tulpar-color-border-default, #d9e0df);
+        border-radius: 10px;
+        background: var(--tulpar-color-bg-elevated, #ffffff);
+      }
+
+      .token-dot {
+        width: 28px;
+        height: 28px;
+        flex: none;
+        border-radius: 8px;
+      }
+
+      .token-dot--bordered {
+        border: 1px solid var(--tulpar-color-border-strong, #c3cdcb);
+      }
+
+      .token-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+      }
+
+      .token-meta strong {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--tulpar-color-text-primary, #15110b);
+      }
+
+      .token-meta code {
+        font-family: var(--tulpar-font-family-mono, ui-monospace, monospace);
+        font-size: 11px;
+        color: var(--tulpar-color-text-muted, #74777a);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* ── Chart row ─────────────────────────────────────────────────────── */
+      .chart-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .chart-cell {
+        width: 52px;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        color: #fff;
+        mix-blend-mode: difference;
+        font-size: 12px;
+        font-weight: 600;
+      }
+    `,
+  ],
 })
 export class ColorsDemoComponent {
   readonly stops = STOPS;
   readonly families = FAMILIES;
   readonly semantics = SEMANTICS;
+  readonly surfaces = SURFACES;
   readonly chart = [1, 2, 3, 4, 5, 6, 7, 8] as const;
+
+  // Signature spirits surfaced in the hero strip.
+  readonly heroFamilies = [
+    { name: 'tulpar', story: 'primary / success' },
+    { name: 'ulgen', story: 'premium / gold' },
+    { name: 'gok', story: 'info / link' },
+    { name: 'al', story: 'danger' },
+    { name: 'kuyas', story: 'warning' },
+    { name: 'erlik', story: 'help' },
+  ];
 }

@@ -63,6 +63,32 @@ export const shellStyles = css`
     bottom: 0;
   }
 
+  /* --- right-positioned sidenav: swap grid columns so content is left, sidenav is right --- */
+  :host([data-sidenav-position="right"]) {
+    grid-template-columns: 1fr var(--_sidenav-col, var(--tulpar-shell-sidenav-width, 17.5rem));
+    grid-template-areas:
+      "topbar topbar"
+      "content sidenav"
+      "footer footer";
+  }
+
+  /* --- over-topbar: sidenav spans full height, topbar only in right column --- */
+  :host([sidenav-layout="over-topbar"]) {
+    grid-template-rows: 1fr;
+    grid-template-columns: var(--_sidenav-col, var(--tulpar-shell-sidenav-width, 17.5rem)) 1fr;
+    grid-template-areas:
+      "sidenav topbar"
+      "sidenav content"
+      "sidenav footer";
+  }
+  :host([sidenav-layout="over-topbar"][data-sidenav-position="right"]) {
+    grid-template-columns: 1fr var(--_sidenav-col, var(--tulpar-shell-sidenav-width, 17.5rem));
+    grid-template-areas:
+      "topbar sidenav"
+      "content sidenav"
+      "footer sidenav";
+  }
+
   /* --- collapsed (static) --- */
   :host([sidenav-mode="static"][data-collapsed]) {
     --_sidenav-col: 0px;
@@ -118,10 +144,53 @@ export const shellStyles = css`
   :host([aside-open]) .aside {
     transform: none;
   }
+  /* --- floating reopen button (B4) --- */
+  .sidenav-fab {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: calc(var(--tulpar-shell-z-aside, 300) + 2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0.375rem;
+    border: none;
+    border-radius: 0.5rem;
+    background: var(--tulpar-color-bg-surface, #ffffff);
+    color: var(--tulpar-color-text-default, #0f172a);
+    box-shadow:
+      0 1px 3px 0 rgb(0 0 0 / 0.1),
+      0 1px 2px -1px rgb(0 0 0 / 0.1);
+    cursor: pointer;
+    opacity: 0;
+    transform: translateX(-0.5rem);
+    animation: tulpar-fab-in 180ms ease-out forwards;
+  }
+  .sidenav-fab:hover {
+    background: var(--tulpar-color-bg-surface-raised, #f8fafc);
+  }
+  .sidenav-fab:focus-visible {
+    outline: 2px solid var(--tulpar-color-brand-default, #2563eb);
+    outline-offset: 2px;
+  }
+  @keyframes tulpar-fab-in {
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .sidenav,
     .aside {
       transition: none;
+    }
+    .sidenav-fab {
+      animation: none;
+      opacity: 1;
+      transform: none;
     }
   }
 `;

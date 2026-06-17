@@ -1,6 +1,7 @@
 import { fixture, html, expect, oneEvent, waitUntil } from "@open-wc/testing";
 import { sendKeys } from "@web/test-runner-commands";
 import "./tulpar-shell";
+import "../sidenav/tulpar-sidenav";
 import type { TulparShell } from "./tulpar-shell";
 
 describe("<tulpar-shell>", () => {
@@ -150,5 +151,81 @@ describe("<tulpar-shell>", () => {
     el.sidenavCollapsed = true;
     await el.updateComplete;
     expect(el.querySelector("#sn")!.hasAttribute("data-rail")).to.be.true;
+  });
+
+  it("reflects data-sidenav-position=right when slotted sidenav has position=right", async () => {
+    const el = await fixture<TulparShell>(html`
+      <tulpar-shell>
+        <tulpar-sidenav slot="sidenav" position="right"></tulpar-sidenav>
+      </tulpar-shell>
+    `);
+    await el.updateComplete;
+    expect(el.getAttribute("data-sidenav-position")).to.equal("right");
+  });
+
+  it("grid-template-areas swaps sidenav and content columns for right-positioned sidenav", async () => {
+    const el = await fixture<TulparShell>(html`
+      <tulpar-shell>
+        <tulpar-sidenav slot="sidenav" position="right"></tulpar-sidenav>
+      </tulpar-shell>
+    `);
+    await el.updateComplete;
+    const areas = getComputedStyle(el).gridTemplateAreas;
+    // right position: content comes before sidenav in the row
+    expect(areas).to.include("content");
+    expect(areas).to.include("sidenav");
+    // "content sidenav" order (content before sidenav) when position=right
+    expect(areas.indexOf("content")).to.be.lessThan(areas.indexOf("sidenav"));
+  });
+
+  // ── Task 7.1 ──────────────────────────────────────────────────────────────
+  it("reflects collapsed/open state onto the slotted sidenav", async () => {
+    const el = await fixture<TulparShell>(html`<tulpar-shell sidenav-mode="static"><div slot="sidenav"></div></tulpar-shell>`);
+    el.sidenavCollapsed = true; await el.updateComplete;
+    expect(el.querySelector('[slot="sidenav"]')!.hasAttribute("data-collapsed")).to.be.true;
+  });
+
+  // ── Task 7.2 ──────────────────────────────────────────────────────────────
+  it("flips dark when a tulpar-theme-toggle bubbles up", async () => {
+    const el = await fixture<TulparShell>(html`<tulpar-shell></tulpar-shell>`);
+    const before = el.dark;
+    el.dispatchEvent(new CustomEvent("tulpar-theme-toggle", { bubbles: true, composed: true }));
+    await el.updateComplete;
+    expect(el.dark).to.equal(!before);
+  });
+
+  // ── Task 7.3 ──────────────────────────────────────────────────────────────
+  it("over-topbar layout puts sidenav before topbar in the grid", async () => {
+    const el = await fixture<TulparShell>(html`<tulpar-shell sidenav-layout="over-topbar"></tulpar-shell>`);
+    expect(el.getAttribute("sidenav-layout")).to.equal("over-topbar");
+    const areas = getComputedStyle(el).gridTemplateAreas;
+    expect(areas.indexOf("sidenav")).to.be.lessThan(areas.indexOf("topbar"));
+  });
+
+  // ── Task 7.4 ──────────────────────────────────────────────────────────────
+  it("shows a floating reopen button when static+collapsed and emits toggle", async () => {
+    const el = await fixture<TulparShell>(html`<tulpar-shell sidenav-mode="static"></tulpar-shell>`);
+    el.sidenavCollapsed = true; await el.updateComplete;
+    const fab = el.shadowRoot!.querySelector(".sidenav-fab") as HTMLButtonElement;
+    expect(fab).to.exist;
+    setTimeout(() => fab.click());
+    expect(await oneEvent(el, "tulpar-menu-toggle")).to.exist;
+  });
+
+  it("no floating button in rail mode (desktop)", async () => {
+    // Force desktop: a narrow headless viewport would set _isMobile=true, which
+    // correctly shows the FAB (mobile treats rail as overlay). This test asserts
+    // the DESKTOP rail behaviour, so pin mobile-breakpoint off.
+    const el = await fixture<TulparShell>(
+      html`<tulpar-shell sidenav-mode="rail" mobile-breakpoint="(max-width: 0px)"></tulpar-shell>`,
+    );
+    el.sidenavCollapsed = true; await el.updateComplete;
+    expect(el.shadowRoot!.querySelector(".sidenav-fab")).to.be.null;
+  });
+
+  it("shows the floating button when overlay sidenav is closed", async () => {
+    const el = await fixture<TulparShell>(html`<tulpar-shell sidenav-mode="overlay"></tulpar-shell>`);
+    await el.updateComplete;
+    expect(el.shadowRoot!.querySelector(".sidenav-fab")).to.exist;
   });
 });

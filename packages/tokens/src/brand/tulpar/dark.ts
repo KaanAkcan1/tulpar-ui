@@ -1,6 +1,7 @@
 import { primitiveColor as c } from "../../primitive/color";
 import { primitiveTypography } from "../../primitive/typography";
 import { primitiveTransition } from "../../primitive/transition";
+import { primitiveShadow } from "../../primitive/shadow";
 import type { SemanticTokens } from "../../semantic/types";
 import { tulparLight } from "./light";
 
@@ -198,23 +199,36 @@ export const tulparDark: SemanticTokens = {
     sidenav: {
       width: "17.5rem",
       railWidth: "4.5rem",
-      bg: c.mergen[950],
+      bg: c.mergen[950],  // unchanged: nav stays darker than content (mergen[950])
       fg: c.colpan[200],
       fgMuted: c.kara[400],
       border: c.mergen[800],
+      edge: "rgba(255, 255, 255, 0.04)",     // NEW
+      scrollShadow: "rgba(0, 0, 0, 0.3)",    // NEW
+      flyoutBg: c.mergen[800],
+      flyoutBorder: c.mergen[700],
+      flyoutHeaderFg: c.kara[400],
+      flyoutDivider: c.mergen[700],
+      railCue: c.kara[400],
       item: {
-        height: "2.75rem",
-        radius: "0.375rem",
+        height: "2.5rem",
+        radius: "0.5rem",
+        heightCompact: "2.25rem",
+        iconSize: "1.125rem",
         bgHover: c.mergen[900],
         bgActive: c.mergen[800],
         fgActive: c.tulpar[300],
         indicator: c.tulpar[400],
+        glow: "rgba(33, 217, 141, 0.5)",    // NEW — tulpar[400] @ 50%
         badgeBg: c.tulpar[400],
         badgeFg: c.yagiz[950],
+        countBg: c.mergen[800],             // NEW
+        countFg: c.colpan[200],             // NEW
+        dot: c.tulpar[400],                 // NEW
       },
     },
     content: {
-      bg: c.mergen[950],
+      bg: c.mergen[900],          // re-bind: was mergen[950] (lift content above nav)
       maxWidth: "80rem",
       paddingCompact: "0.75rem",
       paddingComfortable: "1.5rem",
@@ -223,5 +237,15 @@ export const tulparDark: SemanticTokens = {
     aside: { width: "22rem", bg: c.mergen[900], border: c.mergen[800] },
     mask: { bg: "rgb(11 8 4 / 0.6)" }, // yagiz-950
     z: { topbar: "100", mask: "150", sidenav: "200", aside: "300" },
+  },
+
+  easing: { decelerate: primitiveTransition.easing.decelerate },
+  shadow: {
+    // dark mode is border-led: sm/md intentionally reuse the navy-tinted primitives
+    // (low-contrast on dark surfaces by design — do not "fix" by darkening them).
+    sm: primitiveShadow.sm,
+    md: primitiveShadow.md,
+    // flyout keeps its own pure-black contact shadow so the popover still separates.
+    flyout: "0 2px 4px rgba(0, 0, 0, 0.32), 0 8px 20px rgba(0, 0, 0, 0.28)",
   },
 };

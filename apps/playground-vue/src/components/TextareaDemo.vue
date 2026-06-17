@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { TulparTextarea } from "@tulpar-ui/vue";
+import { TulparTextarea, TulparButton } from "@tulpar-ui/vue";
 
 // ─── Section list ─────────────────────────────────────────────────────────────
 const sections = [
@@ -17,6 +17,7 @@ const activeSection = ref("all");
 
 // Two-way bound demo refs
 const counterBody = ref("");
+const composerBody = ref("");
 
 // ─── Code snippets ────────────────────────────────────────────────────────────
 
@@ -61,6 +62,16 @@ const sizesVariantsCode = `<TulparTextarea size="sm" variant="outlined" label="s
 </script>
 
 <template>
+  <!-- ── Page header ───────────────────────────────────────────────────────── -->
+  <header class="page-header">
+    <span class="page-tag">Form</span>
+    <h1 class="page-title">Textarea</h1>
+    <p class="page-lede">
+      The multi-line text field — autosizing rows, resize control, a live character counter,
+      copy/paste affordances, and the full validation-state set. Built on the shared FormFieldBase.
+    </p>
+  </header>
+
   <!-- Sub-menu -->
   <div class="sub-menu">
     <button
@@ -251,9 +262,118 @@ const sizesVariantsCode = `<TulparTextarea size="sm" variant="outlined" label="s
     </div>
     <pre class="code"><code>{{ sizesVariantsCode }}</code></pre>
   </section>
+
+  <!-- ── In context — a comment composer ──────────────────────────────────────── -->
+  <section v-if="activeSection === 'all'" class="demo-section">
+    <h3 class="demo-title">In context — a comment composer</h3>
+    <p class="demo-desc">
+      Autosize, a live counter, and a submit action composed into a realistic comment box on an
+      elevated surface.
+    </p>
+    <div class="composer-card">
+      <div class="composer-head">
+        <span class="composer-avatar" aria-hidden="true">KA</span>
+        <span class="composer-name">Kaan Akcan</span>
+      </div>
+      <TulparTextarea
+        label="Add a comment"
+        label-position="none"
+        :autosize="true"
+        :min-rows="2"
+        :max-rows="8"
+        :show-count="true"
+        :max-length="500"
+        v-model="composerBody"
+        placeholder="Share your thoughts…"
+      />
+      <div class="composer-actions">
+        <TulparButton severity="secondary" variant="ghost" size="sm">Cancel</TulparButton>
+        <TulparButton severity="primary" size="sm" :disabled="composerBody.trim().length === 0"
+          >Post comment</TulparButton
+        >
+      </div>
+    </div>
+  </section>
 </template>
 
 <style scoped>
+.page-header {
+  margin-bottom: 8px;
+}
+
+.page-tag {
+  display: inline-block;
+  margin-bottom: 14px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--tulpar-color-bg-subtle, #e9f1ef);
+  color: var(--tulpar-color-text-secondary, #57534e);
+}
+
+.page-title {
+  margin: 0 0 12px;
+  font-family: var(--tulpar-font-family-display, Georgia, serif);
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--tulpar-color-text-primary, #15110b);
+}
+
+.page-lede {
+  margin: 0;
+  font-size: 15px;
+  color: var(--tulpar-color-text-secondary, #57534e);
+  max-width: 640px;
+  line-height: 1.6;
+}
+
+.composer-card {
+  max-width: 560px;
+  padding: 20px 22px;
+  border: 1px solid var(--tulpar-color-border-default, #d9e0df);
+  border-radius: 14px;
+  background: var(--tulpar-color-bg-elevated, #ffffff);
+  box-shadow: var(--tulpar-shadow-sm, 0 1px 2px rgb(0 0 0 / 0.06));
+}
+
+.composer-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.composer-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 999px;
+  background: var(--tulpar-color-brand-default, #00c57a);
+  color: var(--tulpar-color-brand-on-color, #07291f);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.composer-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--tulpar-color-text-primary, #15110b);
+}
+
+.composer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}
+
 .sub-menu {
   display: flex;
   flex-wrap: wrap;

@@ -1,16 +1,87 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import {
+  BookOpen,
+  FormInput,
+  Hash,
+  Palette,
+  SquareMousePointer,
+  TextCursorInput,
+  WrapText,
+} from "lucide-vue-next";
 import { TulparShell, TulparTopbar, TulparSidenav } from "@tulpar-ui/vue";
-import type { TulparNavItemData, ShellSidenavMode } from "@tulpar-ui/vue";
+import type { ShellSidenavMode, TulparNavItemVueData } from "@tulpar-ui/vue";
 
-/** Dark-mode flag — forwarded to the shell, which toggles the `.dark` class. */
+// SPA navigation: sidenav links (inline AND rail flyout) dispatch the cancelable
+// `tulpar-navigate` event (composed → reaches window). Intercept it, prevent the
+// native full-page navigation, and route via vue-router so app state (sidenav
+// mode, collapsed, dark) survives. Then notify the web components to refresh
+// their active state (they listen for `tulpar-location-changed`).
+const router = useRouter();
+const onNavigate = (e: Event) => {
+  const ce = e as CustomEvent<{ href?: string }>;
+  const href = ce.detail?.href;
+  if (!href) return;
+  ce.preventDefault();
+  void router.push(href).then(() => {
+    window.dispatchEvent(new Event("tulpar-location-changed"));
+  });
+};
+onMounted(() => window.addEventListener("tulpar-navigate", onNavigate));
+onUnmounted(() => window.removeEventListener("tulpar-navigate", onNavigate));
+
+type SidenavPosition = "left" | "right";
+type SidenavDensity = "comfortable" | "compact";
+type SidenavLayout = "under-topbar" | "over-topbar";
+
+/** Initial dark-mode state — the built-in sidenav toggle flips it from here on. */
 const dark = ref(false);
 
-/** Sidenav mode — bound to the shell and switchable live from the settings drawer. */
+/** Sidenav mode — bound to the shell and switchable live from the configurator. */
 const sidenavMode = ref<ShellSidenavMode>("static");
 
-/** Aside (settings) drawer open state — driven via v-model on the shell. */
+/** Sidenav layout (under/over the topbar) — dogfood the new shell prop. */
+const sidenavLayout = ref<SidenavLayout>("under-topbar");
+
+/** Sidenav position + density — dogfood the new sidenav props from the aside. */
+const position = ref<SidenavPosition>("left");
+const density = ref<SidenavDensity>("comfortable");
+
+/** Aside (configurator) drawer open state — driven via v-model on the shell. */
 const asideOpen = ref(false);
+
+/** Data-driven menu — lucide functional components handled by the wrapper. */
+const menu: TulparNavItemVueData[] = [
+  {
+    type: "section",
+    label: "Components",
+    items: [
+      { label: "Button", href: "/button", icon: SquareMousePointer },
+      // Collapsible group: a nav-item with its own `items` renders as an
+      // expandable group with a chevron. Demonstrates nesting + single-expand.
+      {
+        label: "Form Inputs",
+        icon: FormInput,
+        items: [
+          { label: "TextInput", href: "/text-input", icon: TextCursorInput },
+          { label: "Textarea", href: "/textarea", icon: WrapText },
+          { label: "NumberInput", href: "/number-input", icon: Hash },
+        ],
+      },
+    ],
+  },
+  {
+    type: "section",
+    label: "Foundations",
+    items: [{ label: "Colors", href: "/colors", icon: Palette }],
+  },
+  {
+    type: "section",
+    label: "Guides",
+    items: [{ label: "Sidebar & Theme", href: "/guide", icon: BookOpen }],
+  },
+];
 
 const sidenavModes: { value: ShellSidenavMode; label: string }[] = [
   { value: "static", label: "Static" },
@@ -18,86 +89,76 @@ const sidenavModes: { value: ShellSidenavMode; label: string }[] = [
   { value: "rail", label: "Rail" },
 ];
 
-/** Sidenav menu — hrefs map 1:1 to the routes declared in router.ts. */
-const menu: TulparNavItemData[] = [
-  {
-    label: "Components",
-    items: [
-      { label: "Button", href: "/button" },
-      { label: "TextInput", href: "/text-input" },
-      { label: "Textarea", href: "/textarea" },
-      { label: "NumberInput", href: "/number-input" },
-      { label: "Colors", href: "/colors" },
-    ],
-  },
+const layouts: { value: SidenavLayout; label: string }[] = [
+  { value: "under-topbar", label: "Under topbar" },
+  { value: "over-topbar", label: "Over topbar" },
 ];
+
+const positions: { value: SidenavPosition; label: string }[] = [
+  { value: "left", label: "Left" },
+  { value: "right", label: "Right" },
+];
+
+const densities: { value: SidenavDensity; label: string }[] = [
+  { value: "comfortable", label: "Comfortable" },
+  { value: "compact", label: "Compact" },
+];
+
+function onLogout() {
+  // Placeholder action — a real app would clear the session and redirect.
+  // eslint-disable-next-line no-console
+  console.info("[playground-vue] logout requested");
+}
 </script>
 
 <template>
   <TulparShell
     :sidenav-mode="sidenavMode"
+    :sidenav-layout="sidenavLayout"
     persist-key="playground-vue-shell"
     :dark="dark"
     v-model:aside-open="asideOpen"
   >
     <!-- ── Topbar ───────────────────────────────────────────────────────── -->
-    <TulparTopbar slot="topbar" show-menu-button>
-      <div slot="start" class="brand">
-        <img
-          class="brand-logo"
-          :src="dark ? '/brand/tulpar-ui-lockup-dark.svg' : '/brand/tulpar-ui-lockup-light.svg'"
-          alt="Tulpar UI"
-        />
-        <span class="brand-tag">Vue playground</span>
-      </div>
-      <button
-        slot="end"
-        type="button"
-        class="settings-trigger"
-        aria-label="Open settings"
-        @click="asideOpen = true"
-      >
-        <span aria-hidden="true">⚙</span>
-        <span>Settings</span>
-      </button>
+    <TulparTopbar slot="topbar">
+      <span slot="start" class="topbar-tag">Vue playground</span>
     </TulparTopbar>
 
-    <!-- ── Sidenav ──────────────────────────────────────────────────────── -->
-    <TulparSidenav slot="sidenav" nav-label="Components" :items="menu" />
+    <!-- ── Sidenav (self-contained: built-in brand, toggle, utility, account) -->
+    <TulparSidenav
+      slot="sidenav"
+      nav-label="Main navigation"
+      :items="menu"
+      :position="position"
+      :density="density"
+      :single-expand="true"
+      :show-config="true"
+      config-text="Configurator"
+      user-name="Kaan Akcan"
+      user-role="Owner"
+      :show-settings="true"
+      :show-logout="true"
+      @config="asideOpen = true"
+      @settings="asideOpen = true"
+      @logout="onLogout"
+    />
 
     <!-- ── Routed page content (default slot) ───────────────────────────── -->
     <router-view />
 
-    <!-- ── Footer ───────────────────────────────────────────────────────── -->
-    <footer slot="footer" class="app-footer">Tulpar UI · Vue playground · v0.6</footer>
-
-    <!-- ── Aside: settings drawer (dogfoods the shell's aside panel) ─────── -->
-    <section slot="aside" class="settings" aria-label="Shell settings">
+    <!-- ── Aside: configurator drawer (dogfoods the shell's aside panel) ──── -->
+    <section slot="aside" class="settings" aria-label="Shell configurator">
       <header class="settings-head">
-        <h2>Settings</h2>
+        <h2>Configurator</h2>
         <button
           type="button"
           class="settings-close"
-          aria-label="Close settings"
+          aria-label="Close configurator"
           @click="asideOpen = false"
         >
           ✕
         </button>
       </header>
-
-      <fieldset class="setting">
-        <legend>Theme</legend>
-        <div class="segmented" role="radiogroup" aria-label="Theme">
-          <label :class="{ on: !dark }">
-            <input type="radio" name="theme" :checked="!dark" @change="dark = false" />
-            <span>☾ Light</span>
-          </label>
-          <label :class="{ on: dark }">
-            <input type="radio" name="theme" :checked="dark" @change="dark = true" />
-            <span>★ Dark</span>
-          </label>
-        </div>
-      </fieldset>
 
       <fieldset class="setting">
         <legend>Sidenav mode</legend>
@@ -115,9 +176,59 @@ const menu: TulparNavItemData[] = [
         </div>
       </fieldset>
 
+      <fieldset class="setting">
+        <legend>Sidenav layout</legend>
+        <div class="segmented" role="radiogroup" aria-label="Sidenav layout">
+          <label v-for="l in layouts" :key="l.value" :class="{ on: sidenavLayout === l.value }">
+            <input
+              type="radio"
+              name="sidenav-layout"
+              :value="l.value"
+              :checked="sidenavLayout === l.value"
+              @change="sidenavLayout = l.value"
+            />
+            <span>{{ l.label }}</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset class="setting">
+        <legend>Position</legend>
+        <div class="segmented" role="radiogroup" aria-label="Sidenav position">
+          <label v-for="p in positions" :key="p.value" :class="{ on: position === p.value }">
+            <input
+              type="radio"
+              name="position"
+              :value="p.value"
+              :checked="position === p.value"
+              @change="position = p.value"
+            />
+            <span>{{ p.label }}</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset class="setting">
+        <legend>Density</legend>
+        <div class="segmented" role="radiogroup" aria-label="Sidenav density">
+          <label v-for="d in densities" :key="d.value" :class="{ on: density === d.value }">
+            <input
+              type="radio"
+              name="density"
+              :value="d.value"
+              :checked="density === d.value"
+              @change="density = d.value"
+            />
+            <span>{{ d.label }}</span>
+          </label>
+        </div>
+      </fieldset>
+
       <p class="settings-hint">
-        State persists across reloads via <code>persist-key</code>. Close with Esc, the ✕, or the
-        backdrop.
+        Brand, navigation, the Dark/Light toggle and the account block are all rendered by
+        <code>&lt;TulparSidenav&gt;</code> from props — no app markup. Sidenav mode persists
+        across reloads via <code>persist-key</code>; the rest reset on reload. Close with Esc,
+        the ✕, or the backdrop.
       </p>
     </section>
   </TulparShell>
@@ -138,54 +249,14 @@ body {
   line-height: 1.5;
 }
 
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.brand-logo {
-  display: block;
-  height: 26px;
-  width: auto;
-}
-
-.brand-tag {
+.topbar-tag {
   font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   color: var(--tulpar-color-text-muted, #74777a);
 }
 
-/* Topbar settings trigger */
-.settings-trigger {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 40px;
-  padding: 0 14px;
-  border: 1px solid var(--tulpar-color-border-default, #d9e0df);
-  border-radius: 8px;
-  background: var(--tulpar-color-bg-surface, #f0f7f5);
-  color: var(--tulpar-color-text-primary, #15110b);
-  font-family: inherit;
-  font-size: 13px;
-  cursor: pointer;
-}
-
-.settings-trigger:hover {
-  background: var(--tulpar-color-bg-subtle, #e9f1ef);
-}
-
-.settings-trigger:focus-visible {
-  outline: 2px solid var(--tulpar-color-focus-ring, rgba(81,78,207,.4));
-  outline-offset: 2px;
-}
-
-.app-footer {
-  font-size: 13px;
-  color: var(--tulpar-color-text-muted, #74777a);
-}
-
-/* ── Aside settings panel ──────────────────────────────────────────────── */
+/* ── Aside configurator panel ──────────────────────────────────────────── */
 .settings {
   display: flex;
   flex-direction: column;
@@ -226,7 +297,7 @@ body {
 }
 
 .settings-close:focus-visible {
-  outline: 2px solid var(--tulpar-color-focus-ring, rgba(81,78,207,.4));
+  outline: 2px solid var(--tulpar-color-focus-ring, rgba(81, 78, 207, 0.4));
   outline-offset: 2px;
 }
 
@@ -294,7 +365,7 @@ body {
 }
 
 .segmented label:focus-within {
-  outline: 2px solid var(--tulpar-color-focus-ring, rgba(81,78,207,.4));
+  outline: 2px solid var(--tulpar-color-focus-ring, rgba(81, 78, 207, 0.4));
   outline-offset: 2px;
 }
 

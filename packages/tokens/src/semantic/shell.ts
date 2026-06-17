@@ -1,12 +1,21 @@
 export interface ShellNavItemTokens {
+  // dimensions
   height: string;
   radius: string;
+  heightCompact: string;
+  iconSize: string;
+  // interactive colors
   bgHover: string;
   bgActive: string;
   fgActive: string;
   indicator: string;
+  glow: string;
+  // sub-component colors
   badgeBg: string;
   badgeFg: string;
+  countBg: string;
+  countFg: string;
+  dot: string;
 }
 
 export interface ShellTokens {
@@ -18,6 +27,13 @@ export interface ShellTokens {
     fg: string;
     fgMuted: string;
     border: string;
+    edge: string;
+    scrollShadow: string;
+    flyoutBg: string;
+    flyoutBorder: string;
+    flyoutHeaderFg: string;
+    flyoutDivider: string;
+    railCue: string;
     item: ShellNavItemTokens;
   };
   content: {

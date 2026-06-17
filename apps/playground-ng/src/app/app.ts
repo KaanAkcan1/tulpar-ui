@@ -1,11 +1,96 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
+import { LucideAngularModule, type LucideIconData } from 'lucide-angular';
+import {
+  BookOpen,
+  FormInput,
+  Hash,
+  Palette,
+  SquareMousePointer,
+  TextCursorInput,
+  WrapText,
+} from 'lucide-angular';
 import {
   TulparShellComponent,
   TulparTopbarComponent,
   TulparSidenavComponent,
+  type TulparNavItemNgData,
 } from '@tulpar-ui/angular';
-import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
+import type { ShellSidenavMode } from '@tulpar-ui/angular';
+
+type SidenavPosition = 'left' | 'right';
+type SidenavDensity = 'comfortable' | 'compact';
+type SidenavLayout = 'under-topbar' | 'over-topbar';
+
+/**
+ * Tiny standalone wrappers so a lucide icon (which is plain `LucideIconData`,
+ * not an Angular component) can be passed as a nav item `icon` — the sidenav
+ * wrapper projects component icons via `ngComponentOutlet`, which needs a `Type`.
+ * One declarative component per icon keeps everything AOT-friendly.
+ */
+@Component({
+  selector: 'app-icon-button',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconButton {
+  readonly icon: LucideIconData = SquareMousePointer;
+}
+@Component({
+  selector: 'app-icon-text-input',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconTextInput {
+  readonly icon: LucideIconData = TextCursorInput;
+}
+@Component({
+  selector: 'app-icon-textarea',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconTextarea {
+  readonly icon: LucideIconData = WrapText;
+}
+@Component({
+  selector: 'app-icon-number-input',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconNumberInput {
+  readonly icon: LucideIconData = Hash;
+}
+@Component({
+  selector: 'app-icon-colors',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconColors {
+  readonly icon: LucideIconData = Palette;
+}
+@Component({
+  selector: 'app-icon-form-inputs',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconFormInputs {
+  readonly icon: LucideIconData = FormInput;
+}
+@Component({
+  selector: 'app-icon-guide',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconGuide {
+  readonly icon: LucideIconData = BookOpen;
+}
 
 @Component({
   selector: 'app-root',
@@ -15,68 +100,52 @@ import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
   template: `
     <tulpar-shell-ng
       [sidenavMode]="sidenavMode()"
+      [sidenavLayout]="sidenavLayout()"
       persistKey="playground-ng-shell"
       [dark]="dark()"
       [(asideOpen)]="asideOpen"
+      (tulpar-navigate)="onNavigate($event)"
     >
       <!-- ── Topbar ───────────────────────────────────────────────────────── -->
-      <tulpar-topbar-ng slot="topbar" [showMenuButton]="true">
-        <div slot="start" class="brand">
-          <img
-            class="brand-logo"
-            [src]="dark() ? '/brand/tulpar-ui-lockup-dark.svg' : '/brand/tulpar-ui-lockup-light.svg'"
-            alt="Tulpar UI"
-          />
-          <span class="brand-tag">Angular playground</span>
-        </div>
-        <button
-          slot="end"
-          type="button"
-          class="settings-trigger"
-          aria-label="Open settings"
-          (click)="asideOpen.set(true)"
-        >
-          <span aria-hidden="true">⚙</span>
-          <span>Settings</span>
-        </button>
+      <tulpar-topbar-ng slot="topbar">
+        <span slot="start" class="topbar-tag">Angular playground</span>
       </tulpar-topbar-ng>
 
-      <!-- ── Sidenav ──────────────────────────────────────────────────────── -->
-      <tulpar-sidenav-ng slot="sidenav" navLabel="Components" [items]="menu" />
+      <!-- ── Sidenav (self-contained: built-in brand, toggle, utility, account) -->
+      <tulpar-sidenav-ng
+        slot="sidenav"
+        navLabel="Main navigation"
+        [items]="menu"
+        [position]="position()"
+        [density]="density()"
+        [singleExpand]="true"
+        [showConfig]="true"
+        configText="Configurator"
+        userName="Kaan Akcan"
+        userRole="Owner"
+        [showSettings]="true"
+        [showLogout]="true"
+        (config)="asideOpen.set(true)"
+        (settings)="asideOpen.set(true)"
+        (logout)="onLogout()"
+      />
 
       <!-- ── Routed page content (default slot) ───────────────────────────── -->
       <router-outlet />
 
-      <!-- ── Footer ───────────────────────────────────────────────────────── -->
-      <footer slot="footer" class="app-footer">Tulpar UI · Angular playground · v0.6</footer>
-
-      <!-- ── Aside: settings drawer (dogfoods the shell's aside panel) ─────── -->
-      <section slot="aside" class="settings" aria-label="Shell settings">
+      <!-- ── Aside: configurator drawer (dogfoods the shell's aside panel) ──── -->
+      <section slot="aside" class="settings" aria-label="Shell configurator">
         <header class="settings-head">
-          <h2>Settings</h2>
+          <h2>Configurator</h2>
           <button
             type="button"
             class="settings-close"
-            aria-label="Close settings"
+            aria-label="Close configurator"
             (click)="asideOpen.set(false)"
           >
             ✕
           </button>
         </header>
-
-        <fieldset class="setting">
-          <legend>Theme</legend>
-          <div class="segmented" role="radiogroup" aria-label="Theme">
-            <label [class.on]="!dark()">
-              <input type="radio" name="theme" [checked]="!dark()" (change)="dark.set(false)" />
-              <span>☾ Light</span>
-            </label>
-            <label [class.on]="dark()">
-              <input type="radio" name="theme" [checked]="dark()" (change)="dark.set(true)" />
-              <span>★ Dark</span>
-            </label>
-          </div>
-        </fieldset>
 
         <fieldset class="setting">
           <legend>Sidenav mode</legend>
@@ -95,9 +164,62 @@ import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
           </div>
         </fieldset>
 
+        <fieldset class="setting">
+          <legend>Sidenav layout</legend>
+          <div class="segmented" role="radiogroup" aria-label="Sidenav layout">
+            @for (l of layouts; track l.value) {
+              <label [class.on]="sidenavLayout() === l.value">
+                <input
+                  type="radio"
+                  name="sidenav-layout"
+                  [checked]="sidenavLayout() === l.value"
+                  (change)="sidenavLayout.set(l.value)"
+                />
+                <span>{{ l.label }}</span>
+              </label>
+            }
+          </div>
+        </fieldset>
+
+        <fieldset class="setting">
+          <legend>Position</legend>
+          <div class="segmented" role="radiogroup" aria-label="Sidenav position">
+            @for (p of positions; track p.value) {
+              <label [class.on]="position() === p.value">
+                <input
+                  type="radio"
+                  name="position"
+                  [checked]="position() === p.value"
+                  (change)="position.set(p.value)"
+                />
+                <span>{{ p.label }}</span>
+              </label>
+            }
+          </div>
+        </fieldset>
+
+        <fieldset class="setting">
+          <legend>Density</legend>
+          <div class="segmented" role="radiogroup" aria-label="Sidenav density">
+            @for (d of densities; track d.value) {
+              <label [class.on]="density() === d.value">
+                <input
+                  type="radio"
+                  name="density"
+                  [checked]="density() === d.value"
+                  (change)="density.set(d.value)"
+                />
+                <span>{{ d.label }}</span>
+              </label>
+            }
+          </div>
+        </fieldset>
+
         <p class="settings-hint">
-          State persists across reloads via <code>persistKey</code>. Close with Esc, the ✕, or the
-          backdrop.
+          Brand, navigation, the Dark/Light toggle and the account block are all
+          rendered by <code>&lt;tulpar-sidenav-ng&gt;</code> from props — no app markup.
+          Sidenav mode persists across reloads via <code>persistKey</code>; the rest
+          reset on reload. Close with Esc, the ✕, or the backdrop.
         </p>
       </section>
     </tulpar-shell-ng>
@@ -108,53 +230,14 @@ import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
         display: block;
       }
 
-      .brand {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .brand-logo {
-        display: block;
-        height: 26px;
-        width: auto;
-      }
-
-      .brand-tag {
+      .topbar-tag {
         font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.01em;
         color: var(--tulpar-color-text-muted, #74777a);
       }
 
-      .settings-trigger {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        min-height: 40px;
-        padding: 0 14px;
-        border: 1px solid var(--tulpar-color-border-default, #d9e0df);
-        border-radius: 8px;
-        background: var(--tulpar-color-bg-surface, #f0f7f5);
-        color: var(--tulpar-color-text-primary, #15110b);
-        font-family: inherit;
-        font-size: 13px;
-        cursor: pointer;
-      }
-
-      .settings-trigger:hover {
-        background: var(--tulpar-color-bg-subtle, #e9f1ef);
-      }
-
-      .settings-trigger:focus-visible {
-        outline: 2px solid var(--tulpar-color-focus-ring, rgba(81,78,207,.4));
-        outline-offset: 2px;
-      }
-
-      .app-footer {
-        font-size: 13px;
-        color: var(--tulpar-color-text-muted, #74777a);
-      }
-
-      /* ── Aside settings panel ──────────────────────────────────────────── */
+      /* ── Aside configurator panel ──────────────────────────────────────── */
       .settings {
         display: flex;
         flex-direction: column;
@@ -195,7 +278,7 @@ import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
       }
 
       .settings-close:focus-visible {
-        outline: 2px solid var(--tulpar-color-focus-ring, rgba(81,78,207,.4));
+        outline: 2px solid var(--tulpar-color-focus-ring, rgba(81, 78, 207, 0.4));
         outline-offset: 2px;
       }
 
@@ -261,7 +344,7 @@ import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
       }
 
       .segmented label:focus-within {
-        outline: 2px solid var(--tulpar-color-focus-ring, rgba(81,78,207,.4));
+        outline: 2px solid var(--tulpar-color-focus-ring, rgba(81, 78, 207, 0.4));
         outline-offset: 2px;
       }
 
@@ -289,14 +372,72 @@ import type { TulparNavItemData, ShellSidenavMode } from '@tulpar-ui/angular';
   ],
 })
 export class App {
-  /** Dark-mode flag — forwarded to the shell, which toggles the `.dark` class. */
+  private readonly router = inject(Router);
+
+  /**
+   * SPA navigation: the sidenav links (inline AND rail flyout) dispatch the
+   * cancelable `tulpar-navigate` event. Intercept it, prevent the native full-page
+   * navigation, and route via the Angular Router so app state (sidenav mode,
+   * collapsed, dark) survives. Then notify the web components to refresh their
+   * active state (they listen for `tulpar-location-changed`).
+   */
+  onNavigate(e: Event) {
+    const ce = e as CustomEvent<{ href?: string }>;
+    const href = ce.detail?.href;
+    if (!href) return;
+    ce.preventDefault();
+    void this.router.navigateByUrl(href).then(() => {
+      window.dispatchEvent(new Event('tulpar-location-changed'));
+    });
+  }
+
+  /** Initial dark-mode state — the built-in sidenav toggle flips it from here on. */
   readonly dark = signal(false);
 
-  /** Sidenav mode — bound to the shell, switchable live from the settings drawer. */
+  /** Sidenav mode — bound to the shell, switchable live from the configurator. */
   readonly sidenavMode = signal<ShellSidenavMode>('static');
 
-  /** Aside (settings) drawer open state — two-way bound to the shell. */
+  /** Sidenav layout (under/over the topbar) — dogfood the new shell input. */
+  readonly sidenavLayout = signal<SidenavLayout>('under-topbar');
+
+  /** Sidenav position + density — dogfood the new sidenav inputs from the aside. */
+  readonly position = signal<SidenavPosition>('left');
+  readonly density = signal<SidenavDensity>('comfortable');
+
+  /** Aside (configurator) drawer open state — two-way bound to the shell. */
   readonly asideOpen = signal(false);
+
+  /** Data-driven menu with lucide component icons handled by the wrapper. */
+  readonly menu: TulparNavItemNgData[] = [
+    {
+      type: 'section',
+      label: 'Components',
+      items: [
+        { label: 'Button', href: '/button', icon: IconButton },
+        // Collapsible group: a nav-item with its own `items` renders as an
+        // expandable group with a chevron. Demonstrates nesting + single-expand.
+        {
+          label: 'Form Inputs',
+          icon: IconFormInputs,
+          items: [
+            { label: 'TextInput', href: '/text-input', icon: IconTextInput },
+            { label: 'Textarea', href: '/textarea', icon: IconTextarea },
+            { label: 'NumberInput', href: '/number-input', icon: IconNumberInput },
+          ],
+        },
+      ],
+    },
+    {
+      type: 'section',
+      label: 'Foundations',
+      items: [{ label: 'Colors', href: '/colors', icon: IconColors }],
+    },
+    {
+      type: 'section',
+      label: 'Guides',
+      items: [{ label: 'Sidebar & Theme', href: '/guide', icon: IconGuide }],
+    },
+  ];
 
   readonly sidenavModes: { value: ShellSidenavMode; label: string }[] = [
     { value: 'static', label: 'Static' },
@@ -304,17 +445,23 @@ export class App {
     { value: 'rail', label: 'Rail' },
   ];
 
-  /** Sidenav menu — hrefs map 1:1 to the routes declared in app.routes.ts. */
-  readonly menu: TulparNavItemData[] = [
-    {
-      label: 'Components',
-      items: [
-        { label: 'Button', href: '/button' },
-        { label: 'TextInput', href: '/text-input' },
-        { label: 'Textarea', href: '/textarea' },
-        { label: 'NumberInput', href: '/number-input' },
-        { label: 'Colors', href: '/colors' },
-      ],
-    },
+  readonly layouts: { value: SidenavLayout; label: string }[] = [
+    { value: 'under-topbar', label: 'Under topbar' },
+    { value: 'over-topbar', label: 'Over topbar' },
   ];
+
+  readonly positions: { value: SidenavPosition; label: string }[] = [
+    { value: 'left', label: 'Left' },
+    { value: 'right', label: 'Right' },
+  ];
+
+  readonly densities: { value: SidenavDensity; label: string }[] = [
+    { value: 'comfortable', label: 'Comfortable' },
+    { value: 'compact', label: 'Compact' },
+  ];
+
+  onLogout() {
+    // Placeholder action — a real app would clear the session and redirect.
+    console.info('[playground-ng] logout requested');
+  }
 }

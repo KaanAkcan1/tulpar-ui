@@ -27,6 +27,7 @@ export type { ShellSidenavMode, ShellState };
   template: `
     <tulpar-shell
       [attr.sidenav-mode]="sidenavMode()"
+      [attr.sidenav-layout]="sidenavLayout()"
       [attr.mobile-breakpoint]="mobileBreakpoint()"
       [attr.sidenav-collapsed]="sidenavCollapsed() ? '' : null"
       [attr.aside-open]="asideOpen() ? '' : null"
@@ -47,6 +48,7 @@ export type { ShellSidenavMode, ShellState };
 })
 export class TulparShellComponent {
   readonly sidenavMode = input<ShellSidenavMode>("static");
+  readonly sidenavLayout = input<"under-topbar" | "over-topbar">("under-topbar");
   readonly mobileBreakpoint = input<string>("(max-width: 991px)");
   readonly sidenavCollapsed = input<boolean>(false);
   readonly asideOpen = model<boolean>(false);

@@ -5,5 +5,4 @@ body {
   background: var(--tulpar-color-bg-surface);
   color: var(--tulpar-color-text-primary);
   margin: 0;
-  padding: 2rem;
 }
