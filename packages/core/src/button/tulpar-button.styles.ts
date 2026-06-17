@@ -28,6 +28,11 @@ export const buttonStyles = css`
     /* Default icon size — sized rules below override per size attr. */
     --_btn-icon-size: 16px;
 
+    /* Default press transform — overridden to none by the reduced-motion
+       media query via a host-level var, so all :active rules read the
+       updated value without needing to win a specificity war. */
+    --_btn-press-transform: translateY(0.5px) scale(0.985);
+
     /* Default separator color — variant rules override (solid uses
        rgba on white text; link uses transparent). */
     --_btn-separator: var(--tulpar-color-border-default, ${FB_BORDER});
@@ -150,6 +155,7 @@ export const buttonStyles = css`
   }
 
   /* Weighted per-property durations for solid/raised (shadow lags, transform snaps) */
+  /* order: background-color, border-color, color, box-shadow (lags, 200ms), transform (snaps, 90ms) */
   :host([raised]) .btn,
   :host([variant="solid"]) .btn,
   :host(:not([variant])) .btn {
@@ -371,13 +377,13 @@ export const buttonStyles = css`
    * ============================================================ */
   :host([variant="solid"]) .btn:active,
   :host(:not([variant])) .btn:active {
-    transform: translateY(0.5px) scale(0.985);
+    transform: var(--_btn-press-transform);
     box-shadow: var(--tulpar-button-shadow-press);
     transition-duration: var(--tulpar-button-press-duration, 80ms);
   }
   :host([variant="outlined"]) .btn:active,
   :host([variant="ghost"]) .btn:active {
-    transform: translateY(0.5px) scale(0.985);
+    transform: var(--_btn-press-transform);
   }
 
   /* Optional hover lift for outlined/ghost */
@@ -449,6 +455,7 @@ export const buttonStyles = css`
   :host([disabled]) .btn,
   :host([data-disabled]) .btn {
     background: var(--tulpar-button-disabled-bg);
+    background-image: none;
     color: var(--tulpar-button-disabled-fg);
     border-color: var(--tulpar-button-disabled-border);
     box-shadow: none;
@@ -542,8 +549,11 @@ export const buttonStyles = css`
     .btn {
       transition: none;
     }
-    .btn:active {
-      transform: none;
+    /* Override the press transform var at the host level — because all :active
+       rules read transform via var(--_btn-press-transform), setting it to none
+       here wins without needing to out-specificity any individual :active rule. */
+    :host {
+      --_btn-press-transform: none;
     }
   }
 
@@ -578,6 +588,24 @@ export const buttonStyles = css`
   :host([severity="premium"][variant="solid"]) .btn {
     background-image: var(--tulpar-button-premium-sheen);
     box-shadow: var(--tulpar-button-shadow-rest), var(--tulpar-button-premium-ambient);
+  }
+  /* Bug fix: premium static rule is (0,3,0) which outranks the base hover/press
+     shadow rules (0,2,1). Add premium-specific state rules at (0,3,1) so hover
+     and press shadows are visible on premium-solid buttons. */
+  :host([severity="premium"][variant="solid"]) .btn:hover {
+    box-shadow: var(--tulpar-button-shadow-hover), var(--tulpar-button-premium-ambient);
+  }
+  :host([severity="premium"][variant="solid"]) .btn:active {
+    box-shadow: var(--tulpar-button-shadow-press);
+  }
+
+  /* Bug fix: disabled premium-solid — the premium static rule (0,3,0) outranks
+     the disabled rule (0,2,0), so premium-disabled still shows sheen + glow.
+     Reset both at (0,4,0) so disabled always reads as inert. */
+  :host([disabled][severity="premium"][variant="solid"]) .btn,
+  :host([data-disabled][severity="premium"][variant="solid"]) .btn {
+    background-image: none;
+    box-shadow: none;
   }
 
   /* ============================================================
