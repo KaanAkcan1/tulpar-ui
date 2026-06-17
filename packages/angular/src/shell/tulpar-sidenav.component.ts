@@ -178,6 +178,8 @@ export class TulparSidenavComponent {
   readonly logout = output<void>();
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  /** Modern signal-era cleanup (NOT RxJS) — registers teardown for the observer below. */
+  private readonly destroyRef = inject(DestroyRef);
 
   /**
    * True when items must be rendered in light DOM (component icons present).
@@ -211,7 +213,6 @@ export class TulparSidenavComponent {
     // the inner <tulpar-sidenav> that reads them. Mirror them down so rail/collapse
     // actually reach the core element (Vue needs no equivalent: its root IS the
     // core element). Without this, Angular rail mode renders broken.
-    const destroyRef = inject(DestroyRef);
     afterNextRender(() => {
       const wrapper = this.host.nativeElement;
       const inner = wrapper.querySelector("tulpar-sidenav");
@@ -226,7 +227,7 @@ export class TulparSidenavComponent {
       sync();
       const obs = new MutationObserver(sync);
       obs.observe(wrapper, { attributes: true, attributeFilter: STATE_ATTRS });
-      destroyRef.onDestroy(() => obs.disconnect());
+      this.destroyRef.onDestroy(() => obs.disconnect());
     });
   }
 }
