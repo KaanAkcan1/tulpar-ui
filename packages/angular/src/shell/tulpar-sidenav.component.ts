@@ -62,6 +62,8 @@ function hasComponentIcon(items: TulparNavItemNgData[] | undefined): boolean {
       [attr.show-config]="showConfig() ? '' : null"
       [attr.config-text]="configText() ?? null"
       [attr.theme-label]="themeLabel() ?? null"
+      [attr.theme-text-dark]="themeTextDark() ?? null"
+      [attr.theme-text-light]="themeTextLight() ?? null"
       [attr.config-label]="configLabel() ?? null"
       [attr.show-account-block]="showAccountBlock() ? '' : null"
       [attr.user-name]="userName() ?? null"
@@ -148,6 +150,8 @@ export class TulparSidenavComponent {
   readonly showConfig = input<boolean>(false);
   readonly configText = input<string | undefined>(undefined);
   readonly themeLabel = input<string | undefined>(undefined);
+  readonly themeTextDark = input<string | undefined>(undefined);
+  readonly themeTextLight = input<string | undefined>(undefined);
   readonly configLabel = input<string | undefined>(undefined);
 
   readonly showAccountBlock = input<boolean>(true);

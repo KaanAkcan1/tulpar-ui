@@ -36,6 +36,8 @@ interface Props {
   showConfig?: boolean;
   configText?: string;
   themeLabel?: string;
+  themeTextDark?: string;
+  themeTextLight?: string;
   configLabel?: string;
   showAccountBlock?: boolean;
   userName?: string;
@@ -150,6 +152,8 @@ watchEffect(() => {
     :show-config="showConfig || undefined"
     :config-text="configText ?? undefined"
     :theme-label="themeLabel ?? undefined"
+    :theme-text-dark="themeTextDark ?? undefined"
+    :theme-text-light="themeTextLight ?? undefined"
     :config-label="configLabel ?? undefined"
     :show-account-block="showAccountBlock || undefined"
     :user-name="userName ?? undefined"
