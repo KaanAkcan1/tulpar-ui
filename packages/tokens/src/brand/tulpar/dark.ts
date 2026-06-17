@@ -241,8 +241,11 @@ export const tulparDark: SemanticTokens = {
 
   easing: { decelerate: primitiveTransition.easing.decelerate },
   shadow: {
+    // dark mode is border-led: sm/md intentionally reuse the navy-tinted primitives
+    // (low-contrast on dark surfaces by design — do not "fix" by darkening them).
     sm: primitiveShadow.sm,
     md: primitiveShadow.md,
+    // flyout keeps its own pure-black contact shadow so the popover still separates.
     flyout: "0 2px 4px rgba(0, 0, 0, 0.32), 0 8px 20px rgba(0, 0, 0, 0.28)",
   },
 };
