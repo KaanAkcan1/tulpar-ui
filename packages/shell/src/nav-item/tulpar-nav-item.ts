@@ -89,6 +89,10 @@ export class TulparNavItem extends LitElement {
     const closeKey = rightSide ? "ArrowRight" : "ArrowLeft";
     if ((e.key === openKey || e.key === "Enter" || e.key === " ") && !this._flyoutVisible) {
       e.preventDefault();
+      // Stop the sidenav's arrow-key handler from also running expand()/collapse():
+      // in rail mode the flyout is the disclosure, and inline _expanded must NOT be
+      // mutated (B2: rail suppresses-but-preserves inline expansion).
+      e.stopPropagation();
       this._pinned = true;
       this._showRailFlyout();
       this.updateComplete.then(() => {
@@ -96,6 +100,7 @@ export class TulparNavItem extends LitElement {
       });
     } else if (e.key === "Escape" || (e.key === closeKey && this._flyoutVisible)) {
       e.preventDefault();
+      e.stopPropagation();
       this._onFlyoutHide();
       this._suppressNextFocusOpen = true;
       this.shadowRoot?.querySelector<HTMLElement>("button, a")?.focus();
@@ -283,6 +288,11 @@ export class TulparNavItem extends LitElement {
   }
 
   expand() {
+    // B2: in rail mode the flyout is the disclosure; inline expansion is
+    // suppressed-but-preserved, so external expand() calls (e.g. the sidenav's
+    // ArrowRight handler) must NOT mutate _expanded. Guarding here makes the
+    // invariant robust regardless of event-propagation paths.
+    if (this.hasAttribute("data-rail")) return;
     if (!this._hasChildren || this._expanded) return;
     this._expanded = true;
     this.dispatchEvent(
@@ -291,6 +301,7 @@ export class TulparNavItem extends LitElement {
   }
 
   collapse() {
+    if (this.hasAttribute("data-rail")) return; // B2: never mutate inline state in rail
     this._expanded = false;
   }
 

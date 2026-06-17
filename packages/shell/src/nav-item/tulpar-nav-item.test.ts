@@ -2,6 +2,7 @@ import { fixture, html, expect, oneEvent } from "@open-wc/testing";
 import "./tulpar-nav-item";
 import "../sidenav/tulpar-sidenav";
 import type { TulparNavItem } from "./tulpar-nav-item";
+import type { TulparSidenav } from "../sidenav/tulpar-sidenav";
 
 describe("<tulpar-nav-item>", () => {
   it("renders a real anchor with href", async () => {
@@ -236,6 +237,35 @@ describe("<tulpar-nav-item>", () => {
     el.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
     await el.updateComplete;
     expect(trigger.getAttribute("aria-expanded")).to.equal("true");
+  });
+
+  it("rail ArrowRight opens the flyout without mutating inline expanded state (B2)", async () => {
+    // The sidenav's own arrow handler calls expand(); the nav-item must
+    // stopPropagation in rail so inline _expanded is never flipped — otherwise
+    // leaving rail would reveal a group that wasn't expanded before.
+    const el = await fixture<TulparSidenav>(html`
+      <tulpar-sidenav data-rail>
+        <tulpar-nav-item label="Group" icon="<svg></svg>">
+          <tulpar-nav-item href="/c" label="Child"></tulpar-nav-item>
+        </tulpar-nav-item>
+      </tulpar-sidenav>
+    `);
+    await el.updateComplete;
+    const group = el.querySelector("tulpar-nav-item") as TulparNavItem;
+    await group.updateComplete;
+    group.shadowRoot!.querySelector<HTMLElement>("button")!.focus();
+    group.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }),
+    );
+    await group.updateComplete;
+    // Flyout opened (rail aria-expanded true), but leaving rail must show the
+    // group still collapsed — inline _expanded was never mutated.
+    group.removeAttribute("data-rail");
+    el.removeAttribute("data-rail");
+    await group.updateComplete;
+    expect(group.shadowRoot!.querySelector("button")!.getAttribute("aria-expanded")).to.equal(
+      "false",
+    );
   });
 
   it("Escape closes the flyout and the flyout id matches aria-controls", async () => {
