@@ -160,6 +160,107 @@ export const navItemStyles = css`
     display: none;
   }
 
+  /* Group flyout panel (overrides base .rail-flyout tooltip defaults) */
+  :host([data-rail]) .rail-flyout.is-group {
+    padding: 6px;
+    min-width: 200px;
+    max-width: 280px;
+    white-space: normal;
+    pointer-events: auto;
+    overflow: visible;
+    border-radius: 0.5rem;
+    background: var(--tulpar-shell-sidenav-flyout-bg, #ffffff);
+    border: 1px solid var(--tulpar-shell-sidenav-flyout-border, #d9e0df);
+    box-shadow: var(--tulpar-shadow-flyout, 0 4px 6px -2px rgba(10, 37, 64, 0.1), 0 12px 28px -6px rgba(10, 37, 64, 0.14));
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-header {
+    display: flex;
+    align-items: center;
+    min-height: 1.75rem;
+    padding: 0 0.5rem 0.375rem;
+    margin-bottom: 2px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--tulpar-shell-sidenav-flyout-header-fg, #636568);
+    border-bottom: 1px solid var(--tulpar-shell-sidenav-flyout-divider, #d9e0df);
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2rem;
+    padding: 0 0.5rem;
+    border-radius: 0.375rem;
+    color: var(--tulpar-shell-sidenav-fg, #27231d);
+    font-size: 0.875rem;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background-color 120ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1));
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-link:hover {
+    background: var(--tulpar-shell-sidenav-item-bg-hover, #e9f1ef);
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-link[aria-current="page"] {
+    background: var(--tulpar-shell-sidenav-item-bg-active, #deffea);
+    color: var(--tulpar-shell-sidenav-item-fg-active, #0b7e52);
+    font-weight: 600;
+  }
+  :host([data-rail]) .rail-flyout.is-group .flyout-link:focus-visible {
+    outline: 2px solid var(--tulpar-color-focus-ring, #514ecf);
+    outline-offset: -2px;
+  }
+
+  /* Caret notch (rotated square; fill + 1px border) */
+  :host([data-rail]) .rail-flyout.is-group .flyout-caret {
+    position: absolute;
+    top: var(--flyout-caret-y, 20px);
+    width: 8px;
+    height: 8px;
+    transform: translateY(-50%) rotate(45deg);
+    background: var(--tulpar-shell-sidenav-flyout-bg, #ffffff);
+    left: -5px;
+    border-left: 1px solid var(--tulpar-shell-sidenav-flyout-border, #d9e0df);
+    border-top: 1px solid var(--tulpar-shell-sidenav-flyout-border, #d9e0df);
+  }
+  :host([data-rail]) .rail-flyout.is-group.is-right .flyout-caret {
+    left: auto;
+    right: -5px;
+    border-left: none;
+    border-top: none;
+    border-right: 1px solid var(--tulpar-shell-sidenav-flyout-border, #d9e0df);
+    border-bottom: 1px solid var(--tulpar-shell-sidenav-flyout-border, #d9e0df);
+  }
+
+  /* Chevron discoverability cue on group icons */
+  :host([data-rail]) a,
+  :host([data-rail]) button {
+    justify-content: center;
+  }
+  :host([data-rail]) .chevron.rail-cue {
+    display: block;
+    position: absolute;
+    right: calc(50% - 20px + 2px);
+    bottom: calc(50% - 20px + 2px);
+    margin: 0;
+    font-size: 0.6875rem;
+    line-height: 1;
+    color: var(--tulpar-shell-sidenav-rail-cue, #74777a);
+    opacity: 0.5;
+    transform: none;
+    transition: opacity 120ms var(--tulpar-easing-decelerate, cubic-bezier(0, 0, 0.2, 1));
+    pointer-events: none;
+  }
+  :host([data-rail]) a:hover .chevron.rail-cue,
+  :host([data-rail]) button:hover .chevron.rail-cue {
+    opacity: 1;
+  }
+
   /* Rail flyout: fixed-position label tooltip that escapes overflow-x:clip (B3) */
   .rail-flyout {
     position: fixed;

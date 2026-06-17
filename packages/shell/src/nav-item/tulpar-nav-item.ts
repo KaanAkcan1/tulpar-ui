@@ -67,6 +67,10 @@ export class TulparNavItem extends LitElement {
   @state() private _flyoutTop = 0;
   @state() private _flyoutLeft: number | null = null;
   @state() private _flyoutRight: number | null = null;
+  /** Caret Y offset relative to the flyout top, pinned to the trigger icon center. */
+  @state() private _flyoutCaretY: number | null = null;
+  /** Child model for the group flyout panel. */
+  @state() private _childModel: { href?: string; label: string; active?: boolean }[] = [];
 
   private _onLocationChange = () => {
     this._urlActive = this.href != null && location.pathname === this.href;
@@ -144,14 +148,17 @@ export class TulparNavItem extends LitElement {
 
   private _onSlotChange(e: Event) {
     const slot = e.target as HTMLSlotElement;
-    this._hasChildren = slot.assignedElements().some((el) => {
-      // Direct nav item (core/Vue path) OR the Angular wrapper tag OR any element
-      // (e.g. a display:contents wrapper) that *contains* a nav item.
-      return (
-        el.matches("tulpar-nav-item, tulpar-nav-item-ng") ||
-        el.querySelector("tulpar-nav-item, tulpar-nav-item-ng") != null
-      );
-    });
+    const navItems: TulparNavItem[] = [];
+    for (const el of slot.assignedElements()) {
+      if (el.matches("tulpar-nav-item")) navItems.push(el as TulparNavItem);
+      else el.querySelectorAll?.("tulpar-nav-item").forEach((n) => navItems.push(n as TulparNavItem));
+    }
+    this._hasChildren = navItems.length > 0;
+    this._childModel = navItems.map((n) => ({
+      href: n.href,
+      label: n.label,
+      active: n.active ?? false,
+    }));
   }
 
   private _onClick(e: MouseEvent) {
@@ -226,24 +233,49 @@ export class TulparNavItem extends LitElement {
           @focusout=${this._onAnchorFocusOut}
         >
           ${this._renderInner()}
-          ${this._hasChildren ? html`<span class="chevron" aria-hidden="true">›</span>` : nothing}
+          ${this._hasChildren ? html`<span class="chevron ${isRail ? "rail-cue" : ""}" aria-hidden="true">›</span>` : nothing}
         </button>`;
 
     return html`
       ${link}
       ${isRail
-        ? html`<span
-            class="rail-flyout"
-            style=${styleMap({
-              position: "fixed",
-              top: `${this._flyoutTop}px`,
-              ...(this._flyoutLeft !== null ? { left: `${this._flyoutLeft}px` } : {}),
-              ...(this._flyoutRight !== null ? { right: `${this._flyoutRight}px` } : {}),
-              display: this._flyoutVisible ? "" : "none",
-            })}
-            aria-hidden="true"
-            >${this.label}</span
-          >`
+        ? this._hasChildren
+          ? html`<div
+              class="rail-flyout is-group ${this.closest("tulpar-sidenav")?.getAttribute("position") === "right" ? "is-right" : ""}"
+              role="group"
+              aria-label=${this.label}
+              style=${styleMap({
+                position: "fixed",
+                top: `${this._flyoutTop}px`,
+                ...(this._flyoutLeft !== null ? { left: `${this._flyoutLeft}px` } : {}),
+                ...(this._flyoutRight !== null ? { right: `${this._flyoutRight}px` } : {}),
+                ...(this._flyoutCaretY != null ? { "--flyout-caret-y": `${this._flyoutCaretY}px` } : {}),
+                display: this._flyoutVisible ? "" : "none",
+              })}
+            >
+              <span class="flyout-caret" aria-hidden="true"></span>
+              <div class="flyout-header">${this.label}</div>
+              ${this._childModel.map(
+                (c) => html`<a
+                  class="flyout-link"
+                  href=${c.href ?? nothing}
+                  aria-current=${c.active ? "page" : nothing}
+                  >${c.label}</a
+                >`,
+              )}
+            </div>`
+          : html`<span
+              class="rail-flyout"
+              style=${styleMap({
+                position: "fixed",
+                top: `${this._flyoutTop}px`,
+                ...(this._flyoutLeft !== null ? { left: `${this._flyoutLeft}px` } : {}),
+                ...(this._flyoutRight !== null ? { right: `${this._flyoutRight}px` } : {}),
+                display: this._flyoutVisible ? "" : "none",
+              })}
+              aria-hidden="true"
+              >${this.label}</span
+            >`
         : nothing}
       <div class="children" role="group" ?hidden=${this._hasChildren && !this._expanded}>
         <slot @slotchange=${this._onSlotChange}></slot>

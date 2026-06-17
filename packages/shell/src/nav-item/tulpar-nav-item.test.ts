@@ -222,6 +222,22 @@ describe("<tulpar-nav-item>", () => {
     expect(getComputedStyle(childGroup).display).to.not.equal("none");
   });
 
+  it("rail group shows a flyout panel with header + child links", async () => {
+    const el = await fixture<TulparNavItem>(html`
+      <tulpar-nav-item label="Form Inputs" icon="<svg></svg>" data-rail>
+        <tulpar-nav-item href="/text" label="TextInput"></tulpar-nav-item>
+        <tulpar-nav-item href="/area" label="Textarea"></tulpar-nav-item>
+      </tulpar-nav-item>
+    `);
+    await el.updateComplete;
+    const flyout = el.shadowRoot!.querySelector(".rail-flyout")!;
+    expect(flyout.classList.contains("is-group"), "group variant").to.be.true;
+    expect(flyout.querySelector(".flyout-header")!.textContent).to.include("Form Inputs");
+    const links = flyout.querySelectorAll(".flyout-link");
+    expect(links.length).to.equal(2);
+    expect((links[0] as HTMLAnchorElement).getAttribute("href")).to.equal("/text");
+  });
+
   it("rail flyout on right-side sidenav is positioned to the LEFT of the item (B3-right)", async () => {
     // Wrap the nav-item inside a position="right" sidenav so that
     // closest("tulpar-sidenav")?.getAttribute("position") resolves to "right".
