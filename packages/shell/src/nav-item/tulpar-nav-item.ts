@@ -29,6 +29,15 @@ export class TulparNavItem extends LitElement {
   };
   static override styles = navItemStyles;
 
+  static override get observedAttributes() {
+    return [...super.observedAttributes, "data-rail"];
+  }
+
+  override attributeChangedCallback(name: string, oldVal: string | null, newVal: string | null) {
+    super.attributeChangedCallback(name, oldVal, newVal);
+    if (name === "data-rail") this.requestUpdate();
+  }
+
   @property({ type: String }) href?: string;
   @property({ type: String }) label = "";
   /** Raw SVG string rendered via unsafeSVG. `icon` is author-controlled markup, not user input. */

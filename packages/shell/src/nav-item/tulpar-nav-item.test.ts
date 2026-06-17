@@ -187,6 +187,41 @@ describe("<tulpar-nav-item>", () => {
     expect(el.shadowRoot!.querySelector(".chevron"), "chevron shown").to.exist;
   });
 
+  it("requests an update when data-rail is toggled at runtime", async () => {
+    const el = await fixture<TulparNavItem>(
+      html`<tulpar-nav-item label="Group" icon="<svg></svg>"></tulpar-nav-item>`,
+    );
+    await el.updateComplete;
+    el.toggleAttribute("data-rail", true);
+    // If data-rail is observed, a new update is pending → hasUpdated stays true and the
+    // returned promise resolves on the next render. Spy via isUpdatePending.
+    expect((el as unknown as { isUpdatePending: boolean }).isUpdatePending).to.be.true;
+    await el.updateComplete;
+  });
+
+  it("rail mode hides inline children without mutating expanded state", async () => {
+    const el = await fixture<TulparNavItem>(html`
+      <tulpar-nav-item label="Group" icon="<svg></svg>">
+        <tulpar-nav-item href="/c" label="Child"></tulpar-nav-item>
+      </tulpar-nav-item>
+    `);
+    await el.updateComplete;
+    el.expand();
+    await el.updateComplete;
+    const childGroup = el.shadowRoot!.querySelector(".children") as HTMLElement;
+    expect(getComputedStyle(childGroup).display).to.not.equal("none"); // expanded, visible
+
+    // Enter rail: inline children hidden, but state preserved
+    el.toggleAttribute("data-rail", true);
+    await el.updateComplete;
+    expect(getComputedStyle(childGroup).display).to.equal("none");
+
+    // Leave rail: inline children restored (state was never mutated)
+    el.toggleAttribute("data-rail", false);
+    await el.updateComplete;
+    expect(getComputedStyle(childGroup).display).to.not.equal("none");
+  });
+
   it("rail flyout on right-side sidenav is positioned to the LEFT of the item (B3-right)", async () => {
     // Wrap the nav-item inside a position="right" sidenav so that
     // closest("tulpar-sidenav")?.getAttribute("position") resolves to "right".

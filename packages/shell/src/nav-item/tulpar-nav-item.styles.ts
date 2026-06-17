@@ -154,6 +154,12 @@ export const navItemStyles = css`
     display: none;
   }
 
+  /* Rail: inline children never render in the strip — they appear in the flyout.
+     Expanded state is preserved (not toggled), so leaving rail restores it. */
+  :host([data-rail]) .children {
+    display: none;
+  }
+
   /* Rail flyout: fixed-position label tooltip that escapes overflow-x:clip (B3) */
   .rail-flyout {
     position: fixed;
