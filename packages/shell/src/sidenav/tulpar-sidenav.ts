@@ -109,6 +109,18 @@ export class TulparSidenav extends LitElement {
   /** True when a [slot=footer] child is present in light DOM. */
   @state() _hasFooterSlot = false;
 
+  /** Mirrors global .dark class on documentElement; self-reflected as data-dark. */
+  @state() private _dark = false;
+  private _darkObserver: MutationObserver | null = null;
+
+  private _syncDark = () => {
+    const dark = document.documentElement.classList.contains("dark");
+    if (dark !== this._dark) {
+      this._dark = dark;
+      this.toggleAttribute("data-dark", dark);
+    }
+  };
+
   private _attrObserver: MutationObserver | null = null;
 
   private _renderItem(item: TulparNavItemData): unknown {
@@ -246,6 +258,13 @@ export class TulparSidenav extends LitElement {
     this._hasUtilityStart = !!this.querySelector(':scope > [slot="utility-start"]');
     this._hasUtilityEnd = !!this.querySelector(':scope > [slot="utility-end"]');
     this._hasFooterSlot = !!this.querySelector(':scope > [slot="footer"]');
+    // Sync dark mode from documentElement and observe future changes
+    this._syncDark();
+    this._darkObserver = new MutationObserver(this._syncDark);
+    this._darkObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
     this._attrObserver = new MutationObserver(() => {
       this.requestUpdate();
       this._reflectRail();
@@ -272,6 +291,8 @@ export class TulparSidenav extends LitElement {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.removeEventListener("tulpar-nav-item-expand", this._onItemExpand);
+    this._darkObserver?.disconnect();
+    this._darkObserver = null;
     this._attrObserver?.disconnect();
     this._attrObserver = null;
   }

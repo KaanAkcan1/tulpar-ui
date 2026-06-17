@@ -306,4 +306,39 @@ describe("<tulpar-sidenav>", () => {
     await (item as LitElement).updateComplete;
     expect(item.shadowRoot!.querySelector("svg.probe")).to.exist;
   });
+
+  // ── Chunk 2 (A2): dark observer + theme-text props ──────────────────────
+
+  it("tracks global .dark on documentElement and self-reflects data-dark", async () => {
+    document.documentElement.classList.remove("dark");
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav></tulpar-sidenav>`);
+    await el.updateComplete;
+    expect(el.hasAttribute("data-dark")).to.be.false;
+    document.documentElement.classList.add("dark");
+    await el.updateComplete;
+    expect(el.hasAttribute("data-dark")).to.be.true;
+    document.documentElement.classList.remove("dark"); // cleanup
+    await el.updateComplete;
+    expect(el.hasAttribute("data-dark")).to.be.false;
+  });
+
+  it("theme toggle shows the target mode label, overridable, synced to dark mode", async () => {
+    document.documentElement.classList.remove("dark");
+    const el = await fixture<TulparSidenav>(
+      html`<tulpar-sidenav show-mode-selection></tulpar-sidenav>`,
+    );
+    await el.updateComplete;
+    const text = () => el.shadowRoot!.querySelector(".util-theme .util-text")!.textContent!.trim();
+    // light mode: label = "Dark" (the mode you switch TO)
+    expect(text()).to.equal("Dark");
+    // dark mode: label = "Light"
+    document.documentElement.classList.add("dark");
+    await el.updateComplete;
+    expect(text()).to.equal("Light");
+    // overridable
+    el.setAttribute("theme-text-light", "Aydınlık");
+    await el.updateComplete;
+    expect(text()).to.equal("Aydınlık");
+    document.documentElement.classList.remove("dark"); // cleanup
+  });
 });
