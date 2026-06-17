@@ -343,6 +343,11 @@ export class TulparNavItem extends LitElement {
     if (this._flyoutVisible || this._pinned) this._onFlyoutHide();
   }
 
+  /** Current inline expanded state (read-only; used by the sidenav search filter). */
+  get expanded(): boolean {
+    return this._expanded;
+  }
+
   expand() {
     // B2: in rail mode the flyout is the disclosure; inline expansion is
     // suppressed-but-preserved, so external expand() calls (e.g. the sidenav's

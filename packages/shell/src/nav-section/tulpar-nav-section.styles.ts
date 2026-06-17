@@ -4,6 +4,10 @@ export const navSectionStyles = css`
   :host {
     display: block;
   }
+  /* Filtered out by the sidenav search (no visible children). */
+  :host([data-search-hidden]) {
+    display: none;
+  }
   .section-label {
     font-size: 0.6875rem;
     font-weight: 600;

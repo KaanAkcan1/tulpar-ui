@@ -4,16 +4,18 @@ import { sidenavStyles } from "./tulpar-sidenav.styles";
 import { headerStyles } from "./parts/header.styles";
 import { utilityStyles } from "./parts/utility.styles";
 import { accountStyles } from "./parts/account.styles";
+import { searchStyles } from "./parts/search.styles";
 import { renderHeader } from "./parts/header";
 import { renderUtility } from "./parts/utility";
 import { renderAccount } from "./parts/account";
+import { renderSearch } from "./parts/search";
 import type { TulparNavItemData } from "../nav-item/tulpar-nav-item";
 import type { TulparNavItem } from "../nav-item/tulpar-nav-item";
 import "../nav-item/tulpar-nav-item";
 import "../nav-section/tulpar-nav-section";
 
 export class TulparSidenav extends LitElement {
-  static override styles = [sidenavStyles, headerStyles, utilityStyles, accountStyles];
+  static override styles = [sidenavStyles, headerStyles, utilityStyles, accountStyles, searchStyles];
 
   /**
    * Tell the browser (and Lit) to observe these non-declared attributes so that
@@ -69,6 +71,15 @@ export class TulparSidenav extends LitElement {
   /** Accessible label for the built-in toggle button. */
   @property({ attribute: "toggle-label" }) toggleLabel = "Toggle navigation";
 
+  /** Show the built-in search field (filters the menu). Hidden in rail. Default true. */
+  @property({ type: Boolean, attribute: "show-search" }) showSearch = true;
+  /** Placeholder for the built-in search field. */
+  @property({ attribute: "search-placeholder" }) searchPlaceholder = "Search…";
+  /** Accessible label for the built-in search field. */
+  @property({ attribute: "search-label" }) searchLabel = "Filter navigation";
+  /** Text shown when a filter query matches no items. */
+  @property({ attribute: "search-empty-text" }) searchEmptyText = "No results";
+
   /** Show the built-in theme-toggle cell in the utility row. */
   @property({ type: Boolean, attribute: "show-mode-selection" }) showModeSelection = true;
   /** Show the built-in config cell in the utility row. */
@@ -112,6 +123,17 @@ export class TulparSidenav extends LitElement {
 
   /** True when a [slot=footer] child is present in light DOM. */
   @state() _hasFooterSlot = false;
+
+  /** True when a [slot=search] child is present in light DOM (app-owned search). */
+  @state() _hasSearchSlot = false;
+  /** Current search/filter query. */
+  @state() _query = "";
+  /** True when the active query matches no items. */
+  @state() private _noResults = false;
+  /** Set while the filter mutates group expansion, so single-expand stays out of the way. */
+  private _filtering = false;
+  /** Snapshot of each group's expanded state before filtering, to restore on clear. */
+  private _preFilterExpanded: Map<TulparNavItem, boolean> | null = null;
 
   /** Mirrors global .dark class on documentElement; self-reflected as data-dark. */
   @state() private _dark = false;
@@ -210,6 +232,9 @@ export class TulparSidenav extends LitElement {
   };
 
   private _onItemExpand = (e: Event) => {
+    // While filtering we expand multiple groups to reveal matches; don't let
+    // single-expand collapse them against each other.
+    if (this._filtering) return;
     if (!this.singleExpand) return;
     const opened = (e as CustomEvent).detail.item as TulparNavItem;
     this.querySelectorAll<TulparNavItem>("tulpar-nav-item").forEach((it) => {
@@ -229,6 +254,123 @@ export class TulparSidenav extends LitElement {
       this.hasHeaderSlot = !!this.querySelector(':scope > [slot="header"]');
     }
   };
+
+  /**
+   * Called whenever the search slot's assigned nodes change.
+   * Public so renderSearch() can bind it from parts/search.ts.
+   */
+  _onSearchSlotChange = (e?: Event) => {
+    const slot = e?.target as HTMLSlotElement | undefined;
+    if (slot) {
+      this._hasSearchSlot = slot.assignedElements().length > 0;
+    } else {
+      this._hasSearchSlot = !!this.querySelector(':scope > [slot="search"]');
+    }
+  };
+
+  /** Public so renderSearch() can bind the built-in input. */
+  _onSearchInput = (e: Event) => {
+    this._query = (e.target as HTMLInputElement).value;
+    this._applyFilter();
+    this.dispatchEvent(
+      new CustomEvent("tulpar-search", {
+        bubbles: true,
+        composed: true,
+        detail: { query: this._query },
+      }),
+    );
+  };
+
+  /** Esc clears the query; public so renderSearch() can bind it. */
+  _onSearchKeydown = (e: KeyboardEvent) => {
+    if (e.key === "Escape" && this._query) {
+      e.preventDefault();
+      e.stopPropagation();
+      this._query = "";
+      this._applyFilter();
+    }
+  };
+
+  /** All nav-items in both light DOM (slotted/wrapper) and shadow DOM (data-driven). */
+  private _allNavItems(): TulparNavItem[] {
+    return [
+      ...this.querySelectorAll<TulparNavItem>("tulpar-nav-item"),
+      ...(this.shadowRoot?.querySelectorAll<TulparNavItem>("tulpar-nav-item") ?? []),
+    ];
+  }
+
+  /**
+   * Live label filter. An item shows when its own label matches OR a descendant
+   * matches; groups with a matching descendant are auto-expanded (and restored on
+   * clear); empty sections are hidden; `_noResults` drives the empty message.
+   */
+  private _applyFilter() {
+    const q = this._query.trim().toLowerCase();
+    const items = this._allNavItems();
+    const sections = [
+      ...this.querySelectorAll("tulpar-nav-section"),
+      ...(this.shadowRoot?.querySelectorAll("tulpar-nav-section") ?? []),
+    ];
+
+    if (!q) {
+      items.forEach((i) => i.removeAttribute("data-search-hidden"));
+      sections.forEach((s) => s.removeAttribute("data-search-hidden"));
+      this._restoreExpanded();
+      this._noResults = false;
+      return;
+    }
+
+    // Snapshot expanded state on the first keystroke of a fresh query session.
+    if (!this._preFilterExpanded) {
+      this._preFilterExpanded = new Map();
+      for (const it of items) {
+        if (typeof it.expand === "function") this._preFilterExpanded.set(it, it.expanded);
+      }
+    }
+
+    const selfMatch = new Map<TulparNavItem, boolean>();
+    for (const it of items) selfMatch.set(it, (it.label ?? "").toLowerCase().includes(q));
+
+    let anyVisible = false;
+    this._filtering = true;
+    for (const it of items) {
+      const descendants = it.querySelectorAll<TulparNavItem>("tulpar-nav-item");
+      let visible = selfMatch.get(it) ?? false;
+      let descendantMatch = false;
+      for (const d of descendants) {
+        if (selfMatch.get(d)) {
+          descendantMatch = true;
+          break;
+        }
+      }
+      visible = visible || descendantMatch;
+      it.toggleAttribute("data-search-hidden", !visible);
+      if (visible) anyVisible = true;
+      // Reveal matches inside a group whose own label didn't match.
+      if (descendantMatch && typeof it.expand === "function") it.expand();
+    }
+    this._filtering = false;
+
+    for (const sec of sections) {
+      const childItems = sec.querySelectorAll("tulpar-nav-item");
+      const anyChild = [...childItems].some((c) => !c.hasAttribute("data-search-hidden"));
+      sec.toggleAttribute("data-search-hidden", !anyChild);
+    }
+
+    this._noResults = !anyVisible;
+  }
+
+  /** Restore each group's pre-filter expanded state and drop the snapshot. */
+  private _restoreExpanded() {
+    if (!this._preFilterExpanded) return;
+    this._filtering = true;
+    for (const [it, wasExpanded] of this._preFilterExpanded) {
+      if (wasExpanded) it.expand?.();
+      else it.collapse?.();
+    }
+    this._filtering = false;
+    this._preFilterExpanded = null;
+  }
 
   /**
    * Called whenever the utility-start slot's assigned nodes change.
@@ -278,6 +420,9 @@ export class TulparSidenav extends LitElement {
     this._hasUtilityStart = !!this.querySelector(':scope > [slot="utility-start"]');
     this._hasUtilityEnd = !!this.querySelector(':scope > [slot="utility-end"]');
     this._hasFooterSlot = !!this.querySelector(':scope > [slot="footer"]');
+    this._hasSearchSlot = !!this.querySelector(':scope > [slot="search"]');
+    // Cmd/Ctrl+K focuses the built-in search field.
+    document.addEventListener("keydown", this._onGlobalSearchHotkey);
     // Sync dark mode from documentElement and observe future changes
     this._syncDark();
     this._darkObserver = new MutationObserver(this._syncDark);
@@ -308,8 +453,21 @@ export class TulparSidenav extends LitElement {
     if (this.hasAttribute("data-rail")) this._reflectRail();
   }
 
+  /** Cmd/Ctrl+K → focus the built-in search field (only when it is rendered). */
+  private _onGlobalSearchHotkey = (e: KeyboardEvent) => {
+    if (e.key !== "k" || !(e.metaKey || e.ctrlKey)) return;
+    if (this.hasAttribute("data-rail") || !this.showSearch || this._hasSearchSlot) return;
+    const input = this.shadowRoot?.querySelector<HTMLInputElement>(".search-input");
+    if (input) {
+      e.preventDefault();
+      input.focus();
+      input.select();
+    }
+  };
+
   override disconnectedCallback() {
     super.disconnectedCallback();
+    document.removeEventListener("keydown", this._onGlobalSearchHotkey);
     this.removeEventListener("tulpar-nav-item-expand", this._onItemExpand);
     this.removeEventListener("tulpar-rail-flyout-open", this._onRailFlyoutOpen);
     this._darkObserver?.disconnect();
@@ -327,10 +485,13 @@ export class TulparSidenav extends LitElement {
   override render() {
     return html`
       ${renderHeader(this)}
-      <div class="search"><slot name="search"></slot></div>
+      ${renderSearch(this)}
       <nav aria-label=${this.navLabel} @keydown=${this._onKeydown}>
         ${this.items?.map((i) => this._renderItem(i)) ?? nothing}
         <slot @slotchange=${this._onDefaultSlotChange}></slot>
+        ${this._query && this._noResults
+          ? html`<div class="no-results" role="status">${this.searchEmptyText}</div>`
+          : nothing}
       </nav>
       ${renderUtility(this)}
       ${renderAccount(this)}

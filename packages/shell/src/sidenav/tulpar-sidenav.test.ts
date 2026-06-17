@@ -5,6 +5,116 @@ import "../nav-item/tulpar-nav-item";
 import type { TulparSidenav } from "./tulpar-sidenav";
 import type { TulparNavItem } from "../nav-item/tulpar-nav-item";
 
+describe("<tulpar-sidenav> search filter", () => {
+  const menu = html`
+    <tulpar-nav-section label="Components">
+      <tulpar-nav-item href="/button" label="Button"></tulpar-nav-item>
+      <tulpar-nav-item label="Form Inputs">
+        <tulpar-nav-item href="/text" label="TextInput"></tulpar-nav-item>
+        <tulpar-nav-item href="/area" label="Textarea"></tulpar-nav-item>
+      </tulpar-nav-item>
+    </tulpar-nav-section>
+    <tulpar-nav-section label="Foundations">
+      <tulpar-nav-item href="/colors" label="Colors"></tulpar-nav-item>
+    </tulpar-nav-section>
+  `;
+
+  const type = async (el: TulparSidenav, value: string) => {
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>(".search-input")!;
+    input.value = value;
+    input.dispatchEvent(new Event("input"));
+    await el.updateComplete;
+  };
+
+  it("renders the built-in search field by default and hides it in rail", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav>${menu}</tulpar-sidenav>`);
+    await el.updateComplete;
+    expect(el.shadowRoot!.querySelector(".search-input"), "search shown").to.exist;
+    el.toggleAttribute("data-rail", true);
+    await el.updateComplete;
+    expect(el.shadowRoot!.querySelector(".search-input"), "hidden in rail").to.not.exist;
+  });
+
+  it("does not render the built-in search when show-search is false", async () => {
+    const el = await fixture<TulparSidenav>(
+      html`<tulpar-sidenav .showSearch=${false}>${menu}</tulpar-sidenav>`,
+    );
+    await el.updateComplete;
+    expect(el.shadowRoot!.querySelector(".search-input")).to.not.exist;
+  });
+
+  it("filters items by label and restores when cleared", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav>${menu}</tulpar-sidenav>`);
+    await el.updateComplete;
+    const item = (label: string) =>
+      [...el.querySelectorAll<TulparNavItem>("tulpar-nav-item")].find((n) => n.label === label)!;
+
+    await type(el, "colors");
+    expect(item("Colors").hasAttribute("data-search-hidden"), "Colors visible").to.be.false;
+    expect(item("Button").hasAttribute("data-search-hidden"), "Button hidden").to.be.true;
+    // Empty "Components" section is hidden.
+    const compSection = [...el.querySelectorAll("tulpar-nav-section")].find(
+      (s) => s.getAttribute("label") === "Components",
+    )!;
+    expect(compSection.hasAttribute("data-search-hidden"), "Components section hidden").to.be.true;
+
+    await type(el, "");
+    expect(item("Button").hasAttribute("data-search-hidden"), "Button restored").to.be.false;
+    expect(compSection.hasAttribute("data-search-hidden"), "section restored").to.be.false;
+  });
+
+  it("auto-expands a group whose child matches, and restores expansion on clear", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav>${menu}</tulpar-sidenav>`);
+    await el.updateComplete;
+    const group = [...el.querySelectorAll<TulparNavItem>("tulpar-nav-item")].find(
+      (n) => n.label === "Form Inputs",
+    )!;
+    expect(group.expanded, "collapsed before").to.be.false;
+
+    await type(el, "textarea");
+    expect(group.hasAttribute("data-search-hidden"), "group shown via child").to.be.false;
+    expect(group.expanded, "group auto-expanded").to.be.true;
+    // The non-matching sibling child is hidden.
+    const text = [...el.querySelectorAll<TulparNavItem>("tulpar-nav-item")].find(
+      (n) => n.label === "TextInput",
+    )!;
+    expect(text.hasAttribute("data-search-hidden"), "TextInput hidden").to.be.true;
+
+    await type(el, "");
+    expect(group.expanded, "expansion restored to collapsed").to.be.false;
+  });
+
+  it("shows a no-results message when nothing matches", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav>${menu}</tulpar-sidenav>`);
+    await el.updateComplete;
+    await type(el, "zzzzz");
+    expect(el.shadowRoot!.querySelector(".no-results")).to.exist;
+    await type(el, "");
+    expect(el.shadowRoot!.querySelector(".no-results")).to.not.exist;
+  });
+
+  it("Escape clears the query", async () => {
+    const el = await fixture<TulparSidenav>(html`<tulpar-sidenav>${menu}</tulpar-sidenav>`);
+    await el.updateComplete;
+    await type(el, "button");
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>(".search-input")!;
+    input.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    await el.updateComplete;
+    expect(el._query).to.equal("");
+  });
+
+  it("a slotted [slot=search] suppresses the built-in field", async () => {
+    const el = await fixture<TulparSidenav>(html`
+      <tulpar-sidenav>
+        <input slot="search" id="custom" />
+        ${menu}
+      </tulpar-sidenav>
+    `);
+    await el.updateComplete;
+    expect(el.shadowRoot!.querySelector(".search-input"), "built-in suppressed").to.not.exist;
+  });
+});
+
 describe("<tulpar-sidenav>", () => {
   it("renders a nav landmark with aria-label", async () => {
     const el = await fixture<TulparSidenav>(html`<tulpar-sidenav></tulpar-sidenav>`);

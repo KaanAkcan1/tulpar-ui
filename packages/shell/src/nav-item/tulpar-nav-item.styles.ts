@@ -4,6 +4,10 @@ export const navItemStyles = css`
   :host {
     display: block;
   }
+  /* Filtered out by the sidenav search. */
+  :host([data-search-hidden]) {
+    display: none;
+  }
   a,
   button {
     display: flex;

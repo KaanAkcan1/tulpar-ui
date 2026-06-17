@@ -58,6 +58,9 @@ function hasComponentIcon(items: TulparNavItemNgData[] | undefined): boolean {
       [attr.density]="density()"
       [attr.single-expand]="singleExpand() ? '' : null"
       [attr.toggle-label]="toggleLabel() ?? null"
+      [attr.search-placeholder]="searchPlaceholder() ?? null"
+      [attr.search-label]="searchLabel() ?? null"
+      [attr.search-empty-text]="searchEmptyText() ?? null"
       [attr.show-mode-selection]="showModeSelection() ? '' : null"
       [attr.show-config]="showConfig() ? '' : null"
       [attr.config-text]="configText() ?? null"
@@ -145,6 +148,11 @@ export class TulparSidenavComponent {
   readonly density = input<"comfortable" | "compact">("comfortable");
   readonly singleExpand = input<boolean>(false);
 
+  readonly showSearch = input<boolean>(true);
+  readonly searchPlaceholder = input<string | undefined>(undefined);
+  readonly searchLabel = input<string | undefined>(undefined);
+  readonly searchEmptyText = input<string | undefined>(undefined);
+
   readonly toggleLabel = input<string | undefined>(undefined);
   readonly showModeSelection = input<boolean>(true);
   readonly showConfig = input<boolean>(false);
@@ -190,6 +198,10 @@ export class TulparSidenavComponent {
       el.items = this.renderItemsInLightDom()
         ? undefined
         : (this.items() as TulparNavItemData[] | undefined);
+      // `showSearch` defaults to true in the element; set it as a DOM property so
+      // `false` actually disables the search (an absent boolean attribute would
+      // leave the element's `true` default in place).
+      el.showSearch = this.showSearch();
     });
   }
 }

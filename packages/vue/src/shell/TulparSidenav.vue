@@ -31,6 +31,10 @@ interface Props {
   position?: "left" | "right";
   density?: "comfortable" | "compact";
   singleExpand?: boolean;
+  showSearch?: boolean;
+  searchPlaceholder?: string;
+  searchLabel?: string;
+  searchEmptyText?: string;
   toggleLabel?: string;
   showModeSelection?: boolean;
   showConfig?: boolean;
@@ -53,6 +57,7 @@ const props = withDefaults(defineProps<Props>(), {
   position: "left",
   density: "comfortable",
   singleExpand: false,
+  showSearch: true,
   showModeSelection: true,
   showConfig: false,
   showAccountBlock: true,
@@ -137,6 +142,9 @@ watchEffect(() => {
   hostRef.value.items = renderItemsInLightDom.value
     ? undefined
     : (props.items as TulparNavItemData[] | undefined);
+  // `showSearch` defaults to true in the element; set it as a DOM property so
+  // `false` actually disables it (an absent boolean attribute keeps the default).
+  hostRef.value.showSearch = props.showSearch;
 });
 </script>
 
@@ -147,6 +155,9 @@ watchEffect(() => {
     :position="position"
     :density="density"
     :single-expand="singleExpand || undefined"
+    :search-placeholder="searchPlaceholder ?? undefined"
+    :search-label="searchLabel ?? undefined"
+    :search-empty-text="searchEmptyText ?? undefined"
     :toggle-label="toggleLabel ?? undefined"
     :show-mode-selection="showModeSelection || undefined"
     :show-config="showConfig || undefined"
