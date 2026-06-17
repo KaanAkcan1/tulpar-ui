@@ -97,7 +97,11 @@ export const navItemStyles = css`
     white-space: nowrap;
   }
   .chevron {
-    margin-inline-start: auto;
+    /* label (flex:1) is the SOLE slack source — keeps the group label flush to the
+       icon, pixel-identical to a leaf item. The chevron rides at row end via flex
+       order, not a competing auto-margin. */
+    margin-inline-start: 0;
+    flex: none;
     transition: transform 150ms ease-out;
   }
   button[aria-expanded="true"] .chevron {

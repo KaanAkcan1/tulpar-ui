@@ -147,6 +147,31 @@ describe("<tulpar-nav-item>", () => {
     expect(getComputedStyle(fly).position).to.equal("fixed");
   });
 
+  it("group item label aligns and fills identically to a leaf item with a trailing chip", async () => {
+    const leaf = await fixture<TulparNavItem>(html`
+      <tulpar-nav-item href="/a" label="Alpha" icon="<svg width='18' height='18'></svg>" count="3"></tulpar-nav-item>
+    `);
+    const group = await fixture<TulparNavItem>(html`
+      <tulpar-nav-item label="Group" icon="<svg width='18' height='18'></svg>">
+        <tulpar-nav-item href="/c" label="Child"></tulpar-nav-item>
+      </tulpar-nav-item>
+    `);
+    await leaf.updateComplete;
+    await group.updateComplete;
+    const leafLabel = leaf.shadowRoot!.querySelector(".label") as HTMLElement;
+    const groupLabel = group.shadowRoot!.querySelector(".label") as HTMLElement;
+    // Same left offset (icon + gap), AND the group label is not gap-collapsed:
+    expect(Math.abs(groupLabel.getBoundingClientRect().left - leafLabel.getBoundingClientRect().left))
+      .to.be.lessThan(1);
+    // The group chevron must sit flush at the trailing edge — assert the label fills to it.
+    const groupRow = group.shadowRoot!.querySelector("a, button") as HTMLElement;
+    const chevron = group.shadowRoot!.querySelector(".chevron") as HTMLElement;
+    const rowRight = groupRow.getBoundingClientRect().right;
+    // chevron right edge should be within the row's right padding (~0.75rem ≈ 12px), i.e.
+    // the chevron is NOT pushed away from the trailing edge by a competing auto-margin.
+    expect(rowRight - chevron.getBoundingClientRect().right).to.be.lessThan(16);
+  });
+
   it("detects children nested inside a display:contents wrapper (Angular wrapper case)", async () => {
     // Simulate the Angular wrapper: a non-nav element wrapping a real nav-item.
     const el = await fixture<TulparNavItem>(html`
