@@ -313,13 +313,16 @@ export const buttonStyles = css`
    * ============================================================ */
   :host([variant="solid"]) .btn,
   :host(:not([variant])) .btn {
-    border-color: var(--tulpar-button-surface-border, rgba(0, 0, 0, 0.08));
+    border-color: var(
+      --tulpar-button-surface-border,
+      color-mix(in oklch, var(--_btn-color-default) 85%, black)
+    );
     box-shadow: var(
       --tulpar-button-shadow-rest,
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.16),
-      inset 0 -1px 0 0 rgba(0, 0, 0, 0.08),
-      0 1px 2px -1px rgba(10, 37, 64, 0.2),
-      0 4px 12px -3px rgba(10, 37, 64, 0.12)
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.18),
+      inset 0 -1px 0 0 rgba(0, 0, 0, 0.12),
+      0 1px 2px -1px color-mix(in oklch, var(--_btn-color-default) 60%, black 30%),
+      0 5px 14px -3px color-mix(in oklch, var(--_btn-color-default) 42%, transparent)
     );
   }
   :host([variant="solid"]) .btn:hover,
@@ -327,8 +330,9 @@ export const buttonStyles = css`
     box-shadow: var(
       --tulpar-button-shadow-hover,
       inset 0 1px 0 0 rgba(255, 255, 255, 0.18),
-      0 2px 4px -1px rgba(10, 37, 64, 0.22),
-      0 8px 20px -4px rgba(10, 37, 64, 0.14)
+      inset 0 -1px 0 0 rgba(0, 0, 0, 0.12),
+      0 2px 5px -1px color-mix(in oklch, var(--_btn-color-default) 60%, black 30%),
+      0 10px 24px -5px color-mix(in oklch, var(--_btn-color-default) 46%, transparent)
     );
   }
 
@@ -389,7 +393,7 @@ export const buttonStyles = css`
   :host([variant="solid"]) .btn:active,
   :host(:not([variant])) .btn:active {
     transform: var(--_btn-press-transform);
-    box-shadow: var(--tulpar-button-shadow-press, inset 0 1px 2px 0 rgba(0, 0, 0, 0.14));
+    box-shadow: var(--tulpar-button-shadow-press, inset 0 1px 3px 0 rgba(0, 0, 0, 0.22));
     transition-duration: var(--tulpar-button-press-duration, 80ms);
   }
 
@@ -611,11 +615,15 @@ export const buttonStyles = css`
     box-shadow:
       var(
         --tulpar-button-shadow-rest,
-        inset 0 1px 0 0 rgba(255, 255, 255, 0.16),
-        0 1px 2px -1px rgba(10, 37, 64, 0.2),
-        0 4px 12px -3px rgba(10, 37, 64, 0.12)
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.18),
+        inset 0 -1px 0 0 rgba(0, 0, 0, 0.12),
+        0 1px 2px -1px color-mix(in oklch, var(--_btn-color-default) 60%, black 30%),
+        0 5px 14px -3px color-mix(in oklch, var(--_btn-color-default) 42%, transparent)
       ),
-      var(--tulpar-button-premium-ambient, 0 6px 18px -4px rgba(10, 37, 64, 0.18));
+      var(
+        --tulpar-button-premium-ambient,
+        0 6px 18px -4px color-mix(in oklch, var(--_btn-color-default) 45%, transparent)
+      );
   }
   /* Bug fix: premium static rule is (0,3,0) which outranks the base hover/press
      shadow rules (0,2,1). Add premium-specific state rules at (0,3,1) so hover
@@ -625,13 +633,17 @@ export const buttonStyles = css`
       var(
         --tulpar-button-shadow-hover,
         inset 0 1px 0 0 rgba(255, 255, 255, 0.18),
-        0 2px 4px -1px rgba(10, 37, 64, 0.22),
-        0 8px 20px -4px rgba(10, 37, 64, 0.14)
+        inset 0 -1px 0 0 rgba(0, 0, 0, 0.12),
+        0 2px 5px -1px color-mix(in oklch, var(--_btn-color-default) 60%, black 30%),
+        0 10px 24px -5px color-mix(in oklch, var(--_btn-color-default) 46%, transparent)
       ),
-      var(--tulpar-button-premium-ambient, 0 6px 18px -4px rgba(10, 37, 64, 0.18));
+      var(
+        --tulpar-button-premium-ambient,
+        0 6px 18px -4px color-mix(in oklch, var(--_btn-color-default) 45%, transparent)
+      );
   }
   :host([severity="premium"][variant="solid"]) .btn:active {
-    box-shadow: var(--tulpar-button-shadow-press, inset 0 1px 2px 0 rgba(0, 0, 0, 0.14));
+    box-shadow: var(--tulpar-button-shadow-press, inset 0 1px 3px 0 rgba(0, 0, 0, 0.22));
   }
 
   /* Bug fix: disabled premium-solid — the premium static rule (0,3,0) outranks

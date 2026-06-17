@@ -147,27 +147,27 @@ export const tulparLight: SemanticTokens = {
     pressDuration: "80ms",    // button-specific; faster than primitive scale for tactile press
     spinnerDuration: "600ms", // button-specific; no primitive-scale equivalent
     disabled: { bg: c.colpan[100], fg: c.kara[500], border: c.colpan[200] },
-    surfaceHighlight: "rgba(255, 255, 255, 0.16)",
-    surfaceShade: "rgba(0, 0, 0, 0.08)",
-    surfaceBorder: "color-mix(in oklch, var(--_btn-color-default) 88%, black)",
+    surfaceHighlight: "rgba(255, 255, 255, 0.18)",
+    surfaceShade: "rgba(0, 0, 0, 0.12)",
+    surfaceBorder: "color-mix(in oklch, var(--_btn-color-default) 85%, black)",
     shadow: {
       rest:
         "inset 0 1px 0 0 var(--tulpar-button-surface-highlight), " +
         "inset 0 -1px 0 0 var(--tulpar-button-surface-shade), " +
-        "0 1px 2px -1px color-mix(in oklch, var(--_btn-color-default) 55%, black 40%), " +
-        "0 4px 12px -3px color-mix(in oklch, var(--_btn-color-default) 30%, transparent)",
+        "0 1px 2px -1px color-mix(in oklch, var(--_btn-color-default) 60%, black 30%), " +
+        "0 5px 14px -3px color-mix(in oklch, var(--_btn-color-default) 42%, transparent)",
       hover:
         "inset 0 1px 0 0 var(--tulpar-button-surface-highlight), " +
         "inset 0 -1px 0 0 var(--tulpar-button-surface-shade), " +
-        "0 2px 4px -1px color-mix(in oklch, var(--_btn-color-default) 55%, black 40%), " +
-        "0 8px 20px -4px color-mix(in oklch, var(--_btn-color-default) 34%, transparent)",
+        "0 2px 5px -1px color-mix(in oklch, var(--_btn-color-default) 60%, black 30%), " +
+        "0 10px 24px -5px color-mix(in oklch, var(--_btn-color-default) 46%, transparent)",
       raised:
         "inset 0 1px 0 0 var(--tulpar-button-surface-highlight), " +
         "inset 0 -1px 0 0 var(--tulpar-button-surface-shade), " +
-        "0 2px 6px -1px color-mix(in oklch, var(--_btn-color-default) 50%, black 40%), " +
-        "0 12px 28px -6px color-mix(in oklch, var(--_btn-color-default) 38%, transparent)",
+        "0 2px 6px -1px color-mix(in oklch, var(--_btn-color-default) 55%, black 30%), " +
+        "0 16px 32px -8px color-mix(in oklch, var(--_btn-color-default) 48%, transparent)",
       press:
-        "inset 0 1px 2px 0 color-mix(in oklch, black 14%, transparent)",
+        "inset 0 1px 3px 0 color-mix(in oklch, black 22%, transparent)",
     },
     premium: {
       sheen: "linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0) 42%)",
