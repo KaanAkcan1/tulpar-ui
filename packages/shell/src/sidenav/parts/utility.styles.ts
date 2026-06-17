@@ -48,11 +48,11 @@ export const utilityStyles = css`
     flex: none;
   }
 
-  /* ── Theme-toggle icon swap (CSS-only, no JS state) ────────────────────────
-   * Light mode (default): show moon, hide sun.
-   * Dark mode (.dark on an ancestor): show sun, hide moon.
-   * :host-context(.dark) matches when the document element or any ancestor
-   * carries the .dark class — the same convention used by Tailwind dark mode.
+  /* ── Theme-toggle icon swap driven by host[data-dark] ──────────────────────
+   * Light mode (default): show moon ("go dark"), hide sun.
+   * Dark mode (host reflects data-dark from MutationObserver): show sun ("go light").
+   * Driven by data-dark on the host so icon and text share one signal and can
+   * never desync — :host-context(.dark) was dropped to eliminate the race.
    * ────────────────────────────────────────────────────────────────────────── */
   .util-theme .icon-sun {
     display: none;
@@ -61,10 +61,10 @@ export const utilityStyles = css`
     display: inline;
   }
 
-  :host-context(.dark) .util-theme .icon-sun {
+  :host([data-dark]) .util-theme .icon-sun {
     display: inline;
   }
-  :host-context(.dark) .util-theme .icon-moon {
+  :host([data-dark]) .util-theme .icon-moon {
     display: none;
   }
 

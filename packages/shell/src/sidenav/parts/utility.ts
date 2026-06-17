@@ -101,7 +101,7 @@ export function renderUtility(host: TulparSidenav) {
               )}
           >
             ${moonIcon}${sunIcon}
-            <span class="util-text">Theme</span>
+            <span class="util-text">${host.hasAttribute("data-dark") ? host.themeTextLight : host.themeTextDark}</span>
           </button>
           <slot
             name="utility-start"
