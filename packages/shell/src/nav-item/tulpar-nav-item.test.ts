@@ -222,6 +222,39 @@ describe("<tulpar-nav-item>", () => {
     expect(getComputedStyle(childGroup).display).to.not.equal("none");
   });
 
+  it("group trigger exposes disclosure ARIA in rail mode", async () => {
+    const el = await fixture<TulparNavItem>(html`
+      <tulpar-nav-item label="Group" icon="<svg></svg>" data-rail>
+        <tulpar-nav-item href="/c" label="Child"></tulpar-nav-item>
+      </tulpar-nav-item>
+    `);
+    await el.updateComplete;
+    const trigger = el.shadowRoot!.querySelector("button")!;
+    expect(trigger.getAttribute("aria-haspopup")).to.equal("true");
+    expect(trigger.getAttribute("aria-expanded")).to.equal("false");
+    expect(trigger.getAttribute("aria-controls")).to.be.a("string").and.not.empty;
+    el.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
+    await el.updateComplete;
+    expect(trigger.getAttribute("aria-expanded")).to.equal("true");
+  });
+
+  it("Escape closes the flyout and the flyout id matches aria-controls", async () => {
+    const el = await fixture<TulparNavItem>(html`
+      <tulpar-nav-item label="Group" icon="<svg></svg>" data-rail>
+        <tulpar-nav-item href="/c" label="Child"></tulpar-nav-item>
+      </tulpar-nav-item>
+    `);
+    await el.updateComplete;
+    (el as unknown as { _showRailFlyout(): void })._showRailFlyout();
+    await el.updateComplete;
+    const trigger = el.shadowRoot!.querySelector("button")!;
+    const flyout = el.shadowRoot!.querySelector(".rail-flyout.is-group")!;
+    expect(flyout.id).to.equal(trigger.getAttribute("aria-controls"));
+    el.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+    await el.updateComplete;
+    expect((flyout as HTMLElement).style.display).to.equal("none");
+  });
+
   it("opens the rail flyout after a hover-intent delay, closes after a grace delay", async () => {
     const el = await fixture<TulparNavItem>(html`
       <tulpar-nav-item label="Group" icon="<svg></svg>" data-rail

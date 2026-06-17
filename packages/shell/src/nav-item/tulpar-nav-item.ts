@@ -29,6 +29,9 @@ export class TulparNavItem extends LitElement {
   };
   static override styles = navItemStyles;
 
+  private static _uid = 0;
+  private readonly _flyoutId = `tulpar-rail-flyout-${++TulparNavItem._uid}`;
+
   static override get observedAttributes() {
     return [...super.observedAttributes, "data-rail"];
   }
@@ -76,11 +79,35 @@ export class TulparNavItem extends LitElement {
     this._urlActive = this.href != null && location.pathname === this.href;
   };
 
+  /** Guard: prevents focusin from re-opening the flyout when focus returns after keyboard close. */
+  private _suppressNextFocusOpen = false;
+
+  private _onRailKeydown = (e: KeyboardEvent) => {
+    if (!this.hasAttribute("data-rail") || !this._hasChildren) return;
+    const rightSide = this.closest("tulpar-sidenav")?.getAttribute("position") === "right";
+    const openKey = rightSide ? "ArrowLeft" : "ArrowRight";
+    const closeKey = rightSide ? "ArrowRight" : "ArrowLeft";
+    if ((e.key === openKey || e.key === "Enter" || e.key === " ") && !this._flyoutVisible) {
+      e.preventDefault();
+      this._pinned = true;
+      this._showRailFlyout();
+      this.updateComplete.then(() => {
+        this.shadowRoot?.querySelector<HTMLElement>(".flyout-link")?.focus();
+      });
+    } else if (e.key === "Escape" || (e.key === closeKey && this._flyoutVisible)) {
+      e.preventDefault();
+      this._onFlyoutHide();
+      this._suppressNextFocusOpen = true;
+      this.shadowRoot?.querySelector<HTMLElement>("button, a")?.focus();
+    }
+  };
+
   override connectedCallback() {
     super.connectedCallback();
     this._onLocationChange();
     window.addEventListener("popstate", this._onLocationChange);
     window.addEventListener("tulpar-location-changed", this._onLocationChange);
+    this.addEventListener("keydown", this._onRailKeydown);
   }
 
   override disconnectedCallback() {
@@ -89,6 +116,7 @@ export class TulparNavItem extends LitElement {
     window.removeEventListener("tulpar-location-changed", this._onLocationChange);
     this._detachFlyoutListeners();
     this._clearTimers();
+    this.removeEventListener("keydown", this._onRailKeydown);
   }
 
   // ── Rail flyout: fixed-position escape from overflow-x:clip ─────────────
@@ -113,11 +141,15 @@ export class TulparNavItem extends LitElement {
     const rightSide =
       this.closest("tulpar-sidenav")?.getAttribute("position") === "right";
     const gap = 8; // px gap between item edge and flyout
-    this._flyoutTop = rect.top;
+    // Vertical clamp: top-align to trigger; shift up if panel would overflow viewport bottom.
+    const estHeight = 44 * (this._childModel.length + 1) + 16;
+    const maxTop = window.innerHeight - estHeight - 8;
+    const clampedTop = Math.max(8, Math.min(rect.top, maxTop));
+    this._flyoutTop = clampedTop;
     // Caret points at the trigger icon's vertical center, relative to the flyout's
     // fixed top. When the panel is shifted up to fit, the caret stays on the icon.
     const iconCenter = rect.top + rect.height / 2;
-    this._flyoutCaretY = iconCenter - this._flyoutTop;
+    this._flyoutCaretY = iconCenter - clampedTop;
     if (rightSide) {
       // Flyout must appear to the LEFT of the item.
       // Use CSS `right` anchored to the right viewport edge so the flyout
@@ -172,7 +204,12 @@ export class TulparNavItem extends LitElement {
   };
 
   private _onAnchorFocusIn = () => {
-    if (this.hasAttribute("data-rail")) this._showRailFlyout(); // focus = instant
+    if (!this.hasAttribute("data-rail")) return;
+    if (this._suppressNextFocusOpen) {
+      this._suppressNextFocusOpen = false;
+      return;
+    }
+    this._showRailFlyout(); // focus = instant
   };
 
   private _onAnchorFocusOut = () => {
@@ -274,7 +311,11 @@ export class TulparNavItem extends LitElement {
         >`
       : html`<button
           type="button"
-          aria-expanded=${this._hasChildren ? String(this._expanded) : nothing}
+          aria-expanded=${this._hasChildren
+            ? String(isRail ? this._flyoutVisible : this._expanded)
+            : nothing}
+          aria-haspopup=${this._hasChildren ? "true" : nothing}
+          aria-controls=${this._hasChildren ? this._flyoutId : nothing}
           @click=${this._hasChildren ? (isRail ? this._onAnchorClick : this._toggle) : nothing}
           @pointerenter=${this._onAnchorPointerEnter}
           @pointerleave=${this._onAnchorPointerLeave}
@@ -290,6 +331,7 @@ export class TulparNavItem extends LitElement {
       ${isRail
         ? this._hasChildren
           ? html`<div
+              id=${this._flyoutId}
               class="rail-flyout is-group ${this.closest("tulpar-sidenav")?.getAttribute("position") === "right" ? "is-right" : ""}"
               role="group"
               aria-label=${this.label}
