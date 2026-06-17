@@ -545,7 +545,7 @@ export const IconOnlyAutoDetect: Story = {
 
 /**
  * **InteractionStates** — rest / hover / active / focus / disabled / loading
- * laid out side by side for `solid` and `outlined`.
+ * laid out side by side for `solid`, `outlined`, and `ghost`.
  *
  * Hover/active/focus are interaction-driven — the viewer triggers them by
  * hovering or clicking. `disabled` and `loading` are static so they are always
