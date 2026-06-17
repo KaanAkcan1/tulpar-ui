@@ -1,4 +1,4 @@
-import { fixture, html, expect, oneEvent } from "@open-wc/testing";
+import { fixture, html, expect, oneEvent, aTimeout } from "@open-wc/testing";
 import type { LitElement } from "lit";
 import "./tulpar-sidenav";
 import "../nav-item/tulpar-nav-item";
@@ -315,10 +315,10 @@ describe("<tulpar-sidenav>", () => {
     await el.updateComplete;
     expect(el.hasAttribute("data-dark")).to.be.false;
     document.documentElement.classList.add("dark");
-    await el.updateComplete;
+    await aTimeout(0); await el.updateComplete;
     expect(el.hasAttribute("data-dark")).to.be.true;
     document.documentElement.classList.remove("dark"); // cleanup
-    await el.updateComplete;
+    await aTimeout(0); await el.updateComplete;
     expect(el.hasAttribute("data-dark")).to.be.false;
   });
 
@@ -333,7 +333,7 @@ describe("<tulpar-sidenav>", () => {
     expect(text()).to.equal("Dark");
     // dark mode: label = "Light"
     document.documentElement.classList.add("dark");
-    await el.updateComplete;
+    await aTimeout(0); await el.updateComplete;
     expect(text()).to.equal("Light");
     // overridable
     el.setAttribute("theme-text-light", "Aydınlık");

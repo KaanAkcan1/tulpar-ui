@@ -28,7 +28,6 @@ export class TulparSidenav extends LitElement {
       "data-collapsed",
       "data-sidenav-open",
       "data-rail",
-      "data-dark",
     ];
   }
 
@@ -39,13 +38,6 @@ export class TulparSidenav extends LitElement {
       if (name === "data-rail") {
         this._reflectRail();
       }
-    }
-    // data-dark: sync internal _dark state and request a re-render so template
-    // (utility label, icon swap) reacts. toggleAttribute in _syncDark already
-    // sets the attr; this callback ensures a Lit update is queued synchronously.
-    if (name === "data-dark") {
-      this._dark = newVal !== null;
-      this.requestUpdate();
     }
   }
 
@@ -130,10 +122,6 @@ export class TulparSidenav extends LitElement {
     if (dark !== this._dark) {
       this._dark = dark;
       this.toggleAttribute("data-dark", dark);
-      // Force a synchronous Lit render so that `await el.updateComplete` in tests
-      // (and in consumer code) sees the new template state without needing an
-      // extra tick. performUpdate() is a no-op if no update is pending.
-      this.performUpdate();
     }
   };
 
