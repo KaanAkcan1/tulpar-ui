@@ -135,9 +135,14 @@ export class TulparNavItem extends LitElement {
 
   private _onSlotChange(e: Event) {
     const slot = e.target as HTMLSlotElement;
-    this._hasChildren = slot
-      .assignedElements()
-      .some((el) => el.tagName.toLowerCase() === "tulpar-nav-item");
+    this._hasChildren = slot.assignedElements().some((el) => {
+      // Direct nav item (core/Vue path) OR the Angular wrapper tag OR any element
+      // (e.g. a display:contents wrapper) that *contains* a nav item.
+      return (
+        el.matches("tulpar-nav-item, tulpar-nav-item-ng") ||
+        el.querySelector("tulpar-nav-item") != null
+      );
+    });
   }
 
   private _onClick(e: MouseEvent) {

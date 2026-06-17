@@ -147,6 +147,23 @@ describe("<tulpar-nav-item>", () => {
     expect(getComputedStyle(fly).position).to.equal("fixed");
   });
 
+  it("detects children nested inside a display:contents wrapper (Angular wrapper case)", async () => {
+    // Simulate the Angular wrapper: a non-nav element wrapping a real nav-item.
+    const el = await fixture<TulparNavItem>(html`
+      <tulpar-nav-item label="Group">
+        <div style="display: contents">
+          <tulpar-nav-item href="/child" label="Child"></tulpar-nav-item>
+        </div>
+      </tulpar-nav-item>
+    `);
+    await el.updateComplete;
+    // A group with children renders a <button> exposing aria-expanded and a chevron.
+    const btn = el.shadowRoot!.querySelector("button");
+    expect(btn, "group renders as a button").to.exist;
+    expect(btn!.getAttribute("aria-expanded")).to.equal("false");
+    expect(el.shadowRoot!.querySelector(".chevron"), "chevron shown").to.exist;
+  });
+
   it("rail flyout on right-side sidenav is positioned to the LEFT of the item (B3-right)", async () => {
     // Wrap the nav-item inside a position="right" sidenav so that
     // closest("tulpar-sidenav")?.getAttribute("position") resolves to "right".
