@@ -50,6 +50,7 @@ export type { SelectionSize };
       [attr.warn-text]="warnText() ?? null"
       [attr.no-message-space]="noMessageSpace() ? '' : null"
       [attr.color]="color() ?? null"
+      [attr.description]="description() ?? null"
       (change)="onCoreChange($event)"
     >
       <ng-content select="[slot='label']" />
@@ -77,6 +78,7 @@ export class TulparRadioGroupComponent {
   readonly warnText = input<string | undefined>(undefined);
   readonly noMessageSpace = input<boolean>(false);
   readonly color = input<string | undefined>(undefined);
+  readonly description = input<string | undefined>(undefined);
 
   readonly change = output<CustomEvent<{ value: string | null }>>();
 

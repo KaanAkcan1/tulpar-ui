@@ -6,6 +6,8 @@ import {
   model,
   output,
 } from "@angular/core";
+import type { Type } from "@angular/core";
+import { NgComponentOutlet } from "@angular/common";
 
 import "@tulpar-ui/core/checkbox";
 
@@ -23,6 +25,7 @@ export type { SelectionSize, SelectionLabelPosition };
 @Component({
   selector: "tulpar-checkbox-ng",
   standalone: true,
+  imports: [NgComponentOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   styles: [":host { display: contents; }"],
@@ -46,8 +49,12 @@ export type { SelectionSize, SelectionLabelPosition };
       [attr.no-message-space]="noMessageSpace() ? '' : null"
       [attr.name]="name() ?? null"
       [attr.color]="color() ?? null"
+      [attr.description]="description() ?? null"
       (change)="onCoreChange($event)"
     >
+      @if (icon(); as i) {
+        <span slot="icon"><ng-container *ngComponentOutlet="i" /></span>
+      }
       <ng-content select="[slot='icon']" />
       <ng-content select="[slot='label']" />
       <ng-content select="[slot='description']" />
@@ -78,6 +85,10 @@ export class TulparCheckboxComponent {
   readonly noMessageSpace = input<boolean>(false);
   readonly name = input<string | undefined>(undefined);
   readonly color = input<string | undefined>(undefined);
+  readonly description = input<string | undefined>(undefined);
+
+  /** Convenience: render a component into the `icon` slot (custom check glyph). */
+  readonly icon = input<Type<unknown> | undefined>(undefined);
 
   readonly change = output<Event>();
 
