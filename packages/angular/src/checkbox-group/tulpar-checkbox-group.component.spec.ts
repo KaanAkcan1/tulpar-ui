@@ -90,6 +90,20 @@ describe("TulparCheckboxGroupComponent (TestBed)", () => {
     expect(checkboxes.length).toBe(2);
   });
 
+  it("forwards value down to the core group's .value property (array)", () => {
+    const fixture = TestBed.createComponent(Host);
+    fixture.detectChanges();
+    fixture.componentInstance.value.set(["x"]);
+    fixture.detectChanges();
+    const group = fixture.nativeElement.querySelector("tulpar-checkbox-group") as HTMLElement & {
+      value: string[];
+    };
+    // The wrapper's job is to forward the array as the core .value PROPERTY (not
+    // a stringified attribute). Applying it to the children is the core group's
+    // responsibility, covered by the core checkbox-group tests.
+    expect(group.value).toEqual(["x"]);
+  });
+
   it("two-way: core CustomEvent change updates value model", () => {
     const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();

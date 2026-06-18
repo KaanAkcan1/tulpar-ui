@@ -31,6 +31,7 @@ interface Props {
 }
 
 const {
+  modelValue = [],
   orientation = "vertical",
   size = "md",
 } = defineProps<Props>();
@@ -51,6 +52,7 @@ function onChange(e: Event) {
 
 <template>
   <tulpar-checkbox-group
+    :value.prop="modelValue"
     :name="name ?? undefined"
     :orientation="orientation"
     :size="size"

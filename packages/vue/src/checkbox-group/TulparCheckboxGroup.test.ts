@@ -51,6 +51,19 @@ describe("TulparCheckboxGroup (Vue)", () => {
     expect(group.findAll("tulpar-checkbox").length).toBe(2);
   });
 
+  it("forwards modelValue down as the core .value property (array)", async () => {
+    const wrapper = mount(TulparCheckboxGroup, {
+      props: { modelValue: ["x"] },
+      slots: {
+        default:
+          '<tulpar-checkbox value="x"></tulpar-checkbox><tulpar-checkbox value="y"></tulpar-checkbox>',
+      },
+    });
+    await wrapper.vm.$nextTick();
+    const group = wrapper.find("tulpar-checkbox-group").element as HTMLElement & { value: string[] };
+    expect(group.value).toEqual(["x"]);
+  });
+
   it("v-model: emits update:modelValue (string[]) from composed change CustomEvent detail.value", async () => {
     const wrapper = mount(TulparCheckboxGroup, { props: { modelValue: [] } });
     const inner = wrapper.find("tulpar-checkbox-group");

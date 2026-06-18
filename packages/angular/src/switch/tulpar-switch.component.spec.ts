@@ -12,6 +12,7 @@ import { TulparSwitchComponent } from "./tulpar-switch.component";
       [label]="label()"
       [disabled]="disabled()"
       [size]="size()"
+      [onColor]="onColor()"
       (change)="onChange($event)"
     ></tulpar-switch-ng>
   `,
@@ -21,6 +22,7 @@ class Host {
   label = signal<string | undefined>(undefined);
   disabled = signal(false);
   size = signal<"md" | "lg">("md");
+  onColor = signal<string | undefined>(undefined);
   lastEvent: Event | null = null;
   onChange(e: Event) {
     this.lastEvent = e;
@@ -80,6 +82,16 @@ describe("TulparSwitchComponent (TestBed)", () => {
     fixture.detectChanges();
     const inner = fixture.nativeElement.querySelector("tulpar-switch") as HTMLElement;
     expect(inner.getAttribute("size")).toBe("lg");
+  });
+
+  it("forwards on-color to the core element (imperative attr workaround)", async () => {
+    const fixture = TestBed.createComponent(Host);
+    fixture.componentInstance.onColor.set("#d97706");
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const inner = fixture.nativeElement.querySelector("tulpar-switch") as HTMLElement;
+    expect(inner.getAttribute("on-color")).toBe("#d97706");
   });
 
   it("two-way: core change event updates checked model (via checkedChange)", () => {

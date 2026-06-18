@@ -35,6 +35,7 @@ export type { SelectionSize };
   styles: [":host { display: contents; }"],
   template: `
     <tulpar-checkbox-group
+      [value]="value()"
       [attr.name]="name() ?? null"
       [attr.orientation]="orientation()"
       [attr.size]="size()"
