@@ -307,6 +307,40 @@ export const tulparLight: SemanticTokens = {
     messageRowHeight: "1.25rem",
   },
 
+  selection: {
+    control: {
+      bg: c.white,
+      bgChecked: c.tulpar[500],
+      bgDisabled: c.colpan[100],
+      border: c.colpan[400],
+      borderHover: c.kara[400],
+      borderChecked: c.tulpar[500],
+      borderInvalid: c.al[600],
+    },
+    glyph: {
+      default: c.yagiz[900],
+      onCustom: c.colpan[50],
+      disabled: c.kara[500],
+    },
+    focusRing: "rgba(81, 78, 207, 0.40)",
+    label: c.yagiz[900],
+    description: c.kara[700],
+    card: {
+      bg: c.white,
+      border: c.colpan[200],
+      bgHover: c.colpan[50],
+      bgSelected: "#e6f9f1",
+    },
+  },
+
+  switch: {
+    trackOff: c.colpan[300],
+    trackOn: c.tulpar[500],
+    thumb: c.white,
+    thumbIconOff: c.kara[600],
+    spinnerDuration: "700ms",
+  },
+
   shell: {
     topbar: { height: "4rem", bg: c.white, fg: c.yagiz[900], border: c.colpan[200] },
     sidenav: {
