@@ -9,6 +9,7 @@ const loadingChecked = ref(false);
 const isLoading = ref(false);
 
 function triggerAsyncToggle() {
+  // Real revert-then-commit: show loading, then commit the new value.
   isLoading.value = true;
   setTimeout(() => {
     loadingChecked.value = !loadingChecked.value;
@@ -24,13 +25,11 @@ const visibilityEnabled = ref(true);
 
 // ─── Code snippets ────────────────────────────────────────────────────────────
 
-// heroCode intentionally removed — hero section uses no snippet block
-
-const sizesCode = `<TulparSwitch size="xs" v-model="checked" label="Extra small" />
-<TulparSwitch size="sm" v-model="checked" label="Small" />
-<TulparSwitch size="md" v-model="checked" label="Medium (default)" />
-<TulparSwitch size="lg" v-model="checked" label="Large" />
-<TulparSwitch size="xl" v-model="checked" label="Extra large" />`;
+const sizesCode = `<TulparSwitch size="xs" :model-value="true" label="Extra small" />
+<TulparSwitch size="sm" :model-value="true" label="Small" />
+<TulparSwitch size="md" :model-value="true" label="Medium (default)" />
+<TulparSwitch size="lg" :model-value="true" label="Large" />
+<TulparSwitch size="xl" :model-value="true" label="Extra large" />`;
 
 const labelPositionCode = `<!-- label at the end (default) -->
 <TulparSwitch v-model="checked" label="Notifications" label-position="end" />
@@ -38,8 +37,16 @@ const labelPositionCode = `<!-- label at the end (default) -->
 <!-- label at the start -->
 <TulparSwitch v-model="checked" label="Dark mode" label-position="start" />`;
 
-const labelSlotCode = `<TulparSwitch v-model="checked">
-  <span slot="label">Enable two-factor authentication</span>
+const propsVsSlotsCode = `<!-- (a) PROP form — label + description as attributes -->
+<TulparSwitch
+  v-model="checked"
+  label="Two-factor authentication"
+  description="Adds an extra layer of security to your account login."
+/>
+
+<!-- (b) SLOT form — rich content via named slots -->
+<TulparSwitch v-model="checked">
+  <span slot="label">Two-factor authentication</span>
   <span slot="description">
     Adds an extra layer of security to your account login.
   </span>
@@ -49,7 +56,7 @@ const statesCode = `<!-- Checked -->
 <TulparSwitch :model-value="true" label="Checked" />
 
 <!-- Disabled (off) -->
-<TulparSwitch :model-value="false" :disabled="true" label="Disabled" />
+<TulparSwitch :model-value="false" :disabled="true" label="Disabled off" />
 
 <!-- Disabled (on) -->
 <TulparSwitch :model-value="true" :disabled="true" label="Disabled on" />
@@ -71,6 +78,7 @@ const checked = ref(false);
 const loading = ref(false);
 
 function toggle() {
+  // revert-then-commit: flag loading, then commit after the async work
   loading.value = true;
   setTimeout(() => {
     checked.value = !checked.value;
@@ -79,43 +87,56 @@ function toggle() {
 }
 <\/script>
 
-<TulparButton @click="toggle" :disabled="loading">Async toggle</TulparButton>
-<TulparSwitch :model-value="checked" :loading="loading" label="Saving preference…" />`;
+<TulparSwitch :model-value="checked" :loading="loading" label="Auto-save drafts" />
+<TulparButton @click="toggle" :disabled="loading">Toggle with async</TulparButton>`;
 
-const showIconCode = `<!-- Default check/cross icons -->
-<TulparSwitch v-model="checked" :show-icon="true" label="With icons" />`;
+const showIconCode = `<!-- Default check / cross indicator inside the track -->
+<TulparSwitch :model-value="true" :show-icon="true" label="Show-icon on" />
+<TulparSwitch :model-value="false" :show-icon="true" label="Show-icon off" />`;
 
-const customIconCode = `<TulparSwitch v-model="checked" :show-icon="true">
-  <svg slot="icon-on" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-    fill="none" stroke="currentColor" stroke-width="2" width="10" height="10">
-    <!-- sun icon -->
-    <circle cx="12" cy="12" r="4"/>
-    <line x1="12" y1="2" x2="12" y2="6"/>
-    <line x1="12" y1="18" x2="12" y2="22"/>
-    <line x1="4.22" y1="4.22" x2="7.05" y2="7.05"/>
-  </svg>
-  <svg slot="icon-off" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-    fill="none" stroke="currentColor" stroke-width="2" width="10" height="10">
-    <!-- moon icon -->
-    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-  </svg>
+const iconPropCode = `<!-- Custom icons via PROP — pass a lucide-vue-next component -->
+<script setup>
+import { Sun, Moon } from "lucide-vue-next";
+<\/script>
+
+<TulparSwitch
+  :model-value="true"
+  :show-icon="true"
+  size="lg"
+  :icon-on="Sun"
+  :icon-off="Moon"
+  label="Day / Night (prop)"
+/>`;
+
+const iconSlotCode = `<!-- Custom icons via SLOT — any SVG works -->
+<TulparSwitch :model-value="true" :show-icon="true" size="lg" label="Day / Night (slot)">
+  <Sun slot="icon-on" :size="12" />
+  <Moon slot="icon-off" :size="12" />
 </TulparSwitch>`;
 
-const colorCode = `<TulparSwitch v-model="checked" color="ulgen" label="Ulgen (gold)" />
-<TulparSwitch v-model="checked" color="kizagan" label="Kizagan (red)" />
-<TulparSwitch v-model="checked" on-color="otuken" off-color="kam"
-  label="On=Otuken / Off=Kam" />`;
+const colorCode = `<!-- Single color override (on-state) — BIND it -->
+<TulparSwitch :model-value="true" :color="'ulgen'" label="Ulgen (gold)" />
+<TulparSwitch :model-value="true" :color="'otuken'" label="Otuken (forest)" />
+<TulparSwitch :model-value="true" :color="'kizagan'" label="Kizagan (danger)" />
+
+<!-- Independent on / off track colors — bind both -->
+<TulparSwitch
+  :model-value="true"
+  :on-color="'otuken'"
+  :off-color="'kizagan'"
+  label="On = Otuken / Off = Kizagan"
+/>`;
 </script>
 
 <template>
   <div class="demo-page">
     <header class="page-header">
-      <span class="page-tag">Selection</span>
+      <span class="page-tag">Core</span>
       <h1 class="page-title">Switch</h1>
       <p class="page-lede">
-        A boolean toggle control — five sizes, start/end label, named slots for label + description,
-        loading state, custom icons, and color overrides. Form-associated via the underlying web
-        component.
+        An immediate on/off toggle — five sizes, start/end label, label &amp; description in both
+        prop and slot form, loading state, default and custom icons (prop + slot), and per-state
+        color overrides. Form-associated via the underlying web component.
       </p>
     </header>
 
@@ -133,7 +154,7 @@ const colorCode = `<TulparSwitch v-model="checked" color="ulgen" label="Ulgen (g
       <p class="section-desc">
         Five sizes: <code class="inline-code">xs</code>, <code class="inline-code">sm</code>,
         <code class="inline-code">md</code> (default), <code class="inline-code">lg</code>,
-        <code class="inline-code">xl</code>.
+        <code class="inline-code">xl</code>. All checked.
       </p>
       <div class="preview preview--col">
         <TulparSwitch :model-value="true" size="xs" label="Extra small" />
@@ -159,27 +180,34 @@ const colorCode = `<TulparSwitch v-model="checked" color="ulgen" label="Ulgen (g
       <pre class="code"><code>{{ labelPositionCode }}</code></pre>
     </section>
 
-    <!-- ── 3. Label + description slots ─────────────────────────────────────── -->
+    <!-- ── 3. Props vs slots — label & description ───────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">3. Label + description slots</h2>
+      <h2 class="section-title">3. Props vs slots — label &amp; description</h2>
       <p class="section-desc">
-        Use <code class="inline-code">slot="label"</code> and
-        <code class="inline-code">slot="description"</code> for rich content alongside the switch.
+        Every content capability works in BOTH forms. Use the
+        <code class="inline-code">label</code> / <code class="inline-code">description</code> props
+        for plain text, or the <code class="inline-code">slot="label"</code> /
+        <code class="inline-code">slot="description"</code> slots for rich content. Both render
+        identically.
       </p>
-      <div class="preview preview--col">
-        <TulparSwitch :model-value="true">
-          <span slot="label">Enable two-factor authentication</span>
-          <span slot="description">
-            Adds an extra layer of security to your account login. You will need an authenticator
-            app.
-          </span>
-        </TulparSwitch>
-        <TulparSwitch :model-value="false">
-          <span slot="label">Marketing emails</span>
-          <span slot="description">Receive product updates, tips, and special offers.</span>
-        </TulparSwitch>
+      <div class="preview preview--cols">
+        <div class="preview-col">
+          <p class="preview-label">Prop form</p>
+          <TulparSwitch
+            :model-value="true"
+            label="Two-factor authentication"
+            description="Adds an extra layer of security to your account login."
+          />
+        </div>
+        <div class="preview-col">
+          <p class="preview-label">Slot form</p>
+          <TulparSwitch :model-value="true">
+            <span slot="label">Two-factor authentication</span>
+            <span slot="description"> Adds an extra layer of security to your account login. </span>
+          </TulparSwitch>
+        </div>
       </div>
-      <pre class="code"><code>{{ labelSlotCode }}</code></pre>
+      <pre class="code"><code>{{ propsVsSlotsCode }}</code></pre>
     </section>
 
     <!-- ── 4. States ─────────────────────────────────────────────────────────── -->
@@ -207,10 +235,11 @@ const colorCode = `<TulparSwitch v-model="checked" color="ulgen" label="Ulgen (g
 
     <!-- ── 5. Loading — async demo ───────────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">5. Loading — async demo</h2>
+      <h2 class="section-title">5. Loading — async (revert-then-commit)</h2>
       <p class="section-desc">
         The <code class="inline-code">loading</code> prop shows a spinner inside the thumb and
-        prevents interaction. Click the button below to simulate a 1.2 s async preference save.
+        prevents interaction. Click the button to simulate a 1.2 s async preference save — the
+        switch commits its new value only after the work resolves.
       </p>
       <div class="preview preview--col">
         <TulparSwitch
@@ -238,12 +267,12 @@ const colorCode = `<TulparSwitch v-model="checked" color="ulgen" label="Ulgen (g
       <pre class="code"><code>{{ loadingCode }}</code></pre>
     </section>
 
-    <!-- ── 6. Show icon ──────────────────────────────────────────────────────── -->
+    <!-- ── 6. show-icon — default check / cross ──────────────────────────────── -->
     <section class="doc-section">
       <h2 class="section-title">6. show-icon — check / cross indicator</h2>
       <p class="section-desc">
         <code class="inline-code">show-icon</code> renders a check mark when on and a cross when off
-        inside the track.
+        inside the track. The icon color follows the track color.
       </p>
       <div class="preview">
         <TulparSwitch :model-value="true" :show-icon="true" label="Show-icon on" />
@@ -253,51 +282,91 @@ const colorCode = `<TulparSwitch v-model="checked" color="ulgen" label="Ulgen (g
       <pre class="code"><code>{{ showIconCode }}</code></pre>
     </section>
 
-    <!-- ── 7. Custom icon-on / icon-off ─────────────────────────────────────── -->
+    <!-- ── 7. Custom icons — prop form ───────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">7. Custom icon-on / icon-off slots</h2>
+      <h2 class="section-title">7. Custom icons — prop form</h2>
       <p class="section-desc">
-        Replace the default check/cross with any SVG via
-        <code class="inline-code">slot="icon-on"</code> and
-        <code class="inline-code">slot="icon-off"</code>. Classic example: sun for day, moon for
-        night.
+        Pass a <code class="inline-code">lucide-vue-next</code> component to
+        <code class="inline-code">:icon-on</code> / <code class="inline-code">:icon-off</code> — the
+        wrapper renders it into the right slot. Classic example: sun for day, moon for night.
       </p>
       <div class="preview">
-        <TulparSwitch :model-value="true" :show-icon="true" size="lg" label="Day / Night">
+        <TulparSwitch
+          :model-value="true"
+          :show-icon="true"
+          size="lg"
+          :icon-on="Sun"
+          :icon-off="Moon"
+          label="Day / Night (prop, on)"
+        />
+        <TulparSwitch
+          :model-value="false"
+          :show-icon="true"
+          size="lg"
+          :icon-on="Sun"
+          :icon-off="Moon"
+          label="Day / Night (prop, off)"
+        />
+      </div>
+      <pre class="code"><code>{{ iconPropCode }}</code></pre>
+    </section>
+
+    <!-- ── 8. Custom icons — slot form ───────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">8. Custom icons — slot form</h2>
+      <p class="section-desc">
+        The same custom icons via <code class="inline-code">slot="icon-on"</code> /
+        <code class="inline-code">slot="icon-off"</code> — the escape hatch for any SVG or
+        non-Lucide icon library.
+      </p>
+      <div class="preview">
+        <TulparSwitch
+          :model-value="true"
+          :show-icon="true"
+          size="lg"
+          label="Day / Night (slot, on)"
+        >
           <Sun slot="icon-on" :size="12" />
           <Moon slot="icon-off" :size="12" />
         </TulparSwitch>
-        <TulparSwitch :model-value="false" :show-icon="true" size="lg" label="Day / Night (off)">
+        <TulparSwitch
+          :model-value="false"
+          :show-icon="true"
+          size="lg"
+          label="Day / Night (slot, off)"
+        >
           <Sun slot="icon-on" :size="12" />
           <Moon slot="icon-off" :size="12" />
         </TulparSwitch>
       </div>
-      <pre class="code"><code>{{ customIconCode }}</code></pre>
+      <pre class="code"><code>{{ iconSlotCode }}</code></pre>
     </section>
 
-    <!-- ── 8. Color ──────────────────────────────────────────────────────────── -->
+    <!-- ── 9. Color — on-color / off-color (bound) ───────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">8. Color</h2>
+      <h2 class="section-title">9. Color — on-color / off-color</h2>
       <p class="section-desc">
-        Override the on-state color with <code class="inline-code">color</code> or independently
-        control on/off track colors with <code class="inline-code">on-color</code> /
-        <code class="inline-code">off-color</code>.
+        Override the on-state color with <code class="inline-code">:color</code>, or independently
+        control the on/off track colors with <code class="inline-code">:on-color</code> /
+        <code class="inline-code">:off-color</code>. Always <strong>bind</strong> these in Vue — a
+        static <code class="inline-code">on-color</code> is parsed as an event handler.
       </p>
       <div class="preview preview--col">
-        <TulparSwitch :model-value="true" color="ulgen" label="Ulgen (antique gold)" />
-        <TulparSwitch :model-value="true" color="kizagan" label="Kizagan (danger red)" />
-        <TulparSwitch :model-value="true" color="otuken" label="Otuken (forest green)" />
+        <TulparSwitch :model-value="true" :color="'ulgen'" label="Ulgen (antique gold)" />
+        <TulparSwitch :model-value="true" :color="'otuken'" label="Otuken (forest green)" />
+        <TulparSwitch :model-value="true" :color="'kizagan'" label="Kizagan (danger red)" />
+        <TulparSwitch :model-value="true" :color="'kam'" label="Kam (indigo)" />
         <TulparSwitch
           :model-value="true"
-          on-color="otuken"
-          off-color="kizagan"
-          label="On=Otuken / Off=Kizagan"
+          :on-color="'otuken'"
+          :off-color="'kizagan'"
+          label="On = Otuken / Off = Kizagan"
         />
       </div>
       <pre class="code"><code>{{ colorCode }}</code></pre>
     </section>
 
-    <!-- ── 9. Real-world — Settings card ─────────────────────────────────────── -->
+    <!-- ── 10. In context — Settings card ────────────────────────────────────── -->
     <section class="doc-section">
       <h2 class="section-title">In context — Settings card</h2>
       <p class="section-desc">
@@ -435,6 +504,25 @@ const colorCode = `<TulparSwitch v-model="checked" color="ulgen" label="Ulgen (g
   flex-direction: column;
   align-items: flex-start;
   gap: 12px;
+}
+
+.preview--cols {
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.preview-col {
+  flex: 1;
+  min-width: 240px;
+}
+
+.preview-label {
+  margin: 0 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--tulpar-color-text-muted, #74777a);
 }
 
 /* ── Code block ─────────────────────────────────────────────────────────── */

@@ -5,37 +5,74 @@ import { TulparRadioGroup, TulparRadio } from "@tulpar-ui/vue";
 // ─── State ───────────────────────────────────────────────────────────────────
 
 const heroValue = ref("monthly");
+const basicValue = ref("yearly");
+const propSlotValue = ref("email");
+const sizeValue = ref("md");
 const orientationValue = ref("monthly");
 const horizontalValue = ref("light");
+const groupLabelPropValue = ref("system");
+const groupLabelSlotValue = ref("system");
 const statesGroupValue = ref<string | null>(null);
 const disabledGroupValue = ref("standard");
+const itemDisabledValue = ref("free");
 const cardValue = ref("pro");
-const colorValue = ref("green");
-const compositionValue = ref("pro");
+const colorGroupValue = ref("b");
+const colorPerRadioValue = ref("b");
+const compositionValue = ref("important");
 
 // ─── Code snippets ────────────────────────────────────────────────────────────
 
-// heroCode intentionally removed — hero section uses no snippet block
+const basicCode = `<TulparRadioGroup v-model="value" label="Billing period" name="billing">
+  <TulparRadio value="monthly" label="Monthly" />
+  <TulparRadio value="yearly" label="Yearly" />
+  <TulparRadio value="lifetime" label="Lifetime" />
+</TulparRadioGroup>
+
+<!-- Live value: {{ value }} -->`;
+
+const propsVsSlotsCode = `<!-- (a) PROP form — radio label + description as attributes -->
+<TulparRadio value="email" label="Email" description="Get notified by email." />
+
+<!-- (b) SLOT form — rich label + description -->
+<TulparRadio value="sms">
+  <span slot="label">SMS</span>
+  <span slot="description">Text messages to your phone.</span>
+</TulparRadio>`;
+
+const sizesCode = `<!-- size propagates from the group to every radio -->
+<TulparRadioGroup v-model="value" size="xs" label="Extra small">…</TulparRadioGroup>
+<TulparRadioGroup v-model="value" size="sm" label="Small">…</TulparRadioGroup>
+<TulparRadioGroup v-model="value" size="md" label="Medium">…</TulparRadioGroup>
+<TulparRadioGroup v-model="value" size="lg" label="Large">…</TulparRadioGroup>
+<TulparRadioGroup v-model="value" size="xl" label="Extra large">…</TulparRadioGroup>`;
 
 const orientationCode = `<!-- Vertical (default) -->
-<TulparRadioGroup v-model="value" orientation="vertical" label="Choose one">
-  <TulparRadio value="a" label="Option A" />
-  <TulparRadio value="b" label="Option B" />
-  <TulparRadio value="c" label="Option C" />
+<TulparRadioGroup v-model="value" orientation="vertical" label="Vertical">
+  <TulparRadio value="monthly" label="Monthly" />
+  <TulparRadio value="yearly" label="Yearly" />
 </TulparRadioGroup>
 
 <!-- Horizontal -->
-<TulparRadioGroup v-model="value" orientation="horizontal" label="Choose one">
+<TulparRadioGroup v-model="value" orientation="horizontal" label="Horizontal">
+  <TulparRadio value="light" label="Light" />
+  <TulparRadio value="dark" label="Dark" />
+</TulparRadioGroup>`;
+
+const groupLabelCode = `<!-- (a) PROP form — group legend via label + description -->
+<TulparRadioGroup
+  v-model="value"
+  label="Appearance"
+  description="Choose how Tulpar UI looks in this browser."
+>
   <TulparRadio value="light" label="Light" />
   <TulparRadio value="dark" label="Dark" />
   <TulparRadio value="system" label="System" />
-</TulparRadioGroup>`;
+</TulparRadioGroup>
 
-const groupDescCode = `<TulparRadioGroup v-model="value" name="theme" required>
+<!-- (b) SLOT form — rich group legend -->
+<TulparRadioGroup v-model="value">
   <span slot="label">Appearance</span>
-  <span slot="description">
-    Choose how Tulpar UI looks to you. This setting applies to this browser.
-  </span>
+  <span slot="description">Choose how Tulpar UI looks in this browser.</span>
   <TulparRadio value="light" label="Light" />
   <TulparRadio value="dark" label="Dark" />
   <TulparRadio value="system" label="System" />
@@ -78,31 +115,36 @@ const cardVariantCode = `<TulparRadioGroup v-model="plan" orientation="horizonta
   </TulparRadio>
 </TulparRadioGroup>`;
 
-const colorCode = `<TulparRadioGroup v-model="value" color="ulgen" label="Color: ulgen">
+const colorCode = `<!-- Group-level color — bind it -->
+<TulparRadioGroup v-model="value" :color="'ulgen'" label="Group color: ulgen">
   <TulparRadio value="a" label="Option A" />
   <TulparRadio value="b" label="Option B" />
+</TulparRadioGroup>
+
+<!-- Per-radio override — a single radio overrides the group color -->
+<TulparRadioGroup v-model="value" :color="'otuken'" label="Per-radio override">
+  <TulparRadio value="a" label="Inherits otuken" />
+  <TulparRadio value="b" :color="'kizagan'" label="Overrides to kizagan" />
 </TulparRadioGroup>`;
 
-const keyboardCode = `<!-- Keyboard navigation is managed by tulpar-radio-group automatically.
-     The group implements roving tabindex:
-       - Tab / Shift+Tab  — enter/leave the group
-       - ArrowDown / ArrowRight — next option
-       - ArrowUp / ArrowLeft   — previous option
-       - Home                  — first option
-       - End                   — last option
-     Focus wraps at boundaries. Only the selected (or first) item is in the
-     tab sequence; arrowing changes focus AND value. -->`;
+const keyboardCode = `<!-- Keyboard navigation is managed by tulpar-radio-group (roving tabindex):
+       Tab / Shift+Tab          — enter / leave the group
+       ArrowDown / ArrowRight   — next option (wraps)
+       ArrowUp / ArrowLeft      — previous option (wraps)
+       Home                     — first option
+       End                      — last option
+     Disabled options are skipped. Arrowing changes focus AND value. -->`;
 </script>
 
 <template>
   <div class="demo-page">
     <header class="page-header">
-      <span class="page-tag">Selection</span>
+      <span class="page-tag">Core</span>
       <h1 class="page-title">RadioGroup</h1>
       <p class="page-lede">
-        A single-select fieldset — vertical or horizontal orientation, card variant for plan
-        pickers, group-level label + description, and full roving-tabindex keyboard navigation out
-        of the box.
+        A single-select fieldset — two-way value, vertical or horizontal orientation, size
+        propagation, group legend in prop and slot form, a card variant for plan pickers, group +
+        per-radio color, and full roving-tabindex keyboard navigation.
       </p>
     </header>
 
@@ -127,12 +169,99 @@ const keyboardCode = `<!-- Keyboard navigation is managed by tulpar-radio-group 
       </div>
     </section>
 
-    <!-- ── 1. Orientation ─────────────────────────────────────────────────────── -->
+    <!-- ── 1. Basic ──────────────────────────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">1. Orientation</h2>
+      <h2 class="section-title">1. Basic — vertical group, two-way value</h2>
       <p class="section-desc">
-        <code class="inline-code">orientation="vertical"</code> (default) stacks options in a
-        column. <code class="inline-code">orientation="horizontal"</code> lays them out in a row.
+        <code class="inline-code">v-model</code> binds the selected radio's
+        <code class="inline-code">value</code>. Selecting an option updates the bound value and
+        deselects its siblings.
+      </p>
+      <div class="preview preview--col">
+        <TulparRadioGroup v-model="basicValue" label="Billing period" name="basic">
+          <TulparRadio value="monthly" label="Monthly" />
+          <TulparRadio value="yearly" label="Yearly" />
+          <TulparRadio value="lifetime" label="Lifetime" />
+        </TulparRadioGroup>
+        <p class="live-value">
+          value: <strong>{{ basicValue }}</strong>
+        </p>
+      </div>
+      <pre class="code"><code>{{ basicCode }}</code></pre>
+    </section>
+
+    <!-- ── 2. Props vs slots — radio label & description ─────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">2. Props vs slots — radio label &amp; description</h2>
+      <p class="section-desc">
+        Each <code class="inline-code">TulparRadio</code> takes
+        <code class="inline-code">label</code> / <code class="inline-code">description</code> props
+        OR <code class="inline-code">slot="label"</code> /
+        <code class="inline-code">slot="description"</code>. Both render identically.
+      </p>
+      <div class="preview preview--cols">
+        <div class="preview-col">
+          <p class="preview-label">Prop form</p>
+          <TulparRadioGroup v-model="propSlotValue" name="ps-prop">
+            <TulparRadio value="email" label="Email" description="Get notified by email." />
+            <TulparRadio value="push" label="Push" description="Alerts on your devices." />
+          </TulparRadioGroup>
+        </div>
+        <div class="preview-col">
+          <p class="preview-label">Slot form</p>
+          <TulparRadioGroup v-model="propSlotValue" name="ps-slot">
+            <TulparRadio value="email">
+              <span slot="label">Email</span>
+              <span slot="description">Get notified by email.</span>
+            </TulparRadio>
+            <TulparRadio value="push">
+              <span slot="label">Push</span>
+              <span slot="description">Alerts on your devices.</span>
+            </TulparRadio>
+          </TulparRadioGroup>
+        </div>
+      </div>
+      <pre class="code"><code>{{ propsVsSlotsCode }}</code></pre>
+    </section>
+
+    <!-- ── 3. Sizes ──────────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">3. Sizes</h2>
+      <p class="section-desc">
+        The group <code class="inline-code">size</code> propagates to every radio:
+        <code class="inline-code">xs</code> through <code class="inline-code">xl</code>.
+      </p>
+      <div class="preview preview--row-gap">
+        <TulparRadioGroup v-model="sizeValue" size="xs" label="xs" name="size-xs">
+          <TulparRadio value="md" label="Option A" />
+          <TulparRadio value="b" label="Option B" />
+        </TulparRadioGroup>
+        <TulparRadioGroup v-model="sizeValue" size="sm" label="sm" name="size-sm">
+          <TulparRadio value="md" label="Option A" />
+          <TulparRadio value="b" label="Option B" />
+        </TulparRadioGroup>
+        <TulparRadioGroup v-model="sizeValue" size="md" label="md" name="size-md">
+          <TulparRadio value="md" label="Option A" />
+          <TulparRadio value="b" label="Option B" />
+        </TulparRadioGroup>
+        <TulparRadioGroup v-model="sizeValue" size="lg" label="lg" name="size-lg">
+          <TulparRadio value="md" label="Option A" />
+          <TulparRadio value="b" label="Option B" />
+        </TulparRadioGroup>
+        <TulparRadioGroup v-model="sizeValue" size="xl" label="xl" name="size-xl">
+          <TulparRadio value="md" label="Option A" />
+          <TulparRadio value="b" label="Option B" />
+        </TulparRadioGroup>
+      </div>
+      <pre class="code"><code>{{ sizesCode }}</code></pre>
+    </section>
+
+    <!-- ── 4. Orientation ─────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">4. Orientation</h2>
+      <p class="section-desc">
+        <code class="inline-code">orientation="vertical"</code> (default) stacks options;
+        <code class="inline-code">orientation="horizontal"</code> lays them out in a row.
       </p>
       <div class="preview preview--row-gap">
         <TulparRadioGroup
@@ -159,31 +288,46 @@ const keyboardCode = `<!-- Keyboard navigation is managed by tulpar-radio-group 
       <pre class="code"><code>{{ orientationCode }}</code></pre>
     </section>
 
-    <!-- ── 2. Group label + description slots ─────────────────────────────────── -->
+    <!-- ── 5. Group label + description — prop AND slot ──────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">2. Group label + description</h2>
+      <h2 class="section-title">5. Group label + description — prop &amp; slot</h2>
       <p class="section-desc">
-        Use <code class="inline-code">slot="label"</code> and
-        <code class="inline-code">slot="description"</code> on the group for a rich legend above the
-        options.
+        The group legend can be set via the <code class="inline-code">label</code> /
+        <code class="inline-code">description</code> props OR via group-level
+        <code class="inline-code">slot="label"</code> /
+        <code class="inline-code">slot="description"</code>.
       </p>
-      <div class="preview">
-        <TulparRadioGroup v-model="horizontalValue" name="theme-desc" :required="true">
-          <span slot="label">Appearance</span>
-          <span slot="description"
-            >Choose how Tulpar UI looks. This setting applies to this browser.</span
+      <div class="preview preview--cols">
+        <div class="preview-col">
+          <p class="preview-label">Prop form</p>
+          <TulparRadioGroup
+            v-model="groupLabelPropValue"
+            name="gl-prop"
+            label="Appearance"
+            description="Choose how Tulpar UI looks in this browser."
           >
-          <TulparRadio value="light" label="Light" />
-          <TulparRadio value="dark" label="Dark" />
-          <TulparRadio value="system" label="System" />
-        </TulparRadioGroup>
+            <TulparRadio value="light" label="Light" />
+            <TulparRadio value="dark" label="Dark" />
+            <TulparRadio value="system" label="System" />
+          </TulparRadioGroup>
+        </div>
+        <div class="preview-col">
+          <p class="preview-label">Slot form</p>
+          <TulparRadioGroup v-model="groupLabelSlotValue" name="gl-slot">
+            <span slot="label">Appearance</span>
+            <span slot="description">Choose how Tulpar UI looks in this browser.</span>
+            <TulparRadio value="light" label="Light" />
+            <TulparRadio value="dark" label="Dark" />
+            <TulparRadio value="system" label="System" />
+          </TulparRadioGroup>
+        </div>
       </div>
-      <pre class="code"><code>{{ groupDescCode }}</code></pre>
+      <pre class="code"><code>{{ groupLabelCode }}</code></pre>
     </section>
 
-    <!-- ── 3. States ─────────────────────────────────────────────────────────── -->
+    <!-- ── 6. States ─────────────────────────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">3. States</h2>
+      <h2 class="section-title">6. States</h2>
       <p class="section-desc">
         Required + invalid with <code class="inline-code">error-text</code>, group-level disabled,
         and per-item disabled.
@@ -211,7 +355,7 @@ const keyboardCode = `<!-- Keyboard navigation is managed by tulpar-radio-group 
           <TulparRadio value="express" label="Express" />
         </TulparRadioGroup>
 
-        <TulparRadioGroup v-model="orientationValue" label="Item disabled" name="states-item">
+        <TulparRadioGroup v-model="itemDisabledValue" label="Item disabled" name="states-item">
           <TulparRadio value="free" label="Free" />
           <TulparRadio value="pro" label="Pro (unavailable)" :disabled="true" />
           <TulparRadio value="enterprise" label="Enterprise" />
@@ -220,13 +364,13 @@ const keyboardCode = `<!-- Keyboard navigation is managed by tulpar-radio-group 
       <pre class="code"><code>{{ statesCode }}</code></pre>
     </section>
 
-    <!-- ── 4. Card variant ────────────────────────────────────────────────────── -->
+    <!-- ── 7. Card variant — plan picker ─────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">4. Card variant — plan picker</h2>
+      <h2 class="section-title">7. Card variant — plan picker</h2>
       <p class="section-desc">
         <code class="inline-code">variant="card"</code> on each
-        <code class="inline-code">TulparRadio</code> renders clickable cards — ideal for plan or
-        layout pickers.
+        <code class="inline-code">TulparRadio</code> renders arrow-key navigable cards — ideal for
+        plan or layout pickers. Each shows a single clean selection dot.
       </p>
       <div class="preview">
         <TulparRadioGroup
@@ -249,51 +393,51 @@ const keyboardCode = `<!-- Keyboard navigation is managed by tulpar-radio-group 
       <pre class="code"><code>{{ cardVariantCode }}</code></pre>
     </section>
 
-    <!-- ── 5. Color ──────────────────────────────────────────────────────────── -->
+    <!-- ── 8. Color — group + per-radio override ─────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">5. Color</h2>
+      <h2 class="section-title">8. Color — group + per-radio override</h2>
       <p class="section-desc">
-        Override the selected-state accent with any design-system palette value via
-        <code class="inline-code">color</code> on the group.
+        Bind <code class="inline-code">:color</code> on the group to set the accent for every radio,
+        or on a single <code class="inline-code">TulparRadio</code> to override just that one.
       </p>
       <div class="preview preview--row-gap">
         <TulparRadioGroup
-          v-model="colorValue"
-          color="ulgen"
-          label="Ulgen (gold)"
-          name="color-ulgen"
+          v-model="colorGroupValue"
+          :color="'ulgen'"
+          label="Group: ulgen"
+          name="c-ulgen"
         >
-          <TulparRadio value="green" label="Option A" />
-          <TulparRadio value="gold" label="Option B" />
+          <TulparRadio value="a" label="Option A" />
+          <TulparRadio value="b" label="Option B" />
         </TulparRadioGroup>
         <TulparRadioGroup
-          v-model="colorValue"
-          color="kizagan"
-          label="Kizagan (red)"
-          name="color-kizagan"
+          v-model="colorGroupValue"
+          :color="'kizagan'"
+          label="Group: kizagan"
+          name="c-kizagan"
         >
-          <TulparRadio value="green" label="Option A" />
-          <TulparRadio value="red" label="Option B" />
+          <TulparRadio value="a" label="Option A" />
+          <TulparRadio value="b" label="Option B" />
         </TulparRadioGroup>
         <TulparRadioGroup
-          v-model="colorValue"
-          color="otuken"
-          label="Otuken (forest)"
-          name="color-otuken"
+          v-model="colorPerRadioValue"
+          :color="'otuken'"
+          label="Per-radio override"
+          name="c-override"
         >
-          <TulparRadio value="green" label="Option A" />
-          <TulparRadio value="forest" label="Option B" />
+          <TulparRadio value="a" label="Inherits otuken" />
+          <TulparRadio value="b" :color="'kizagan'" label="Overrides to kizagan" />
         </TulparRadioGroup>
       </div>
       <pre class="code"><code>{{ colorCode }}</code></pre>
     </section>
 
-    <!-- ── 6. Keyboard navigation ────────────────────────────────────────────── -->
+    <!-- ── 9. Keyboard navigation ────────────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">6. Keyboard navigation</h2>
+      <h2 class="section-title">9. Keyboard navigation</h2>
       <p class="section-desc">
         The group implements roving tabindex — only the selected (or first) option is in the tab
-        sequence. Arrow keys move focus and change the value simultaneously.
+        sequence. Arrow keys move focus and change the value; disabled options are skipped.
       </p>
       <div class="preview">
         <div class="keyboard-table">
@@ -317,37 +461,39 @@ const keyboardCode = `<!-- Keyboard navigation is managed by tulpar-radio-group 
             <kbd>End</kbd>
             <span>Last option</span>
           </div>
+          <div class="keyboard-row">
+            <kbd>disabled</kbd>
+            <span>Skipped during arrow navigation</span>
+          </div>
         </div>
       </div>
       <pre class="code"><code>{{ keyboardCode }}</code></pre>
     </section>
 
-    <!-- ── 7. Real-world — plan picker ───────────────────────────────────────── -->
+    <!-- ── 10. In context — notification frequency ───────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">In context — pricing plan picker</h2>
+      <h2 class="section-title">In context — notification frequency</h2>
       <p class="section-desc">
-        A full plan selection card using the card variant with descriptions, showing the selected
-        plan detail below.
+        A settings composition: a single-select frequency picker using the card variant with
+        descriptions, plus a live readout of the chosen value.
       </p>
       <div class="composition">
         <div class="plan-card">
-          <h3 class="plan-card-title">Choose your plan</h3>
-          <p class="plan-card-sub">You can upgrade or downgrade at any time.</p>
-          <TulparRadioGroup v-model="compositionValue" name="plan-picker" class="plan-group">
-            <TulparRadio variant="card" value="free" label="Free">
-              <span slot="description">$0 / mo · 1 user · 1 GB storage · Community support</span>
+          <h3 class="plan-card-title">Email notifications</h3>
+          <p class="plan-card-sub">How often should we send you a digest?</p>
+          <TulparRadioGroup v-model="compositionValue" name="freq-picker" class="plan-group">
+            <TulparRadio variant="card" value="important" label="Important only">
+              <span slot="description">Only security alerts and account changes.</span>
             </TulparRadio>
-            <TulparRadio variant="card" value="pro" label="Pro">
-              <span slot="description"
-                >$29 / mo · 25 users · 100 GB storage · Priority support</span
-              >
+            <TulparRadio variant="card" value="daily" label="Daily digest">
+              <span slot="description">One summary email every morning.</span>
             </TulparRadio>
-            <TulparRadio variant="card" value="enterprise" label="Enterprise">
-              <span slot="description">Custom pricing · Unlimited · Dedicated support + SLA</span>
+            <TulparRadio variant="card" value="realtime" label="Real-time">
+              <span slot="description">Every event, as it happens.</span>
             </TulparRadio>
           </TulparRadioGroup>
           <p class="plan-selected">
-            Selected plan: <strong>{{ compositionValue }}</strong>
+            Selected: <strong>{{ compositionValue }}</strong>
           </p>
         </div>
       </div>
@@ -440,8 +586,32 @@ const keyboardCode = `<!-- Keyboard navigation is managed by tulpar-radio-group 
   align-items: flex-start;
 }
 
+.preview--col {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.preview--cols {
+  align-items: flex-start;
+  gap: 40px;
+}
+
 .preview--row-gap {
   gap: 32px;
+}
+
+.preview-col {
+  flex: 1;
+  min-width: 240px;
+}
+
+.preview-label {
+  margin: 0 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--tulpar-color-text-muted, #74777a);
 }
 
 .code {
@@ -466,6 +636,12 @@ const keyboardCode = `<!-- Keyboard navigation is managed by tulpar-radio-group 
   border-radius: 3px;
   padding: 1px 5px;
   color: var(--tulpar-color-text-primary, #15110b);
+}
+
+.live-value {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--tulpar-color-text-secondary, #57534e);
 }
 
 kbd {
