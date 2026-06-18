@@ -77,8 +77,10 @@ function onChange(e: Event) {
     :description="description ?? undefined"
     @change="onChange"
   >
-    <span v-if="iconOn" slot="icon-on"><component :is="iconOn" /></span>
-    <span v-if="iconOff" slot="icon-off"><component :is="iconOff" /></span>
+    <!-- Render directly with the slot attr so the icon's root <svg> is the
+         slotted node and the core's ::slotted sizing fits it to the thumb. -->
+    <component :is="iconOn" v-if="iconOn" slot="icon-on" />
+    <component :is="iconOff" v-if="iconOff" slot="icon-off" />
     <slot />
   </tulpar-switch>
 </template>

@@ -2,6 +2,7 @@ import {
   afterRenderEffect,
   ChangeDetectionStrategy,
   Component,
+  computed,
   CUSTOM_ELEMENTS_SCHEMA,
   input,
   model,
@@ -61,10 +62,14 @@ export type { SelectionSize, SelectionLabelPosition };
       (change)="onCoreChange($event)"
     >
       @if (iconOn(); as i) {
-        <span slot="icon-on"><ng-container *ngComponentOutlet="i" /></span>
+        <span slot="icon-on"
+          ><ng-container *ngComponentOutlet="i; inputs: { size: iconSize() }"
+        /></span>
       }
       @if (iconOff(); as i) {
-        <span slot="icon-off"><ng-container *ngComponentOutlet="i" /></span>
+        <span slot="icon-off"
+          ><ng-container *ngComponentOutlet="i; inputs: { size: iconSize() }"
+        /></span>
       }
       <ng-content select="[slot='icon-on']" />
       <ng-content select="[slot='icon-off']" />
@@ -112,6 +117,11 @@ export class TulparSwitchComponent {
   readonly iconOn = input<Type<unknown> | undefined>(undefined);
   /** Convenience: render a component into the `icon-off` slot. */
   readonly iconOff = input<Type<unknown> | undefined>(undefined);
+
+  /** Thumb-icon px size per tier (~58% of the thumb) for the icon-component inputs. */
+  protected readonly iconSize = computed(
+    () => ({ xs: 9, sm: 10, md: 11, lg: 13, xl: 14 })[this.size()] ?? 11,
+  );
 
   readonly change = output<Event>();
 

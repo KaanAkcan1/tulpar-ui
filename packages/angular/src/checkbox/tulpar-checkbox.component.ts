@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   CUSTOM_ELEMENTS_SCHEMA,
   input,
   model,
@@ -53,7 +54,9 @@ export type { SelectionSize, SelectionLabelPosition };
       (change)="onCoreChange($event)"
     >
       @if (icon(); as i) {
-        <span slot="icon"><ng-container *ngComponentOutlet="i" /></span>
+        <span slot="icon"
+          ><ng-container *ngComponentOutlet="i; inputs: { size: iconSize() }"
+        /></span>
       }
       <ng-content select="[slot='icon']" />
       <ng-content select="[slot='label']" />
@@ -89,6 +92,11 @@ export class TulparCheckboxComponent {
 
   /** Convenience: render a component into the `icon` slot (custom check glyph). */
   readonly icon = input<Type<unknown> | undefined>(undefined);
+
+  /** Glyph px size per tier (~70% of the box) for the icon-component inputs. */
+  protected readonly iconSize = computed(
+    () => ({ xs: 10, sm: 11, md: 13, lg: 14, xl: 15 })[this.size()] ?? 13,
+  );
 
   readonly change = output<Event>();
 

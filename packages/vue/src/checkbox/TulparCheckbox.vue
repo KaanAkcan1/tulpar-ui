@@ -70,7 +70,11 @@ function onChange(e: Event) {
     :description="description ?? undefined"
     @change="onChange"
   >
-    <span v-if="icon" slot="icon"><component :is="icon" /></span>
+    <!-- Render the icon component directly with the slot attr so its root <svg>
+         is the slotted node — the core's ::slotted sizing then fits it to the
+         glyph box (a wrapping span would let the icon overflow at its intrinsic
+         size). -->
+    <component :is="icon" v-if="icon" slot="icon" />
     <slot />
   </tulpar-checkbox>
 </template>

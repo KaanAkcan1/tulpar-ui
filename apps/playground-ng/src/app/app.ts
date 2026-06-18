@@ -464,16 +464,17 @@ export class App {
             { label: 'NumberInput', href: '/number-input', icon: IconNumberInput },
           ],
         },
-      ],
-    },
-    {
-      type: 'section',
-      label: 'Selection',
-      items: [
-        { label: 'Switch', href: '/switch', icon: IconSwitch },
-        { label: 'Checkbox', href: '/checkbox', icon: IconCheckbox },
-        { label: 'Radio Group', href: '/radio-group', icon: IconRadio },
-        { label: 'Checkbox Group', href: '/checkbox-group', icon: IconCheckboxGroup },
+        // Selection — a collapsible group under Components (matches playground-vue).
+        {
+          label: 'Selection',
+          icon: IconCheckbox,
+          items: [
+            { label: 'Switch', href: '/switch', icon: IconSwitch },
+            { label: 'Checkbox', href: '/checkbox', icon: IconCheckbox },
+            { label: 'RadioGroup', href: '/radio-group', icon: IconRadio },
+            { label: 'CheckboxGroup', href: '/checkbox-group', icon: IconCheckboxGroup },
+          ],
+        },
       ],
     },
     {

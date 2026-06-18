@@ -121,6 +121,15 @@ export const switchStyles = css`
     display: block;
   }
 
+  /* Custom slotted icons (via slot or the wrapper's icon prop): size them to
+     the thumb-icon size (1em = the .ic font-size) regardless of their intrinsic
+     dimensions, and center them. */
+  ::slotted(*) {
+    width: 1em;
+    height: 1em;
+    display: block;
+  }
+
   .ic--on {
     color: var(--_sw-icon-on);
   }
