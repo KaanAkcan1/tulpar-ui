@@ -24,6 +24,10 @@
       "types": "./dist/checkbox/index.d.ts",
       "import": "./dist/checkbox/index.js"
     },
+    "./checkbox-group": {
+      "types": "./dist/checkbox-group/index.d.ts",
+      "import": "./dist/checkbox-group/index.js"
+    },
     "./number-input": {
       "types": "./dist/number-input/index.d.ts",
       "import": "./dist/number-input/index.js"
