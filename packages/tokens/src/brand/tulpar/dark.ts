@@ -305,6 +305,7 @@ export const tulparDark: SemanticTokens = {
     trackOn: c.tulpar[400],
     thumb: c.white,
     thumbIconOff: c.kara[400],
+    thumbShadow: "0 1px 2px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.4)",
     spinnerDuration: "700ms",
   },
 

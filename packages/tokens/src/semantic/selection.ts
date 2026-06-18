@@ -35,6 +35,8 @@ export interface SwitchTokens {
   trackOn: string;
   thumb: string;
   thumbIconOff: string;
+  /** Layered thumb box-shadow. Tokenized (not `:host-context`) so it flips with the `.dark` class. */
+  thumbShadow: string;
   /** Loading spinner rotation duration. Non-color, parallels `button.spinnerDuration`. */
   spinnerDuration: string;
 }

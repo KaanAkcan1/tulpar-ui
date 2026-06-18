@@ -87,6 +87,19 @@ describe("<tulpar-switch>", () => {
     expect(data.get("wifi")).to.equal("on");
   });
 
+  it("syncs FormData when checked is set programmatically (no click)", async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form><tulpar-switch name="wifi"></tulpar-switch></form>
+    `);
+    const el = form.querySelector("tulpar-switch") as TulparSwitch;
+    el.checked = true;
+    await el.updateComplete;
+    expect(new FormData(form).get("wifi")).to.equal("on");
+    el.checked = false;
+    await el.updateComplete;
+    expect(new FormData(form).get("wifi")).to.equal(null);
+  });
+
   it("submits a custom value when value is set", async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form><tulpar-switch name="mode" value="dark" checked></tulpar-switch></form>
@@ -147,6 +160,16 @@ describe("<tulpar-switch>", () => {
     it("renders the spinner element", async () => {
       const el = await fixture<TulparSwitch>(html`<tulpar-switch loading></tulpar-switch>`);
       expect(el.shadowRoot!.querySelector(".spinner")).to.exist;
+    });
+
+    it("shows the spinner and hides the thumb icons while loading", async () => {
+      const el = await fixture<TulparSwitch>(
+        html`<tulpar-switch loading show-icon></tulpar-switch>`,
+      );
+      const spinner = el.shadowRoot!.querySelector(".spinner") as HTMLElement;
+      const onIcon = el.shadowRoot!.querySelector(".ic--on") as HTMLElement;
+      expect(getComputedStyle(spinner).opacity).to.equal("1");
+      expect(getComputedStyle(onIcon).opacity).to.equal("0");
     });
   });
 

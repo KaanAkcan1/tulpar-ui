@@ -51,15 +51,14 @@ export class TulparSwitch extends SelectionControlBase {
     this._initialChecked = this.checked;
   }
 
-  protected override firstUpdated() {
-    super.firstUpdated();
-    // Seed the form value so an authored `checked` is submitted without an
-    // interaction.
-    this._internals.setFormValue(this.checked ? this.value : null);
-  }
-
   protected override updated(changed: Map<string, unknown>) {
     super.updated(changed);
+    // Keep the form value in sync with `checked`/`value` — covers the initial
+    // render AND programmatic changes (e.g. an Angular wrapper setting `checked`
+    // directly, where `_toggle` never runs).
+    if (changed.has("checked") || changed.has("value")) {
+      this._internals.setFormValue(this.checked ? this.value : null);
+    }
     if (changed.has("onColor")) {
       if (this.onColor) this.style.setProperty("--_sw-track-on", this.onColor);
       else this.style.removeProperty("--_sw-track-on");

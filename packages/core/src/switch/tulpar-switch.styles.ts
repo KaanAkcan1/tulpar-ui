@@ -61,10 +61,13 @@ export const switchStyles = css`
     height: var(--_sw-thumb);
     border-radius: 50%;
     background: var(--tulpar-switch-thumb, #fff);
-    box-shadow:
+    /* Tokenized so it flips with the .dark class (token CSS), not :host-context. */
+    box-shadow: var(
+      --tulpar-switch-thumb-shadow,
       0 1px 2px rgba(11, 8, 4, 0.28),
       0 2px 6px -1px rgba(11, 8, 4, 0.18),
-      inset 0 1px 0 rgba(255, 255, 255, 0.7);
+      inset 0 1px 0 rgba(255, 255, 255, 0.7)
+    );
     transform: translateX(0);
     transition: transform 240ms cubic-bezier(0.34, 1.3, 0.64, 1);
     display: grid;
@@ -184,20 +187,6 @@ export const switchStyles = css`
   /* ── Invalid (danger ring; keep brand on-track when checked) ──────────── */
   :host([invalid]) .track {
     box-shadow: inset 0 0 0 1px var(--tulpar-selection-control-border-invalid, #b22128);
-  }
-
-  /* ── Dark-mode layered shadow ─────────────────────────────────────────── */
-  @media (prefers-color-scheme: dark) {
-    .thumb {
-      box-shadow:
-        0 1px 2px rgba(0, 0, 0, 0.45),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4);
-    }
-  }
-  :host-context(.dark) .thumb {
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.45),
-      inset 0 1px 0 rgba(255, 255, 255, 0.4);
   }
 
   /* ── Keyframes ────────────────────────────────────────────────────────── */
