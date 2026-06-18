@@ -30,6 +30,14 @@ export const switchStyles = css`
     --_sw-icon-off: var(--tulpar-switch-thumb-icon-off, #636568);
   }
 
+  /* The single color prop (resolved to --_sel-fill by the base) recolors the
+     ON track. An explicit on-color override still wins: the prop writes
+     --_sw-track-on as an inline style, which beats this stylesheet rule. */
+  :host([data-custom-fill]) {
+    --_sw-track-on: var(--_sel-fill);
+    --_sw-icon-on: var(--_sel-fill);
+  }
+
   /* ── Track (the focusable role=switch button) ─────────────────────────── */
   .track {
     position: relative;

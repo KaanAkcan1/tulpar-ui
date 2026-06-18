@@ -104,8 +104,29 @@ describe("SelectionGroupBase (via test subclass)", () => {
       expect(k.getAttribute("size")).to.equal("lg");
       expect(k.hasAttribute("disabled")).to.be.true;
       expect(k.hasAttribute("readonly")).to.be.true;
-      expect(k.getAttribute("color")).to.equal("#123456");
+      // `color` is a property (not a reflected attribute), so the group mirrors
+      // it onto the child's `color` property rather than an attribute.
+      expect((k as unknown as { color?: string }).color).to.equal("#123456");
     }
+  });
+
+  it("does not clobber a child's own color (per-item override)", async () => {
+    const el = await fixture<TestGroup>(html`
+      <test-selection-group color="#111111">
+        <tulpar-checkbox value="a"></tulpar-checkbox>
+        <tulpar-checkbox value="b"></tulpar-checkbox>
+      </test-selection-group>
+    `);
+    // Set a per-item override on the second child, then re-propagate.
+    const kids = Array.from(el.querySelectorAll("tulpar-checkbox")) as unknown as {
+      color?: string;
+    }[];
+    kids[1].color = "#999999";
+    el.color = "#222222";
+    await el.updateComplete;
+    // Child A inherits the (updated) group color; child B keeps its override.
+    expect(kids[0].color).to.equal("#222222");
+    expect(kids[1].color).to.equal("#999999");
   });
 
   it("propagates to a child added after connect (slotchange)", async () => {

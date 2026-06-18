@@ -121,13 +121,41 @@ export abstract class SelectionGroupBase extends LitElement implements Selection
       this._mirrorGroupFlag(child, "disabled", this.disabled);
       this._mirrorGroupFlag(child, "readonly", this.readonly);
 
-      if (this.color) child.setAttribute("color", this.color);
+      this._mirrorGroupColor(child);
     }
 
     // Detect card children and toggle data-has-cards on the host.
     const hasCards = children.some((c) => c.getAttribute("variant") === "card");
     if (hasCards) this.setAttribute("data-has-cards", "");
     else this.removeAttribute("data-has-cards");
+  }
+
+  /**
+   * Mirror the group `color` onto a child WITHOUT clobbering a child's own
+   * authored `color` (per-item override). Uses a `data-group-color` marker so
+   * we only ever clear / replace the color the group itself introduced.
+   */
+  private _mirrorGroupColor(child: HTMLElement) {
+    // `color` is a property (not a reflected attribute), so a per-item override
+    // set by a framework wrapper won't show up as an attribute. Read the live
+    // property and track what the group itself applied via a marker, so a
+    // child's own `color` (per-item override) is never clobbered.
+    const marker = "data-group-color";
+    const colorChild = child as HTMLElement & { color?: string };
+    const ownColor = colorChild.color;
+    const groupApplied = child.getAttribute(marker) || undefined;
+    if (this.color) {
+      // Apply only when the child has no color of its own, OR its current color
+      // is exactly the one the group previously applied.
+      if (!ownColor || ownColor === groupApplied) {
+        colorChild.color = this.color;
+        child.setAttribute(marker, this.color);
+      }
+    } else if (groupApplied !== undefined) {
+      // The group cleared its color — remove only the one it added.
+      if (ownColor === groupApplied) colorChild.color = undefined;
+      child.removeAttribute(marker);
+    }
   }
 
   /** Add/remove a boolean attr the group owns, without clobbering the child's own. */

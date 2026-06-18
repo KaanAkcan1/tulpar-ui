@@ -1,6 +1,6 @@
 import { html, svg, type TemplateResult, nothing } from "lit";
 import { property } from "lit/decorators.js";
-import { SelectionControlBase } from "../_internal/selection-control-base";
+import { SelectionControlBase, resolveSelectionColor } from "../_internal/selection-control-base";
 import { switchStyles } from "./tulpar-switch.styles";
 
 /** Two-segment tick, round caps, ~1em, currentColor. */
@@ -60,11 +60,13 @@ export class TulparSwitch extends SelectionControlBase {
       this._internals.setFormValue(this.checked ? this.value : null);
     }
     if (changed.has("onColor")) {
-      if (this.onColor) this.style.setProperty("--_sw-track-on", this.onColor);
+      if (this.onColor)
+        this.style.setProperty("--_sw-track-on", resolveSelectionColor(this.onColor));
       else this.style.removeProperty("--_sw-track-on");
     }
     if (changed.has("offColor")) {
-      if (this.offColor) this.style.setProperty("--_sw-track-off", this.offColor);
+      if (this.offColor)
+        this.style.setProperty("--_sw-track-off", resolveSelectionColor(this.offColor));
       else this.style.removeProperty("--_sw-track-off");
     }
   }

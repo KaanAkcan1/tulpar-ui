@@ -8,6 +8,47 @@ export type SelectionSize = "xs" | "sm" | "md" | "lg" | "xl";
 export type SelectionLabelPosition = "start" | "end";
 
 /**
+ * Design-system color family names accepted by the `color` / `on-color` /
+ * `off-color` props. A bare family name is resolved to its primitive `-500`
+ * token (the canonical mid-tone fill, matching the brand-default selection
+ * fill). Any value that is not a known family name is passed through verbatim,
+ * so raw CSS colors (`#f00`, `rgb(...)`, `var(--x)`) still work.
+ */
+const SELECTION_COLOR_NAMES = new Set([
+  "al",
+  "kizagan",
+  "umay",
+  "ilay",
+  "erlik",
+  "kam",
+  "mergen",
+  "gok",
+  "ay",
+  "yersu",
+  "tulpar",
+  "otuken",
+  "kayin",
+  "ulgen",
+  "kuyas",
+  "alaz",
+  "burkut",
+  "colpan",
+  "ayzit",
+  "boz",
+  "kara",
+  "yagiz",
+]);
+
+/**
+ * Resolve a `color` value to a CSS color. A known design-system family name
+ * maps to `var(--tulpar-primitive-color-<name>-500)`; anything else is treated
+ * as an already-valid CSS color and returned unchanged.
+ */
+export function resolveSelectionColor(value: string): string {
+  return SELECTION_COLOR_NAMES.has(value) ? `var(--tulpar-primitive-color-${value}-500)` : value;
+}
+
+/**
  * Internal abstract base for the Tulpar UI selection family
  * (Switch / Checkbox / Radio).
  *
@@ -69,7 +110,7 @@ export abstract class SelectionControlBase extends LitElement implements Selecti
     if (this._color) {
       // Apply as a dedicated inline var rather than --_sel-fill directly, so
       // the disabled token rule in CSS can still override the resolved fill.
-      this.style.setProperty("--_sel-custom-fill", this._color);
+      this.style.setProperty("--_sel-custom-fill", resolveSelectionColor(this._color));
       this.setAttribute("data-custom-fill", "");
     } else {
       this.style.removeProperty("--_sel-custom-fill");
