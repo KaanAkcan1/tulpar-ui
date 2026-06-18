@@ -35,5 +35,6 @@ export interface SwitchTokens {
   trackOn: string;
   thumb: string;
   thumbIconOff: string;
+  /** Loading spinner rotation duration. Non-color, parallels `button.spinnerDuration`. */
   spinnerDuration: string;
 }
