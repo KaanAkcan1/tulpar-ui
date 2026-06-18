@@ -31,3 +31,10 @@ export type { TulparNavItemVueData } from "./shell/TulparSidenav.vue";
 export { default as TulparNavItem } from "./shell/TulparNavItem.vue";
 export { default as TulparNavSection } from "./shell/TulparNavSection.vue";
 export type { ShellSidenavMode, ShellState, TulparNavItemData } from "@tulpar-ui/shell";
+
+export { default as TulparSwitch } from "./switch/TulparSwitch.vue";
+export { default as TulparCheckbox } from "./checkbox/TulparCheckbox.vue";
+export { default as TulparRadio } from "./radio/TulparRadio.vue";
+export { default as TulparRadioGroup } from "./radio-group/TulparRadioGroup.vue";
+export { default as TulparCheckboxGroup } from "./checkbox-group/TulparCheckboxGroup.vue";
+export type { SelectionSize, SelectionLabelPosition } from "@tulpar-ui/core/switch";

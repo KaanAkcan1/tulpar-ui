@@ -10,6 +10,7 @@ import type { InputTokens } from "./input";
 import type { FontTokens, TransitionTokens, EasingTokens, ShadowTokens } from "./common";
 import type { ShellTokens } from "./shell";
 import type { ChartTokens } from "./chart";
+import type { SelectionTokens, SwitchTokens } from "./selection";
 
 export type { ColorTokens, VariantColorTokens } from "./color";
 export type { ButtonTokens, ButtonSizeTokens } from "./button";
@@ -17,12 +18,15 @@ export type { InputTokens, InputSizeTokens } from "./input";
 export type { FontTokens, TransitionTokens, EasingTokens, ShadowTokens } from "./common";
 export type { ShellTokens, ShellNavItemTokens } from "./shell";
 export type { ChartTokens } from "./chart";
+export type { SelectionTokens, SwitchTokens } from "./selection";
 
 export interface SemanticTokens {
   color: ColorTokens;
   chart: ChartTokens;
   button: ButtonTokens;
   input: InputTokens;
+  selection: SelectionTokens;
+  switch: SwitchTokens;
   font: FontTokens;
   transition: TransitionTokens;
   shell: ShellTokens;

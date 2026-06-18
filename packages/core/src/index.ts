@@ -3,3 +3,8 @@ export * from "./button-group";
 export * from "./text-input";
 export * from "./textarea";
 export * from "./number-input";
+export * from "./switch";
+export * from "./checkbox";
+export * from "./checkbox-group";
+export * from "./radio";
+export * from "./radio-group";

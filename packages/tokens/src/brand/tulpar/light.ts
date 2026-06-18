@@ -307,6 +307,45 @@ export const tulparLight: SemanticTokens = {
     messageRowHeight: "1.25rem",
   },
 
+  selection: {
+    control: {
+      bg: c.white,
+      bgChecked: c.tulpar[500],
+      bgDisabled: c.colpan[100],
+      border: c.colpan[400],
+      borderHover: c.kara[400],
+      borderChecked: c.tulpar[500],
+      borderInvalid: c.al[600],
+    },
+    glyph: {
+      default: c.yagiz[900],
+      onCustom: c.colpan[50],
+      disabled: c.kara[500],
+    },
+    focusRing: "rgba(81, 78, 207, 0.40)",
+    label: c.yagiz[900],
+    description: c.kara[700],
+    card: {
+      bg: c.white,
+      border: c.colpan[200],
+      bgHover: c.colpan[50],
+      // Bespoke pre-baked tint: the live selected bg is computed in component CSS as
+      // color-mix(--_sel-fill 8%, surface) so it follows the per-instance color. This
+      // static value is only the no-color-mix fallback; no palette step matches it.
+      bgSelected: "#e6f9f1",
+    },
+  },
+
+  switch: {
+    trackOff: c.colpan[300],
+    trackOn: c.tulpar[500],
+    thumb: c.white,
+    thumbIconOff: c.kara[600],
+    thumbShadow:
+      "0 1px 2px rgba(11, 8, 4, 0.28), 0 2px 6px -1px rgba(11, 8, 4, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.7)",
+    spinnerDuration: "700ms",
+  },
+
   shell: {
     topbar: { height: "4rem", bg: c.white, fg: c.yagiz[900], border: c.colpan[200] },
     sidenav: {

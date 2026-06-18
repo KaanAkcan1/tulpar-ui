@@ -20,9 +20,29 @@
       "types": "./dist/button-group/index.d.ts",
       "import": "./dist/button-group/index.js"
     },
+    "./checkbox": {
+      "types": "./dist/checkbox/index.d.ts",
+      "import": "./dist/checkbox/index.js"
+    },
+    "./checkbox-group": {
+      "types": "./dist/checkbox-group/index.d.ts",
+      "import": "./dist/checkbox-group/index.js"
+    },
     "./number-input": {
       "types": "./dist/number-input/index.d.ts",
       "import": "./dist/number-input/index.js"
+    },
+    "./radio": {
+      "types": "./dist/radio/index.d.ts",
+      "import": "./dist/radio/index.js"
+    },
+    "./radio-group": {
+      "types": "./dist/radio-group/index.d.ts",
+      "import": "./dist/radio-group/index.js"
+    },
+    "./switch": {
+      "types": "./dist/switch/index.d.ts",
+      "import": "./dist/switch/index.js"
     },
     "./text-input": {
       "types": "./dist/text-input/index.d.ts",

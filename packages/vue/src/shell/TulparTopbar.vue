@@ -14,8 +14,8 @@ const { showMenuButton = false, menuButtonLabel } = defineProps<Props>();
     :show-menu-button="showMenuButton || undefined"
     :menu-button-label="menuButtonLabel ?? undefined"
   >
-    <slot name="start" />
+    <span style="display: contents" slot="start"><slot name="start" /></span>
     <slot />
-    <slot name="end" />
+    <span style="display: contents" slot="end"><slot name="end" /></span>
   </tulpar-topbar>
 </template>
