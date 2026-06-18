@@ -178,15 +178,15 @@ watchEffect(() => {
     @tulpar-settings-click="emit('settings')"
     @tulpar-logout="emit('logout')"
   >
-    <slot name="header" />
-    <slot name="header-actions" />
-    <slot name="search" />
-    <slot name="utility-start" />
-    <slot name="utility-end" />
+    <span style="display: contents" slot="header"><slot name="header" /></span>
+    <span style="display: contents" slot="header-actions"><slot name="header-actions" /></span>
+    <span style="display: contents" slot="search"><slot name="search" /></span>
+    <span style="display: contents" slot="utility-start"><slot name="utility-start" /></span>
+    <span style="display: contents" slot="utility-end"><slot name="utility-end" /></span>
     <template v-if="renderItemsInLightDom">
       <NavNode v-for="(item, i) in items" :key="item.href ?? item.label ?? i" :item="item" />
     </template>
     <slot />
-    <slot name="footer" />
+    <span style="display: contents" slot="footer"><slot name="footer" /></span>
   </tulpar-sidenav>
 </template>

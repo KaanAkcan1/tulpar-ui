@@ -28,6 +28,7 @@ interface Props {
   warnText?: string;
   noMessageSpace?: boolean;
   color?: string;
+  description?: string;
 }
 
 const { modelValue = null, orientation = "vertical", size = "md" } = defineProps<Props>();
@@ -63,10 +64,9 @@ function onChange(e: Event) {
     :warn-text="warnText ?? undefined"
     :no-message-space="noMessageSpace || undefined"
     :color="color ?? undefined"
+    :description="description ?? undefined"
     @change="onChange"
   >
-    <slot name="label" />
-    <slot name="description" />
     <slot />
   </tulpar-radio-group>
 </template>

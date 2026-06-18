@@ -105,8 +105,11 @@ function onInput(e: Event) {
     @input="onInput"
     @change="(e: Event) => emit('change', e)"
   >
-    <slot name="prefix" />
-    <slot name="suffix" />
-    <slot name="label" />
+    <span style="display: contents" slot="prefix"><slot name="prefix" /></span>
+    <span style="display: contents" slot="suffix"><slot name="suffix" /></span>
+    <span style="display: contents" slot="label"><slot name="label" /></span>
+    <!-- Default passthrough: lets consumers use <span slot="x"> (Vue 3 drops the
+         legacy slot directive, so a literal slot attr routes here to the core). -->
+    <slot />
   </tulpar-text-input>
 </template>

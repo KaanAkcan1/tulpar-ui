@@ -20,6 +20,7 @@ interface Props {
   noMessageSpace?: boolean;
   name?: string;
   color?: string;
+  description?: string;
 }
 
 const {
@@ -60,9 +61,9 @@ function onChange(e: Event) {
     :no-message-space="noMessageSpace || undefined"
     :name="name ?? undefined"
     :color="color ?? undefined"
+    :description="description ?? undefined"
     @change="onChange"
   >
-    <slot name="label" />
-    <slot name="description" />
+    <slot />
   </tulpar-radio>
 </template>

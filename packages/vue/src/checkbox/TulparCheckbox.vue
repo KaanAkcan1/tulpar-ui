@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Component } from "vue";
 import "@tulpar-ui/core/checkbox";
 import type { SelectionSize, SelectionLabelPosition } from "@tulpar-ui/core/checkbox";
 
@@ -21,6 +22,9 @@ interface Props {
   noMessageSpace?: boolean;
   name?: string;
   color?: string;
+  description?: string;
+  /** Convenience: render a component into the `icon` slot (custom check glyph). */
+  icon?: Component;
 }
 
 const {
@@ -63,10 +67,10 @@ function onChange(e: Event) {
     :no-message-space="noMessageSpace || undefined"
     :name="name ?? undefined"
     :color="color ?? undefined"
+    :description="description ?? undefined"
     @change="onChange"
   >
-    <slot name="icon" />
-    <slot name="label" />
-    <slot name="description" />
+    <span v-if="icon" slot="icon"><component :is="icon" /></span>
+    <slot />
   </tulpar-checkbox>
 </template>

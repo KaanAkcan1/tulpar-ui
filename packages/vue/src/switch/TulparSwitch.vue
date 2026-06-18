@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Component } from "vue";
 import "@tulpar-ui/core/switch";
 import type { SelectionSize, SelectionLabelPosition } from "@tulpar-ui/core/switch";
 
@@ -23,6 +24,11 @@ interface Props {
   noMessageSpace?: boolean;
   name?: string;
   color?: string;
+  description?: string;
+  /** Convenience: render a component into the `icon-on` slot. */
+  iconOn?: Component;
+  /** Convenience: render a component into the `icon-off` slot. */
+  iconOff?: Component;
 }
 
 const {
@@ -68,11 +74,11 @@ function onChange(e: Event) {
     :no-message-space="noMessageSpace || undefined"
     :name="name ?? undefined"
     :color="color ?? undefined"
+    :description="description ?? undefined"
     @change="onChange"
   >
-    <slot name="icon-on" />
-    <slot name="icon-off" />
-    <slot name="label" />
-    <slot name="description" />
+    <span v-if="iconOn" slot="icon-on"><component :is="iconOn" /></span>
+    <span v-if="iconOff" slot="icon-off"><component :is="iconOff" /></span>
+    <slot />
   </tulpar-switch>
 </template>
