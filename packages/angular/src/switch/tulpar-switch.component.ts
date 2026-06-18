@@ -3,12 +3,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
-  ElementRef,
   input,
   model,
   output,
   viewChild,
 } from "@angular/core";
+import type { ElementRef } from "@angular/core";
 
 import "@tulpar-ui/core/switch";
 
