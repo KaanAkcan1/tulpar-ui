@@ -45,6 +45,26 @@ describe("SelectionGroupBase (via test subclass)", () => {
     expect(legend.hidden).to.be.false;
   });
 
+  it("renders the description from the description attribute", async () => {
+    const el = await fixture<TestGroup>(
+      html`<test-selection-group label="Q" description="Choose carefully"></test-selection-group>`,
+    );
+    const description = el.shadowRoot!.querySelector(".description") as HTMLElement;
+    expect(description.textContent).to.contain("Choose carefully");
+  });
+
+  it("slotted description wins over the description attribute", async () => {
+    const el = await fixture<TestGroup>(html`
+      <test-selection-group label="Q" description="attr"
+        ><span slot="description">Slotted group desc</span></test-selection-group
+      >
+    `);
+    await el.updateComplete;
+    const slot = el.shadowRoot!.querySelector<HTMLSlotElement>('slot[name="description"]')!;
+    const assigned = slot.assignedNodes({ flatten: true });
+    expect(assigned.some((n) => n.textContent?.includes("Slotted group desc"))).to.be.true;
+  });
+
   it("aria-labelledby links the legend id", async () => {
     const el = await fixture<TestGroup>(
       html`<test-selection-group label="Q"></test-selection-group>`,

@@ -55,6 +55,54 @@ describe("SelectionControlBase — anatomy", () => {
   });
 });
 
+describe("SelectionControlBase — description", () => {
+  it("places the description attribute text in .description", async () => {
+    const el = await mount(
+      html`<test-selection-control label="x" description="More info"></test-selection-control>`,
+    );
+    await el.updateComplete;
+    const description = el.shadowRoot!.querySelector(".description")!;
+    expect(description.textContent).to.contain("More info");
+  });
+
+  it("slotted description content wins over the description attribute", async () => {
+    const el = await mount(
+      html`<test-selection-control label="x" description="attr"
+        ><span slot="description">Slotted desc</span></test-selection-control
+      >`,
+    );
+    await el.updateComplete;
+    const slot = el.shadowRoot!.querySelector<HTMLSlotElement>('slot[name="description"]')!;
+    const assigned = slot.assignedNodes({ flatten: true });
+    expect(assigned.some((n) => n.textContent?.includes("Slotted desc"))).to.be.true;
+  });
+
+  it("sets data-has-description when only the description attr is provided", async () => {
+    const el = await mount(
+      html`<test-selection-control label="x" description="More info"></test-selection-control>`,
+    );
+    await el.updateComplete;
+    expect(el.hasAttribute("data-has-description")).to.be.true;
+  });
+
+  it("omits data-has-description when neither attr nor slot is present", async () => {
+    const el = await mount(html`<test-selection-control label="x"></test-selection-control>`);
+    await el.updateComplete;
+    expect(el.hasAttribute("data-has-description")).to.be.false;
+  });
+
+  it("renders .text/.description for a description-only control (no label)", async () => {
+    const el = await mount(
+      html`<test-selection-control description="Standalone"></test-selection-control>`,
+    );
+    await el.updateComplete;
+    const text = el.shadowRoot!.querySelector<HTMLElement>(".text")!;
+    expect(text.hasAttribute("hidden")).to.be.false;
+    const description = el.shadowRoot!.querySelector(".description")!;
+    expect(description.textContent).to.contain("Standalone");
+  });
+});
+
 describe("SelectionControlBase — properties / reflection", () => {
   it("reflects label-position=start and reverses the row", async () => {
     const el = await mount(

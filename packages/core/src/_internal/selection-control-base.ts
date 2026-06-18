@@ -38,6 +38,9 @@ export abstract class SelectionControlBase extends LitElement implements Selecti
   // --- Label ---
   @property({ type: String }) label?: string;
 
+  // --- Description ---
+  @property({ type: String }) description?: string;
+
   // --- State ---
   @property({ type: Boolean, reflect: true }) disabled = false;
   @property({ type: Boolean, reflect: true }) readonly = false;
@@ -104,27 +107,35 @@ export abstract class SelectionControlBase extends LitElement implements Selecti
     return Array.from(this.children).some((c) => c.slot === "description");
   }
 
+  /** True when an attribute description or a slotted description is present. */
+  protected _hasDescription(): boolean {
+    return !!this.description || this._hasDescriptionSlotContent();
+  }
+
   private _onLabelSlotChange = () => {
     if (this._hasLabel()) this.setAttribute("data-has-label", "");
     else this.removeAttribute("data-has-label");
   };
 
-  private _onDescriptionSlotChange = (e: Event) => {
-    const slot = e.target as HTMLSlotElement;
-    const has = slot.assignedNodes({ flatten: true }).length > 0;
-    if (has) this.setAttribute("data-has-description", "");
+  // Note: the `description` prop (slot fallback) also counts as a description,
+  // so we recompute via _hasDescription() rather than only checking the slot —
+  // this keeps data-has-description correct for the attribute-only path too.
+  private _onDescriptionSlotChange = () => {
+    if (this._hasDescription()) this.setAttribute("data-has-description", "");
     else this.removeAttribute("data-has-description");
   };
 
   protected override firstUpdated() {
-    // Seed the has-label attribute for the attribute-only label case
-    // (slotchange does not fire when the slot has no assigned light DOM).
+    // Seed the has-label / has-description attributes for the attribute-only
+    // case (slotchange does not fire when the slot has no assigned light DOM).
     this._onLabelSlotChange();
+    this._onDescriptionSlotChange();
   }
 
   protected override updated(changed: Map<string, unknown>) {
     super.updated(changed);
     if (changed.has("label")) this._onLabelSlotChange();
+    if (changed.has("description")) this._onDescriptionSlotChange();
   }
 
   protected _ariaRequiredAttr() {
@@ -178,17 +189,19 @@ export abstract class SelectionControlBase extends LitElement implements Selecti
   };
 
   protected override render(): TemplateResult {
-    const hasLabel = this._hasLabel();
+    const hasText = this._hasLabel() || this._hasDescription();
     return html`
       <label class="root" part="base" @click=${this._onRootClick}>
         <span class="control" part="control">${this.renderControl(this._ariaLabel())}</span>
-        <span class="text" part="text" ?hidden=${!hasLabel}>
+        <span class="text" part="text" ?hidden=${!hasText}>
           <span class="label" part="label"
             ><slot name="label" @slotchange=${this._onLabelSlotChange}>${this.label}</slot></span
           >
           <span class="description" part="description"
-            ><slot name="description" @slotchange=${this._onDescriptionSlotChange}></slot
-          ></span>
+            ><slot name="description" @slotchange=${this._onDescriptionSlotChange}
+              >${this.description}</slot
+            ></span
+          >
         </span>
       </label>
       ${renderMessageRow(this)}
