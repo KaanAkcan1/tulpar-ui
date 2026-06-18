@@ -4,3 +4,4 @@ export * from "./text-input";
 export * from "./textarea";
 export * from "./number-input";
 export * from "./switch";
+export * from "./checkbox";
