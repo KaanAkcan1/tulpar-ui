@@ -73,6 +73,16 @@ describe("<tulpar-radio>", () => {
     expect(el.checked).to.be.true;
   });
 
+  it("clicking the label text (default variant) selects the radio", async () => {
+    const el = await fixture<TulparRadio>(
+      html`<tulpar-radio value="a" label="Option A"></tulpar-radio>`,
+    );
+    const label = el.shadowRoot!.querySelector(".label") as HTMLElement;
+    label.click();
+    await el.updateComplete;
+    expect(el.checked).to.be.true;
+  });
+
   it("Space selects", async () => {
     const el = await fixture<TulparRadio>(html`<tulpar-radio value="a"></tulpar-radio>`);
     pressKey(el, " ");

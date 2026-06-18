@@ -204,7 +204,7 @@ export const selectionControlBaseStyles = css`
       transform 120ms cubic-bezier(0.2, 0, 0, 1);
   }
 
-  :host([variant="card"]:not([disabled]):not([checked])) .root:hover {
+  :host([variant="card"]:not([disabled]):not([checked]):not([indeterminate])) .root:hover {
     border-color: var(--tulpar-selection-control-border-hover, #909396);
     background: var(--tulpar-selection-card-bg-hover, #f0f7f5);
     box-shadow: 0 2px 8px -2px rgba(11, 8, 4, 0.1);

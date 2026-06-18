@@ -153,24 +153,26 @@ export abstract class SelectionControlBase extends LitElement implements Selecti
   protected abstract renderControl(ariaLabel?: string): TemplateResult;
 
   /**
-   * Card variant: forward clicks that land on the text area (outside the
-   * .control span) to the focusable control inside .control. This makes the
-   * whole card label clickable without duplicating the toggle logic.
+   * Forward clicks that land on the label/description area (outside the
+   * .control span) to the focusable control. The `<label class="root">` does
+   * NOT natively forward to Checkbox/Radio because their control is a custom
+   * `<span role="checkbox|radio">` (a span is not a labelable element), so
+   * without this the whole-label click target would only work for the box
+   * itself. Applies to ALL variants (default + card).
    *
-   * The click on .control itself still reaches the control's own handler —
-   * we stop propagation there to avoid a double-toggle. For the non-card
-   * variant the handler is a no-op (the card attribute won't be set).
+   * Switch is intentionally NOT forwarded here: its control is a native
+   * `<button>`, which the `<label>` already forwards to. We only target a
+   * `[tabindex]`-bearing custom control (the box span), so the switch button
+   * (no tabindex attr) is skipped — no double toggle.
    */
   private _onRootClick = (e: MouseEvent) => {
-    if (this.getAttribute("variant") !== "card") return;
     const control = this.shadowRoot?.querySelector(".control");
     if (!control) return;
-    // If the click originated from inside .control, the control's own handler
-    // will run — don't re-dispatch.
+    // If the click originated inside .control, the control's own handler runs —
+    // skip re-dispatch (prevents a double toggle).
     if (e.composedPath().some((t) => t === control || (t as Element).closest?.(".control"))) {
       return;
     }
-    // Forward to the focusable element inside .control.
     const focusable = control.querySelector<HTMLElement>("[tabindex]");
     focusable?.click();
   };

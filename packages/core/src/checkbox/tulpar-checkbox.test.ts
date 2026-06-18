@@ -60,6 +60,25 @@ describe("<tulpar-checkbox>", () => {
     expect(el.checked).to.be.true;
   });
 
+  it("clicking the label text (default variant) toggles checked", async () => {
+    const el = await fixture<TulparCheckbox>(
+      html`<tulpar-checkbox label="Accept"></tulpar-checkbox>`,
+    );
+    const label = el.shadowRoot!.querySelector(".label") as HTMLElement;
+    label.click();
+    await el.updateComplete;
+    expect(el.checked).to.be.true;
+  });
+
+  it("clicking the box once does not double-toggle via root forwarding", async () => {
+    const el = await fixture<TulparCheckbox>(
+      html`<tulpar-checkbox label="Accept"></tulpar-checkbox>`,
+    );
+    box(el).click();
+    await el.updateComplete;
+    expect(el.checked).to.be.true;
+  });
+
   it("indeterminate → aria-checked=mixed, independent of checked", async () => {
     const el = await fixture<TulparCheckbox>(html`<tulpar-checkbox></tulpar-checkbox>`);
     expect(el.checked).to.be.false;
