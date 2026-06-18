@@ -294,6 +294,8 @@ export const tulparDark: SemanticTokens = {
       bg: c.mergen[900],
       border: c.mergen[800],
       bgHover: c.mergen[800],
+      // Bespoke pre-baked tint: live selected bg is color-mix(--_sel-fill 12%, surface)
+      // in component CSS (follows per-instance color); this is the no-mix fallback only.
       bgSelected: "#173a2e",
     },
   },

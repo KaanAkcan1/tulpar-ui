@@ -329,6 +329,9 @@ export const tulparLight: SemanticTokens = {
       bg: c.white,
       border: c.colpan[200],
       bgHover: c.colpan[50],
+      // Bespoke pre-baked tint: the live selected bg is computed in component CSS as
+      // color-mix(--_sel-fill 8%, surface) so it follows the per-instance color. This
+      // static value is only the no-color-mix fallback; no palette step matches it.
       bgSelected: "#e6f9f1",
     },
   },
