@@ -30,7 +30,7 @@ export type { SelectionSize, SelectionLabelPosition };
     <tulpar-checkbox
       [attr.checked]="checked() ? '' : null"
       [attr.indeterminate]="indeterminate() ? '' : null"
-      [attr.value]="value() ?? null"
+      [attr.value]="value()"
       [attr.variant]="variant()"
       [attr.size]="size()"
       [attr.label]="label() ?? null"

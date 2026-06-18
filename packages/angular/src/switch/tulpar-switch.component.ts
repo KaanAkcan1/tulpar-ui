@@ -38,7 +38,7 @@ export type { SelectionSize, SelectionLabelPosition };
     <tulpar-switch
       #switchEl
       [attr.checked]="checked() ? '' : null"
-      [attr.value]="value() ?? null"
+      [attr.value]="value()"
       [attr.loading]="loading() ? '' : null"
       [attr.show-icon]="showIcon() ? '' : null"
       [attr.size]="size()"
