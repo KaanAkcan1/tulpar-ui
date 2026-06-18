@@ -6,3 +6,5 @@ export * from "./number-input";
 export * from "./switch";
 export * from "./checkbox";
 export * from "./checkbox-group";
+export * from "./radio";
+export * from "./radio-group";
