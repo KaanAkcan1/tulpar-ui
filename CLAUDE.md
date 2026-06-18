@@ -139,6 +139,23 @@ Each package's `src/_internal/` is package-private: never re-exported, never in 
 
 For any visual/UX judgment (colors, spacing, motion, layout, story design), invoke the `/frontend-design` and `/ui-ux-pro-max` skills before deciding. Target bar: enterprise, product-ready.
 
+### Playgrounds (playground-ng + playground-vue)
+
+These are the living, hands-on showcases — treat them as a product surface, not a scratchpad.
+
+- **Parity is mandatory.** The two playgrounds must stay in lockstep: same sidenav/menu structure, same pages, same examples, same visual design. A feature, section, or example present in one MUST be present in the other. Never let one drift ahead.
+- **Spec first, then apply to both.** Before building/editing playground pages, write a detailed spec of exactly what each page demonstrates — every prop, every state, every variant, every slot — then implement that identical spec in BOTH frameworks. Do not improvise per-framework.
+- **Show every feature, both prop and slot forms.** For every capability, demonstrate it. Where a component accepts content via both a prop and a slot (label, description, icons, …), show BOTH usages explicitly — they must both work.
+- **Run `/frontend-design` (and `/ui-ux-pro-max`) on every page.** Enterprise-grade, strong UI/UX. Verify visually in a real browser (headless Playwright screenshots) before claiming done — don't trust the build alone.
+
+### Props vs slots (dual support)
+
+Components accept rich content via **both** a convenience prop and a slot, never one instead of the other. `label`, `description`, and icons (e.g. switch `icon-on`/`icon-off`, checkbox `icon`) all have a prop form AND a slot form; the prop sits on top of the slot (slot wins when both are set). Wrappers must forward both. See [`feedback_optional_prop_does_not_remove_slot`].
+
+### Vue wrapper slot forwarding (gotcha)
+
+A Vue SFC that renders `<slot name="label" />` inside a web component does NOT reach the element's named slot — Vue consumes the `slot=` targeting and projects the content without it, so the core's shadow `<slot name="label">` stays empty. Forward each slot through a transparent carrier that keeps the real `slot` attribute, e.g. `<span style="display:contents" slot="label"><slot name="label" /></span>` (verify in-browser). This applies to every Vue wrapper, not just selection.
+
 ### Form-associated custom elements
 
 Buttons use `static formAssociated = true` + `attachInternals()`. The wrapper does NOT add another `ControlValueAccessor` — the Web Component already integrates with native `<form>`, and that bubbles up to Angular Reactive Forms / Vue native binding without extra plumbing.
