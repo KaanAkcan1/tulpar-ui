@@ -21,7 +21,10 @@ export const selectionControlBaseStyles = css`
     font-family: var(--tulpar-font-family-ui, system-ui);
 
     /* Private color stops. Concrete subclasses (track / box) consume these. */
-    --_sel-fill: var(--tulpar-selection-control-bg-checked, var(--tulpar-color-brand-default, #00c57a));
+    --_sel-fill: var(
+      --tulpar-selection-control-bg-checked,
+      var(--tulpar-color-brand-default, #00c57a)
+    );
     --_sel-glyph: var(--tulpar-selection-glyph-default, #15110b);
   }
 
@@ -36,7 +39,10 @@ export const selectionControlBaseStyles = css`
 
   /* Invalid recolors the control fill/border to danger. */
   :host([invalid]) {
-    --_sel-fill: var(--tulpar-selection-control-border-invalid, var(--tulpar-color-danger-default, #b22128));
+    --_sel-fill: var(
+      --tulpar-selection-control-border-invalid,
+      var(--tulpar-color-danger-default, #b22128)
+    );
   }
 
   /* Disabled muting wins over invalid + custom fill via later source order
@@ -190,8 +196,7 @@ export const selectionControlBaseStyles = css`
    */
   :host([variant="card"]) .root {
     padding: var(--_sel-card-pad, 12px);
-    border: var(--_sel-card-border-width, 1.5px) solid
-      var(--tulpar-selection-card-border, #d9e0df);
+    border: var(--_sel-card-border-width, 1.5px) solid var(--tulpar-selection-card-border, #d9e0df);
     border-radius: var(--_sel-card-radius, 9px);
     background: var(--tulpar-selection-card-bg, #fff);
     align-items: flex-start;

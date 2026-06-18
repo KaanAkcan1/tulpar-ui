@@ -33,7 +33,10 @@ export { TulparNavItemComponent } from "./shell/tulpar-nav-item.component";
 export { TulparNavSectionComponent } from "./shell/tulpar-nav-section.component";
 
 export { TulparSwitchComponent } from "./switch/tulpar-switch.component";
-export type { SelectionSize as SwitchSize, SelectionLabelPosition } from "./switch/tulpar-switch.component";
+export type {
+  SelectionSize as SwitchSize,
+  SelectionLabelPosition,
+} from "./switch/tulpar-switch.component";
 
 export { TulparCheckboxComponent } from "./checkbox/tulpar-checkbox.component";
 

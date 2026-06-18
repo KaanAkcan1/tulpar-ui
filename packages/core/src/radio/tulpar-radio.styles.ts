@@ -19,8 +19,7 @@ export const radioStyles = css`
     width: var(--_sel-control-size, 18px);
     height: var(--_sel-control-size, 18px);
     border-radius: 50%;
-    border: 1.5px solid
-      var(--_sel-control-border, var(--tulpar-selection-control-border, #b8c1be));
+    border: 1.5px solid var(--_sel-control-border, var(--tulpar-selection-control-border, #b8c1be));
     background: var(--tulpar-selection-control-bg, #fff);
     cursor: pointer;
     transition:
@@ -37,11 +36,7 @@ export const radioStyles = css`
   /* ── Hover (unchecked, not disabled) ───────────────────────────────────── */
   :host(:not([checked]):not([disabled])) .root:hover .box--radio {
     border-color: var(--tulpar-selection-control-border-hover, #909396);
-    background: color-mix(
-      in srgb,
-      var(--_sel-fill) 5%,
-      var(--tulpar-selection-control-bg, #fff)
-    );
+    background: color-mix(in srgb, var(--_sel-fill) 5%, var(--tulpar-selection-control-bg, #fff));
   }
 
   /* ── Press ─────────────────────────────────────────────────────────────── */

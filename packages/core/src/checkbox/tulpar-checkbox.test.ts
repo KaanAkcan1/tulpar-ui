@@ -205,7 +205,7 @@ describe("<tulpar-checkbox>", () => {
   it("custom icon slot sets data-has-icon attribute", async () => {
     const el = await fixture<TulparCheckbox>(html`
       <tulpar-checkbox>
-        <svg slot="icon" aria-hidden="true"><path d="M3 8l4 4 6-6"/></svg>
+        <svg slot="icon" aria-hidden="true"><path d="M3 8l4 4 6-6" /></svg>
       </tulpar-checkbox>
     `);
     await el.updateComplete;

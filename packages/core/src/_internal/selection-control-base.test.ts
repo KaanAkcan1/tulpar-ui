@@ -35,7 +35,9 @@ describe("SelectionControlBase — anatomy", () => {
 
   it("slotted label content wins over the label attribute", async () => {
     const el = await mount(
-      html`<test-selection-control label="attr"><span slot="label">Slotted</span></test-selection-control>`,
+      html`<test-selection-control label="attr"
+        ><span slot="label">Slotted</span></test-selection-control
+      >`,
     );
     await el.updateComplete;
     const slot = el.shadowRoot!.querySelector<HTMLSlotElement>('slot[name="label"]')!;
@@ -56,10 +58,7 @@ describe("SelectionControlBase — anatomy", () => {
 describe("SelectionControlBase — properties / reflection", () => {
   it("reflects label-position=start and reverses the row", async () => {
     const el = await mount(
-      html`<test-selection-control
-        label="x"
-        label-position="start"
-      ></test-selection-control>`,
+      html`<test-selection-control label="x" label-position="start"></test-selection-control>`,
     );
     expect(el.getAttribute("label-position")).to.equal("start");
     const root = el.shadowRoot!.querySelector(".root")!;
@@ -96,10 +95,7 @@ describe("SelectionControlBase — properties / reflection", () => {
 describe("SelectionControlBase — message row", () => {
   it("shows an error with role=alert when invalid + errorText", async () => {
     const el = await mount(
-      html`<test-selection-control
-        invalid
-        error-text="Required field"
-      ></test-selection-control>`,
+      html`<test-selection-control invalid error-text="Required field"></test-selection-control>`,
     );
     await el.updateComplete;
     const node = el.shadowRoot!.querySelector('[role="alert"]')!;

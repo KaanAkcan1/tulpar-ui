@@ -110,24 +110,11 @@ export class TulparCheckbox extends SelectionControlBase {
         @click=${this._toggle}
         @keydown=${this._onKeydown}
       >
-        <svg
-          class="glyph glyph--check"
-          viewBox="0 0 16 16"
-          part="glyph"
-          aria-hidden="true"
-        >
-          <path
-            class="tick"
-            pathLength="1"
-            d="M3.5 8.5 L6.8 11.8 L12.5 4.8"
-          />
+        <svg class="glyph glyph--check" viewBox="0 0 16 16" part="glyph" aria-hidden="true">
+          <path class="tick" pathLength="1" d="M3.5 8.5 L6.8 11.8 L12.5 4.8" />
         </svg>
         <span class="glyph glyph--dash" part="glyph" aria-hidden="true"></span>
-        <slot
-          name="icon"
-          class="glyph glyph--custom"
-          @slotchange=${this._onIconSlotChange}
-        ></slot>
+        <slot name="icon" class="glyph glyph--custom" @slotchange=${this._onIconSlotChange}></slot>
       </span>
     `;
   }

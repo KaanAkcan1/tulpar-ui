@@ -30,11 +30,7 @@ interface Props {
   color?: string;
 }
 
-const {
-  modelValue = [],
-  orientation = "vertical",
-  size = "md",
-} = defineProps<Props>();
+const { modelValue = [], orientation = "vertical", size = "md" } = defineProps<Props>();
 
 const emit = defineEmits<{
   "update:modelValue": [value: string[]];

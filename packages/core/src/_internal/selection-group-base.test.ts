@@ -23,8 +23,9 @@ function container(el: TestGroup): HTMLElement {
 
 describe("SelectionGroupBase (via test subclass)", () => {
   it("is not form-associated", () => {
-    expect((SelectionGroupBase as unknown as { formAssociated?: boolean }).formAssociated).to.not
-      .equal(true);
+    expect(
+      (SelectionGroupBase as unknown as { formAssociated?: boolean }).formAssociated,
+    ).to.not.equal(true);
   });
 
   it("renders the legend from the label attribute", async () => {
@@ -71,13 +72,7 @@ describe("SelectionGroupBase (via test subclass)", () => {
 
   it("propagates name/size/disabled/readonly/color to children on connect", async () => {
     const el = await fixture<TestGroup>(html`
-      <test-selection-group
-        name="grp"
-        size="lg"
-        disabled
-        readonly
-        color="#123456"
-      >
+      <test-selection-group name="grp" size="lg" disabled readonly color="#123456">
         <tulpar-checkbox value="a"></tulpar-checkbox>
         <tulpar-checkbox value="b"></tulpar-checkbox>
       </test-selection-group>

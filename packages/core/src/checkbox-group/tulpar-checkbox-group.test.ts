@@ -251,18 +251,14 @@ describe("<tulpar-checkbox-group>", () => {
       // data-has-cards IS set (the detection is orientation-agnostic)
       expect(el.hasAttribute("data-has-cards")).to.be.true;
       // But the grid only activates on orientation=horizontal — verify the styles sheet
-      const { selectionGroupBaseStyles } = await import(
-        "../_internal/selection-group-base.styles"
-      );
+      const { selectionGroupBaseStyles } = await import("../_internal/selection-group-base.styles");
       const css = selectionGroupBaseStyles.cssText;
       expect(css).to.include('[orientation="horizontal"][data-has-cards]');
       expect(css).to.include("grid-template-columns");
     });
 
     it("group CSS: horizontal card grid uses auto-fit minmax(220px,1fr)", async () => {
-      const { selectionGroupBaseStyles } = await import(
-        "../_internal/selection-group-base.styles"
-      );
+      const { selectionGroupBaseStyles } = await import("../_internal/selection-group-base.styles");
       const css = selectionGroupBaseStyles.cssText;
       expect(css).to.include("220px");
       expect(css).to.include("auto-fit");

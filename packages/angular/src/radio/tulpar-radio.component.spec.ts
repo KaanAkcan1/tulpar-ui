@@ -85,8 +85,7 @@ describe("TulparRadioComponent (TestBed)", () => {
   it("two-way: core change event updates checked model", () => {
     const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();
-    const wrapper = fixture.debugElement.children[0]
-      .componentInstance as TulparRadioComponent;
+    const wrapper = fixture.debugElement.children[0].componentInstance as TulparRadioComponent;
     const inner = fixture.nativeElement.querySelector("tulpar-radio") as HTMLElement & {
       checked: boolean;
     };

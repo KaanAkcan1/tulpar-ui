@@ -18,9 +18,7 @@ function radios(group: TulparRadioGroup): TulparRadio[] {
 }
 
 function arrow(group: TulparRadioGroup, from: TulparRadio, key: string) {
-  box(from).dispatchEvent(
-    new KeyboardEvent("keydown", { key, bubbles: true, composed: true }),
-  );
+  box(from).dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true, composed: true }));
 }
 
 describe("public type exports", () => {

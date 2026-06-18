@@ -60,7 +60,9 @@ describe("TulparCheckboxGroup (Vue)", () => {
       },
     });
     await wrapper.vm.$nextTick();
-    const group = wrapper.find("tulpar-checkbox-group").element as HTMLElement & { value: string[] };
+    const group = wrapper.find("tulpar-checkbox-group").element as HTMLElement & {
+      value: string[];
+    };
     expect(group.value).toEqual(["x"]);
   });
 

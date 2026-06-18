@@ -192,7 +192,8 @@ export class TulparRadioGroup extends SelectionGroupBase {
         break;
       case "ArrowUp":
       case "ArrowLeft":
-        nextIdx = currentIdx < 0 ? enabled.length - 1 : (currentIdx - 1 + enabled.length) % enabled.length;
+        nextIdx =
+          currentIdx < 0 ? enabled.length - 1 : (currentIdx - 1 + enabled.length) % enabled.length;
         break;
       case "Home":
         nextIdx = 0;
@@ -226,7 +227,6 @@ export class TulparRadioGroup extends SelectionGroupBase {
     const focusTarget = radio.shadowRoot?.querySelector(".box--radio") as HTMLElement | null;
     (focusTarget ?? radio).focus();
   }
-
 }
 
 if (!customElements.get("tulpar-radio-group")) {

@@ -87,8 +87,7 @@ describe("TulparCheckboxComponent (TestBed)", () => {
   it("two-way: core change event updates checked model", () => {
     const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();
-    const wrapper = fixture.debugElement.children[0]
-      .componentInstance as TulparCheckboxComponent;
+    const wrapper = fixture.debugElement.children[0].componentInstance as TulparCheckboxComponent;
     const inner = fixture.nativeElement.querySelector("tulpar-checkbox") as HTMLElement & {
       checked: boolean;
     };

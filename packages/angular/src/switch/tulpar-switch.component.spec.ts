@@ -97,8 +97,7 @@ describe("TulparSwitchComponent (TestBed)", () => {
   it("two-way: core change event updates checked model (via checkedChange)", () => {
     const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();
-    const wrapper = fixture.debugElement.children[0]
-      .componentInstance as TulparSwitchComponent;
+    const wrapper = fixture.debugElement.children[0].componentInstance as TulparSwitchComponent;
     const inner = fixture.nativeElement.querySelector("tulpar-switch") as HTMLElement & {
       checked: boolean;
     };

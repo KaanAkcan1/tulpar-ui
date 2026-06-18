@@ -108,8 +108,7 @@ describe("TulparRadioGroupComponent (TestBed)", () => {
   it("two-way: core CustomEvent change updates value model", () => {
     const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();
-    const wrapper = fixture.debugElement.children[0]
-      .componentInstance as TulparRadioGroupComponent;
+    const wrapper = fixture.debugElement.children[0].componentInstance as TulparRadioGroupComponent;
     const inner = fixture.nativeElement.querySelector("tulpar-radio-group") as HTMLElement;
     inner.dispatchEvent(
       new CustomEvent("change", {
