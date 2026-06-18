@@ -3,11 +3,14 @@ import { Router, RouterOutlet } from '@angular/router';
 import { LucideAngularModule, type LucideIconData } from 'lucide-angular';
 import {
   BookOpen,
+  CheckSquare,
+  Circle,
   FormInput,
   Hash,
   Palette,
   SquareMousePointer,
   TextCursorInput,
+  ToggleLeft,
   WrapText,
 } from 'lucide-angular';
 import {
@@ -90,6 +93,42 @@ class IconFormInputs {
 })
 class IconGuide {
   readonly icon: LucideIconData = BookOpen;
+}
+@Component({
+  selector: 'app-icon-switch',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconSwitch {
+  readonly icon: LucideIconData = ToggleLeft;
+}
+@Component({
+  selector: 'app-icon-checkbox',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconCheckbox {
+  readonly icon: LucideIconData = CheckSquare;
+}
+@Component({
+  selector: 'app-icon-radio',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconRadio {
+  readonly icon: LucideIconData = Circle;
+}
+@Component({
+  selector: 'app-icon-checkbox-group',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconCheckboxGroup {
+  readonly icon: LucideIconData = CheckSquare;
 }
 
 @Component({
@@ -425,6 +464,16 @@ export class App {
             { label: 'NumberInput', href: '/number-input', icon: IconNumberInput },
           ],
         },
+      ],
+    },
+    {
+      type: 'section',
+      label: 'Selection',
+      items: [
+        { label: 'Switch', href: '/switch', icon: IconSwitch },
+        { label: 'Checkbox', href: '/checkbox', icon: IconCheckbox },
+        { label: 'Radio Group', href: '/radio-group', icon: IconRadio },
+        { label: 'Checkbox Group', href: '/checkbox-group', icon: IconCheckboxGroup },
       ],
     },
     {
