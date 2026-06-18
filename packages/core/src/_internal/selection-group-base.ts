@@ -107,9 +107,13 @@ export abstract class SelectionGroupBase extends LitElement implements Selection
    *     that re-enabling the group only clears the disables IT added — a child
    *     disabled on its own stays disabled.
    *   - color: only when the group sets one
+   *
+   * Also sets `data-has-cards` on the host when any child has variant="card",
+   * so the group styles can switch to a responsive grid for horizontal card groups.
    */
   protected _propagate() {
-    for (const child of this._childElements()) {
+    const children = this._childElements();
+    for (const child of children) {
       if (this.name !== undefined) child.setAttribute("name", this.name);
       child.setAttribute("size", this.size);
 
@@ -118,6 +122,11 @@ export abstract class SelectionGroupBase extends LitElement implements Selection
 
       if (this.color) child.setAttribute("color", this.color);
     }
+
+    // Detect card children and toggle data-has-cards on the host.
+    const hasCards = children.some((c) => c.getAttribute("variant") === "card");
+    if (hasCards) this.setAttribute("data-has-cards", "");
+    else this.removeAttribute("data-has-cards");
   }
 
   /** Add/remove a boolean attr the group owns, without clobbering the child's own. */

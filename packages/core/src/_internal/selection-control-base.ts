@@ -152,10 +152,33 @@ export abstract class SelectionControlBase extends LitElement implements Selecti
    */
   protected abstract renderControl(ariaLabel?: string): TemplateResult;
 
+  /**
+   * Card variant: forward clicks that land on the text area (outside the
+   * .control span) to the focusable control inside .control. This makes the
+   * whole card label clickable without duplicating the toggle logic.
+   *
+   * The click on .control itself still reaches the control's own handler —
+   * we stop propagation there to avoid a double-toggle. For the non-card
+   * variant the handler is a no-op (the card attribute won't be set).
+   */
+  private _onRootClick = (e: MouseEvent) => {
+    if (this.getAttribute("variant") !== "card") return;
+    const control = this.shadowRoot?.querySelector(".control");
+    if (!control) return;
+    // If the click originated from inside .control, the control's own handler
+    // will run — don't re-dispatch.
+    if (e.composedPath().some((t) => t === control || (t as Element).closest?.(".control"))) {
+      return;
+    }
+    // Forward to the focusable element inside .control.
+    const focusable = control.querySelector<HTMLElement>("[tabindex]");
+    focusable?.click();
+  };
+
   protected override render(): TemplateResult {
     const hasLabel = this._hasLabel();
     return html`
-      <label class="root" part="base">
+      <label class="root" part="base" @click=${this._onRootClick}>
         <span class="control" part="control">${this.renderControl(this._ariaLabel())}</span>
         <span class="text" part="text" ?hidden=${!hasLabel}>
           <span class="label" part="label"

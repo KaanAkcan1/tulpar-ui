@@ -54,4 +54,14 @@ export const selectionGroupBaseStyles = css`
     flex-wrap: wrap;
     column-gap: var(--tulpar-selection-group-gap-horizontal, 1.25rem);
   }
+
+  /* When children are card variants and the group is horizontal, use a
+     responsive equal-height grid instead of a wrapping flex row. */
+  :host([orientation="horizontal"][data-has-cards]) .items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    flex-direction: unset;
+    flex-wrap: unset;
+    gap: var(--tulpar-selection-group-gap, 0.5rem);
+  }
 `;

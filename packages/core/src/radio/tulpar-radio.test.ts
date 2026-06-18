@@ -2,6 +2,7 @@ import { fixture, html, expect } from "@open-wc/testing";
 import "./tulpar-radio";
 import type { TulparRadio } from "./tulpar-radio";
 import { radioStyles } from "./tulpar-radio.styles";
+import { selectionControlBaseStyles } from "../_internal/selection-control-base.styles";
 
 function box(el: TulparRadio): HTMLSpanElement {
   return el.shadowRoot!.querySelector(".box--radio") as HTMLSpanElement;
@@ -218,6 +219,54 @@ describe("<tulpar-radio>", () => {
       expect(css).to.include("transition: none");
       // Final dot size present inside the reduced-motion block.
       expect(css).to.include("width: 40%");
+    });
+  });
+
+  describe("variant=card", () => {
+    it("card: clicking the root label toggles checked", async () => {
+      const el = await fixture<TulparRadio>(
+        html`<tulpar-radio value="a" variant="card" label="Card option"></tulpar-radio>`,
+      );
+      const root = el.shadowRoot!.querySelector(".root") as HTMLElement;
+      root.click();
+      await el.updateComplete;
+      expect(el.checked).to.be.true;
+    });
+
+    it("card: inner control retains role=radio and aria-checked", async () => {
+      const el = await fixture<TulparRadio>(
+        html`<tulpar-radio value="a" variant="card" label="Card option"></tulpar-radio>`,
+      );
+      const b = box(el);
+      expect(b.getAttribute("role")).to.equal("radio");
+
+      b.click();
+      await el.updateComplete;
+      expect(b.getAttribute("aria-checked")).to.equal("true");
+    });
+
+    it("card: checked attribute reflects to host after selection", async () => {
+      const el = await fixture<TulparRadio>(
+        html`<tulpar-radio value="a" variant="card"></tulpar-radio>`,
+      );
+      el.checked = true;
+      await el.updateComplete;
+      expect(el.hasAttribute("checked")).to.be.true;
+    });
+
+    it("card: shared base styles include card variant rules", () => {
+      const css = selectionControlBaseStyles.cssText;
+      expect(css).to.include('[variant="card"]');
+      expect(css).to.include("border");
+      expect(css).to.include("--_sel-fill");
+    });
+
+    it("card+invalid: invalid attribute reflected to host", async () => {
+      const el = await fixture<TulparRadio>(
+        html`<tulpar-radio value="a" variant="card" invalid label="Option"></tulpar-radio>`,
+      );
+      await el.updateComplete;
+      expect(el.hasAttribute("invalid")).to.be.true;
     });
   });
 });

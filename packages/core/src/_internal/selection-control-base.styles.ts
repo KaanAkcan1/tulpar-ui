@@ -53,6 +53,9 @@ export const selectionControlBaseStyles = css`
     --_sel-label-fs: 12px;
     --_sel-desc-fs: 11px;
     --_sel-touch: 8px;
+    --_sel-card-pad: 8px;
+    --_sel-card-radius: 7px;
+    --_sel-card-border-width: 1px;
   }
   :host([size="sm"]) {
     --_sel-control-size: 16px;
@@ -60,6 +63,9 @@ export const selectionControlBaseStyles = css`
     --_sel-label-fs: 13px;
     --_sel-desc-fs: 12px;
     --_sel-touch: 6px;
+    --_sel-card-pad: 10px;
+    --_sel-card-radius: 8px;
+    --_sel-card-border-width: 1px;
   }
   :host([size="md"]) {
     --_sel-control-size: 18px;
@@ -67,6 +73,9 @@ export const selectionControlBaseStyles = css`
     --_sel-label-fs: 14px;
     --_sel-desc-fs: 12px;
     --_sel-touch: 5px;
+    --_sel-card-pad: 12px;
+    --_sel-card-radius: 9px;
+    --_sel-card-border-width: 1.5px;
   }
   :host([size="lg"]) {
     --_sel-control-size: 20px;
@@ -74,6 +83,9 @@ export const selectionControlBaseStyles = css`
     --_sel-label-fs: 16px;
     --_sel-desc-fs: 13px;
     --_sel-touch: 4px;
+    --_sel-card-pad: 14px;
+    --_sel-card-radius: 10px;
+    --_sel-card-border-width: 1.5px;
   }
   :host([size="xl"]) {
     --_sel-control-size: 22px;
@@ -81,6 +93,9 @@ export const selectionControlBaseStyles = css`
     --_sel-label-fs: 18px;
     --_sel-desc-fs: 14px;
     --_sel-touch: 3px;
+    --_sel-card-pad: 16px;
+    --_sel-card-radius: 11px;
+    --_sel-card-border-width: 1.5px;
   }
 
   /* ── Root (the <label> is both wrapper and click target) ─────────────── */
@@ -164,6 +179,83 @@ export const selectionControlBaseStyles = css`
     .control * {
       transition: none !important;
       animation-duration: 0.001ms !important;
+    }
+  }
+
+  /* ── Card variant ────────────────────────────────────────────────────── */
+  /*
+   * The card is the SAME .root <label> re-skinned via :host([variant="card"]).
+   * No template branches — the control box/dot stays exactly where it is.
+   * Per-tier --_sel-card-pad / --_sel-card-radius are set in the size blocks above.
+   */
+  :host([variant="card"]) .root {
+    padding: var(--_sel-card-pad, 12px);
+    border: var(--_sel-card-border-width, 1.5px) solid
+      var(--tulpar-selection-card-border, #d9e0df);
+    border-radius: var(--_sel-card-radius, 9px);
+    background: var(--tulpar-selection-card-bg, #fff);
+    align-items: flex-start;
+    gap: var(--_sel-gap);
+    cursor: pointer;
+    transition:
+      border-color 140ms cubic-bezier(0.2, 0, 0, 1),
+      background-color 140ms cubic-bezier(0.2, 0, 0, 1),
+      box-shadow 160ms cubic-bezier(0.2, 0, 0, 1),
+      transform 120ms cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  :host([variant="card"]:not([disabled]):not([checked])) .root:hover {
+    border-color: var(--tulpar-selection-control-border-hover, #909396);
+    background: var(--tulpar-selection-card-bg-hover, #f0f7f5);
+    box-shadow: 0 2px 8px -2px rgba(11, 8, 4, 0.1);
+    transform: translateY(-1px);
+  }
+
+  :host([variant="card"][checked]) .root,
+  :host([variant="card"][indeterminate]) .root {
+    border-color: var(--_sel-fill);
+    background: var(
+      --tulpar-selection-card-bg-selected,
+      color-mix(in oklch, var(--_sel-fill) 8%, var(--tulpar-selection-card-bg, #fff))
+    );
+    box-shadow: 0 0 0 1px var(--_sel-fill) inset;
+  }
+
+  :host([variant="card"]) .root:active {
+    transform: translateY(0) scale(0.995);
+  }
+
+  /* Focus ring on the whole card when the inner control is keyboard-focused */
+  :host([variant="card"]) .root:has(:focus-visible) {
+    outline: 2px solid var(--tulpar-selection-focus-ring, rgba(81, 78, 207, 0.4));
+    outline-offset: 2px;
+  }
+
+  @media (forced-colors: active) {
+    :host([variant="card"]) .root:has(:focus-visible) {
+      outline-color: CanvasText;
+    }
+  }
+
+  /* Invalid: danger border; tint suppressed when also checked */
+  :host([variant="card"][invalid]) .root {
+    border-color: var(--tulpar-selection-control-border-invalid, #b22128);
+  }
+
+  :host([variant="card"][invalid][checked]) .root,
+  :host([variant="card"][invalid][indeterminate]) .root {
+    background: var(--tulpar-selection-card-bg, #fff);
+    box-shadow: none;
+  }
+
+  :host([variant="card"][disabled]) .root {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :host([variant="card"]) .root {
+      transition: none;
     }
   }
 `;

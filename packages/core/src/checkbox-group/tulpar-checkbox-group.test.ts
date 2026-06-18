@@ -217,4 +217,55 @@ describe("<tulpar-checkbox-group>", () => {
     await settle(el);
     expect(el.value).to.deep.equal(["a", "b"]);
   });
+
+  describe("card variant + group layout", () => {
+    it("horizontal group with card children sets data-has-cards on host", async () => {
+      const el = await fixture<TulparCheckboxGroup>(html`
+        <tulpar-checkbox-group orientation="horizontal">
+          <tulpar-checkbox value="a" variant="card" label="A"></tulpar-checkbox>
+          <tulpar-checkbox value="b" variant="card" label="B"></tulpar-checkbox>
+        </tulpar-checkbox-group>
+      `);
+      await settle(el);
+      expect(el.hasAttribute("data-has-cards")).to.be.true;
+    });
+
+    it("horizontal group WITHOUT card children does NOT set data-has-cards", async () => {
+      const el = await fixture<TulparCheckboxGroup>(html`
+        <tulpar-checkbox-group orientation="horizontal">
+          <tulpar-checkbox value="a" label="A"></tulpar-checkbox>
+          <tulpar-checkbox value="b" label="B"></tulpar-checkbox>
+        </tulpar-checkbox-group>
+      `);
+      await settle(el);
+      expect(el.hasAttribute("data-has-cards")).to.be.false;
+    });
+
+    it("vertical group with card children does NOT get grid layout class (stays column)", async () => {
+      const el = await fixture<TulparCheckboxGroup>(html`
+        <tulpar-checkbox-group orientation="vertical">
+          <tulpar-checkbox value="a" variant="card" label="A"></tulpar-checkbox>
+        </tulpar-checkbox-group>
+      `);
+      await settle(el);
+      // data-has-cards IS set (the detection is orientation-agnostic)
+      expect(el.hasAttribute("data-has-cards")).to.be.true;
+      // But the grid only activates on orientation=horizontal — verify the styles sheet
+      const { selectionGroupBaseStyles } = await import(
+        "../_internal/selection-group-base.styles"
+      );
+      const css = selectionGroupBaseStyles.cssText;
+      expect(css).to.include('[orientation="horizontal"][data-has-cards]');
+      expect(css).to.include("grid-template-columns");
+    });
+
+    it("group CSS: horizontal card grid uses auto-fit minmax(220px,1fr)", async () => {
+      const { selectionGroupBaseStyles } = await import(
+        "../_internal/selection-group-base.styles"
+      );
+      const css = selectionGroupBaseStyles.cssText;
+      expect(css).to.include("220px");
+      expect(css).to.include("auto-fit");
+    });
+  });
 });
