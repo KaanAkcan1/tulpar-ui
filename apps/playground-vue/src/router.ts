@@ -6,6 +6,10 @@ import TextareaDemo from "./components/TextareaDemo.vue";
 import NumberInputDemo from "./components/NumberInputDemo.vue";
 import ColorsDemo from "./components/ColorsDemo.vue";
 import GuideDemo from "./components/GuideDemo.vue";
+import SwitchDemo from "./components/SwitchDemo.vue";
+import CheckboxDemo from "./components/CheckboxDemo.vue";
+import RadioGroupDemo from "./components/RadioGroupDemo.vue";
+import CheckboxGroupDemo from "./components/CheckboxGroupDemo.vue";
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -18,6 +22,18 @@ export const router = createRouter({
       path: "/number-input",
       component: NumberInputDemo,
       meta: { title: "NumberInput — Tulpar UI" },
+    },
+    { path: "/switch", component: SwitchDemo, meta: { title: "Switch — Tulpar UI" } },
+    { path: "/checkbox", component: CheckboxDemo, meta: { title: "Checkbox — Tulpar UI" } },
+    {
+      path: "/radio-group",
+      component: RadioGroupDemo,
+      meta: { title: "RadioGroup — Tulpar UI" },
+    },
+    {
+      path: "/checkbox-group",
+      component: CheckboxGroupDemo,
+      meta: { title: "CheckboxGroup — Tulpar UI" },
     },
     { path: "/colors", component: ColorsDemo, meta: { title: "Colors — Tulpar UI" } },
     { path: "/guide", component: GuideDemo, meta: { title: "Sidebar & Theme — Tulpar UI" } },

@@ -3,11 +3,15 @@ import { onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import {
   BookOpen,
+  CheckSquare,
+  CircleDot,
   FormInput,
   Hash,
+  ListChecks,
   Palette,
   SquareMousePointer,
   TextCursorInput,
+  ToggleLeft,
   WrapText,
 } from "lucide-vue-next";
 import { TulparShell, TulparTopbar, TulparSidenav } from "@tulpar-ui/vue";
@@ -67,6 +71,16 @@ const menu: TulparNavItemVueData[] = [
           { label: "TextInput", href: "/text-input", icon: TextCursorInput },
           { label: "Textarea", href: "/textarea", icon: WrapText },
           { label: "NumberInput", href: "/number-input", icon: Hash },
+        ],
+      },
+      {
+        label: "Selection",
+        icon: CheckSquare,
+        items: [
+          { label: "Switch", href: "/switch", icon: ToggleLeft },
+          { label: "Checkbox", href: "/checkbox", icon: CheckSquare },
+          { label: "RadioGroup", href: "/radio-group", icon: CircleDot },
+          { label: "CheckboxGroup", href: "/checkbox-group", icon: ListChecks },
         ],
       },
     ],
@@ -247,6 +261,19 @@ body {
   background: var(--tulpar-color-bg-surface, #f0f7f5);
   color: var(--tulpar-color-text-primary, #15110b);
   line-height: 1.5;
+}
+
+/*
+ * Bottom-gap fix: the last .doc-section on every demo page carries
+ * margin-bottom: 48px (from its scoped style) which adds ~48 px of
+ * blank space below the visible content inside the shell's scrollable
+ * <main> region (which already has its own 1.5 rem bottom padding).
+ * Resetting margin-bottom to 0 on the last section removes that
+ * redundant gap while keeping the padding-bottom (which is part of the
+ * section's visual structure above the border).
+ */
+.doc-section:last-child {
+  margin-bottom: 0;
 }
 
 .topbar-tag {
