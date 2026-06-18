@@ -120,6 +120,25 @@ describe("SelectionGroupBase (via test subclass)", () => {
     expect(kids[1].hasAttribute("disabled")).to.be.false;
   });
 
+  it("re-enabling the group clears only the disables it added", async () => {
+    const el = await fixture<TestGroup>(html`
+      <test-selection-group name="grp" disabled>
+        <tulpar-checkbox value="a" disabled></tulpar-checkbox>
+        <tulpar-checkbox value="b"></tulpar-checkbox>
+      </test-selection-group>
+    `);
+    await el.updateComplete;
+    const kids = el.querySelectorAll("tulpar-checkbox");
+    expect(kids[0].hasAttribute("disabled")).to.be.true;
+    expect(kids[1].hasAttribute("disabled")).to.be.true;
+
+    el.disabled = false;
+    await el.updateComplete;
+    // child a was disabled on its own → stays; child b was only group-disabled → cleared
+    expect(kids[0].hasAttribute("disabled")).to.be.true;
+    expect(kids[1].hasAttribute("disabled")).to.be.false;
+  });
+
   it("group invalid + errorText renders an alert message row", async () => {
     const el = await fixture<TestGroup>(html`
       <test-selection-group invalid error-text="Required"></test-selection-group>

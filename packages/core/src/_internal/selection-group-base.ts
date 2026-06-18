@@ -102,7 +102,10 @@ export abstract class SelectionGroupBase extends LitElement implements Selection
   /**
    * Mirror identity + state onto each child:
    *   - name / size: always set
-   *   - disabled / readonly: OR-ed with the child's own (group OR child)
+   *   - disabled / readonly: OR-ed with the child's own (group OR child). The
+   *     group marks the attrs it adds (`data-group-disabled`/`-readonly`) so
+   *     that re-enabling the group only clears the disables IT added — a child
+   *     disabled on its own stays disabled.
    *   - color: only when the group sets one
    */
   protected _propagate() {
@@ -110,10 +113,27 @@ export abstract class SelectionGroupBase extends LitElement implements Selection
       if (this.name !== undefined) child.setAttribute("name", this.name);
       child.setAttribute("size", this.size);
 
-      if (this.disabled) child.setAttribute("disabled", "");
-      if (this.readonly) child.setAttribute("readonly", "");
+      this._mirrorGroupFlag(child, "disabled", this.disabled);
+      this._mirrorGroupFlag(child, "readonly", this.readonly);
 
       if (this.color) child.setAttribute("color", this.color);
+    }
+  }
+
+  /** Add/remove a boolean attr the group owns, without clobbering the child's own. */
+  private _mirrorGroupFlag(child: HTMLElement, attr: "disabled" | "readonly", on: boolean) {
+    const marker = `data-group-${attr}`;
+    if (on) {
+      // Only introduce (and mark) the attr if the child didn't already have its
+      // own — otherwise we'd later clear the child's own state on re-enable.
+      if (!child.hasAttribute(attr)) {
+        child.setAttribute(attr, "");
+        child.setAttribute(marker, "");
+      }
+    } else if (child.hasAttribute(marker)) {
+      // Only the group put it there — safe to clear.
+      child.removeAttribute(attr);
+      child.removeAttribute(marker);
     }
   }
 

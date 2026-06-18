@@ -46,6 +46,11 @@ export class TulparCheckboxGroup extends SelectionGroupBase {
     // Capture whether `value` was authored before the base's connect runs its
     // apply-down/reconcile-up pass (which would otherwise clobber authored
     // `checked` children when `value` is empty).
+    // Known limitation: a length>0 heuristic cannot distinguish an explicit
+    // `value=[]` (clear-all intent set before connect) from the default empty
+    // array — in that edge, authored `checked` children win. For HTML-authored
+    // usage this is the desired behavior; programmatic clear-all should set
+    // `value` AFTER connect (which always applies down).
     this._valueAuthored = this.value.length > 0;
     this._silentReconcile = true;
     super.connectedCallback();
