@@ -83,6 +83,14 @@ export abstract class SelectionControlBase extends LitElement implements Selecti
     this._internals = this.attachInternals();
   }
 
+  /** Propagate `<fieldset disabled>` to this control. */
+  formDisabledCallback(disabled: boolean) {
+    this.disabled = disabled;
+  }
+
+  /** Subclasses override to restore their initial value on form reset. */
+  formResetCallback() {}
+
   /** True when an attribute label or a slotted label is present. */
   protected _hasLabel(): boolean {
     return !!this.label || this._hasLabelSlotContent();

@@ -31,7 +31,7 @@ export const selectionControlBaseStyles = css`
      on-custom contrast color. */
   :host([data-custom-fill]) {
     --_sel-fill: var(--_sel-custom-fill);
-    --_sel-glyph: var(--tulpar-selection-glyph-on-custom, #fff);
+    --_sel-glyph: var(--tulpar-selection-glyph-on-custom, #f0f7f5);
   }
 
   /* Invalid recolors the control fill/border to danger. */

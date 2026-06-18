@@ -1,9 +1,6 @@
 import { html, nothing, type TemplateResult } from "lit";
 
-/**
- * Minimal host contract the selection message-row helper reads from.
- * Both SelectionControlBase and the (future) group bases satisfy this.
- */
+/** Minimal host contract the message-row helper reads (both bases satisfy it). */
 export interface SelectionMessageHost {
   invalid: boolean;
   warn: boolean;
@@ -15,15 +12,9 @@ export interface SelectionMessageHost {
 }
 
 /**
- * Pure helper that renders the selection-family message row.
- *
- * Sanctioned ≤50-line copy of FormFieldBase's message-row logic
- * (see docs/architecture/internal-layering.md). Kept as a free function
- * rather than a mixin so Switch/Checkbox/Radio (and the group bases) can
- * share it without coupling their class hierarchies.
- *
- * Precedence: invalid+errorText (role=alert) > warn+warnText (role=status)
- * > helperText (no role).
+ * Sanctioned ≤50-line copy of FormFieldBase's message row (internal-layering.md).
+ * Free function (not a mixin) so all selection elements share it without coupling.
+ * Precedence: invalid+errorText (alert) > warn+warnText (status) > helperText.
  */
 export function renderMessageRow(host: SelectionMessageHost): TemplateResult | typeof nothing {
   if (host.noMessageSpace) return nothing;
