@@ -1,140 +1,190 @@
-import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
-import { TulparSwitchComponent } from '@tulpar-ui/angular';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  input,
+  signal,
+} from '@angular/core';
+import { TulparSwitchComponent, TulparButtonComponent } from '@tulpar-ui/angular';
+import { LucideAngularModule, Sun, Moon, Wifi, Bell, Shield, Eye } from 'lucide-angular';
+
+// ─── Icon components for [iconOn] / [iconOff] (named-component prop form) ──
+@Component({
+  selector: 'app-sun-icon',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-angular [img]="iconData" [size]="size()"></lucide-angular>`,
+})
+class AppSunIcon {
+  readonly iconData = Sun;
+  size = input(12);
+}
+
+@Component({
+  selector: 'app-moon-icon',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-angular [img]="iconData" [size]="size()"></lucide-angular>`,
+})
+class AppMoonIcon {
+  readonly iconData = Moon;
+  size = input(12);
+}
 
 // ─── Code snippets ─────────────────────────────────────────────────────────────
 
-const SIZES_CODE = `<tulpar-switch-ng size="xs" label="Extra Small"></tulpar-switch-ng>
-<tulpar-switch-ng size="sm" label="Small"></tulpar-switch-ng>
-<tulpar-switch-ng size="md" label="Medium (default)"></tulpar-switch-ng>
-<tulpar-switch-ng size="lg" label="Large"></tulpar-switch-ng>
-<tulpar-switch-ng size="xl" label="Extra Large"></tulpar-switch-ng>`;
+const SIZES_CODE = `<tulpar-switch-ng size="xs" [checked]="true" label="Extra small"></tulpar-switch-ng>
+<tulpar-switch-ng size="sm" [checked]="true" label="Small"></tulpar-switch-ng>
+<tulpar-switch-ng size="md" [checked]="true" label="Medium (default)"></tulpar-switch-ng>
+<tulpar-switch-ng size="lg" [checked]="true" label="Large"></tulpar-switch-ng>
+<tulpar-switch-ng size="xl" [checked]="true" label="Extra large"></tulpar-switch-ng>`;
 
-const LABEL_POSITION_CODE = `<!-- end (default) — label after the track -->
-<tulpar-switch-ng label="Notifications" labelPosition="end"></tulpar-switch-ng>
+const LABEL_POSITION_CODE = `<!-- label at the end (default) -->
+<tulpar-switch-ng [(checked)]="checked" label="Notifications" labelPosition="end"></tulpar-switch-ng>
 
-<!-- start — label before the track -->
-<tulpar-switch-ng label="Notifications" labelPosition="start"></tulpar-switch-ng>`;
+<!-- label at the start -->
+<tulpar-switch-ng [(checked)]="checked" label="Dark mode" labelPosition="start"></tulpar-switch-ng>`;
 
-const SLOTS_CODE = `<!-- Label + description via named slots -->
-<tulpar-switch-ng>
-  <span slot="label">Marketing emails</span>
-  <span slot="description">Receive product updates and promotions</span>
+const PROPS_VS_SLOTS_CODE = `<!-- (a) PROP form — label + description as inputs -->
+<tulpar-switch-ng
+  [checked]="true"
+  label="Two-factor authentication"
+  description="Adds an extra layer of security to your account login."
+></tulpar-switch-ng>
+
+<!-- (b) SLOT form — rich content via named slots -->
+<tulpar-switch-ng [checked]="true">
+  <span slot="label">Two-factor authentication</span>
+  <span slot="description">
+    Adds an extra layer of security to your account login.
+  </span>
 </tulpar-switch-ng>`;
 
 const STATES_CODE = `<!-- Checked -->
-<tulpar-switch-ng label="Checked" [checked]="true"></tulpar-switch-ng>
+<tulpar-switch-ng [checked]="true" label="Checked"></tulpar-switch-ng>
 
-<!-- Disabled -->
-<tulpar-switch-ng label="Disabled off" [disabled]="true"></tulpar-switch-ng>
-<tulpar-switch-ng label="Disabled on" [checked]="true" [disabled]="true"></tulpar-switch-ng>
+<!-- Disabled (off) -->
+<tulpar-switch-ng [disabled]="true" label="Disabled off"></tulpar-switch-ng>
+
+<!-- Disabled (on) -->
+<tulpar-switch-ng [checked]="true" [disabled]="true" label="Disabled on"></tulpar-switch-ng>
 
 <!-- Readonly -->
-<tulpar-switch-ng label="Readonly" [checked]="true" [readonly]="true"></tulpar-switch-ng>
+<tulpar-switch-ng [checked]="true" [readonly]="true" label="Readonly"></tulpar-switch-ng>
 
-<!-- Invalid + required + error-text -->
+<!-- Required + invalid + error text -->
 <tulpar-switch-ng
-  label="Accept terms"
   [required]="true"
   [invalid]="true"
-  errorText="You must accept the terms"
+  label="Accept terms"
+  errorText="You must accept the terms to continue."
 ></tulpar-switch-ng>`;
 
-const LOADING_CODE = `loading = signal(false);
-checked = signal(false);
+const LOADING_CODE = `// component
+readonly checked = signal(false);
+readonly loading = signal(false);
 
-onAsyncToggle() {
+onAsyncToggle(e: Event) {
+  e.preventDefault(); // revert-then-commit: let the signal drive checked
   if (this.loading()) return;
   this.loading.set(true);
   setTimeout(() => {
-    this.checked.update(v => !v);
+    this.checked.update((v) => !v);
     this.loading.set(false);
   }, 1200);
 }
 
-<!-- Template -->
+<!-- template -->
 <tulpar-switch-ng
-  label="Saving preference…"
   [(checked)]="checked"
   [loading]="loading()"
-  (change)="onAsyncToggle()"
+  label="Auto-save drafts"
+  (change)="onAsyncToggle($event)"
+></tulpar-switch-ng>
+<tulpar-button-ng
+  size="sm"
+  severity="secondary"
+  variant="outlined"
+  [disabled]="loading()"
+  (clicked)="onAsyncToggle($event)"
+>Toggle with async</tulpar-button-ng>`;
+
+const SHOW_ICON_CODE = `<!-- Default check / cross indicator inside the track -->
+<tulpar-switch-ng [checked]="true" [showIcon]="true" label="Show-icon on"></tulpar-switch-ng>
+<tulpar-switch-ng [showIcon]="true" label="Show-icon off"></tulpar-switch-ng>`;
+
+const ICON_PROP_CODE = `<!-- Custom icons via PROP — pass a component class to [iconOn] / [iconOff] -->
+@Component({
+  selector: 'app-sun-icon',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: \`<lucide-angular [img]="iconData" [size]="size()"></lucide-angular>\`,
+})
+class AppSunIcon { readonly iconData = Sun; size = input(12); }
+
+<tulpar-switch-ng
+  [checked]="true"
+  [showIcon]="true"
+  size="lg"
+  [iconOn]="AppSunIcon"
+  [iconOff]="AppMoonIcon"
+  label="Day / Night (prop)"
 ></tulpar-switch-ng>`;
 
-const SHOW_ICON_CODE = `<!-- Built-in check / x icons -->
-<tulpar-switch-ng label="With icons" [showIcon]="true" [checked]="true"></tulpar-switch-ng>`;
-
-const CUSTOM_ICON_CODE = `<!-- Sun = on, Moon = off via named slots -->
-<tulpar-switch-ng [checked]="true">
+const ICON_SLOT_CODE = `<!-- Custom icons via SLOT — any SVG works -->
+<tulpar-switch-ng [checked]="true" [showIcon]="true" size="lg" label="Day / Night (slot)">
   <span slot="icon-on">
-    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"
-         fill="none" stroke="currentColor" stroke-width="2.5"
-         stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="4"/>
-      <line x1="12" y1="2" x2="12" y2="6"/>
-      <line x1="12" y1="18" x2="12" y2="22"/>
-      <line x1="4.22" y1="4.22" x2="7.05" y2="7.05"/>
-      <line x1="16.95" y1="16.95" x2="19.78" y2="19.78"/>
-      <line x1="2" y1="12" x2="6" y2="12"/>
-      <line x1="18" y1="12" x2="22" y2="12"/>
-      <line x1="4.22" y1="19.78" x2="7.05" y2="16.95"/>
-      <line x1="16.95" y1="7.05" x2="19.78" y2="4.22"/>
-    </svg>
+    <lucide-angular [img]="Sun" [size]="12"></lucide-angular>
   </span>
   <span slot="icon-off">
-    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"
-         fill="none" stroke="currentColor" stroke-width="2.5"
-         stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-    </svg>
+    <lucide-angular [img]="Moon" [size]="12"></lucide-angular>
   </span>
 </tulpar-switch-ng>`;
 
-const COLORS_CODE = `<!-- on-color / off-color forwarded from wrapper -->
-<tulpar-switch-ng label="Custom green" [checked]="true" onColor="#16a34a"></tulpar-switch-ng>
-<tulpar-switch-ng label="Custom amber off" offColor="#f59e0b"></tulpar-switch-ng>
-<tulpar-switch-ng label="Danger" [checked]="true" onColor="#dc2626"></tulpar-switch-ng>`;
+const COLOR_CODE = `<!-- Single color override (on-state) — bind it -->
+<tulpar-switch-ng [checked]="true" [color]="'ulgen'" label="Ulgen (gold)"></tulpar-switch-ng>
+<tulpar-switch-ng [checked]="true" [color]="'otuken'" label="Otuken (forest)"></tulpar-switch-ng>
+<tulpar-switch-ng [checked]="true" [color]="'kizagan'" label="Kizagan (danger)"></tulpar-switch-ng>
 
-const SETTINGS_CODE = `<div class="settings-card">
-  <tulpar-switch-ng [(checked)]="notifEmail">
-    <span slot="label">Email notifications</span>
-    <span slot="description">Daily digest of activity</span>
-  </tulpar-switch-ng>
-  <tulpar-switch-ng [(checked)]="notifPush">
-    <span slot="label">Push notifications</span>
-    <span slot="description">Instant alerts on your device</span>
-  </tulpar-switch-ng>
-  <tulpar-switch-ng [(checked)]="notifSms" [disabled]="true">
-    <span slot="label">SMS notifications</span>
-    <span slot="description">Requires phone number verification</span>
-  </tulpar-switch-ng>
-</div>`;
+<!-- Independent on / off track colors — bind both -->
+<tulpar-switch-ng
+  [checked]="true"
+  [onColor]="'otuken'"
+  [offColor]="'kizagan'"
+  label="On = Otuken / Off = Kizagan"
+></tulpar-switch-ng>`;
 
 @Component({
   selector: 'app-switch-demo',
   standalone: true,
-  imports: [TulparSwitchComponent],
+  // AppSunIcon / AppMoonIcon are rendered dynamically via NgComponentOutlet
+  // inside the switch wrapper ([iconOn] / [iconOff] class-reference bindings),
+  // so their selectors never appear in this template.
+  imports: [TulparSwitchComponent, TulparButtonComponent, LucideAngularModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <!-- ── Page header ─────────────────────────────────────────────────── -->
     <header class="page-header">
-      <span class="page-tag">Selection</span>
+      <span class="page-tag">Core</span>
       <h1 class="page-title">Switch</h1>
       <p class="page-lede">
-        A binary toggle control — semantically a checkbox, visually a sliding track. Five sizes,
-        label positions, loading state, custom colors, and icon slots.
+        An immediate on/off toggle — five sizes, start/end label, label &amp; description in both
+        prop and slot form, loading state, default and custom icons (prop + slot), and per-state
+        color overrides. Form-associated via the underlying web component.
       </p>
     </header>
 
     <!-- ── Hero ──────────────────────────────────────────────────────────── -->
     <section class="doc-section">
       <div class="hero">
-        <tulpar-switch-ng label="Wi-Fi" [checked]="true" size="lg"></tulpar-switch-ng>
-        <tulpar-switch-ng label="Bluetooth" size="lg"></tulpar-switch-ng>
+        <tulpar-switch-ng [(checked)]="heroChecked" size="lg" label="Enable notifications">
+        </tulpar-switch-ng>
         <tulpar-switch-ng
-          label="Airplane mode"
-          [checked]="true"
+          [(checked)]="heroChecked"
           size="lg"
-          onColor="#dc2626"
+          labelPosition="start"
+          label="Dark mode"
         ></tulpar-switch-ng>
       </div>
     </section>
@@ -143,15 +193,16 @@ const SETTINGS_CODE = `<div class="settings-card">
     <section class="doc-section">
       <h2 class="section-title">1. Sizes</h2>
       <p class="section-desc">
-        Five sizes from <code class="inline-code">xs</code> to <code class="inline-code">xl</code>.
-        Default is <code class="inline-code">md</code>.
+        Five sizes: <code class="inline-code">xs</code>, <code class="inline-code">sm</code>,
+        <code class="inline-code">md</code> (default), <code class="inline-code">lg</code>,
+        <code class="inline-code">xl</code>. All checked.
       </p>
-      <div class="preview preview--baseline">
-        <tulpar-switch-ng size="xs" label="Extra Small"></tulpar-switch-ng>
-        <tulpar-switch-ng size="sm" label="Small"></tulpar-switch-ng>
-        <tulpar-switch-ng size="md" label="Medium"></tulpar-switch-ng>
-        <tulpar-switch-ng size="lg" label="Large"></tulpar-switch-ng>
-        <tulpar-switch-ng size="xl" label="Extra Large"></tulpar-switch-ng>
+      <div class="preview preview--col">
+        <tulpar-switch-ng [checked]="true" size="xs" label="Extra small"></tulpar-switch-ng>
+        <tulpar-switch-ng [checked]="true" size="sm" label="Small"></tulpar-switch-ng>
+        <tulpar-switch-ng [checked]="true" size="md" label="Medium (default)"></tulpar-switch-ng>
+        <tulpar-switch-ng [checked]="true" size="lg" label="Large"></tulpar-switch-ng>
+        <tulpar-switch-ng [checked]="true" size="xl" label="Extra large"></tulpar-switch-ng>
       </div>
       <pre class="code"><code>{{ sizesCode }}</code></pre>
     </section>
@@ -160,239 +211,246 @@ const SETTINGS_CODE = `<div class="settings-card">
     <section class="doc-section">
       <h2 class="section-title">2. Label position</h2>
       <p class="section-desc">
-        <code class="inline-code">end</code> (default) places the label after the track;
-        <code class="inline-code">start</code> places it before.
+        <code class="inline-code">labelPosition="end"</code> (default) or
+        <code class="inline-code">labelPosition="start"</code>.
       </p>
-      <div class="preview">
-        <tulpar-switch-ng label="Label end (default)" labelPosition="end"></tulpar-switch-ng>
-        <tulpar-switch-ng label="Label start" labelPosition="start"></tulpar-switch-ng>
+      <div class="preview preview--col">
+        <tulpar-switch-ng [checked]="true" label="Notifications" labelPosition="end">
+        </tulpar-switch-ng>
+        <tulpar-switch-ng [checked]="true" label="Dark mode" labelPosition="start">
+        </tulpar-switch-ng>
       </div>
       <pre class="code"><code>{{ labelPositionCode }}</code></pre>
     </section>
 
-    <!-- ── 3. Label + description slots ───────────────────────────────── -->
+    <!-- ── 3. Props vs slots — label & description ──────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">3. Label + description slots</h2>
+      <h2 class="section-title">3. Props vs slots — label &amp; description</h2>
       <p class="section-desc">
-        Project rich content into <code class="inline-code">slot="label"</code> and
-        <code class="inline-code">slot="description"</code> for multi-line settings rows.
+        Every content capability works in BOTH forms. Use the
+        <code class="inline-code">label</code> / <code class="inline-code">description</code> inputs
+        for plain text, or the <code class="inline-code">slot="label"</code> /
+        <code class="inline-code">slot="description"</code> slots for rich content. Both render
+        identically.
       </p>
-      <div class="preview">
-        <tulpar-switch-ng>
-          <span slot="label">Marketing emails</span>
-          <span slot="description">Receive product updates and promotions</span>
-        </tulpar-switch-ng>
-        <tulpar-switch-ng [checked]="true">
-          <span slot="label">Security alerts</span>
-          <span slot="description">Notify me of suspicious login attempts</span>
-        </tulpar-switch-ng>
+      <div class="preview preview--cols">
+        <div class="preview-col">
+          <p class="preview-label">Prop form</p>
+          <tulpar-switch-ng
+            [checked]="true"
+            label="Two-factor authentication"
+            description="Adds an extra layer of security to your account login."
+          ></tulpar-switch-ng>
+        </div>
+        <div class="preview-col">
+          <p class="preview-label">Slot form</p>
+          <tulpar-switch-ng [checked]="true">
+            <span slot="label">Two-factor authentication</span>
+            <span slot="description"> Adds an extra layer of security to your account login. </span>
+          </tulpar-switch-ng>
+        </div>
       </div>
-      <pre class="code"><code>{{ slotsCode }}</code></pre>
+      <pre class="code"><code>{{ propsVsSlotsCode }}</code></pre>
     </section>
 
     <!-- ── 4. States ──────────────────────────────────────────────────── -->
     <section class="doc-section">
       <h2 class="section-title">4. States</h2>
       <p class="section-desc">
-        Checked, disabled (on/off), readonly, and invalid with required error-text.
+        Checked, disabled (on/off), readonly, required + invalid with
+        <code class="inline-code">errorText</code>.
       </p>
       <div class="preview preview--col">
-        <div class="preview-row">
-          <tulpar-switch-ng label="Checked" [checked]="true"></tulpar-switch-ng>
-          <tulpar-switch-ng label="Disabled off" [disabled]="true"></tulpar-switch-ng>
-          <tulpar-switch-ng
-            label="Disabled on"
-            [checked]="true"
-            [disabled]="true"
-          ></tulpar-switch-ng>
-          <tulpar-switch-ng
-            label="Readonly on"
-            [checked]="true"
-            [readonly]="true"
-          ></tulpar-switch-ng>
-        </div>
+        <tulpar-switch-ng [checked]="true" label="Checked"></tulpar-switch-ng>
+        <tulpar-switch-ng [disabled]="true" label="Disabled off"></tulpar-switch-ng>
+        <tulpar-switch-ng [checked]="true" [disabled]="true" label="Disabled on"></tulpar-switch-ng>
+        <tulpar-switch-ng [checked]="true" [readonly]="true" label="Readonly"></tulpar-switch-ng>
         <tulpar-switch-ng
-          label="Accept terms"
           [required]="true"
           [invalid]="true"
-          errorText="You must accept the terms to continue"
+          label="Accept terms"
+          errorText="You must accept the terms to continue."
         ></tulpar-switch-ng>
       </div>
       <pre class="code"><code>{{ statesCode }}</code></pre>
     </section>
 
-    <!-- ── 5. Loading (async toggle) ──────────────────────────────────── -->
+    <!-- ── 5. Loading — async demo ──────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">5. Loading — async toggle</h2>
+      <h2 class="section-title">5. Loading — async (revert-then-commit)</h2>
       <p class="section-desc">
-        The <code class="inline-code">loading</code> input disables interaction and shows a spinner
-        inside the track. Click the switch below to see the ~1.2 s async simulation.
+        The <code class="inline-code">loading</code> input shows a spinner inside the thumb and
+        prevents interaction. Click the button to simulate a 1.2 s async preference save — the
+        switch commits its new value only after the work resolves.
       </p>
-      <div class="preview">
+      <div class="preview preview--col">
         <tulpar-switch-ng
-          label="Dark mode"
-          [(checked)]="asyncChecked"
-          [loading]="asyncLoading()"
-          (change)="onAsyncToggle($event)"
+          [(checked)]="loadingChecked"
+          [loading]="isLoading()"
+          label="Auto-save drafts"
+          [helperText]="
+            isLoading()
+              ? 'Saving preference…'
+              : loadingChecked()
+                ? 'Auto-save is on'
+                : 'Auto-save is off'
+          "
+          (change)="triggerAsyncToggle($event)"
         ></tulpar-switch-ng>
-        @if (asyncLoading()) {
-          <span class="status-feedback">Saving preference…</span>
-        } @else {
-          <span class="status-feedback">Value: {{ asyncChecked() }}</span>
-        }
+        <tulpar-button-ng
+          size="sm"
+          severity="secondary"
+          variant="outlined"
+          [disabled]="isLoading()"
+          (clicked)="triggerAsyncToggle($event)"
+        >
+          {{ isLoading() ? 'Saving…' : 'Toggle with async' }}
+        </tulpar-button-ng>
       </div>
       <pre class="code"><code>{{ loadingCode }}</code></pre>
     </section>
 
-    <!-- ── 6. Show icon ───────────────────────────────────────────────── -->
+    <!-- ── 6. show-icon — default check / cross ─────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">6. Show icon</h2>
+      <h2 class="section-title">6. show-icon — check / cross indicator</h2>
       <p class="section-desc">
-        The <code class="inline-code">showIcon</code> input renders built-in check / ✕ icons inside
-        the thumb.
+        <code class="inline-code">showIcon</code> renders a check mark when on and a cross when off
+        inside the track. The icon color follows the track color.
       </p>
-      <div class="preview preview--baseline">
-        <tulpar-switch-ng size="sm" [showIcon]="true" label="Off with icon"></tulpar-switch-ng>
-        <tulpar-switch-ng
-          size="sm"
-          [showIcon]="true"
-          [checked]="true"
-          label="On with icon"
-        ></tulpar-switch-ng>
-        <tulpar-switch-ng size="md" [showIcon]="true" label="MD off"></tulpar-switch-ng>
-        <tulpar-switch-ng
-          size="md"
-          [showIcon]="true"
-          [checked]="true"
-          label="MD on"
-        ></tulpar-switch-ng>
-        <tulpar-switch-ng size="lg" [showIcon]="true" label="LG off"></tulpar-switch-ng>
-        <tulpar-switch-ng
-          size="lg"
-          [showIcon]="true"
-          [checked]="true"
-          label="LG on"
-        ></tulpar-switch-ng>
+      <div class="preview">
+        <tulpar-switch-ng [checked]="true" [showIcon]="true" label="Show-icon on">
+        </tulpar-switch-ng>
+        <tulpar-switch-ng [showIcon]="true" label="Show-icon off"></tulpar-switch-ng>
+        <tulpar-switch-ng [checked]="true" size="lg" [showIcon]="true" label="Large with icon">
+        </tulpar-switch-ng>
       </div>
       <pre class="code"><code>{{ showIconCode }}</code></pre>
     </section>
 
-    <!-- ── 7. Custom icon slots ───────────────────────────────────────── -->
+    <!-- ── 7. Custom icons — prop form ──────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">7. Custom icon slots — sun / moon</h2>
+      <h2 class="section-title">7. Custom icons — prop form</h2>
       <p class="section-desc">
-        Project any SVG or icon component into
-        <code class="inline-code">slot="icon-on"</code> and
-        <code class="inline-code">slot="icon-off"</code> to replace the built-in check/✕ with custom
-        graphics.
+        Pass a component class to <code class="inline-code">[iconOn]</code> /
+        <code class="inline-code">[iconOff]</code> — the wrapper renders it into the right slot via
+        <code class="inline-code">NgComponentOutlet</code>. Classic example: sun for day, moon for
+        night.
       </p>
-      <div class="preview preview--baseline">
-        <!-- Sun on, Moon off — interactive -->
-        <tulpar-switch-ng size="lg" [(checked)]="themeChecked" label="Theme">
-          <!-- Sun icon — on state -->
-          <span slot="icon-on">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <circle cx="12" cy="12" r="4" />
-              <line x1="12" y1="2" x2="12" y2="6" />
-              <line x1="12" y1="18" x2="12" y2="22" />
-              <line x1="4.22" y1="4.22" x2="7.05" y2="7.05" />
-              <line x1="16.95" y1="16.95" x2="19.78" y2="19.78" />
-              <line x1="2" y1="12" x2="6" y2="12" />
-              <line x1="18" y1="12" x2="22" y2="12" />
-              <line x1="4.22" y1="19.78" x2="7.05" y2="16.95" />
-              <line x1="16.95" y1="7.05" x2="19.78" y2="4.22" />
-            </svg>
-          </span>
-          <!-- Moon icon — off state -->
-          <span slot="icon-off">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-            </svg>
-          </span>
-        </tulpar-switch-ng>
-        <span class="status-feedback">{{ themeChecked() ? 'Light' : 'Dark' }}</span>
-      </div>
-      <pre class="code"><code>{{ customIconCode }}</code></pre>
-    </section>
-
-    <!-- ── 8. on-color / off-color ────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">8. on-color / off-color</h2>
-      <p class="section-desc">
-        Override the track color per-state with any CSS color value. Useful for semantic intent
-        beyond the design system's default brand green.
-      </p>
-      <div class="preview preview--baseline">
+      <div class="preview">
         <tulpar-switch-ng
-          label="Custom green"
           [checked]="true"
-          onColor="#16a34a"
+          [showIcon]="true"
+          size="lg"
+          [iconOn]="AppSunIcon"
+          [iconOff]="AppMoonIcon"
+          label="Day / Night (prop, on)"
         ></tulpar-switch-ng>
-        <tulpar-switch-ng label="Custom amber off" offColor="#f59e0b"></tulpar-switch-ng>
-        <tulpar-switch-ng label="Danger on" [checked]="true" onColor="#dc2626"></tulpar-switch-ng>
-        <tulpar-switch-ng label="Purple on" [checked]="true" onColor="#7c3aed"></tulpar-switch-ng>
+        <tulpar-switch-ng
+          [showIcon]="true"
+          size="lg"
+          [iconOn]="AppSunIcon"
+          [iconOff]="AppMoonIcon"
+          label="Day / Night (prop, off)"
+        ></tulpar-switch-ng>
       </div>
-      <pre class="code"><code>{{ colorsCode }}</code></pre>
+      <pre class="code"><code>{{ iconPropCode }}</code></pre>
     </section>
 
-    <!-- ── 9. In context — settings card ──────────────────────────────── -->
+    <!-- ── 8. Custom icons — slot form ──────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">In context — notification settings card</h2>
+      <h2 class="section-title">8. Custom icons — slot form</h2>
       <p class="section-desc">
-        Switches rarely live alone. Here they compose into a settings list with grouped on/off
-        toggles for notification preferences.
+        The same custom icons via <code class="inline-code">slot="icon-on"</code> /
+        <code class="inline-code">slot="icon-off"</code> — the escape hatch for any SVG or
+        non-Lucide icon library.
+      </p>
+      <div class="preview">
+        <tulpar-switch-ng
+          [checked]="true"
+          [showIcon]="true"
+          size="lg"
+          label="Day / Night (slot, on)"
+        >
+          <span slot="icon-on"><lucide-angular [img]="Sun" [size]="12"></lucide-angular></span>
+          <span slot="icon-off"><lucide-angular [img]="Moon" [size]="12"></lucide-angular></span>
+        </tulpar-switch-ng>
+        <tulpar-switch-ng [showIcon]="true" size="lg" label="Day / Night (slot, off)">
+          <span slot="icon-on"><lucide-angular [img]="Sun" [size]="12"></lucide-angular></span>
+          <span slot="icon-off"><lucide-angular [img]="Moon" [size]="12"></lucide-angular></span>
+        </tulpar-switch-ng>
+      </div>
+      <pre class="code"><code>{{ iconSlotCode }}</code></pre>
+    </section>
+
+    <!-- ── 9. Color — on-color / off-color (bound) ──────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">9. Color — on-color / off-color</h2>
+      <p class="section-desc">
+        Override the on-state color with <code class="inline-code">[color]</code>, or independently
+        control the on/off track colors with <code class="inline-code">[onColor]</code> /
+        <code class="inline-code">[offColor]</code>. The core resolves design-system color names
+        (<code class="inline-code">ulgen</code>, <code class="inline-code">otuken</code>, …).
+      </p>
+      <div class="preview preview--col">
+        <tulpar-switch-ng [checked]="true" [color]="'ulgen'" label="Ulgen (antique gold)">
+        </tulpar-switch-ng>
+        <tulpar-switch-ng [checked]="true" [color]="'otuken'" label="Otuken (forest green)">
+        </tulpar-switch-ng>
+        <tulpar-switch-ng [checked]="true" [color]="'kizagan'" label="Kizagan (danger red)">
+        </tulpar-switch-ng>
+        <tulpar-switch-ng [checked]="true" [color]="'kam'" label="Kam (indigo)"></tulpar-switch-ng>
+        <tulpar-switch-ng
+          [checked]="true"
+          [onColor]="'otuken'"
+          [offColor]="'kizagan'"
+          label="On = Otuken / Off = Kizagan"
+        ></tulpar-switch-ng>
+      </div>
+      <pre class="code"><code>{{ colorCode }}</code></pre>
+    </section>
+
+    <!-- ── 10. In context — Settings card ───────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">In context — Settings card</h2>
+      <p class="section-desc">
+        Switches grouped in a settings card. Each row has a label + description and an independent
+        boolean state.
       </p>
       <div class="composition">
         <div class="settings-card">
-          <p class="settings-card-title">Notifications</p>
-          <div class="settings-row">
-            <tulpar-switch-ng [(checked)]="notifEmail">
-              <span slot="label">Email notifications</span>
-              <span slot="description">Daily digest of activity in your workspace</span>
-            </tulpar-switch-ng>
+          <h3 class="settings-card-title">Device settings</h3>
+          <div class="settings-list">
+            <div class="settings-row">
+              <lucide-angular class="settings-icon" [img]="Wifi" [size]="18"></lucide-angular>
+              <tulpar-switch-ng [(checked)]="wifiEnabled" [noMessageSpace]="true">
+                <span slot="label">Wi-Fi</span>
+                <span slot="description">Connect to wireless networks automatically.</span>
+              </tulpar-switch-ng>
+            </div>
+            <div class="settings-row">
+              <lucide-angular class="settings-icon" [img]="Bell" [size]="18"></lucide-angular>
+              <tulpar-switch-ng [(checked)]="notificationsEnabled" [noMessageSpace]="true">
+                <span slot="label">Push notifications</span>
+                <span slot="description">Receive alerts for activity and updates.</span>
+              </tulpar-switch-ng>
+            </div>
+            <div class="settings-row">
+              <lucide-angular class="settings-icon" [img]="Shield" [size]="18"></lucide-angular>
+              <tulpar-switch-ng [(checked)]="privacyEnabled" [noMessageSpace]="true">
+                <span slot="label">Privacy mode</span>
+                <span slot="description">Hide your online status from other users.</span>
+              </tulpar-switch-ng>
+            </div>
+            <div class="settings-row">
+              <lucide-angular class="settings-icon" [img]="Eye" [size]="18"></lucide-angular>
+              <tulpar-switch-ng [(checked)]="visibilityEnabled" [noMessageSpace]="true">
+                <span slot="label">Profile visibility</span>
+                <span slot="description">Allow others to find you by name or email.</span>
+              </tulpar-switch-ng>
+            </div>
           </div>
-          <div class="settings-row">
-            <tulpar-switch-ng [(checked)]="notifPush">
-              <span slot="label">Push notifications</span>
-              <span slot="description">Instant alerts on your connected devices</span>
-            </tulpar-switch-ng>
-          </div>
-          <div class="settings-row">
-            <tulpar-switch-ng [(checked)]="notifSms" [disabled]="true">
-              <span slot="label">SMS notifications</span>
-              <span slot="description">Requires phone number verification first</span>
-            </tulpar-switch-ng>
-          </div>
-          <div class="settings-row">
-            <tulpar-switch-ng [(checked)]="notifMarketing">
-              <span slot="label">Marketing updates</span>
-              <span slot="description">Product news, feature releases and tips</span>
-            </tulpar-switch-ng>
-          </div>
-          <p class="settings-summary">Active: {{ activeNotifCount() }} / 4</p>
         </div>
       </div>
-      <pre class="code"><code>{{ settingsCode }}</code></pre>
     </section>
   `,
   styles: [
@@ -438,7 +496,7 @@ const SETTINGS_CODE = `<div class="settings-card">
       .hero {
         display: flex;
         flex-wrap: wrap;
-        gap: 16px;
+        gap: 24px;
         align-items: center;
         padding: 32px 28px;
         border: 1px solid var(--tulpar-color-border-default, #d9e0df);
@@ -485,20 +543,29 @@ const SETTINGS_CODE = `<div class="settings-card">
         align-items: center;
       }
 
-      .preview--baseline {
-        align-items: baseline;
-      }
-
       .preview--col {
         flex-direction: column;
         align-items: flex-start;
+        gap: 12px;
       }
 
-      .preview-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px;
-        align-items: center;
+      .preview--cols {
+        align-items: flex-start;
+        gap: 40px;
+      }
+
+      .preview-col {
+        flex: 1;
+        min-width: 240px;
+      }
+
+      .preview-label {
+        margin: 0 0 12px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--tulpar-color-text-muted, #74777a);
       }
 
       .code {
@@ -525,87 +592,97 @@ const SETTINGS_CODE = `<div class="settings-card">
         color: var(--tulpar-color-text-primary, #15110b);
       }
 
-      .status-feedback {
-        font-size: 13px;
-        color: var(--tulpar-color-text-secondary, #57534e);
-      }
-
-      /* ── Real-world composition ─────────────────────────────────────── */
       .composition {
         display: flex;
       }
 
       .settings-card {
         flex: 1;
-        max-width: 480px;
-        padding: 20px;
+        max-width: 520px;
         border: 1px solid var(--tulpar-color-border-default, #d9e0df);
         border-radius: 12px;
         background: var(--tulpar-color-bg-elevated, #ffffff);
         box-shadow: var(--tulpar-shadow-sm, 0 1px 2px rgb(0 0 0 / 0.06));
+        overflow: hidden;
       }
 
       .settings-card-title {
-        margin: 0 0 16px;
+        margin: 0;
+        padding: 16px 20px;
         font-family: var(--tulpar-font-family-display, Georgia, serif);
         font-size: 16px;
         font-weight: 600;
         color: var(--tulpar-color-text-primary, #15110b);
-      }
-
-      .settings-row {
-        padding: 12px 0;
         border-bottom: 1px solid var(--tulpar-color-border-default, #d9e0df);
       }
 
-      .settings-row:last-of-type {
+      .settings-list {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .settings-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--tulpar-color-border-default, #d9e0df);
+      }
+
+      .settings-row:last-child {
         border-bottom: none;
       }
 
-      .settings-summary {
-        margin: 12px 0 0;
-        font-size: 12px;
+      .settings-icon {
+        margin-top: 2px;
+        flex-shrink: 0;
         color: var(--tulpar-color-text-muted, #74777a);
       }
     `,
   ],
 })
 export class SwitchDemoComponent {
-  // ── Async loading demo ──────────────────────────────────────────────────────
-  readonly asyncChecked = signal(false);
-  readonly asyncLoading = signal(false);
+  // ── State ──────────────────────────────────────────────────────────────────
+  readonly heroChecked = signal(true);
 
-  onAsyncToggle(e: Event): void {
-    e.preventDefault(); // let the signal drive the checked state
-    if (this.asyncLoading()) return;
-    this.asyncLoading.set(true);
+  readonly loadingChecked = signal(false);
+  readonly isLoading = signal(false);
+
+  readonly notificationsEnabled = signal(true);
+  readonly wifiEnabled = signal(true);
+  readonly privacyEnabled = signal(false);
+  readonly visibilityEnabled = signal(true);
+
+  triggerAsyncToggle(e: Event): void {
+    e.preventDefault(); // revert-then-commit: let the signal drive checked
+    if (this.isLoading()) return;
+    this.isLoading.set(true);
     setTimeout(() => {
-      this.asyncChecked.update((v) => !v);
-      this.asyncLoading.set(false);
+      this.loadingChecked.update((v) => !v);
+      this.isLoading.set(false);
     }, 1200);
   }
 
-  // ── Theme demo ──────────────────────────────────────────────────────────────
-  readonly themeChecked = signal(false);
+  // ── Lucide icon references ──────────────────────────────────────────────────
+  protected readonly Sun = Sun;
+  protected readonly Moon = Moon;
+  protected readonly Wifi = Wifi;
+  protected readonly Bell = Bell;
+  protected readonly Shield = Shield;
+  protected readonly Eye = Eye;
 
-  // ── Settings card demo ──────────────────────────────────────────────────────
-  readonly notifEmail = signal(true);
-  readonly notifPush = signal(false);
-  readonly notifSms = signal(false);
-  readonly notifMarketing = signal(true);
-
-  readonly activeNotifCount = () =>
-    [this.notifEmail(), this.notifPush(), this.notifSms(), this.notifMarketing()].filter(Boolean)
-      .length;
+  // ── Named icon components for [iconOn] / [iconOff] ──────────────────────────
+  protected readonly AppSunIcon = AppSunIcon;
+  protected readonly AppMoonIcon = AppMoonIcon;
 
   // ── Code snippets ───────────────────────────────────────────────────────────
   readonly sizesCode = SIZES_CODE;
   readonly labelPositionCode = LABEL_POSITION_CODE;
-  readonly slotsCode = SLOTS_CODE;
+  readonly propsVsSlotsCode = PROPS_VS_SLOTS_CODE;
   readonly statesCode = STATES_CODE;
   readonly loadingCode = LOADING_CODE;
   readonly showIconCode = SHOW_ICON_CODE;
-  readonly customIconCode = CUSTOM_ICON_CODE;
-  readonly colorsCode = COLORS_CODE;
-  readonly settingsCode = SETTINGS_CODE;
+  readonly iconPropCode = ICON_PROP_CODE;
+  readonly iconSlotCode = ICON_SLOT_CODE;
+  readonly colorCode = COLOR_CODE;
 }

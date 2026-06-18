@@ -3,121 +3,117 @@ import { TulparRadioGroupComponent, TulparRadioComponent } from '@tulpar-ui/angu
 
 // ─── Code snippets ─────────────────────────────────────────────────────────────
 
-const BASIC_CODE = `selected = signal<string | null>('weekly');
-
-<tulpar-radio-group-ng
-  label="Billing frequency"
-  name="billing"
-  [(value)]="selected"
->
+const BASIC_CODE = `<tulpar-radio-group-ng [(value)]="value" label="Billing period" name="billing">
   <tulpar-radio-ng value="monthly" label="Monthly"></tulpar-radio-ng>
-  <tulpar-radio-ng value="weekly"  label="Weekly"></tulpar-radio-ng>
-  <tulpar-radio-ng value="annual"  label="Annual">
-    <span slot="description">Save 20% vs monthly</span>
-  </tulpar-radio-ng>
-</tulpar-radio-group-ng>`;
-
-const SIZES_CODE = `<!-- xs through xl — applies to all radios in the group -->
-<tulpar-radio-group-ng size="xs" label="Extra Small">
-  <tulpar-radio-ng value="a" label="Option A"></tulpar-radio-ng>
-  <tulpar-radio-ng value="b" label="Option B"></tulpar-radio-ng>
+  <tulpar-radio-ng value="yearly" label="Yearly"></tulpar-radio-ng>
+  <tulpar-radio-ng value="lifetime" label="Lifetime"></tulpar-radio-ng>
 </tulpar-radio-group-ng>
 
-<tulpar-radio-group-ng size="md" label="Medium (default)">
-  <tulpar-radio-ng value="a" label="Option A"></tulpar-radio-ng>
-  <tulpar-radio-ng value="b" label="Option B"></tulpar-radio-ng>
-</tulpar-radio-group-ng>
+<!-- Live value: {{ value() }} -->`;
 
-<tulpar-radio-group-ng size="xl" label="Extra Large">
-  <tulpar-radio-ng value="a" label="Option A"></tulpar-radio-ng>
-  <tulpar-radio-ng value="b" label="Option B"></tulpar-radio-ng>
-</tulpar-radio-group-ng>`;
+const PROPS_VS_SLOTS_CODE = `<!-- (a) PROP form — radio label + description as inputs -->
+<tulpar-radio-ng value="email" label="Email" description="Get notified by email."></tulpar-radio-ng>
+
+<!-- (b) SLOT form — rich label + description -->
+<tulpar-radio-ng value="sms">
+  <span slot="label">SMS</span>
+  <span slot="description">Text messages to your phone.</span>
+</tulpar-radio-ng>`;
+
+const SIZES_CODE = `<!-- size propagates from the group to every radio -->
+<tulpar-radio-group-ng [(value)]="value" size="xs" label="Extra small">…</tulpar-radio-group-ng>
+<tulpar-radio-group-ng [(value)]="value" size="sm" label="Small">…</tulpar-radio-group-ng>
+<tulpar-radio-group-ng [(value)]="value" size="md" label="Medium">…</tulpar-radio-group-ng>
+<tulpar-radio-group-ng [(value)]="value" size="lg" label="Large">…</tulpar-radio-group-ng>
+<tulpar-radio-group-ng [(value)]="value" size="xl" label="Extra large">…</tulpar-radio-group-ng>`;
 
 const ORIENTATION_CODE = `<!-- Vertical (default) -->
-<tulpar-radio-group-ng orientation="vertical" label="Vertical">
-  <tulpar-radio-ng value="a" label="Option A"></tulpar-radio-ng>
-  <tulpar-radio-ng value="b" label="Option B"></tulpar-radio-ng>
-  <tulpar-radio-ng value="c" label="Option C"></tulpar-radio-ng>
+<tulpar-radio-group-ng [(value)]="value" orientation="vertical" label="Vertical">
+  <tulpar-radio-ng value="monthly" label="Monthly"></tulpar-radio-ng>
+  <tulpar-radio-ng value="yearly" label="Yearly"></tulpar-radio-ng>
 </tulpar-radio-group-ng>
 
 <!-- Horizontal -->
-<tulpar-radio-group-ng orientation="horizontal" label="Horizontal">
-  <tulpar-radio-ng value="a" label="Option A"></tulpar-radio-ng>
-  <tulpar-radio-ng value="b" label="Option B"></tulpar-radio-ng>
-  <tulpar-radio-ng value="c" label="Option C"></tulpar-radio-ng>
-</tulpar-radio-group-ng>`;
-
-const LEGEND_SLOT_CODE = `<!-- Group legend + description via named slots -->
-<tulpar-radio-group-ng name="theme">
-  <span slot="label">Theme preference</span>
-  <span slot="description">Controls the visual appearance of the interface</span>
+<tulpar-radio-group-ng [(value)]="value" orientation="horizontal" label="Horizontal">
   <tulpar-radio-ng value="light" label="Light"></tulpar-radio-ng>
-  <tulpar-radio-ng value="dark"  label="Dark"></tulpar-radio-ng>
-  <tulpar-radio-ng value="system" label="System default"></tulpar-radio-ng>
+  <tulpar-radio-ng value="dark" label="Dark"></tulpar-radio-ng>
 </tulpar-radio-group-ng>`;
 
-const STATES_CODE = `<!-- Group-level disabled — all children disabled -->
-<tulpar-radio-group-ng label="Disabled group" [disabled]="true" value="a">
+const GROUP_LABEL_CODE = `<!-- (a) PROP form — group legend via label + description -->
+<tulpar-radio-group-ng
+  [(value)]="value"
+  label="Appearance"
+  description="Choose how Tulpar UI looks in this browser."
+>
+  <tulpar-radio-ng value="light" label="Light"></tulpar-radio-ng>
+  <tulpar-radio-ng value="dark" label="Dark"></tulpar-radio-ng>
+  <tulpar-radio-ng value="system" label="System"></tulpar-radio-ng>
+</tulpar-radio-group-ng>
+
+<!-- (b) SLOT form — rich group legend -->
+<tulpar-radio-group-ng [(value)]="value">
+  <span slot="label">Appearance</span>
+  <span slot="description">Choose how Tulpar UI looks in this browser.</span>
+  <tulpar-radio-ng value="light" label="Light"></tulpar-radio-ng>
+  <tulpar-radio-ng value="dark" label="Dark"></tulpar-radio-ng>
+  <tulpar-radio-ng value="system" label="System"></tulpar-radio-ng>
+</tulpar-radio-group-ng>`;
+
+const STATES_CODE = `<!-- Required + invalid -->
+<tulpar-radio-group-ng
+  [required]="true"
+  [invalid]="true"
+  label="Choose a plan"
+  errorText="Please select a plan to continue."
+>
+  <tulpar-radio-ng value="free" label="Free"></tulpar-radio-ng>
+  <tulpar-radio-ng value="pro" label="Pro"></tulpar-radio-ng>
+</tulpar-radio-group-ng>
+
+<!-- Group-level disabled -->
+<tulpar-radio-group-ng [(value)]="value" [disabled]="true" label="Disabled group">
+  <tulpar-radio-ng value="standard" label="Standard"></tulpar-radio-ng>
+  <tulpar-radio-ng value="express" label="Express"></tulpar-radio-ng>
+</tulpar-radio-group-ng>
+
+<!-- Individual item disabled -->
+<tulpar-radio-group-ng [(value)]="value" label="Item disabled">
+  <tulpar-radio-ng value="free" label="Free"></tulpar-radio-ng>
+  <tulpar-radio-ng value="pro" label="Pro (unavailable)" [disabled]="true"></tulpar-radio-ng>
+  <tulpar-radio-ng value="enterprise" label="Enterprise"></tulpar-radio-ng>
+</tulpar-radio-group-ng>`;
+
+const CARD_VARIANT_CODE = `<tulpar-radio-group-ng [(value)]="plan" orientation="horizontal" label="Choose a plan">
+  <tulpar-radio-ng variant="card" value="starter" label="Starter">
+    <span slot="description">$9 / mo · Up to 5 users</span>
+  </tulpar-radio-ng>
+  <tulpar-radio-ng variant="card" value="pro" label="Pro">
+    <span slot="description">$29 / mo · Up to 25 users</span>
+  </tulpar-radio-ng>
+  <tulpar-radio-ng variant="card" value="enterprise" label="Enterprise">
+    <span slot="description">Custom pricing · Unlimited</span>
+  </tulpar-radio-ng>
+</tulpar-radio-group-ng>`;
+
+const COLOR_CODE = `<!-- Group-level color — bind it -->
+<tulpar-radio-group-ng [(value)]="value" [color]="'ulgen'" label="Group color: ulgen">
   <tulpar-radio-ng value="a" label="Option A"></tulpar-radio-ng>
   <tulpar-radio-ng value="b" label="Option B"></tulpar-radio-ng>
 </tulpar-radio-group-ng>
 
-<!-- Group invalid + required + error-text -->
-<tulpar-radio-group-ng
-  label="Shipping method"
-  [required]="true"
-  [invalid]="true"
-  errorText="Please select a shipping method"
->
-  <tulpar-radio-ng value="standard" label="Standard"></tulpar-radio-ng>
-  <tulpar-radio-ng value="express"  label="Express"></tulpar-radio-ng>
+<!-- Per-radio override — a single radio overrides the group color -->
+<tulpar-radio-group-ng [(value)]="value" [color]="'otuken'" label="Per-radio override">
+  <tulpar-radio-ng value="a" label="Inherits otuken"></tulpar-radio-ng>
+  <tulpar-radio-ng value="b" [color]="'kizagan'" label="Overrides to kizagan"></tulpar-radio-ng>
 </tulpar-radio-group-ng>`;
 
-const CARD_VARIANT_CODE = `<!-- Card-variant radios compose naturally into plan-picker grids -->
-<tulpar-radio-group-ng name="plan" [(value)]="selectedPlan">
-  <tulpar-radio-ng value="free" variant="card" label="Free">
-    <span slot="description">Up to 3 projects</span>
-  </tulpar-radio-ng>
-  <tulpar-radio-ng value="pro" variant="card" label="Pro">
-    <span slot="description">Unlimited projects + priority support</span>
-  </tulpar-radio-ng>
-  <tulpar-radio-ng value="enterprise" variant="card" label="Enterprise">
-    <span slot="description">SSO, audit logs, SLA</span>
-  </tulpar-radio-ng>
-</tulpar-radio-group-ng>`;
-
-const COLORS_CODE = `<tulpar-radio-group-ng name="colors" label="Color" [(value)]="colorSelected">
-  <tulpar-radio-ng value="default" label="Default brand"></tulpar-radio-ng>
-  <tulpar-radio-ng value="otuken"  label="Otuken"  color="otuken"></tulpar-radio-ng>
-  <tulpar-radio-ng value="kizagan" label="Kizagan" color="kizagan"></tulpar-radio-ng>
-</tulpar-radio-group-ng>`;
-
-const COMPOSITION_CODE = `<!-- Notification frequency — real-world settings row -->
-selected = signal<string | null>('instant');
-
-<tulpar-radio-group-ng
-  name="notif-freq"
-  label="Notification frequency"
-  orientation="vertical"
-  [(value)]="selected"
->
-  <tulpar-radio-ng value="instant">
-    <span slot="label">Instant</span>
-    <span slot="description">Notified immediately when activity occurs</span>
-  </tulpar-radio-ng>
-  <tulpar-radio-ng value="daily">
-    <span slot="label">Daily digest</span>
-    <span slot="description">One summary email each morning at 8 AM</span>
-  </tulpar-radio-ng>
-  <tulpar-radio-ng value="weekly">
-    <span slot="label">Weekly summary</span>
-    <span slot="description">One email every Monday with weekly highlights</span>
-  </tulpar-radio-ng>
-  <tulpar-radio-ng value="never">
-    <span slot="label">Never</span>
-    <span slot="description">No email notifications — check the app manually</span>
-  </tulpar-radio-ng>
-</tulpar-radio-group-ng>`;
+const KEYBOARD_CODE = `<!-- Keyboard navigation is managed by tulpar-radio-group (roving tabindex):
+       Tab / Shift+Tab          — enter / leave the group
+       ArrowDown / ArrowRight   — next option (wraps)
+       ArrowUp / ArrowLeft      — previous option (wraps)
+       Home                     — first option
+       End                      — last option
+     Disabled options are skipped. Arrowing changes focus AND value. -->`;
 
 @Component({
   selector: 'app-radio-group-demo',
@@ -128,11 +124,12 @@ selected = signal<string | null>('instant');
   template: `
     <!-- ── Page header ─────────────────────────────────────────────────── -->
     <header class="page-header">
-      <span class="page-tag">Selection</span>
-      <h1 class="page-title">Radio Group</h1>
+      <span class="page-tag">Core</span>
+      <h1 class="page-title">RadioGroup</h1>
       <p class="page-lede">
-        A managed group of mutually exclusive radio buttons — vertical/horizontal layout, card
-        variant for plan pickers, group-level states, and signal two-way binding.
+        A single-select fieldset — two-way value, vertical or horizontal orientation, size
+        propagation, group legend in prop and slot form, a card variant for plan pickers, group +
+        per-radio color, and full roving-tabindex keyboard navigation.
       </p>
     </header>
 
@@ -140,258 +137,368 @@ selected = signal<string | null>('instant');
     <section class="doc-section">
       <div class="hero">
         <tulpar-radio-group-ng
-          label="Preferred contact"
-          name="hero-contact"
-          [(value)]="heroSelected"
+          [(value)]="heroValue"
+          label="Billing period"
+          name="billing-hero"
           size="lg"
         >
-          <tulpar-radio-ng value="email" label="Email"></tulpar-radio-ng>
-          <tulpar-radio-ng value="phone" label="Phone"></tulpar-radio-ng>
-          <tulpar-radio-ng value="slack" label="Slack"></tulpar-radio-ng>
+          <tulpar-radio-ng value="monthly" label="Monthly"></tulpar-radio-ng>
+          <tulpar-radio-ng value="yearly" label="Yearly"></tulpar-radio-ng>
+          <tulpar-radio-ng value="lifetime" label="Lifetime"></tulpar-radio-ng>
         </tulpar-radio-group-ng>
-        <p class="hero-value">
-          Selected: <strong>{{ heroSelected() ?? '(none)' }}</strong>
-        </p>
+        <tulpar-radio-group-ng
+          [(value)]="heroValue"
+          orientation="horizontal"
+          name="billing-hero-h"
+          size="lg"
+        >
+          <tulpar-radio-ng value="monthly" label="Monthly"></tulpar-radio-ng>
+          <tulpar-radio-ng value="yearly" label="Yearly"></tulpar-radio-ng>
+          <tulpar-radio-ng value="lifetime" label="Lifetime"></tulpar-radio-ng>
+        </tulpar-radio-group-ng>
       </div>
     </section>
 
-    <!-- ── 1. Basic binding ────────────────────────────────────────────── -->
+    <!-- ── 1. Basic ─────────────────────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">1. Basic two-way binding</h2>
+      <h2 class="section-title">1. Basic — vertical group, two-way value</h2>
       <p class="section-desc">
-        Use <code class="inline-code">[(value)]</code> for signal-driven two-way binding. The
-        group's <code class="inline-code">name</code> is shared automatically by the group to all
-        member radios. Children are slotted directly inside the group wrapper.
+        <code class="inline-code">[(value)]</code> binds the selected radio's
+        <code class="inline-code">value</code>. Selecting an option updates the bound value and
+        deselects its siblings.
       </p>
       <div class="preview preview--col">
-        <tulpar-radio-group-ng label="Billing frequency" name="billing" [(value)]="billingSelected">
+        <tulpar-radio-group-ng [(value)]="basicValue" label="Billing period" name="basic">
           <tulpar-radio-ng value="monthly" label="Monthly"></tulpar-radio-ng>
-          <tulpar-radio-ng value="weekly" label="Weekly"></tulpar-radio-ng>
-          <tulpar-radio-ng value="annual" label="Annual">
-            <span slot="description">Save 20% vs monthly</span>
-          </tulpar-radio-ng>
+          <tulpar-radio-ng value="yearly" label="Yearly"></tulpar-radio-ng>
+          <tulpar-radio-ng value="lifetime" label="Lifetime"></tulpar-radio-ng>
         </tulpar-radio-group-ng>
-        <p class="status-feedback">Value: {{ billingSelected() ?? '(none)' }}</p>
+        <p class="live-value">
+          value: <strong>{{ basicValue() }}</strong>
+        </p>
       </div>
       <pre class="code"><code>{{ basicCode }}</code></pre>
     </section>
 
-    <!-- ── 2. Sizes ────────────────────────────────────────────────────── -->
+    <!-- ── 2. Props vs slots — radio label & description ────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">2. Sizes</h2>
+      <h2 class="section-title">2. Props vs slots — radio label &amp; description</h2>
       <p class="section-desc">
-        The <code class="inline-code">size</code> prop applies to the whole group.
+        Each <code class="inline-code">tulpar-radio-ng</code> takes
+        <code class="inline-code">label</code> / <code class="inline-code">description</code> inputs
+        OR <code class="inline-code">slot="label"</code> /
+        <code class="inline-code">slot="description"</code>. Both render identically.
       </p>
-      <div class="preview preview--row">
-        <tulpar-radio-group-ng size="xs" label="XS" name="sz-xs" value="a">
-          <tulpar-radio-ng value="a" label="Option A"></tulpar-radio-ng>
+      <div class="preview preview--cols">
+        <div class="preview-col">
+          <p class="preview-label">Prop form</p>
+          <tulpar-radio-group-ng [(value)]="propSlotValue" name="ps-prop">
+            <tulpar-radio-ng value="email" label="Email" description="Get notified by email.">
+            </tulpar-radio-ng>
+            <tulpar-radio-ng value="push" label="Push" description="Alerts on your devices.">
+            </tulpar-radio-ng>
+          </tulpar-radio-group-ng>
+        </div>
+        <div class="preview-col">
+          <p class="preview-label">Slot form</p>
+          <tulpar-radio-group-ng [(value)]="propSlotValue" name="ps-slot">
+            <tulpar-radio-ng value="email">
+              <span slot="label">Email</span>
+              <span slot="description">Get notified by email.</span>
+            </tulpar-radio-ng>
+            <tulpar-radio-ng value="push">
+              <span slot="label">Push</span>
+              <span slot="description">Alerts on your devices.</span>
+            </tulpar-radio-ng>
+          </tulpar-radio-group-ng>
+        </div>
+      </div>
+      <pre class="code"><code>{{ propsVsSlotsCode }}</code></pre>
+    </section>
+
+    <!-- ── 3. Sizes ─────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">3. Sizes</h2>
+      <p class="section-desc">
+        The group <code class="inline-code">size</code> propagates to every radio:
+        <code class="inline-code">xs</code> through <code class="inline-code">xl</code>.
+      </p>
+      <div class="preview preview--row-gap">
+        <tulpar-radio-group-ng [(value)]="sizeValue" size="xs" label="xs" name="size-xs">
+          <tulpar-radio-ng value="md" label="Option A"></tulpar-radio-ng>
           <tulpar-radio-ng value="b" label="Option B"></tulpar-radio-ng>
         </tulpar-radio-group-ng>
-        <tulpar-radio-group-ng size="sm" label="SM" name="sz-sm" value="a">
-          <tulpar-radio-ng value="a" label="Option A"></tulpar-radio-ng>
+        <tulpar-radio-group-ng [(value)]="sizeValue" size="sm" label="sm" name="size-sm">
+          <tulpar-radio-ng value="md" label="Option A"></tulpar-radio-ng>
           <tulpar-radio-ng value="b" label="Option B"></tulpar-radio-ng>
         </tulpar-radio-group-ng>
-        <tulpar-radio-group-ng size="md" label="MD (default)" name="sz-md" value="a">
-          <tulpar-radio-ng value="a" label="Option A"></tulpar-radio-ng>
+        <tulpar-radio-group-ng [(value)]="sizeValue" size="md" label="md" name="size-md">
+          <tulpar-radio-ng value="md" label="Option A"></tulpar-radio-ng>
           <tulpar-radio-ng value="b" label="Option B"></tulpar-radio-ng>
         </tulpar-radio-group-ng>
-        <tulpar-radio-group-ng size="lg" label="LG" name="sz-lg" value="a">
-          <tulpar-radio-ng value="a" label="Option A"></tulpar-radio-ng>
+        <tulpar-radio-group-ng [(value)]="sizeValue" size="lg" label="lg" name="size-lg">
+          <tulpar-radio-ng value="md" label="Option A"></tulpar-radio-ng>
           <tulpar-radio-ng value="b" label="Option B"></tulpar-radio-ng>
         </tulpar-radio-group-ng>
-        <tulpar-radio-group-ng size="xl" label="XL" name="sz-xl" value="a">
-          <tulpar-radio-ng value="a" label="Option A"></tulpar-radio-ng>
+        <tulpar-radio-group-ng [(value)]="sizeValue" size="xl" label="xl" name="size-xl">
+          <tulpar-radio-ng value="md" label="Option A"></tulpar-radio-ng>
           <tulpar-radio-ng value="b" label="Option B"></tulpar-radio-ng>
         </tulpar-radio-group-ng>
       </div>
       <pre class="code"><code>{{ sizesCode }}</code></pre>
     </section>
 
-    <!-- ── 3. Orientation ─────────────────────────────────────────────── -->
+    <!-- ── 4. Orientation ───────────────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">3. Orientation — vertical / horizontal</h2>
+      <h2 class="section-title">4. Orientation</h2>
       <p class="section-desc">
-        <code class="inline-code">vertical</code> (default) stacks radios top-to-bottom.
-        <code class="inline-code">horizontal</code> lays them out in a row.
+        <code class="inline-code">orientation="vertical"</code> (default) stacks options;
+        <code class="inline-code">orientation="horizontal"</code> lays them out in a row.
       </p>
-      <div class="preview preview--row">
-        <tulpar-radio-group-ng orientation="vertical" label="Vertical" name="or-vert" value="a">
-          <tulpar-radio-ng value="a" label="Option A"></tulpar-radio-ng>
-          <tulpar-radio-ng value="b" label="Option B"></tulpar-radio-ng>
-          <tulpar-radio-ng value="c" label="Option C"></tulpar-radio-ng>
+      <div class="preview preview--row-gap">
+        <tulpar-radio-group-ng
+          [(value)]="orientationValue"
+          orientation="vertical"
+          label="Vertical (default)"
+          name="orient-v"
+        >
+          <tulpar-radio-ng value="monthly" label="Monthly"></tulpar-radio-ng>
+          <tulpar-radio-ng value="yearly" label="Yearly"></tulpar-radio-ng>
+          <tulpar-radio-ng value="lifetime" label="Lifetime"></tulpar-radio-ng>
         </tulpar-radio-group-ng>
         <tulpar-radio-group-ng
+          [(value)]="horizontalValue"
           orientation="horizontal"
           label="Horizontal"
-          name="or-horiz"
-          value="a"
+          name="orient-h"
         >
-          <tulpar-radio-ng value="a" label="Option A"></tulpar-radio-ng>
-          <tulpar-radio-ng value="b" label="Option B"></tulpar-radio-ng>
-          <tulpar-radio-ng value="c" label="Option C"></tulpar-radio-ng>
+          <tulpar-radio-ng value="light" label="Light"></tulpar-radio-ng>
+          <tulpar-radio-ng value="dark" label="Dark"></tulpar-radio-ng>
+          <tulpar-radio-ng value="system" label="System"></tulpar-radio-ng>
         </tulpar-radio-group-ng>
       </div>
       <pre class="code"><code>{{ orientationCode }}</code></pre>
     </section>
 
-    <!-- ── 4. Legend + description slots ──────────────────────────────── -->
+    <!-- ── 5. Group label + description — prop AND slot ─────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">4. Legend + description slots</h2>
+      <h2 class="section-title">5. Group label + description — prop &amp; slot</h2>
       <p class="section-desc">
-        Project rich content into <code class="inline-code">slot="label"</code> and
-        <code class="inline-code">slot="description"</code> on the group element.
+        The group legend can be set via the <code class="inline-code">label</code> /
+        <code class="inline-code">description</code> inputs OR via group-level
+        <code class="inline-code">slot="label"</code> /
+        <code class="inline-code">slot="description"</code>.
       </p>
-      <div class="preview">
-        <tulpar-radio-group-ng name="theme-legend" [(value)]="themeSelected">
-          <span slot="label">Theme preference</span>
-          <span slot="description">Controls the visual appearance of the interface</span>
-          <tulpar-radio-ng value="light" label="Light"></tulpar-radio-ng>
-          <tulpar-radio-ng value="dark" label="Dark"></tulpar-radio-ng>
-          <tulpar-radio-ng value="system" label="System default"></tulpar-radio-ng>
-        </tulpar-radio-group-ng>
-        <p class="status-feedback">Value: {{ themeSelected() ?? '(none)' }}</p>
+      <div class="preview preview--cols">
+        <div class="preview-col">
+          <p class="preview-label">Prop form</p>
+          <tulpar-radio-group-ng
+            [(value)]="groupLabelPropValue"
+            name="gl-prop"
+            label="Appearance"
+            description="Choose how Tulpar UI looks in this browser."
+          >
+            <tulpar-radio-ng value="light" label="Light"></tulpar-radio-ng>
+            <tulpar-radio-ng value="dark" label="Dark"></tulpar-radio-ng>
+            <tulpar-radio-ng value="system" label="System"></tulpar-radio-ng>
+          </tulpar-radio-group-ng>
+        </div>
+        <div class="preview-col">
+          <p class="preview-label">Slot form</p>
+          <tulpar-radio-group-ng [(value)]="groupLabelSlotValue" name="gl-slot">
+            <span slot="label">Appearance</span>
+            <span slot="description">Choose how Tulpar UI looks in this browser.</span>
+            <tulpar-radio-ng value="light" label="Light"></tulpar-radio-ng>
+            <tulpar-radio-ng value="dark" label="Dark"></tulpar-radio-ng>
+            <tulpar-radio-ng value="system" label="System"></tulpar-radio-ng>
+          </tulpar-radio-group-ng>
+        </div>
       </div>
-      <pre class="code"><code>{{ legendSlotCode }}</code></pre>
+      <pre class="code"><code>{{ groupLabelCode }}</code></pre>
     </section>
 
-    <!-- ── 5. Group states ────────────────────────────────────────────── -->
+    <!-- ── 6. States ──────────────────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">5. Group states — disabled, required, invalid</h2>
+      <h2 class="section-title">6. States</h2>
       <p class="section-desc">
-        State flags on the group propagate to all member radios.
-        <code class="inline-code">invalid</code> + <code class="inline-code">errorText</code>
-        shows the group-level error message.
+        Required + invalid with <code class="inline-code">errorText</code>, group-level disabled,
+        and per-item disabled.
       </p>
-      <div class="preview preview--row">
-        <tulpar-radio-group-ng label="Disabled group" name="st-dis" [disabled]="true" value="a">
-          <tulpar-radio-ng value="a" label="Option A"></tulpar-radio-ng>
-          <tulpar-radio-ng value="b" label="Option B"></tulpar-radio-ng>
-        </tulpar-radio-group-ng>
+      <div class="preview preview--row-gap">
         <tulpar-radio-group-ng
-          label="Shipping method"
-          name="st-inv"
+          [(value)]="statesGroupValue"
           [required]="true"
           [invalid]="true"
-          errorText="Please select a shipping method"
+          label="Choose a plan"
+          errorText="Please select a plan to continue."
+          name="states-invalid"
+        >
+          <tulpar-radio-ng value="free" label="Free"></tulpar-radio-ng>
+          <tulpar-radio-ng value="pro" label="Pro"></tulpar-radio-ng>
+        </tulpar-radio-group-ng>
+
+        <tulpar-radio-group-ng
+          [(value)]="disabledGroupValue"
+          [disabled]="true"
+          label="Disabled group"
+          name="states-disabled"
         >
           <tulpar-radio-ng value="standard" label="Standard"></tulpar-radio-ng>
           <tulpar-radio-ng value="express" label="Express"></tulpar-radio-ng>
         </tulpar-radio-group-ng>
-        <tulpar-radio-group-ng label="Readonly" name="st-ro" [readonly]="true" value="a">
-          <tulpar-radio-ng value="a" label="Option A"></tulpar-radio-ng>
-          <tulpar-radio-ng value="b" label="Option B"></tulpar-radio-ng>
+
+        <tulpar-radio-group-ng
+          [(value)]="itemDisabledValue"
+          label="Item disabled"
+          name="states-item"
+        >
+          <tulpar-radio-ng value="free" label="Free"></tulpar-radio-ng>
+          <tulpar-radio-ng
+            value="pro"
+            label="Pro (unavailable)"
+            [disabled]="true"
+          ></tulpar-radio-ng>
+          <tulpar-radio-ng value="enterprise" label="Enterprise"></tulpar-radio-ng>
         </tulpar-radio-group-ng>
       </div>
       <pre class="code"><code>{{ statesCode }}</code></pre>
     </section>
 
-    <!-- ── 6. Card variant — plan picker ──────────────────────────────── -->
+    <!-- ── 7. Card variant — plan picker ────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">6. Card variant — plan picker</h2>
+      <h2 class="section-title">7. Card variant — plan picker</h2>
       <p class="section-desc">
-        Individual <code class="inline-code">tulpar-radio-ng</code> items accept
-        <code class="inline-code">variant="card"</code> for a bordered card surface — ideal for plan
-        pickers and option selections.
+        <code class="inline-code">variant="card"</code> on each
+        <code class="inline-code">tulpar-radio-ng</code> renders arrow-key navigable cards — ideal
+        for plan or layout pickers. Each shows a single clean selection dot.
       </p>
-      <div class="preview preview--col">
-        <tulpar-radio-group-ng name="plan-picker" [(value)]="planSelected" orientation="horizontal">
-          <tulpar-radio-ng value="free" variant="card" label="Free">
-            <span slot="description">Up to 3 projects — always free</span>
+      <div class="preview">
+        <tulpar-radio-group-ng
+          [(value)]="cardValue"
+          orientation="horizontal"
+          label="Choose a plan"
+          name="card-plans"
+        >
+          <tulpar-radio-ng variant="card" value="starter" label="Starter">
+            <span slot="description">$9 / mo · Up to 5 users</span>
           </tulpar-radio-ng>
-          <tulpar-radio-ng value="pro" variant="card" label="Pro">
-            <span slot="description">Unlimited projects + priority support</span>
+          <tulpar-radio-ng variant="card" value="pro" label="Pro">
+            <span slot="description">$29 / mo · Up to 25 users</span>
           </tulpar-radio-ng>
-          <tulpar-radio-ng value="enterprise" variant="card" label="Enterprise">
-            <span slot="description">SSO, audit logs, dedicated SLA</span>
+          <tulpar-radio-ng variant="card" value="enterprise" label="Enterprise">
+            <span slot="description">Custom · Unlimited</span>
           </tulpar-radio-ng>
         </tulpar-radio-group-ng>
-        <p class="status-feedback">
-          Plan: <strong>{{ planSelected() ?? '(none)' }}</strong>
-        </p>
       </div>
       <pre class="code"><code>{{ cardVariantCode }}</code></pre>
     </section>
 
-    <!-- ── 7. Color ────────────────────────────────────────────────────── -->
+    <!-- ── 8. Color — group + per-radio override ────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">7. Color</h2>
-      <p class="section-desc">Override the radio accent at the group level or per-item.</p>
-      <div class="preview preview--row">
-        <tulpar-radio-group-ng name="col-grp" label="Group color (otuken)" color="otuken" value="a">
+      <h2 class="section-title">8. Color — group + per-radio override</h2>
+      <p class="section-desc">
+        Bind <code class="inline-code">[color]</code> on the group to set the accent for every
+        radio, or on a single <code class="inline-code">tulpar-radio-ng</code> to override just that
+        one.
+      </p>
+      <div class="preview preview--row-gap">
+        <tulpar-radio-group-ng
+          [(value)]="colorGroupValue"
+          [color]="'ulgen'"
+          label="Group: ulgen"
+          name="c-ulgen"
+        >
           <tulpar-radio-ng value="a" label="Option A"></tulpar-radio-ng>
           <tulpar-radio-ng value="b" label="Option B"></tulpar-radio-ng>
         </tulpar-radio-group-ng>
-        <tulpar-radio-group-ng name="col-item" label="Per-item colors" value="a">
-          <tulpar-radio-ng value="a" label="Kizagan" color="kizagan"></tulpar-radio-ng>
-          <tulpar-radio-ng value="b" label="Kam" color="kam"></tulpar-radio-ng>
-          <tulpar-radio-ng value="c" label="Yersu" color="yersu"></tulpar-radio-ng>
+        <tulpar-radio-group-ng
+          [(value)]="colorGroupValue"
+          [color]="'kizagan'"
+          label="Group: kizagan"
+          name="c-kizagan"
+        >
+          <tulpar-radio-ng value="a" label="Option A"></tulpar-radio-ng>
+          <tulpar-radio-ng value="b" label="Option B"></tulpar-radio-ng>
+        </tulpar-radio-group-ng>
+        <tulpar-radio-group-ng
+          [(value)]="colorPerRadioValue"
+          [color]="'otuken'"
+          label="Per-radio override"
+          name="c-override"
+        >
+          <tulpar-radio-ng value="a" label="Inherits otuken"></tulpar-radio-ng>
+          <tulpar-radio-ng value="b" [color]="'kizagan'" label="Overrides to kizagan">
+          </tulpar-radio-ng>
         </tulpar-radio-group-ng>
       </div>
-      <pre class="code"><code>{{ colorsCode }}</code></pre>
+      <pre class="code"><code>{{ colorCode }}</code></pre>
     </section>
 
-    <!-- ── 8. Keyboard hint ───────────────────────────────────────────── -->
+    <!-- ── 9. Keyboard navigation ───────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">8. Keyboard navigation</h2>
+      <h2 class="section-title">9. Keyboard navigation</h2>
       <p class="section-desc">
-        Radio groups implement the ARIA radio group pattern with roving tabindex.
-        <kbd>ArrowDown</kbd> / <kbd>ArrowRight</kbd> advance; <kbd>ArrowUp</kbd> /
-        <kbd>ArrowLeft</kbd> go back; <kbd>Home</kbd> / <kbd>End</kbd> jump to first/last.
+        The group implements roving tabindex — only the selected (or first) option is in the tab
+        sequence. Arrow keys move focus and change the value; disabled options are skipped.
       </p>
       <div class="preview">
-        <tulpar-radio-group-ng
-          name="kbd-demo"
-          label="Press Tab to focus, then use Arrow keys"
-          [(value)]="kbdSelected"
-        >
-          <tulpar-radio-ng value="alpha" label="Alpha"></tulpar-radio-ng>
-          <tulpar-radio-ng value="beta" label="Beta"></tulpar-radio-ng>
-          <tulpar-radio-ng value="gamma" label="Gamma"></tulpar-radio-ng>
-          <tulpar-radio-ng value="delta" label="Delta"></tulpar-radio-ng>
-        </tulpar-radio-group-ng>
-        <p class="status-feedback">Active: {{ kbdSelected() ?? '(none)' }}</p>
+        <div class="keyboard-table">
+          <div class="keyboard-row">
+            <kbd>Tab</kbd> / <kbd>Shift+Tab</kbd>
+            <span>Enter or leave the group</span>
+          </div>
+          <div class="keyboard-row">
+            <kbd>↓</kbd> / <kbd>→</kbd>
+            <span>Next option (wraps to first)</span>
+          </div>
+          <div class="keyboard-row">
+            <kbd>↑</kbd> / <kbd>←</kbd>
+            <span>Previous option (wraps to last)</span>
+          </div>
+          <div class="keyboard-row">
+            <kbd>Home</kbd>
+            <span>First option</span>
+          </div>
+          <div class="keyboard-row">
+            <kbd>End</kbd>
+            <span>Last option</span>
+          </div>
+          <div class="keyboard-row">
+            <kbd>disabled</kbd>
+            <span>Skipped during arrow navigation</span>
+          </div>
+        </div>
       </div>
+      <pre class="code"><code>{{ keyboardCode }}</code></pre>
     </section>
 
-    <!-- ── 9. In context — notification frequency ─────────────────────── -->
+    <!-- ── 10. In context — notification frequency ──────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">In context — notification frequency settings</h2>
+      <h2 class="section-title">In context — notification frequency</h2>
       <p class="section-desc">
-        A complete settings panel where the radio group owns a realistic single-choice preference
-        with rich descriptions per option.
+        A settings composition: a single-select frequency picker using the card variant with
+        descriptions, plus a live readout of the chosen value.
       </p>
       <div class="composition">
-        <div class="notif-card">
-          <p class="notif-card-title">Email notifications</p>
-          <tulpar-radio-group-ng
-            name="notif-freq"
-            label="Notification frequency"
-            orientation="vertical"
-            [(value)]="notifFreqSelected"
-          >
-            <tulpar-radio-ng value="instant">
-              <span slot="label">Instant</span>
-              <span slot="description">Notified immediately when activity occurs</span>
+        <div class="plan-card">
+          <h3 class="plan-card-title">Email notifications</h3>
+          <p class="plan-card-sub">How often should we send you a digest?</p>
+          <tulpar-radio-group-ng [(value)]="compositionValue" name="freq-picker" class="plan-group">
+            <tulpar-radio-ng variant="card" value="important" label="Important only">
+              <span slot="description">Only security alerts and account changes.</span>
             </tulpar-radio-ng>
-            <tulpar-radio-ng value="daily">
-              <span slot="label">Daily digest</span>
-              <span slot="description">One summary email each morning at 8 AM</span>
+            <tulpar-radio-ng variant="card" value="daily" label="Daily digest">
+              <span slot="description">One summary email every morning.</span>
             </tulpar-radio-ng>
-            <tulpar-radio-ng value="weekly">
-              <span slot="label">Weekly summary</span>
-              <span slot="description">One email every Monday with weekly highlights</span>
-            </tulpar-radio-ng>
-            <tulpar-radio-ng value="never">
-              <span slot="label">Never</span>
-              <span slot="description">No email notifications — check the app manually</span>
+            <tulpar-radio-ng variant="card" value="realtime" label="Real-time">
+              <span slot="description">Every event, as it happens.</span>
             </tulpar-radio-ng>
           </tulpar-radio-group-ng>
-          <p class="notif-summary">
-            Current frequency: <strong>{{ notifFreqSelected() ?? '(none)' }}</strong>
+          <p class="plan-selected">
+            Selected: <strong>{{ compositionValue() }}</strong>
           </p>
         </div>
       </div>
-      <pre class="code"><code>{{ compositionCode }}</code></pre>
     </section>
   `,
   styles: [
@@ -437,19 +544,12 @@ selected = signal<string | null>('instant');
       .hero {
         display: flex;
         flex-wrap: wrap;
-        gap: 24px;
+        gap: 32px;
         align-items: flex-start;
         padding: 32px 28px;
         border: 1px solid var(--tulpar-color-border-default, #d9e0df);
         border-radius: 14px;
         background: var(--tulpar-color-bg-subtle, #e9f1ef);
-      }
-
-      .hero-value {
-        margin: 0;
-        font-size: 14px;
-        color: var(--tulpar-color-text-secondary, #57534e);
-        align-self: flex-end;
       }
 
       .doc-section {
@@ -496,11 +596,27 @@ selected = signal<string | null>('instant');
         align-items: flex-start;
       }
 
-      .preview--row {
-        flex-direction: row;
+      .preview--cols {
         align-items: flex-start;
-        flex-wrap: wrap;
-        gap: 24px;
+        gap: 40px;
+      }
+
+      .preview--row-gap {
+        gap: 32px;
+      }
+
+      .preview-col {
+        flex: 1;
+        min-width: 240px;
+      }
+
+      .preview-label {
+        margin: 0 0 12px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--tulpar-color-text-muted, #74777a);
       }
 
       .code {
@@ -527,7 +643,8 @@ selected = signal<string | null>('instant');
         color: var(--tulpar-color-text-primary, #15110b);
       }
 
-      .status-feedback {
+      .live-value {
+        margin: 4px 0 0;
         font-size: 13px;
         color: var(--tulpar-color-text-secondary, #57534e);
       }
@@ -543,65 +660,87 @@ selected = signal<string | null>('instant');
         color: var(--tulpar-color-text-primary, #15110b);
       }
 
-      /* ── Composition ────────────────────────────────────────────────── */
+      .keyboard-table {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .keyboard-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 14px;
+        color: var(--tulpar-color-text-secondary, #57534e);
+      }
+
       .composition {
         display: flex;
       }
 
-      .notif-card {
+      .plan-card {
         flex: 1;
-        max-width: 460px;
-        padding: 20px;
+        max-width: 580px;
+        padding: 24px;
         border: 1px solid var(--tulpar-color-border-default, #d9e0df);
         border-radius: 12px;
         background: var(--tulpar-color-bg-elevated, #ffffff);
         box-shadow: var(--tulpar-shadow-sm, 0 1px 2px rgb(0 0 0 / 0.06));
       }
 
-      .notif-card-title {
-        margin: 0 0 16px;
+      .plan-card-title {
+        margin: 0 0 6px;
         font-family: var(--tulpar-font-family-display, Georgia, serif);
-        font-size: 16px;
+        font-size: 20px;
         font-weight: 600;
         color: var(--tulpar-color-text-primary, #15110b);
       }
 
-      .notif-summary {
-        margin: 16px 0 0;
-        font-size: 13px;
+      .plan-card-sub {
+        margin: 0 0 20px;
+        font-size: 14px;
         color: var(--tulpar-color-text-secondary, #57534e);
-        padding-top: 12px;
-        border-top: 1px solid var(--tulpar-color-border-default, #d9e0df);
+      }
+
+      .plan-group {
+        display: block;
+        margin-bottom: 16px;
+      }
+
+      .plan-selected {
+        margin: 16px 0 0;
+        font-size: 14px;
+        color: var(--tulpar-color-text-secondary, #57534e);
       }
     `,
   ],
 })
 export class RadioGroupDemoComponent {
-  // ── Hero demo ───────────────────────────────────────────────────────────────
-  readonly heroSelected = signal<string | null>('email');
-
-  // ── Basic binding demo ──────────────────────────────────────────────────────
-  readonly billingSelected = signal<string | null>('annual');
-
-  // ── Legend slot demo ────────────────────────────────────────────────────────
-  readonly themeSelected = signal<string | null>('system');
-
-  // ── Plan picker demo ────────────────────────────────────────────────────────
-  readonly planSelected = signal<string | null>('pro');
-
-  // ── Keyboard demo ───────────────────────────────────────────────────────────
-  readonly kbdSelected = signal<string | null>('alpha');
-
-  // ── Composition demo ────────────────────────────────────────────────────────
-  readonly notifFreqSelected = signal<string | null>('instant');
+  // ── State ──────────────────────────────────────────────────────────────────
+  readonly heroValue = signal('monthly');
+  readonly basicValue = signal('yearly');
+  readonly propSlotValue = signal('email');
+  readonly sizeValue = signal('md');
+  readonly orientationValue = signal('monthly');
+  readonly horizontalValue = signal('light');
+  readonly groupLabelPropValue = signal('system');
+  readonly groupLabelSlotValue = signal('system');
+  readonly statesGroupValue = signal<string | null>(null);
+  readonly disabledGroupValue = signal('standard');
+  readonly itemDisabledValue = signal('free');
+  readonly cardValue = signal('pro');
+  readonly colorGroupValue = signal('b');
+  readonly colorPerRadioValue = signal('b');
+  readonly compositionValue = signal('important');
 
   // ── Code snippets ───────────────────────────────────────────────────────────
   readonly basicCode = BASIC_CODE;
+  readonly propsVsSlotsCode = PROPS_VS_SLOTS_CODE;
   readonly sizesCode = SIZES_CODE;
   readonly orientationCode = ORIENTATION_CODE;
-  readonly legendSlotCode = LEGEND_SLOT_CODE;
+  readonly groupLabelCode = GROUP_LABEL_CODE;
   readonly statesCode = STATES_CODE;
   readonly cardVariantCode = CARD_VARIANT_CODE;
-  readonly colorsCode = COLORS_CODE;
-  readonly compositionCode = COMPOSITION_CODE;
+  readonly colorCode = COLOR_CODE;
+  readonly keyboardCode = KEYBOARD_CODE;
 }

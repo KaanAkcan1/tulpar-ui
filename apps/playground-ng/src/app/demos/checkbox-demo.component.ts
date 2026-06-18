@@ -3,149 +3,166 @@ import {
   Component,
   computed,
   CUSTOM_ELEMENTS_SCHEMA,
+  input,
   signal,
 } from '@angular/core';
 import { TulparCheckboxComponent } from '@tulpar-ui/angular';
+import { LucideAngularModule, Star } from 'lucide-angular';
+
+// ─── Icon component for [icon] (named-component prop form) ──
+@Component({
+  selector: 'app-star-icon',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-angular [img]="iconData" [size]="size()"></lucide-angular>`,
+})
+class AppStarIcon {
+  readonly iconData = Star;
+  size = input(12);
+}
+
+type Resource = 'users' | 'content' | 'billing';
 
 // ─── Code snippets ─────────────────────────────────────────────────────────────
 
-const SIZES_CODE = `<tulpar-checkbox-ng size="xs" label="Extra Small"></tulpar-checkbox-ng>
-<tulpar-checkbox-ng size="sm" label="Small"></tulpar-checkbox-ng>
-<tulpar-checkbox-ng size="md" label="Medium (default)"></tulpar-checkbox-ng>
-<tulpar-checkbox-ng size="lg" label="Large"></tulpar-checkbox-ng>
-<tulpar-checkbox-ng size="xl" label="Extra Large"></tulpar-checkbox-ng>`;
+const SIZES_CODE = `<tulpar-checkbox-ng size="xs" [checked]="true" label="Extra small"></tulpar-checkbox-ng>
+<tulpar-checkbox-ng size="sm" [checked]="true" label="Small"></tulpar-checkbox-ng>
+<tulpar-checkbox-ng size="md" [checked]="true" label="Medium (default)"></tulpar-checkbox-ng>
+<tulpar-checkbox-ng size="lg" [checked]="true" label="Large"></tulpar-checkbox-ng>
+<tulpar-checkbox-ng size="xl" [checked]="true" label="Extra large"></tulpar-checkbox-ng>`;
 
-const LABEL_SLOTS_CODE = `<!-- label + description via named slots -->
+const PROPS_VS_SLOTS_CODE = `<!-- (a) PROP form -->
+<tulpar-checkbox-ng
+  [checked]="true"
+  label="Remember me"
+  description="Stay signed in for 30 days on this device."
+></tulpar-checkbox-ng>
+
+<!-- (b) SLOT form -->
 <tulpar-checkbox-ng [checked]="true">
   <span slot="label">Remember me</span>
-  <span slot="description">Stay signed in for 30 days</span>
+  <span slot="description">Stay signed in for 30 days on this device.</span>
 </tulpar-checkbox-ng>`;
 
-const STATES_CODE = `<!-- Checked -->
-<tulpar-checkbox-ng label="Checked" [checked]="true"></tulpar-checkbox-ng>
-
-<!-- Disabled -->
-<tulpar-checkbox-ng label="Disabled off" [disabled]="true"></tulpar-checkbox-ng>
-<tulpar-checkbox-ng label="Disabled on" [checked]="true" [disabled]="true"></tulpar-checkbox-ng>
-
-<!-- Readonly -->
-<tulpar-checkbox-ng label="Readonly on" [checked]="true" [readonly]="true"></tulpar-checkbox-ng>
-
-<!-- Invalid + required -->
+const STATES_CODE = `<tulpar-checkbox-ng [checked]="true" label="Checked"></tulpar-checkbox-ng>
+<tulpar-checkbox-ng [disabled]="true" label="Disabled"></tulpar-checkbox-ng>
+<tulpar-checkbox-ng [checked]="true" [disabled]="true" label="Disabled checked"></tulpar-checkbox-ng>
+<tulpar-checkbox-ng [checked]="true" [readonly]="true" label="Readonly"></tulpar-checkbox-ng>
 <tulpar-checkbox-ng
-  label="Accept terms"
   [required]="true"
   [invalid]="true"
-  errorText="You must accept the terms"
+  label="Accept terms"
+  errorText="You must accept the terms to continue."
 ></tulpar-checkbox-ng>`;
 
-const INDETERMINATE_CODE = `// Signal-driven select-all
-allItems = ['Billing', 'Reports', 'Users'];
-checkedItems = signal<string[]>([]);
+const INDETERMINATE_CODE = `// component
+readonly items = ['read', 'write', 'delete', 'admin'];
+readonly selected = signal<string[]>(['read', 'write']);
 
-parentChecked  = computed(() => this.checkedItems().length === this.allItems.length);
-parentIndet    = computed(() =>
-  this.checkedItems().length > 0 && this.checkedItems().length < this.allItems.length
+readonly allSelected = computed(() => this.selected().length === this.items.length);
+readonly someSelected = computed(
+  () => this.selected().length > 0 && this.selected().length < this.items.length,
 );
 
-onParentChange() {
-  this.checkedItems.set(this.parentChecked() ? [] : [...this.allItems]);
+onSelectAll(e: Event) {
+  const el = e.target as HTMLElement & { checked: boolean };
+  this.selected.set(el.checked ? [...this.items] : []);
 }
 
-onChildChange(item: string, checked: boolean) {
-  this.checkedItems.update(items =>
-    checked ? [...items, item] : items.filter(i => i !== item)
-  );
+onItemChange(item: string, e: Event) {
+  const el = e.target as HTMLElement & { checked: boolean };
+  this.selected.update((s) => (el.checked ? [...s, item] : s.filter((v) => v !== item)));
 }
 
-<!-- Template -->
+<!-- Parent — indeterminate when some (but not all) are selected -->
 <tulpar-checkbox-ng
+  [checked]="allSelected()"
+  [indeterminate]="someSelected()"
   label="Select all"
-  [checked]="parentChecked()"
-  [indeterminate]="parentIndet()"
-  (change)="onParentChange()"
+  (change)="onSelectAll($event)"
 ></tulpar-checkbox-ng>
-@for (item of allItems; track item) {
+
+<!-- Children -->
+@for (item of items; track item) {
   <tulpar-checkbox-ng
+    [checked]="selected().includes(item)"
     [label]="item"
-    [checked]="checkedItems().includes(item)"
-    (change)="onChildChange(item, $any($event.target).checked)"
+    (change)="onItemChange(item, $event)"
   ></tulpar-checkbox-ng>
 }`;
 
-const CUSTOM_ICON_CODE = `<!-- Custom check icon via slot="icon" -->
-<tulpar-checkbox-ng label="Star-checked" [checked]="true">
-  <span slot="icon">
-    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"
-         viewBox="0 0 24 24" fill="currentColor">
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02
-                       12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-    </svg>
-  </span>
+const ICON_PROP_CODE = `<!-- Custom check glyph via PROP — pass a component class -->
+@Component({
+  selector: 'app-star-icon',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: \`<lucide-angular [img]="iconData" [size]="size()"></lucide-angular>\`,
+})
+class AppStarIcon { readonly iconData = Star; size = input(12); }
+
+<tulpar-checkbox-ng [checked]="true" [icon]="AppStarIcon" label="Star (prop)"></tulpar-checkbox-ng>
+
+<!-- The indeterminate dash is NEVER overridden by a custom icon -->
+<tulpar-checkbox-ng
+  [indeterminate]="true"
+  [icon]="AppStarIcon"
+  label="Indeterminate"
+></tulpar-checkbox-ng>`;
+
+const ICON_SLOT_CODE = `<!-- Custom check glyph via SLOT — any SVG (here a heart) -->
+<tulpar-checkbox-ng [checked]="true" label="Heart (slot)">
+  <svg slot="icon" viewBox="0 0 24 24" width="12" height="12"
+    fill="currentColor" aria-hidden="true">
+    <path d="M12 21s-7.5-4.9-10-9.3C.4 8.6 2 5 5.5 5c2 0 3.3 1.2 4 2.3.7-1.1 2-2.3 4-2.3
+      C17 5 18.6 8.6 17 11.7 14.5 16.1 12 21 12 21z" />
+  </svg>
 </tulpar-checkbox-ng>`;
 
-const CARD_VARIANT_CODE = `<!-- Single card -->
-<tulpar-checkbox-ng variant="card" label="Express shipping" [checked]="true">
-  <span slot="description">Arrives in 2–3 business days</span>
-</tulpar-checkbox-ng>
+const COLOR_CODE = `<tulpar-checkbox-ng [checked]="true" [color]="'ulgen'" label="Ulgen (gold)"></tulpar-checkbox-ng>
+<tulpar-checkbox-ng [checked]="true" [color]="'otuken'" label="Otuken (forest)"></tulpar-checkbox-ng>
+<tulpar-checkbox-ng [checked]="true" [color]="'kizagan'" label="Kizagan (red)"></tulpar-checkbox-ng>
+<tulpar-checkbox-ng [checked]="true" [color]="'kam'" label="Kam (indigo)"></tulpar-checkbox-ng>
+<tulpar-checkbox-ng [checked]="true" [color]="'yersu'" label="Yersu (teal)"></tulpar-checkbox-ng>`;
 
-<!-- Grid of cards -->
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-  <tulpar-checkbox-ng variant="card" label="Read"  [checked]="true"></tulpar-checkbox-ng>
-  <tulpar-checkbox-ng variant="card" label="Write" [checked]="true"></tulpar-checkbox-ng>
-  <tulpar-checkbox-ng variant="card" label="Delete"                ></tulpar-checkbox-ng>
-  <tulpar-checkbox-ng variant="card" label="Admin"                 ></tulpar-checkbox-ng>
-</div>`;
-
-const COLORS_CODE = `<tulpar-checkbox-ng label="Default brand" [checked]="true"></tulpar-checkbox-ng>
-<tulpar-checkbox-ng label="Otuken" [checked]="true" color="otuken"></tulpar-checkbox-ng>
-<tulpar-checkbox-ng label="Kizagan" [checked]="true" color="kizagan"></tulpar-checkbox-ng>
-<tulpar-checkbox-ng label="Kam" [checked]="true" color="kam"></tulpar-checkbox-ng>`;
-
-const PERMISSIONS_CODE = `<!-- Real-world: role-based permissions with indeterminate select-all -->
-<div class="permissions-card">
-  <tulpar-checkbox-ng
-    label="All permissions"
-    [checked]="allPermsChecked()"
-    [indeterminate]="somePermsChecked()"
-    (change)="onToggleAll()"
-  ></tulpar-checkbox-ng>
-  <!-- child items ... -->
-</div>`;
+const CARD_VARIANT_CODE = `<tulpar-checkbox-ng
+  variant="card"
+  [checked]="selected().includes('pro')"
+  (change)="onPlanChange('pro', $event)"
+>
+  <span slot="label">Pro</span>
+  <span slot="description">Up to 25 users · 100 GB storage</span>
+</tulpar-checkbox-ng>`;
 
 @Component({
   selector: 'app-checkbox-demo',
   standalone: true,
-  imports: [TulparCheckboxComponent],
+  // AppStarIcon is rendered dynamically via NgComponentOutlet inside the
+  // checkbox wrapper ([icon] class-reference binding).
+  imports: [TulparCheckboxComponent, LucideAngularModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <!-- ── Page header ─────────────────────────────────────────────────── -->
     <header class="page-header">
-      <span class="page-tag">Selection</span>
+      <span class="page-tag">Core</span>
       <h1 class="page-title">Checkbox</h1>
       <p class="page-lede">
-        A multi-select control with full state management — indeterminate "select all", card
-        variant, custom icon slot, and signal-driven composition.
+        A boolean selection control — five sizes, label &amp; description in prop and slot form,
+        indeterminate select-all, custom check glyph (prop + slot), per-color overrides, and a card
+        variant. Works standalone or inside a CheckboxGroup.
       </p>
     </header>
 
     <!-- ── Hero ──────────────────────────────────────────────────────────── -->
     <section class="doc-section">
       <div class="hero">
-        <tulpar-checkbox-ng
-          label="Subscribe to newsletter"
-          [checked]="true"
-          size="lg"
-        ></tulpar-checkbox-ng>
-        <tulpar-checkbox-ng size="lg">
-          <span slot="label">Remember me</span>
-          <span slot="description">Stay signed in for 30 days</span>
+        <tulpar-checkbox-ng [checked]="true" size="lg" label="I agree to the terms of service">
         </tulpar-checkbox-ng>
+        <tulpar-checkbox-ng size="lg" label="Subscribe to newsletter"></tulpar-checkbox-ng>
         <tulpar-checkbox-ng
-          label="I accept the terms"
-          [required]="true"
+          [indeterminate]="true"
           size="lg"
+          label="Select all"
         ></tulpar-checkbox-ng>
       </div>
     </section>
@@ -154,249 +171,284 @@ const PERMISSIONS_CODE = `<!-- Real-world: role-based permissions with indetermi
     <section class="doc-section">
       <h2 class="section-title">1. Sizes</h2>
       <p class="section-desc">
-        Five sizes from <code class="inline-code">xs</code> to <code class="inline-code">xl</code>.
+        Five sizes: <code class="inline-code">xs</code> through <code class="inline-code">xl</code>.
         Default is <code class="inline-code">md</code>.
       </p>
-      <div class="preview preview--baseline">
-        <tulpar-checkbox-ng size="xs" label="Extra Small" [checked]="true"></tulpar-checkbox-ng>
-        <tulpar-checkbox-ng size="sm" label="Small" [checked]="true"></tulpar-checkbox-ng>
-        <tulpar-checkbox-ng size="md" label="Medium" [checked]="true"></tulpar-checkbox-ng>
-        <tulpar-checkbox-ng size="lg" label="Large" [checked]="true"></tulpar-checkbox-ng>
-        <tulpar-checkbox-ng size="xl" label="Extra Large" [checked]="true"></tulpar-checkbox-ng>
+      <div class="preview preview--col">
+        <tulpar-checkbox-ng size="xs" [checked]="true" label="Extra small"></tulpar-checkbox-ng>
+        <tulpar-checkbox-ng size="sm" [checked]="true" label="Small"></tulpar-checkbox-ng>
+        <tulpar-checkbox-ng
+          size="md"
+          [checked]="true"
+          label="Medium (default)"
+        ></tulpar-checkbox-ng>
+        <tulpar-checkbox-ng size="lg" [checked]="true" label="Large"></tulpar-checkbox-ng>
+        <tulpar-checkbox-ng size="xl" [checked]="true" label="Extra large"></tulpar-checkbox-ng>
       </div>
       <pre class="code"><code>{{ sizesCode }}</code></pre>
     </section>
 
-    <!-- ── 2. Label + description slots ───────────────────────────────── -->
+    <!-- ── 2. Props vs slots — label & description ──────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">2. Label + description slots</h2>
+      <h2 class="section-title">2. Props vs slots — label &amp; description</h2>
       <p class="section-desc">
-        Use <code class="inline-code">slot="label"</code> and
-        <code class="inline-code">slot="description"</code> for rich multi-line rows.
+        Use <code class="inline-code">label</code> /
+        <code class="inline-code">description</code> inputs for plain text, or
+        <code class="inline-code">slot="label"</code> /
+        <code class="inline-code">slot="description"</code> for rich content. Both render
+        identically.
       </p>
-      <div class="preview">
-        <tulpar-checkbox-ng [checked]="true">
-          <span slot="label">Remember me</span>
-          <span slot="description">Stay signed in for 30 days</span>
-        </tulpar-checkbox-ng>
-        <tulpar-checkbox-ng>
-          <span slot="label">Agree to privacy policy</span>
-          <span slot="description">We will never sell your personal data</span>
-        </tulpar-checkbox-ng>
+      <div class="preview preview--cols">
+        <div class="preview-col">
+          <p class="preview-label">Prop form</p>
+          <tulpar-checkbox-ng
+            [checked]="true"
+            label="Remember me"
+            description="Stay signed in for 30 days on this device."
+          ></tulpar-checkbox-ng>
+        </div>
+        <div class="preview-col">
+          <p class="preview-label">Slot form</p>
+          <tulpar-checkbox-ng [checked]="true">
+            <span slot="label">Remember me</span>
+            <span slot="description">Stay signed in for 30 days on this device.</span>
+          </tulpar-checkbox-ng>
+        </div>
       </div>
-      <pre class="code"><code>{{ labelSlotsCode }}</code></pre>
+      <pre class="code"><code>{{ propsVsSlotsCode }}</code></pre>
     </section>
 
     <!-- ── 3. States ──────────────────────────────────────────────────── -->
     <section class="doc-section">
       <h2 class="section-title">3. States</h2>
       <p class="section-desc">
-        Checked, disabled (on/off), readonly, and invalid with required error text.
+        Checked, disabled, disabled-checked, readonly, required + invalid with
+        <code class="inline-code">errorText</code>.
       </p>
       <div class="preview preview--col">
-        <div class="preview-row">
-          <tulpar-checkbox-ng label="Checked" [checked]="true"></tulpar-checkbox-ng>
-          <tulpar-checkbox-ng label="Disabled off" [disabled]="true"></tulpar-checkbox-ng>
-          <tulpar-checkbox-ng
-            label="Disabled on"
-            [checked]="true"
-            [disabled]="true"
-          ></tulpar-checkbox-ng>
-          <tulpar-checkbox-ng
-            label="Readonly on"
-            [checked]="true"
-            [readonly]="true"
-          ></tulpar-checkbox-ng>
-        </div>
+        <tulpar-checkbox-ng [checked]="true" label="Checked"></tulpar-checkbox-ng>
+        <tulpar-checkbox-ng [disabled]="true" label="Disabled"></tulpar-checkbox-ng>
+        <tulpar-checkbox-ng [checked]="true" [disabled]="true" label="Disabled checked">
+        </tulpar-checkbox-ng>
         <tulpar-checkbox-ng
-          label="Accept terms"
+          [checked]="true"
+          [readonly]="true"
+          label="Readonly"
+        ></tulpar-checkbox-ng>
+        <tulpar-checkbox-ng
           [required]="true"
           [invalid]="true"
-          errorText="You must accept the terms to continue"
+          label="Accept terms"
+          errorText="You must accept the terms to continue."
         ></tulpar-checkbox-ng>
       </div>
       <pre class="code"><code>{{ statesCode }}</code></pre>
     </section>
 
-    <!-- ── 4. Indeterminate + select-all ──────────────────────────────── -->
+    <!-- ── 4. Indeterminate + select-all ────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">4. Indeterminate — signal-driven select all</h2>
+      <h2 class="section-title">4. Indeterminate + select-all</h2>
       <p class="section-desc">
-        The parent checkbox is <code class="inline-code">indeterminate</code> when some (but not
-        all) children are checked. All state is derived from a
-        <code class="inline-code">signal()</code> array — no RxJS.
+        The <code class="inline-code">indeterminate</code> input renders a dash instead of a
+        checkmark — for a "select all" parent whose children are partially selected. Wire it via a
+        <code class="inline-code">computed</code> checking whether some (but not all) items are
+        selected. Toggle the parent to select / clear all.
       </p>
       <div class="preview preview--col">
         <tulpar-checkbox-ng
-          label="Select all"
-          [checked]="parentChecked()"
-          [indeterminate]="parentIndeterminate()"
-          (change)="onParentChange($event)"
+          [checked]="allSelected()"
+          [indeterminate]="someSelected()"
+          label="Select all permissions"
+          (change)="onSelectAllChange($event)"
         ></tulpar-checkbox-ng>
-        <div class="child-list">
-          @for (item of permissionItems; track item) {
+        <div class="indent-group">
+          @for (item of selectAllItems; track item) {
             <tulpar-checkbox-ng
+              [checked]="selectedPermissions().includes(item)"
               [label]="item"
-              [checked]="checkedPermissions().includes(item)"
-              (change)="onChildChange(item, $any($event.target).checked)"
+              (change)="onItemChange(item, $event)"
             ></tulpar-checkbox-ng>
           }
         </div>
-        <p class="status-feedback">Selected: {{ checkedPermissions().join(', ') || '(none)' }}</p>
+        <p class="live-value">
+          Selected: <strong>{{ selectedPermissions().join(', ') || '(none)' }}</strong>
+        </p>
       </div>
       <pre class="code"><code>{{ indeterminateCode }}</code></pre>
     </section>
 
-    <!-- ── 5. Custom icon slot ────────────────────────────────────────── -->
+    <!-- ── 5. Custom icon — prop form ───────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">5. Custom icon slot</h2>
+      <h2 class="section-title">5. Custom check glyph — prop form</h2>
       <p class="section-desc">
-        Project any SVG or icon component into
-        <code class="inline-code">slot="icon"</code> to replace the default checkmark.
-      </p>
-      <div class="preview preview--baseline">
-        <!-- Star icon -->
-        <tulpar-checkbox-ng label="Starred" [checked]="true">
-          <span slot="icon">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="10"
-              height="10"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <polygon
-                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
-              />
-            </svg>
-          </span>
-        </tulpar-checkbox-ng>
-        <!-- Heart icon -->
-        <tulpar-checkbox-ng label="Favorited" [checked]="true">
-          <span slot="icon">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="10"
-              height="10"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path
-                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-              />
-            </svg>
-          </span>
-        </tulpar-checkbox-ng>
-      </div>
-      <pre class="code"><code>{{ customIconCode }}</code></pre>
-    </section>
-
-    <!-- ── 6. Card variant ─────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">6. Card variant</h2>
-      <p class="section-desc">
-        <code class="inline-code">variant="card"</code> wraps the checkbox in a bordered card
-        surface. Ideal for plan pickers and option grids.
+        Pass a component class to <code class="inline-code">[icon]</code> to replace the default
+        checkmark. The <code class="inline-code">indeterminate</code> dash is never overridden by a
+        custom icon.
       </p>
       <div class="preview preview--col">
-        <p class="preview-label">Single card</p>
-        <tulpar-checkbox-ng variant="card" [checked]="true">
-          <span slot="label">Express shipping</span>
-          <span slot="description">Arrives in 2–3 business days</span>
+        <tulpar-checkbox-ng [checked]="true" [icon]="AppStarIcon" label="Star (prop)">
         </tulpar-checkbox-ng>
-        <p class="preview-label">Grid of cards</p>
-        <div class="card-grid">
-          <tulpar-checkbox-ng
-            variant="card"
-            label="Read"
-            [checked]="cardPermRead()"
-          ></tulpar-checkbox-ng>
-          <tulpar-checkbox-ng
-            variant="card"
-            label="Write"
-            [checked]="cardPermWrite()"
-          ></tulpar-checkbox-ng>
-          <tulpar-checkbox-ng
-            variant="card"
-            label="Delete"
-            [checked]="cardPermDelete()"
-          ></tulpar-checkbox-ng>
-          <tulpar-checkbox-ng
-            variant="card"
-            label="Admin"
-            [checked]="cardPermAdmin()"
-          ></tulpar-checkbox-ng>
-        </div>
+        <tulpar-checkbox-ng [checked]="true" size="lg" [icon]="AppStarIcon" label="Star large">
+        </tulpar-checkbox-ng>
+        <tulpar-checkbox-ng
+          [indeterminate]="true"
+          [icon]="AppStarIcon"
+          label="Indeterminate keeps the dash"
+        ></tulpar-checkbox-ng>
       </div>
-      <pre class="code"><code>{{ cardVariantCode }}</code></pre>
+      <pre class="code"><code>{{ iconPropCode }}</code></pre>
+    </section>
+
+    <!-- ── 6. Custom icon — slot form ───────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">6. Custom check glyph — slot form</h2>
+      <p class="section-desc">
+        The same swap via <code class="inline-code">slot="icon"</code> — the escape hatch for any
+        SVG or non-Lucide icon. Here, a filled heart.
+      </p>
+      <div class="preview preview--col">
+        <tulpar-checkbox-ng [checked]="true" label="Heart (slot)">
+          <svg
+            slot="icon"
+            viewBox="0 0 24 24"
+            width="12"
+            height="12"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              d="M12 21s-7.5-4.9-10-9.3C.4 8.6 2 5 5.5 5c2 0 3.3 1.2 4 2.3.7-1.1 2-2.3 4-2.3C17 5 18.6 8.6 17 11.7 14.5 16.1 12 21 12 21z"
+            />
+          </svg>
+        </tulpar-checkbox-ng>
+        <tulpar-checkbox-ng [checked]="true" size="lg" label="Heart large (slot)">
+          <svg
+            slot="icon"
+            viewBox="0 0 24 24"
+            width="14"
+            height="14"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              d="M12 21s-7.5-4.9-10-9.3C.4 8.6 2 5 5.5 5c2 0 3.3 1.2 4 2.3.7-1.1 2-2.3 4-2.3C17 5 18.6 8.6 17 11.7 14.5 16.1 12 21 12 21z"
+            />
+          </svg>
+        </tulpar-checkbox-ng>
+      </div>
+      <pre class="code"><code>{{ iconSlotCode }}</code></pre>
     </section>
 
     <!-- ── 7. Color ────────────────────────────────────────────────────── -->
     <section class="doc-section">
       <h2 class="section-title">7. Color</h2>
-      <p class="section-desc">Override the checkbox accent with any design-system color name.</p>
-      <div class="preview preview--baseline">
-        <tulpar-checkbox-ng label="Default brand" [checked]="true"></tulpar-checkbox-ng>
-        <tulpar-checkbox-ng label="Otuken" [checked]="true" color="otuken"></tulpar-checkbox-ng>
-        <tulpar-checkbox-ng label="Kizagan" [checked]="true" color="kizagan"></tulpar-checkbox-ng>
-        <tulpar-checkbox-ng label="Kam" [checked]="true" color="kam"></tulpar-checkbox-ng>
-        <tulpar-checkbox-ng label="Yersu" [checked]="true" color="yersu"></tulpar-checkbox-ng>
-        <tulpar-checkbox-ng label="Erlik" [checked]="true" color="erlik"></tulpar-checkbox-ng>
+      <p class="section-desc">
+        Bind <code class="inline-code">[color]</code> to override the checked-fill with any
+        design-system palette value.
+      </p>
+      <div class="preview">
+        <tulpar-checkbox-ng [checked]="true" [color]="'ulgen'" label="Ulgen (gold)">
+        </tulpar-checkbox-ng>
+        <tulpar-checkbox-ng [checked]="true" [color]="'otuken'" label="Otuken (forest)">
+        </tulpar-checkbox-ng>
+        <tulpar-checkbox-ng [checked]="true" [color]="'kizagan'" label="Kizagan (red)">
+        </tulpar-checkbox-ng>
+        <tulpar-checkbox-ng [checked]="true" [color]="'kam'" label="Kam (indigo)">
+        </tulpar-checkbox-ng>
+        <tulpar-checkbox-ng [checked]="true" [color]="'yersu'" label="Yersu (teal)">
+        </tulpar-checkbox-ng>
       </div>
-      <pre class="code"><code>{{ colorsCode }}</code></pre>
+      <pre class="code"><code>{{ colorCode }}</code></pre>
     </section>
 
-    <!-- ── 8. In context — permissions panel ──────────────────────────── -->
+    <!-- ── 8. Card variant ──────────────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">In context — role permissions panel</h2>
+      <h2 class="section-title">8. Card variant</h2>
       <p class="section-desc">
-        Checkboxes compose into a hierarchical permissions UI — select-all parent with indeterminate
-        derived from child state, grouped into resource sections.
+        <code class="inline-code">variant="card"</code> wraps the checkbox and its label in a
+        clickable card surface — selected cards are tinted with a brand border. Great for plan
+        pickers and feature toggles.
+      </p>
+      <div class="preview">
+        <div class="card-grid">
+          <tulpar-checkbox-ng
+            variant="card"
+            [checked]="selectedPlans().includes('starter')"
+            (change)="onPlanChange('starter', $event)"
+          >
+            <span slot="label">Starter</span>
+            <span slot="description">Up to 5 users · 10 GB storage</span>
+          </tulpar-checkbox-ng>
+          <tulpar-checkbox-ng
+            variant="card"
+            [checked]="selectedPlans().includes('pro')"
+            (change)="onPlanChange('pro', $event)"
+          >
+            <span slot="label">Pro</span>
+            <span slot="description">Up to 25 users · 100 GB storage</span>
+          </tulpar-checkbox-ng>
+          <tulpar-checkbox-ng
+            variant="card"
+            [checked]="selectedPlans().includes('enterprise')"
+            (change)="onPlanChange('enterprise', $event)"
+          >
+            <span slot="label">Enterprise</span>
+            <span slot="description">Unlimited users · 1 TB storage</span>
+          </tulpar-checkbox-ng>
+        </div>
+      </div>
+      <pre class="code"><code>{{ cardVariantCode }}</code></pre>
+    </section>
+
+    <!-- ── 9. In context — permissions matrix ───────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">In context — permissions matrix</h2>
+      <p class="section-desc">
+        A role editor — each resource has a select-all parent (indeterminate when partially
+        selected) plus a CRUD checkbox per action. Toggle a parent to flip the whole row.
       </p>
       <div class="composition">
         <div class="permissions-card">
-          <p class="permissions-title">Editor Role Permissions</p>
-
-          <p class="permissions-group-label">Content</p>
-          <div class="permissions-group">
-            <tulpar-checkbox-ng
-              label="All content permissions"
-              [checked]="allContentChecked()"
-              [indeterminate]="someContentChecked()"
-              (change)="onToggleAllContent($event)"
-            ></tulpar-checkbox-ng>
-            <div class="permissions-children">
-              @for (p of contentPermissions; track p) {
-                <tulpar-checkbox-ng
-                  [label]="p"
-                  [checked]="checkedContent().includes(p)"
-                  (change)="onContentChange(p, $any($event.target).checked)"
-                ></tulpar-checkbox-ng>
+          <table class="permissions-table">
+            <thead>
+              <tr>
+                <th class="perm-resource">Resource</th>
+                <th>All</th>
+                <th>Create</th>
+                <th>Read</th>
+                <th>Update</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (resource of resources; track resource) {
+                <tr>
+                  <td class="perm-resource-name">{{ resource }}</td>
+                  <td>
+                    <tulpar-checkbox-ng
+                      [checked]="groupAll(resource)"
+                      [indeterminate]="groupSome(resource)"
+                      [noMessageSpace]="true"
+                      size="sm"
+                      (change)="onGroupSelectAll(resource, $event)"
+                    ></tulpar-checkbox-ng>
+                  </td>
+                  @for (action of actions; track action) {
+                    <td>
+                      <tulpar-checkbox-ng
+                        [checked]="permissionGroups()[resource][action]"
+                        [noMessageSpace]="true"
+                        size="sm"
+                        (change)="onActionChange(resource, action, $event)"
+                      ></tulpar-checkbox-ng>
+                    </td>
+                  }
+                </tr>
               }
-            </div>
-          </div>
-
-          <p class="permissions-group-label">Media</p>
-          <div class="permissions-group">
-            <tulpar-checkbox-ng
-              label="All media permissions"
-              [checked]="allMediaChecked()"
-              [indeterminate]="someMediaChecked()"
-              (change)="onToggleAllMedia($event)"
-            ></tulpar-checkbox-ng>
-            <div class="permissions-children">
-              @for (p of mediaPermissions; track p) {
-                <tulpar-checkbox-ng
-                  [label]="p"
-                  [checked]="checkedMedia().includes(p)"
-                  (change)="onMediaChange(p, $any($event.target).checked)"
-                ></tulpar-checkbox-ng>
-              }
-            </div>
-          </div>
+            </tbody>
+          </table>
         </div>
       </div>
-      <pre class="code"><code>{{ permissionsCode }}</code></pre>
     </section>
   `,
   styles: [
@@ -442,7 +494,7 @@ const PERMISSIONS_CODE = `<!-- Real-world: role-based permissions with indetermi
       .hero {
         display: flex;
         flex-wrap: wrap;
-        gap: 20px;
+        gap: 24px;
         align-items: center;
         padding: 32px 28px;
         border: 1px solid var(--tulpar-color-border-default, #d9e0df);
@@ -485,12 +537,8 @@ const PERMISSIONS_CODE = `<!-- Real-world: role-based permissions with indetermi
         padding: 24px;
         display: flex;
         flex-wrap: wrap;
-        gap: 12px;
+        gap: 12px 24px;
         align-items: center;
-      }
-
-      .preview--baseline {
-        align-items: baseline;
       }
 
       .preview--col {
@@ -498,15 +546,18 @@ const PERMISSIONS_CODE = `<!-- Real-world: role-based permissions with indetermi
         align-items: flex-start;
       }
 
-      .preview-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        align-items: center;
+      .preview--cols {
+        align-items: flex-start;
+        gap: 40px;
+      }
+
+      .preview-col {
+        flex: 1;
+        min-width: 240px;
       }
 
       .preview-label {
-        margin: 0 0 8px;
+        margin: 0 0 12px;
         font-size: 12px;
         font-weight: 600;
         letter-spacing: 0.05em;
@@ -538,149 +589,164 @@ const PERMISSIONS_CODE = `<!-- Real-world: role-based permissions with indetermi
         color: var(--tulpar-color-text-primary, #15110b);
       }
 
-      .child-list {
+      .indent-group {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 10px;
         padding-left: 24px;
+        border-left: 2px solid var(--tulpar-color-border-default, #d9e0df);
+        margin-left: 4px;
       }
 
-      .status-feedback {
+      .live-value {
+        margin: 4px 0 0;
         font-size: 13px;
         color: var(--tulpar-color-text-secondary, #57534e);
       }
 
       .card-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 12px;
         width: 100%;
-        max-width: 400px;
       }
 
-      /* ── Composition ────────────────────────────────────────────────── */
       .composition {
         display: flex;
       }
 
       .permissions-card {
         flex: 1;
-        max-width: 420px;
-        padding: 20px;
         border: 1px solid var(--tulpar-color-border-default, #d9e0df);
         border-radius: 12px;
         background: var(--tulpar-color-bg-elevated, #ffffff);
         box-shadow: var(--tulpar-shadow-sm, 0 1px 2px rgb(0 0 0 / 0.06));
+        overflow: hidden;
       }
 
-      .permissions-title {
-        margin: 0 0 16px;
-        font-family: var(--tulpar-font-family-display, Georgia, serif);
-        font-size: 16px;
-        font-weight: 600;
-        color: var(--tulpar-color-text-primary, #15110b);
+      .permissions-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
       }
 
-      .permissions-group-label {
-        margin: 16px 0 8px;
+      .permissions-table th {
+        padding: 12px 16px;
         font-size: 11px;
         font-weight: 600;
-        letter-spacing: 0.05em;
         text-transform: uppercase;
+        letter-spacing: 0.05em;
         color: var(--tulpar-color-text-muted, #74777a);
+        text-align: center;
+        border-bottom: 1px solid var(--tulpar-color-border-default, #d9e0df);
+        background: var(--tulpar-color-bg-subtle, #e9f1ef);
       }
 
-      .permissions-group {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
+      .perm-resource {
+        text-align: left !important;
       }
 
-      .permissions-children {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        padding-left: 24px;
+      .permissions-table td {
+        padding: 12px 16px;
+        text-align: center;
+        border-bottom: 1px solid var(--tulpar-color-border-default, #d9e0df);
+      }
+
+      .permissions-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .perm-resource-name {
+        text-align: left;
+        font-weight: 500;
+        color: var(--tulpar-color-text-primary, #15110b);
+        text-transform: capitalize;
       }
     `,
   ],
 })
 export class CheckboxDemoComponent {
-  // ── Indeterminate select-all demo ───────────────────────────────────────────
-  readonly permissionItems = ['Billing', 'Reports', 'Users', 'Settings'];
-  readonly checkedPermissions = signal<string[]>(['Billing', 'Reports']);
+  // ── Select-all demo ─────────────────────────────────────────────────────────
+  readonly selectAllItems = ['read', 'write', 'delete', 'admin'];
+  readonly selectedPermissions = signal<string[]>(['read', 'write']);
 
-  readonly parentChecked = computed(
-    () => this.checkedPermissions().length === this.permissionItems.length,
+  readonly allSelected = computed(
+    () => this.selectedPermissions().length === this.selectAllItems.length,
   );
-  readonly parentIndeterminate = computed(
+  readonly someSelected = computed(
     () =>
-      this.checkedPermissions().length > 0 &&
-      this.checkedPermissions().length < this.permissionItems.length,
+      this.selectedPermissions().length > 0 &&
+      this.selectedPermissions().length < this.selectAllItems.length,
   );
 
-  onParentChange(_e: Event): void {
-    this.checkedPermissions.set(this.parentChecked() ? [] : [...this.permissionItems]);
+  onSelectAllChange(e: Event): void {
+    const el = e.target as HTMLElement & { checked: boolean };
+    this.selectedPermissions.set(el.checked ? [...this.selectAllItems] : []);
   }
 
-  onChildChange(item: string, checked: boolean): void {
-    this.checkedPermissions.update((items) =>
-      checked ? [...items, item] : items.filter((i) => i !== item),
+  onItemChange(item: string, e: Event): void {
+    const el = e.target as HTMLElement & { checked: boolean };
+    this.selectedPermissions.update((s) =>
+      el.checked ? [...s, item] : s.filter((v) => v !== item),
     );
   }
 
-  // ── Card variant demo ───────────────────────────────────────────────────────
-  readonly cardPermRead = signal(true);
-  readonly cardPermWrite = signal(true);
-  readonly cardPermDelete = signal(false);
-  readonly cardPermAdmin = signal(false);
+  // ── Card variant grid ───────────────────────────────────────────────────────
+  readonly selectedPlans = signal<string[]>(['pro']);
 
-  // ── Permissions composition ─────────────────────────────────────────────────
-  readonly contentPermissions = ['Create articles', 'Edit articles', 'Publish articles'];
-  readonly mediaPermissions = ['Upload files', 'Delete files'];
-
-  readonly checkedContent = signal<string[]>(['Create articles', 'Edit articles']);
-  readonly checkedMedia = signal<string[]>([]);
-
-  readonly allContentChecked = computed(
-    () => this.checkedContent().length === this.contentPermissions.length,
-  );
-  readonly someContentChecked = computed(
-    () =>
-      this.checkedContent().length > 0 &&
-      this.checkedContent().length < this.contentPermissions.length,
-  );
-  readonly allMediaChecked = computed(
-    () => this.checkedMedia().length === this.mediaPermissions.length,
-  );
-  readonly someMediaChecked = computed(
-    () =>
-      this.checkedMedia().length > 0 && this.checkedMedia().length < this.mediaPermissions.length,
-  );
-
-  onToggleAllContent(_e: Event): void {
-    this.checkedContent.set(this.allContentChecked() ? [] : [...this.contentPermissions]);
+  onPlanChange(plan: string, e: Event): void {
+    const el = e.target as HTMLElement & { checked: boolean };
+    this.selectedPlans.update((s) => (el.checked ? [...s, plan] : s.filter((v) => v !== plan)));
   }
 
-  onContentChange(p: string, checked: boolean): void {
-    this.checkedContent.update((items) => (checked ? [...items, p] : items.filter((i) => i !== p)));
+  // ── Permissions matrix ──────────────────────────────────────────────────────
+  readonly resources: Resource[] = ['users', 'content', 'billing'];
+  readonly actions = ['create', 'read', 'update', 'delete'] as const;
+  readonly permissionGroups = signal<Record<Resource, Record<string, boolean>>>({
+    users: { create: true, read: true, update: false, delete: false },
+    content: { create: true, read: true, update: true, delete: false },
+    billing: { create: false, read: true, update: false, delete: false },
+  });
+
+  groupAll(resource: Resource): boolean {
+    const g = this.permissionGroups()[resource];
+    return this.actions.every((a) => g[a]);
   }
 
-  onToggleAllMedia(_e: Event): void {
-    this.checkedMedia.set(this.allMediaChecked() ? [] : [...this.mediaPermissions]);
+  groupSome(resource: Resource): boolean {
+    const g = this.permissionGroups()[resource];
+    const vals = this.actions.map((a) => g[a]);
+    return vals.some(Boolean) && !vals.every(Boolean);
   }
 
-  onMediaChange(p: string, checked: boolean): void {
-    this.checkedMedia.update((items) => (checked ? [...items, p] : items.filter((i) => i !== p)));
+  onGroupSelectAll(resource: Resource, e: Event): void {
+    const el = e.target as HTMLElement & { checked: boolean };
+    this.permissionGroups.update((groups) => {
+      const next = { ...groups, [resource]: { ...groups[resource] } };
+      for (const a of this.actions) next[resource][a] = el.checked;
+      return next;
+    });
   }
+
+  onActionChange(resource: Resource, action: string, e: Event): void {
+    const el = e.target as HTMLElement & { checked: boolean };
+    this.permissionGroups.update((groups) => {
+      const next = { ...groups, [resource]: { ...groups[resource] } };
+      next[resource][action] = el.checked;
+      return next;
+    });
+  }
+
+  // ── Named icon component for [icon] ─────────────────────────────────────────
+  protected readonly AppStarIcon = AppStarIcon;
 
   // ── Code snippets ───────────────────────────────────────────────────────────
   readonly sizesCode = SIZES_CODE;
-  readonly labelSlotsCode = LABEL_SLOTS_CODE;
+  readonly propsVsSlotsCode = PROPS_VS_SLOTS_CODE;
   readonly statesCode = STATES_CODE;
   readonly indeterminateCode = INDETERMINATE_CODE;
-  readonly customIconCode = CUSTOM_ICON_CODE;
+  readonly iconPropCode = ICON_PROP_CODE;
+  readonly iconSlotCode = ICON_SLOT_CODE;
+  readonly colorCode = COLOR_CODE;
   readonly cardVariantCode = CARD_VARIANT_CODE;
-  readonly colorsCode = COLORS_CODE;
-  readonly permissionsCode = PERMISSIONS_CODE;
 }
