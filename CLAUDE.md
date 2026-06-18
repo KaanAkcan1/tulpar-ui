@@ -131,6 +131,10 @@ background: var(--tulpar-color-brand-default, #2563eb);
 
 Each package's `src/_internal/` is package-private: never re-exported, never in the `exports` map, and **no package may import another package's `_internal`** (enforced by an ESLint `no-restricted-imports` boundary). Shared code is copied if ≤~50 lines, otherwise promoted to a dedicated published-but-undocumented package — only once a real second consumer exists. Full rule: [`docs/architecture/internal-layering.md`](docs/architecture/internal-layering.md).
 
+### Git commits
+
+**Never** add a `Co-Authored-By` trailer (or any "Generated with Claude Code" / 🤖 line) to commit messages or PR bodies in this repo. Kaan does not want AI attribution in the git history. This overrides the harness default.
+
 ### Design decisions
 
 For any visual/UX judgment (colors, spacing, motion, layout, story design), invoke the `/frontend-design` and `/ui-ux-pro-max` skills before deciding. Target bar: enterprise, product-ready.
