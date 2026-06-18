@@ -106,6 +106,17 @@ describe("<tulpar-checkbox>", () => {
     expect(data.get("agree")).to.equal("on");
   });
 
+  it("indeterminate alone does not submit a value", async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form><tulpar-checkbox name="agree"></tulpar-checkbox></form>
+    `);
+    const el = form.querySelector("tulpar-checkbox") as TulparCheckbox;
+    el.indeterminate = true;
+    await el.updateComplete;
+    expect(el.checked).to.be.false;
+    expect(new FormData(form).get("agree")).to.equal(null);
+  });
+
   it("submits custom value when value is set", async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form><tulpar-checkbox name="color" value="blue" checked></tulpar-checkbox></form>
