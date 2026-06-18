@@ -26,6 +26,7 @@ export abstract class SelectionGroupBase extends LitElement implements Selection
 
   // --- Label / layout ---
   @property({ type: String }) label?: string;
+  @property({ type: String }) description?: string;
   @property({ type: String, reflect: true }) orientation: "vertical" | "horizontal" = "vertical";
   @property({ type: String, reflect: true }) size: SelectionSize = "md";
   @property({ type: String }) color?: string;
@@ -184,7 +185,7 @@ export abstract class SelectionGroupBase extends LitElement implements Selection
           <slot name="label">${this.label}</slot>
         </div>
         <div class="description" part="description">
-          <slot name="description"></slot>
+          <slot name="description">${this.description}</slot>
         </div>
         <div class="items" part="items">
           <slot @slotchange=${this._onSlotChange}></slot>
