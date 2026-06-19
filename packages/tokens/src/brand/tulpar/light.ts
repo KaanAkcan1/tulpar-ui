@@ -346,6 +346,38 @@ export const tulparLight: SemanticTokens = {
     spinnerDuration: "700ms",
   },
 
+  overlay: {
+    surface: { bg: c.white, border: c.colpan[200] },
+    // Inverted dark chip on light mode.
+    tooltip: { bg: c.yagiz[900], text: c.colpan[50] },
+    shadow: "0 10px 30px -10px rgba(2,8,23,.28), 0 2px 6px -2px rgba(2,8,23,.12)",
+    focusRing: "rgba(81, 78, 207, 0.40)", // kam-500 @ 40% (project focus-ring convention)
+    zIndex: "1000",
+    tone: {
+      // soft tonal map: surface=family[100], onSurface=family[800].
+      // border lifted to family[700] (from the [200] starting point) so the
+      // tonal border clears WCAG 3:1 against its own [100] surface — a [200]
+      // border is near-invisible on a [100] fill. Enforced by overlay.contrast.test.ts.
+      info: { surface: c.gok[100], onSurface: c.gok[800], border: c.gok[700] }, // gok = blue
+      success: { surface: c.otuken[100], onSurface: c.otuken[800], border: c.otuken[700] }, // otuken = green
+      warning: { surface: c.ulgen[100], onSurface: c.ulgen[800], border: c.ulgen[700] }, // ulgen = amber
+      danger: { surface: c.al[100], onSurface: c.al[800], border: c.al[700] }, // al = red (matches input/selection invalid)
+    },
+    motion: {
+      delayOpen: "400ms",
+      delayClose: "120ms",
+      durationEnter: "160ms",
+      durationExit: "110ms",
+      easing: "cubic-bezier(0.2,0.9,0.3,1)",
+    },
+    size: {
+      tooltipMaxWidth: "32ch",
+      popoverMaxH: "min(28rem, 60vh)",
+      tooltipPadding: "7px 11px",
+      popoverPadding: "16px",
+    },
+  },
+
   shell: {
     topbar: { height: "4rem", bg: c.white, fg: c.yagiz[900], border: c.colpan[200] },
     sidenav: {

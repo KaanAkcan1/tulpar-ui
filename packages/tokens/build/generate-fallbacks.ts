@@ -30,6 +30,23 @@ export interface FallbackValues {
   inputIconInvalid: string;
   inputIconWarn: string;
   inputIconValidating: string;
+  overlaySurfaceBg: string;
+  overlaySurfaceBorder: string;
+  overlayTooltipBg: string;
+  overlayTooltipText: string;
+  overlayFocusRing: string;
+  overlayToneInfoSurface: string;
+  overlayToneInfoOnSurface: string;
+  overlayToneInfoBorder: string;
+  overlayToneSuccessSurface: string;
+  overlayToneSuccessOnSurface: string;
+  overlayToneSuccessBorder: string;
+  overlayToneWarningSurface: string;
+  overlayToneWarningOnSurface: string;
+  overlayToneWarningBorder: string;
+  overlayToneDangerSurface: string;
+  overlayToneDangerOnSurface: string;
+  overlayToneDangerBorder: string;
 }
 
 export function buildFallbacks(): FallbackValues {
@@ -60,6 +77,23 @@ export function buildFallbacks(): FallbackValues {
     inputIconInvalid: primitiveColor.al[600],
     inputIconWarn: primitiveColor.kuyas[700],
     inputIconValidating: primitiveColor.kam[500],
+    overlaySurfaceBg: primitiveColor.white,
+    overlaySurfaceBorder: primitiveColor.colpan[200],
+    overlayTooltipBg: primitiveColor.yagiz[900],
+    overlayTooltipText: primitiveColor.colpan[50],
+    overlayFocusRing: "rgba(81, 78, 207, 0.40)",
+    overlayToneInfoSurface: primitiveColor.gok[100],
+    overlayToneInfoOnSurface: primitiveColor.gok[800],
+    overlayToneInfoBorder: primitiveColor.gok[700],
+    overlayToneSuccessSurface: primitiveColor.otuken[100],
+    overlayToneSuccessOnSurface: primitiveColor.otuken[800],
+    overlayToneSuccessBorder: primitiveColor.otuken[700],
+    overlayToneWarningSurface: primitiveColor.ulgen[100],
+    overlayToneWarningOnSurface: primitiveColor.ulgen[800],
+    overlayToneWarningBorder: primitiveColor.ulgen[700],
+    overlayToneDangerSurface: primitiveColor.al[100],
+    overlayToneDangerOnSurface: primitiveColor.al[800],
+    overlayToneDangerBorder: primitiveColor.al[700],
   };
 }
 

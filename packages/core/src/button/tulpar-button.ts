@@ -1,7 +1,14 @@
-import { LitElement, html, nothing } from "lit";
+import { LitElement, html, nothing, type TemplateResult } from "lit";
 import { property } from "lit/decorators.js";
 import { buttonStyles } from "./tulpar-button.styles";
 import { warnDev } from "../_internal/warn-dev";
+// Side-effect import: registers <tulpar-tooltip>. The button delegates its
+// `tooltip` convenience attribute to the real, accessible, collision-aware
+// tooltip (WCAG 1.4.13) instead of the old CSS-only chip. Importing the module
+// (not the class) keeps registration order-safe; the element is only ever
+// instantiated lazily — buttons that never set `tooltip` create no overlay
+// machinery (see `render()`).
+import "../tooltip/tulpar-tooltip";
 
 export type ButtonSeverity =
   | "primary"
@@ -163,15 +170,18 @@ export class TulparButton extends LitElement {
 
   // --- Tooltip ---
   /**
-   * Simple inline string tooltip.
+   * Convenience string tooltip. When set, the button delegates to a real
+   * `<tulpar-tooltip>` rendered in its shadow root: the inner control becomes
+   * the tooltip's `[slot="trigger"]`, so it gets collision-aware positioning,
+   * hover/focus reveal with delay, hover-bridge, Escape-to-dismiss and a
+   * working `aria-describedby` — i.e. WCAG 1.4.13 (hoverable / dismissible /
+   * persistent) compliance.
    *
-   * Limitations:
-   * - Clipped by ancestors with `overflow: hidden`.
-   * - Uses a fixed z-index (100); may be obscured by modals/drawers.
-   * - No ESC dismiss, no hover delay, no viewport-edge collision detection.
+   * Lazy: when this attribute is unset, no `<tulpar-tooltip>` is rendered and no
+   * overlay machinery is instantiated.
    *
-   * For production needs, use a dedicated tooltip component (planned v0.5, built
-   * on the Popover API + CSS Anchor Positioning).
+   * For richer needs (custom content, placement, controlled open) use
+   * `<tulpar-tooltip>` directly.
    */
   @property({ type: String, reflect: true })
   tooltip?: string;
@@ -256,47 +266,45 @@ export class TulparButton extends LitElement {
   };
 
   override render() {
-    return html`
-      ${this.href ? this._renderAnchor() : this._renderButton()} ${this._renderTooltip()}
-    `;
+    const slotted = !!this.tooltip;
+    const control = this.href ? this._renderAnchor(slotted) : this._renderButton(slotted);
+    // Lazy: only instantiate <tulpar-tooltip> (and its overlay machinery) when a
+    // tooltip string is actually set. The control is handed to the tooltip as
+    // its `[slot="trigger"]`; the tooltip is `display:contents`, so it adds no
+    // box and the button's own layout (icons, loading, sizing) is unaffected.
+    if (!slotted) return control;
+    return html`<tulpar-tooltip .text=${this.tooltip}>${control}</tulpar-tooltip>`;
   }
 
-  private _renderButton() {
+  private _renderButton(slotted = false): TemplateResult {
     return html`
       <button
         class="btn"
         type="button"
+        slot=${slotted ? "trigger" : nothing}
         ?disabled=${this.disabled}
         aria-busy=${this.loading ? "true" : "false"}
-        aria-describedby=${this.tooltip ? "tulpar-btn-tooltip" : ""}
       >
         ${this._renderContents()}
       </button>
     `;
   }
 
-  private _renderAnchor() {
+  private _renderAnchor(slotted = false): TemplateResult {
     return html`
       <a
         class="btn"
+        slot=${slotted ? "trigger" : nothing}
         href=${this.disabled ? nothing : (this.href ?? nothing)}
         target=${this.target ?? nothing}
         rel=${this.rel ?? nothing}
         aria-disabled=${this.disabled ? "true" : "false"}
         aria-busy=${this.loading ? "true" : "false"}
-        aria-describedby=${this.tooltip ? "tulpar-btn-tooltip" : ""}
         tabindex=${this.disabled ? "-1" : "0"}
       >
         ${this._renderContents()}
       </a>
     `;
-  }
-
-  private _renderTooltip() {
-    if (!this.tooltip) return "";
-    return html`<span class="tooltip" role="tooltip" id="tulpar-btn-tooltip"
-      >${this.tooltip}</span
-    >`;
   }
 
   private _renderContents() {

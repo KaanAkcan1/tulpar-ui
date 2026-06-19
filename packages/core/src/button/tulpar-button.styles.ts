@@ -2,8 +2,6 @@ import { css, unsafeCSS } from "lit";
 import { FALLBACKS } from "@tulpar-ui/tokens/fallbacks";
 
 const FB_BORDER = unsafeCSS(FALLBACKS.borderDefault);
-const FB_TEXT_PRIMARY = unsafeCSS(FALLBACKS.textPrimary);
-const FB_TEXT_INVERSE = unsafeCSS(FALLBACKS.textInverse);
 
 export const buttonStyles = css`
   /* ============================================================
@@ -11,7 +9,7 @@ export const buttonStyles = css`
    * ============================================================ */
   :host {
     display: inline-flex;
-    position: relative; /* anchor for absolutely-positioned tooltip */
+    position: relative; /* containing block for the loading spinner overlay */
     cursor: pointer;
 
     /* Default severity (primary) — color stops feed the variant rules below.
@@ -688,40 +686,6 @@ export const buttonStyles = css`
   /* active after hover so press (down) wins over lift (up) at equal specificity */
   :host([variant="tonal"]) .btn:active {
     transform: var(--_btn-press-transform);
-  }
-
-  /* ============================================================
-   * Tooltip (string-only, hover/focus reveal, fixed-below position)
-   * ============================================================ */
-  .tooltip {
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--tulpar-color-text-primary, ${FB_TEXT_PRIMARY});
-    color: var(--tulpar-color-text-inverse, ${FB_TEXT_INVERSE});
-    font-family: var(--tulpar-font-family-ui, system-ui);
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 1.3;
-    padding: 6px 10px;
-    border-radius: 4px;
-    white-space: nowrap;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 150ms ease;
-    z-index: 100;
-    box-shadow: 0 2px 6px rgba(10, 37, 64, 0.18);
-  }
-  :host(:hover) .tooltip,
-  :host(:focus-within) .tooltip {
-    opacity: 1;
-  }
-  /* Respect reduced motion */
-  @media (prefers-reduced-motion: reduce) {
-    .tooltip {
-      transition: none;
-    }
   }
 
   /* ============================================================
