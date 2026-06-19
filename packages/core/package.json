@@ -32,6 +32,10 @@
       "types": "./dist/number-input/index.d.ts",
       "import": "./dist/number-input/index.js"
     },
+    "./popover": {
+      "types": "./dist/popover/index.d.ts",
+      "import": "./dist/popover/index.js"
+    },
     "./radio": {
       "types": "./dist/radio/index.d.ts",
       "import": "./dist/radio/index.js"
@@ -51,6 +55,14 @@
     "./textarea": {
       "types": "./dist/textarea/index.d.ts",
       "import": "./dist/textarea/index.js"
+    },
+    "./toggletip": {
+      "types": "./dist/toggletip/index.d.ts",
+      "import": "./dist/toggletip/index.js"
+    },
+    "./tooltip": {
+      "types": "./dist/tooltip/index.d.ts",
+      "import": "./dist/tooltip/index.js"
     }
   },
   "files": [

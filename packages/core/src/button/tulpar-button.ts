@@ -1,7 +1,14 @@
-import { LitElement, html, nothing } from "lit";
+import { LitElement, html, nothing, type TemplateResult } from "lit";
 import { property } from "lit/decorators.js";
 import { buttonStyles } from "./tulpar-button.styles";
 import { warnDev } from "../_internal/warn-dev";
+// Side-effect import: registers <tulpar-tooltip>. The button delegates its
+// `tooltip` convenience attribute to the real, accessible, collision-aware
+// tooltip (WCAG 1.4.13) instead of the old CSS-only chip. Importing the module
+// (not the class) keeps registration order-safe; the element is only ever
+// instantiated lazily — buttons that never set `tooltip` create no overlay
+// machinery (see `render()`).
+import "../tooltip/tulpar-tooltip";
 
 export type ButtonSeverity =
   | "primary"
@@ -163,18 +170,37 @@ export class TulparButton extends LitElement {
 
   // --- Tooltip ---
   /**
-   * Simple inline string tooltip.
+   * Convenience string tooltip. When set, the button delegates to a real
+   * `<tulpar-tooltip>` rendered as a sibling in its shadow root: the inner
+   * control is given a stable id and the tooltip references it by `for`, so the
+   * control gets collision-aware positioning, hover/focus reveal with delay,
+   * hover-bridge, Escape-to-dismiss and a working `aria-describedby` (the
+   * tooltip self-wires that onto the resolved trigger) — i.e. WCAG 1.4.13
+   * (hoverable / dismissible / persistent) compliance.
    *
-   * Limitations:
-   * - Clipped by ancestors with `overflow: hidden`.
-   * - Uses a fixed z-index (100); may be obscured by modals/drawers.
-   * - No ESC dismiss, no hover delay, no viewport-edge collision detection.
+   * The for-id binding (not a slot-wrap) keeps `<tulpar-tooltip>` at
+   * `display:contents` with a `position:fixed` top-layer surface, so adding it
+   * as a shadow sibling never disturbs the button's own layout (icon slots,
+   * loading, icon-only, groups).
    *
-   * For production needs, use a dedicated tooltip component (planned v0.5, built
-   * on the Popover API + CSS Anchor Positioning).
+   * Lazy: when this attribute is unset, no `<tulpar-tooltip>` is rendered and no
+   * overlay machinery is instantiated.
+   *
+   * For richer needs (custom content, placement, controlled open) use
+   * `<tulpar-tooltip>` directly.
    */
   @property({ type: String, reflect: true })
   tooltip?: string;
+
+  /**
+   * Stable per-instance id minted for the inner interactive control (the shadow
+   * `<button>`/`<a>`). Used as the `for` target of the delegated
+   * `<tulpar-tooltip>`. Resolved within this button's shadow root (the tooltip
+   * is a sibling), so it never collides with light-DOM ids.
+   */
+  private readonly _controlId = `tulpar-btn-control-${(TulparButton._seq += 1)}`;
+
+  private static _seq = 0;
 
   constructor() {
     super();
@@ -256,47 +282,51 @@ export class TulparButton extends LitElement {
   };
 
   override render() {
+    const hasTooltip = !!this.tooltip;
+    const control = this.href ? this._renderAnchor(hasTooltip) : this._renderButton(hasTooltip);
+    // Lazy: only instantiate <tulpar-tooltip> (and its overlay machinery) when a
+    // tooltip string is actually set. The tooltip is rendered as a SIBLING of the
+    // control and references it by `for` (the control carries `id=_controlId`).
+    // The tooltip is `display:contents` with a `position:fixed` surface, so it
+    // adds no box and the button's own layout (icons, loading, sizing) is
+    // unaffected. The tooltip self-wires hover/focus/Esc + aria-describedby onto
+    // the resolved inner control.
+    if (!hasTooltip) return control;
     return html`
-      ${this.href ? this._renderAnchor() : this._renderButton()} ${this._renderTooltip()}
+      ${control}
+      <tulpar-tooltip .for=${this._controlId} .text=${this.tooltip}></tulpar-tooltip>
     `;
   }
 
-  private _renderButton() {
+  private _renderButton(hasTooltip = false): TemplateResult {
     return html`
       <button
         class="btn"
         type="button"
+        id=${hasTooltip ? this._controlId : nothing}
         ?disabled=${this.disabled}
         aria-busy=${this.loading ? "true" : "false"}
-        aria-describedby=${this.tooltip ? "tulpar-btn-tooltip" : ""}
       >
         ${this._renderContents()}
       </button>
     `;
   }
 
-  private _renderAnchor() {
+  private _renderAnchor(hasTooltip = false): TemplateResult {
     return html`
       <a
         class="btn"
+        id=${hasTooltip ? this._controlId : nothing}
         href=${this.disabled ? nothing : (this.href ?? nothing)}
         target=${this.target ?? nothing}
         rel=${this.rel ?? nothing}
         aria-disabled=${this.disabled ? "true" : "false"}
         aria-busy=${this.loading ? "true" : "false"}
-        aria-describedby=${this.tooltip ? "tulpar-btn-tooltip" : ""}
         tabindex=${this.disabled ? "-1" : "0"}
       >
         ${this._renderContents()}
       </a>
     `;
-  }
-
-  private _renderTooltip() {
-    if (!this.tooltip) return "";
-    return html`<span class="tooltip" role="tooltip" id="tulpar-btn-tooltip"
-      >${this.tooltip}</span
-    >`;
   }
 
   private _renderContents() {

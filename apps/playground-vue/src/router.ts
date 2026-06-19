@@ -10,6 +10,9 @@ import SwitchDemo from "./components/SwitchDemo.vue";
 import CheckboxDemo from "./components/CheckboxDemo.vue";
 import RadioGroupDemo from "./components/RadioGroupDemo.vue";
 import CheckboxGroupDemo from "./components/CheckboxGroupDemo.vue";
+import TooltipDemo from "./components/TooltipDemo.vue";
+import ToggletipDemo from "./components/ToggletipDemo.vue";
+import PopoverDemo from "./components/PopoverDemo.vue";
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -35,6 +38,9 @@ export const router = createRouter({
       component: CheckboxGroupDemo,
       meta: { title: "CheckboxGroup — Tulpar UI" },
     },
+    { path: "/tooltip", component: TooltipDemo, meta: { title: "Tooltip — Tulpar UI" } },
+    { path: "/toggletip", component: ToggletipDemo, meta: { title: "Toggletip — Tulpar UI" } },
+    { path: "/popover", component: PopoverDemo, meta: { title: "Popover — Tulpar UI" } },
     { path: "/colors", component: ColorsDemo, meta: { title: "Colors — Tulpar UI" } },
     { path: "/guide", component: GuideDemo, meta: { title: "Sidebar & Theme — Tulpar UI" } },
     { path: "/:pathMatch(.*)*", redirect: "/button" },

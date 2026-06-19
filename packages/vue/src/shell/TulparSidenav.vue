@@ -178,15 +178,25 @@ watchEffect(() => {
     @tulpar-settings-click="emit('settings')"
     @tulpar-logout="emit('logout')"
   >
-    <span style="display: contents" slot="header"><slot name="header" /></span>
-    <span style="display: contents" slot="header-actions"><slot name="header-actions" /></span>
-    <span style="display: contents" slot="search"><slot name="search" /></span>
-    <span style="display: contents" slot="utility-start"><slot name="utility-start" /></span>
-    <span style="display: contents" slot="utility-end"><slot name="utility-end" /></span>
+    <!-- Only project a slot wrapper when the consumer actually fills it. An
+         unconditional empty <span slot="x"> registers as assigned slot content
+         on the web component, which suppresses its built-in brand/search/account
+         (the element treats "slot present" as "app owns this region"). -->
+    <span v-if="$slots.header" style="display: contents" slot="header"><slot name="header" /></span>
+    <span v-if="$slots['header-actions']" style="display: contents" slot="header-actions"
+      ><slot name="header-actions"
+    /></span>
+    <span v-if="$slots.search" style="display: contents" slot="search"><slot name="search" /></span>
+    <span v-if="$slots['utility-start']" style="display: contents" slot="utility-start"
+      ><slot name="utility-start"
+    /></span>
+    <span v-if="$slots['utility-end']" style="display: contents" slot="utility-end"
+      ><slot name="utility-end"
+    /></span>
     <template v-if="renderItemsInLightDom">
       <NavNode v-for="(item, i) in items" :key="item.href ?? item.label ?? i" :item="item" />
     </template>
     <slot />
-    <span style="display: contents" slot="footer"><slot name="footer" /></span>
+    <span v-if="$slots.footer" style="display: contents" slot="footer"><slot name="footer" /></span>
   </tulpar-sidenav>
 </template>

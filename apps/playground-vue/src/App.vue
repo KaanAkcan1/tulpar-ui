@@ -7,7 +7,11 @@ import {
   CircleDot,
   FormInput,
   Hash,
+  Layers,
   ListChecks,
+  MessageCircle,
+  MessageSquare,
+  MessageSquareText,
   Palette,
   SquareMousePointer,
   TextCursorInput,
@@ -81,6 +85,16 @@ const menu: TulparNavItemVueData[] = [
           { label: "Checkbox", href: "/checkbox", icon: CheckSquare },
           { label: "RadioGroup", href: "/radio-group", icon: CircleDot },
           { label: "CheckboxGroup", href: "/checkbox-group", icon: ListChecks },
+        ],
+      },
+      // Overlay — directive-driven tooltip / toggletip / popover family (v0.11).
+      {
+        label: "Overlay",
+        icon: Layers,
+        items: [
+          { label: "Tooltip", href: "/tooltip", icon: MessageSquare },
+          { label: "Toggletip", href: "/toggletip", icon: MessageCircle },
+          { label: "Popover", href: "/popover", icon: MessageSquareText },
         ],
       },
     ],

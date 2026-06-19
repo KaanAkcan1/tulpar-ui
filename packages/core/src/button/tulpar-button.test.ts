@@ -1,6 +1,7 @@
 import { fixture, html, expect } from "@open-wc/testing";
 import "./tulpar-button";
 import type { TulparButton } from "./tulpar-button";
+import type { TulparTooltip } from "../tooltip/tulpar-tooltip";
 import { buttonStyles } from "./tulpar-button.styles";
 
 describe("public type exports", () => {
@@ -435,36 +436,92 @@ describe("<tulpar-button>", () => {
     });
   });
 
-  describe("tooltip", () => {
-    it("renders a tooltip span when tooltip attribute is set", async () => {
+  describe("tooltip (delegates to <tulpar-tooltip> via for-id, WCAG 1.4.13)", () => {
+    it("composes a real <tulpar-tooltip> carrying the tooltip string as text", async () => {
       const el = await fixture<TulparButton>(
         html`<tulpar-button tooltip="Delete item">X</tulpar-button>`,
       );
-      const tip = el.shadowRoot!.querySelector(".tooltip");
+      await el.updateComplete;
+      const tip = el.shadowRoot!.querySelector("tulpar-tooltip") as TulparTooltip;
       expect(tip).to.exist;
-      expect(tip!.getAttribute("role")).to.equal("tooltip");
-      expect(tip!.textContent?.trim()).to.equal("Delete item");
+      expect(tip.text).to.equal("Delete item");
     });
 
-    it("does NOT render tooltip span when tooltip is unset", async () => {
+    it("keeps the old static `.tooltip` span out of the shadow DOM", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button tooltip="Delete item">X</tulpar-button>`,
+      );
+      await el.updateComplete;
+      // The CSS-only #tulpar-btn-tooltip span no longer exists — the surface is
+      // owned by <tulpar-tooltip>.
+      expect(el.shadowRoot!.querySelector("#tulpar-btn-tooltip")).to.not.exist;
+    });
+
+    it("points the tooltip's `for` at the inner control's id (for-id model, no slot-wrap)", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button tooltip="Delete item">X</tulpar-button>`,
+      );
+      await el.updateComplete;
+      const tip = el.shadowRoot!.querySelector("tulpar-tooltip")!;
+      const btn = el.shadowRoot!.querySelector("button.btn")!;
+      // The inner control has a stable id and the tooltip references it by `for`.
+      expect(btn.id, "inner control has an id").to.be.a("string").and.not.empty;
+      expect(tip.getAttribute("for")).to.equal(btn.id);
+      // No slot-wrap: the control is NOT slotted into a trigger, and the tooltip
+      // is a sibling of the control, not its parent.
+      expect(btn.hasAttribute("slot")).to.be.false;
+      expect(btn.parentElement).to.not.equal(tip);
+    });
+
+    it("renders NO tulpar-tooltip / overlay machinery when tooltip is unset (lazy)", async () => {
       const el = await fixture<TulparButton>(html`<tulpar-button>X</tulpar-button>`);
-      expect(el.shadowRoot!.querySelector(".tooltip")).to.not.exist;
+      await el.updateComplete;
+      expect(el.shadowRoot!.querySelector("tulpar-tooltip")).to.not.exist;
+      // The inner control is rendered bare (not slotted into any trigger).
+      const btn = el.shadowRoot!.querySelector("button.btn")!;
+      expect(btn.hasAttribute("slot")).to.be.false;
     });
 
-    it("sets aria-describedby on the inner button when tooltip is set", async () => {
+    it("wires a working aria-describedby from the inner button to the tooltip surface", async () => {
       const el = await fixture<TulparButton>(
         html`<tulpar-button tooltip="Save changes">X</tulpar-button>`,
       );
-      const btn = el.shadowRoot!.querySelector("button")!;
-      expect(btn.getAttribute("aria-describedby")).to.equal("tulpar-btn-tooltip");
+      await el.updateComplete;
+      const tip = el.shadowRoot!.querySelector("tulpar-tooltip") as TulparTooltip;
+      await tip.updateComplete;
+      const btn = el.shadowRoot!.querySelector("button.btn")!;
+      const surface = tip.shadowRoot!.querySelector('[role="tooltip"]')!;
+      expect(surface, "tooltip surface exists").to.exist;
+      const described = btn.getAttribute("aria-describedby");
+      expect(described, "button has aria-describedby").to.be.a("string").and.not.empty;
+      // It points at the tulpar-tooltip's surface, NOT the old static span id.
+      expect(described).to.not.equal("tulpar-btn-tooltip");
+      expect(described).to.contain(surface.id);
     });
 
-    it("sets aria-describedby on the anchor when tooltip + href are both set", async () => {
+    it("wires aria-describedby on the anchor when tooltip + href are both set", async () => {
       const el = await fixture<TulparButton>(
         html`<tulpar-button tooltip="Open" href="/x">X</tulpar-button>`,
       );
-      const anchor = el.shadowRoot!.querySelector("a")!;
-      expect(anchor.getAttribute("aria-describedby")).to.equal("tulpar-btn-tooltip");
+      await el.updateComplete;
+      const tip = el.shadowRoot!.querySelector("tulpar-tooltip") as TulparTooltip;
+      await tip.updateComplete;
+      const anchor = el.shadowRoot!.querySelector("a.btn")!;
+      // The anchor is the for-id trigger: it has an id the tooltip points at,
+      // and is not slotted/wrapped.
+      expect(anchor.id, "inner anchor has an id").to.be.a("string").and.not.empty;
+      expect(tip.getAttribute("for")).to.equal(anchor.id);
+      expect(anchor.hasAttribute("slot")).to.be.false;
+      const surface = tip.shadowRoot!.querySelector('[role="tooltip"]')!;
+      expect(anchor.getAttribute("aria-describedby")).to.contain(surface.id);
+    });
+
+    it("still exposes + reflects the tooltip attribute (convenience prop preserved)", async () => {
+      const el = await fixture<TulparButton>(
+        html`<tulpar-button tooltip="Hello">X</tulpar-button>`,
+      );
+      expect(el.tooltip).to.equal("Hello");
+      expect(el.getAttribute("tooltip")).to.equal("Hello");
     });
   });
 

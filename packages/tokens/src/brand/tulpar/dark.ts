@@ -309,6 +309,33 @@ export const tulparDark: SemanticTokens = {
     spinnerDuration: "700ms",
   },
 
+  overlay: {
+    surface: { bg: c.mergen[900], border: c.mergen[800] },
+    // Inverted light chip on dark mode.
+    tooltip: { bg: c.colpan[50], text: c.yagiz[900] },
+    shadow: "0 10px 30px -10px rgba(0,0,0,.6), 0 2px 6px -2px rgba(0,0,0,.4)",
+    focusRing: "rgba(132, 151, 255, 0.60)", // kam-300 @ 60% (dark focus-ring convention)
+    zIndex: "1000",
+    tone: {
+      // soft tonal map (dark): surface=family[900], onSurface=family[100].
+      // border lifted to family[400] (from the [800] starting point) so the
+      // tonal border clears WCAG 3:1 against its own dark [900] surface — an
+      // [800] border is near-invisible on a [900] fill. Enforced by overlay.contrast.test.ts.
+      info: { surface: c.gok[900], onSurface: c.gok[100], border: c.gok[400] }, // gok = blue
+      success: { surface: c.otuken[900], onSurface: c.otuken[100], border: c.otuken[400] }, // otuken = green
+      warning: { surface: c.ulgen[900], onSurface: c.ulgen[100], border: c.ulgen[400] }, // ulgen = amber
+      danger: { surface: c.al[900], onSurface: c.al[100], border: c.al[400] }, // al = red (matches input/selection invalid)
+    },
+    motion: {
+      delayOpen: "400ms",
+      delayClose: "120ms",
+      durationEnter: "160ms",
+      durationExit: "110ms",
+      easing: "cubic-bezier(0.2,0.9,0.3,1)",
+    },
+    size: tulparLight.overlay.size,
+  },
+
   shell: {
     topbar: { height: "4rem", bg: c.mergen[900], fg: c.colpan[100], border: c.mergen[800] },
     sidenav: {
