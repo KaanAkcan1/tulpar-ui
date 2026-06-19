@@ -231,6 +231,63 @@ describe("toaster-root", () => {
     });
   });
 
+  // ─── Fixed positioning (BUG 1 regression guard) ─────────────────────────────
+
+  describe("fixed positioning", () => {
+    it("toaster root has position:fixed after getToasterRoot()", () => {
+      const root = getToasterRoot();
+      const style = window.getComputedStyle(root);
+      expect(style.position).to.equal("fixed");
+    });
+
+    it("location container has position:fixed after getLocationContainer()", () => {
+      const container = getLocationContainer("bottom-right");
+      const style = window.getComputedStyle(container);
+      expect(style.position).to.equal("fixed");
+    });
+
+    it("toaster root has pointer-events:none", () => {
+      const root = getToasterRoot();
+      const style = window.getComputedStyle(root);
+      expect(style.pointerEvents).to.equal("none");
+    });
+
+    it("location container has pointer-events:none", () => {
+      const container = getLocationContainer("top-center");
+      const style = window.getComputedStyle(container);
+      expect(style.pointerEvents).to.equal("none");
+    });
+
+    it("injects exactly one <style data-tulpar-toaster> into <head>", () => {
+      getToasterRoot();
+      const sheets = document.querySelectorAll("[data-tulpar-toaster]");
+      expect(sheets.length).to.equal(1);
+    });
+
+    it("does NOT inject a second style sheet on repeated getToasterRoot calls", () => {
+      getToasterRoot();
+      getToasterRoot();
+      getToasterRoot();
+      const sheets = document.querySelectorAll("[data-tulpar-toaster]");
+      expect(sheets.length).to.equal(1);
+    });
+
+    it("__resetToasterRootForTest removes the injected style sheet", () => {
+      getToasterRoot();
+      expect(document.querySelector("[data-tulpar-toaster]")).to.not.be.null;
+      __resetToasterRootForTest();
+      expect(document.querySelector("[data-tulpar-toaster]")).to.be.null;
+    });
+
+    it("style sheet is re-injected after reset + new getToasterRoot call", () => {
+      getToasterRoot();
+      __resetToasterRootForTest();
+      // After reset and a new call, the sheet is back.
+      getToasterRoot();
+      expect(document.querySelector("[data-tulpar-toaster]")).to.not.be.null;
+    });
+  });
+
   // ─── __resetToasterRootForTest ──────────────────────────────────────────────
 
   describe("__resetToasterRootForTest", () => {

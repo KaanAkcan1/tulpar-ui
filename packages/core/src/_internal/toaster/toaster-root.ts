@@ -25,17 +25,105 @@ import type { Location } from "./queue";
 
 const ROOT_ATTR = "data-tulpar-toaster-root";
 const REGION_LABEL = "Notifications";
+const STYLE_ATTR = "data-tulpar-toaster";
 
 let root: HTMLElement | null = null;
 let themeObserver: MutationObserver | null = null;
 const containers = new Map<Location, HTMLElement>();
 let keydownBound = false;
+let globalStyleInjected = false;
 
 /**
  * Previously-focused element before F6 jump; used by Shift+F6 to restore focus.
  * Kept as a WeakRef so it doesn't prevent GC of detached elements.
  */
 let previousFocus: WeakRef<HTMLElement> | null = null;
+
+// ─── global style injection ──────────────────────────────────────────────────
+
+/**
+ * Inject a single `<style data-tulpar-toaster>` sheet into `<head>` the first
+ * time the toaster portal is created.  Because the region root is LIGHT DOM
+ * (appended to `document.body`), shadow-DOM stylesheets cannot reach it — an
+ * injected global sheet is the right solution.
+ *
+ * Rules:
+ * - Region root: `position:fixed; inset:0; pointer-events:none; z-index:var(--tulpar-z-toast, 9000)`
+ *   → covers the whole viewport but doesn't block pointer events.
+ * - Each `[data-location]` container: `position:fixed; display:flex; pointer-events:none;`
+ *   → anchored to the correct corner/edge.
+ * - Individual `<tulpar-toast>` hosts inside containers: `pointer-events:auto`
+ *   → restores interactivity per-toast even though the parent is `pointer-events:none`.
+ *
+ * The sheet is keyed off `[data-tulpar-toaster]` and injected only once regardless
+ * of how many times the module is imported.
+ */
+function injectGlobalStyles(): void {
+  if (globalStyleInjected) return;
+  if (document.querySelector(`[${STYLE_ATTR}]`)) {
+    globalStyleInjected = true;
+    return;
+  }
+  globalStyleInjected = true;
+
+  const style = document.createElement("style");
+  style.setAttribute(STYLE_ATTR, "");
+  style.textContent = `
+/* Tulpar UI — toaster portal positioning */
+[${ROOT_ATTR}] {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--tulpar-z-toast, 9000);
+}
+
+/* ── Location containers ── */
+[data-location] {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+}
+
+/* top edge */
+[data-location^="top-"] {
+  top: 16px;
+}
+
+/* bottom edge */
+[data-location^="bottom-"] {
+  bottom: 16px;
+}
+
+/* left-aligned */
+[data-location$="-left"] {
+  left: 16px;
+  align-items: flex-start;
+}
+
+/* right-aligned */
+[data-location$="-right"] {
+  right: 16px;
+  align-items: flex-end;
+}
+
+/* center-aligned (horizontal) */
+[data-location$="-center"] {
+  left: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+}
+
+/* ── Individual toast hosts: restore pointer-events so they are interactive ── */
+[data-location] > * {
+  pointer-events: auto;
+}
+`;
+
+  // Append to <head> (preferred) or <body> as fallback.
+  (document.head ?? document.body).appendChild(style);
+}
 
 // ─── theme sync ─────────────────────────────────────────────────────────────
 
@@ -145,6 +233,8 @@ export function restorePreviousFocus(): boolean {
 export function getToasterRoot(): HTMLElement {
   if (root && root.isConnected) return root;
 
+  injectGlobalStyles();
+
   root = document.createElement("div");
   root.setAttribute(ROOT_ATTR, "");
   root.setAttribute("role", "region");
@@ -203,4 +293,8 @@ export function __resetToasterRootForTest(): void {
     document.removeEventListener("keydown", onKeydown);
     keydownBound = false;
   }
+  // Remove the injected global style sheet so tests start from a clean slate.
+  const injected = document.querySelector(`[${STYLE_ATTR}]`);
+  if (injected) injected.parentElement?.removeChild(injected);
+  globalStyleInjected = false;
 }

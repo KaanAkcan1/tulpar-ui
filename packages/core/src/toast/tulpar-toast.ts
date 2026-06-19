@@ -252,11 +252,10 @@ export class TulparToast extends LitElement {
 
   constructor() {
     super();
-    // Make the host programmatically focusable for F6 region jump.
-    // tabindex="-1": reachable via .focus() but not in natural tab order.
-    if (!this.hasAttribute("tabindex")) {
-      this.setAttribute("tabindex", "-1");
-    }
+    // NOTE: The custom-element spec forbids attribute mutations in the constructor
+    // (causes "The result must not have attributes" when the parser creates then
+    // upgrades the element). tabindex is set in connectedCallback() instead.
+    //
     // Esc handler: when this toast or any of its shadow descendants has focus
     // and Esc is pressed, dispatch a cancelable tulpar-dismiss event with
     // reason:'user'. The host listens at the shadow root so composed keyboard
@@ -267,6 +266,17 @@ export class TulparToast extends LitElement {
     // Esc consumers (modals, dropdowns) because those handle Esc at higher
     // levels and stop propagation there if needed.
     this.addEventListener("keydown", this._onKeydown);
+  }
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    // Make the host programmatically focusable for F6 region jump.
+    // tabindex="-1": reachable via .focus() but not in natural tab order.
+    // Set here (not in constructor) to satisfy the custom-element spec: the
+    // constructor must not mutate attributes.
+    if (!this.hasAttribute("tabindex")) {
+      this.setAttribute("tabindex", "-1");
+    }
   }
 
   override updated(changed: Map<string, unknown>): void {

@@ -50,6 +50,56 @@ describe("<tulpar-toast> registration", () => {
   });
 });
 
+// ─── Constructor safety (BUG 2 regression guard) ─────────────────────────────
+//
+// The custom-element spec forbids attribute mutations in the constructor —
+// doing so causes "Failed to construct 'CustomElement': The result must not
+// have attributes" when the element is parser-created then upgraded.
+// This suite verifies that createElement + immediate setAttribute + append
+// does NOT throw, and that the element works normally after upgrade.
+
+describe("<tulpar-toast> constructor safety (no attribute mutations)", () => {
+  it("document.createElement('tulpar-toast') does not throw", () => {
+    expect(() => document.createElement("tulpar-toast")).to.not.throw();
+  });
+
+  it("createElement + setAttribute before append does not throw", () => {
+    expect(() => {
+      const el = document.createElement("tulpar-toast") as TulparToast;
+      el.setAttribute("tone", "info");
+      document.body.appendChild(el);
+      document.body.removeChild(el);
+    }).to.not.throw();
+  });
+
+  it("createElement + multiple setAttribute calls before append do not throw", () => {
+    expect(() => {
+      const el = document.createElement("tulpar-toast") as TulparToast;
+      el.setAttribute("tone", "success");
+      el.setAttribute("heading", "Test heading");
+      el.setAttribute("closable", "");
+      document.body.appendChild(el);
+      document.body.removeChild(el);
+    }).to.not.throw();
+  });
+
+  it("element has tabindex='-1' after being connected to DOM", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    const ti = el.getAttribute("tabindex");
+    expect(ti).to.be.oneOf(["-1", "0"]);
+  });
+
+  it("declarative <tulpar-toast> in fixture does not throw", async () => {
+    let threw = false;
+    try {
+      await fixture<TulparToast>(html`<tulpar-toast tone="info" heading="No throw"></tulpar-toast>`);
+    } catch {
+      threw = true;
+    }
+    expect(threw).to.be.false;
+  });
+});
+
 // ─── Default tone ─────────────────────────────────────────────────────────────
 
 describe("<tulpar-toast> default tone", () => {
