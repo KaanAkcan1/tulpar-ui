@@ -7,7 +7,11 @@ import {
   Circle,
   FormInput,
   Hash,
+  Layers,
+  MessageSquare,
+  MessageSquareText,
   Palette,
+  PanelTop,
   SquareMousePointer,
   TextCursorInput,
   ToggleLeft,
@@ -129,6 +133,42 @@ class IconRadio {
 })
 class IconCheckboxGroup {
   readonly icon: LucideIconData = CheckSquare;
+}
+@Component({
+  selector: 'app-icon-overlay',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconOverlay {
+  readonly icon: LucideIconData = Layers;
+}
+@Component({
+  selector: 'app-icon-tooltip',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconTooltip {
+  readonly icon: LucideIconData = MessageSquare;
+}
+@Component({
+  selector: 'app-icon-toggletip',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconToggletip {
+  readonly icon: LucideIconData = MessageSquareText;
+}
+@Component({
+  selector: 'app-icon-popover',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconPopover {
+  readonly icon: LucideIconData = PanelTop;
 }
 
 @Component({
@@ -473,6 +513,16 @@ export class App {
             { label: 'Checkbox', href: '/checkbox', icon: IconCheckbox },
             { label: 'RadioGroup', href: '/radio-group', icon: IconRadio },
             { label: 'CheckboxGroup', href: '/checkbox-group', icon: IconCheckboxGroup },
+          ],
+        },
+        // Overlay — directive-driven tooltip / toggletip / popover family (v0.11).
+        {
+          label: 'Overlay',
+          icon: IconOverlay,
+          items: [
+            { label: 'Tooltip', href: '/tooltip', icon: IconTooltip },
+            { label: 'Toggletip', href: '/toggletip', icon: IconToggletip },
+            { label: 'Popover', href: '/popover', icon: IconPopover },
           ],
         },
       ],

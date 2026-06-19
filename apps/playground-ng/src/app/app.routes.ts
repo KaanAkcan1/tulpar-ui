@@ -10,6 +10,9 @@ import { SwitchDemoComponent } from './demos/switch-demo.component';
 import { CheckboxDemoComponent } from './demos/checkbox-demo.component';
 import { RadioGroupDemoComponent } from './demos/radio-group-demo.component';
 import { CheckboxGroupDemoComponent } from './demos/checkbox-group-demo.component';
+import { TooltipDemoComponent } from './demos/tooltip-demo.component';
+import { ToggletipDemoComponent } from './demos/toggletip-demo.component';
+import { PopoverDemoComponent } from './demos/popover-demo.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'button' },
@@ -27,5 +30,8 @@ export const routes: Routes = [
     component: CheckboxGroupDemoComponent,
     title: 'Checkbox Group — Tulpar UI',
   },
+  { path: 'tooltip', component: TooltipDemoComponent, title: 'Tooltip — Tulpar UI' },
+  { path: 'toggletip', component: ToggletipDemoComponent, title: 'Toggletip — Tulpar UI' },
+  { path: 'popover', component: PopoverDemoComponent, title: 'Popover — Tulpar UI' },
   { path: '**', redirectTo: 'button' },
 ];
