@@ -1,40 +1,58 @@
 import { expect, fixture, html } from "@open-wc/testing";
-import { resolveAnchor, warnIfBadTrigger, supportsPopover, supportsCssAnchor } from "./anchor";
+import {
+  resolveAnchor,
+  warnIfBadTrigger,
+  warnIfUnresolvedFor,
+  supportsPopover,
+  supportsCssAnchor,
+} from "./anchor";
 import { linkDescribedBy, unlinkDescribedBy, setHasPopup, clearHasPopup, makeLiveRegion } from "./aria";
 
 describe("resolveAnchor", () => {
-  it("prefers the focusable element slotted into [slot=trigger]", async () => {
-    const host = (await fixture(html`
+  it("resolves the trigger from the host's `for` attribute via getElementById", async () => {
+    const wrap = (await fixture(html`
       <div>
-        <button slot="trigger" id="slotted">Trigger</button>
+        <button id="my-trigger">Trigger</button>
+        <div for="my-trigger"></div>
       </div>
-    `)) as HTMLElement & { anchor?: string };
-    // also set an anchor id that should be ignored when a slotted trigger exists
-    const external = document.createElement("button");
-    external.id = "external-anchor";
-    document.body.appendChild(external);
-    host.anchor = "external-anchor";
-
-    const resolved = resolveAnchor(host);
-    expect(resolved).to.equal(host.querySelector("#slotted"));
-
-    external.remove();
+    `)) as HTMLElement;
+    const host = wrap.querySelector("div[for]") as HTMLElement & { for?: string };
+    expect(resolveAnchor(host)).to.equal(wrap.querySelector("#my-trigger"));
   });
 
-  it("falls back to document.getElementById(host.anchor)", async () => {
-    const host = (await fixture(html`<div></div>`)) as HTMLElement & { anchor?: string };
-    const external = document.createElement("button");
-    external.id = "my-anchor";
-    document.body.appendChild(external);
-    host.anchor = "my-anchor";
-
-    expect(resolveAnchor(host)).to.equal(external);
-    external.remove();
+  it("prefers the host's `for` property over the attribute", async () => {
+    const wrap = (await fixture(html`
+      <div>
+        <button id="prop-trigger">Trigger</button>
+        <div for="attr-trigger"></div>
+      </div>
+    `)) as HTMLElement;
+    const host = wrap.querySelector("div[for]") as HTMLElement & { for?: string };
+    // No #attr-trigger exists; the property points at the real one.
+    host.for = "prop-trigger";
+    expect(resolveAnchor(host)).to.equal(wrap.querySelector("#prop-trigger"));
   });
 
-  it("returns null when neither a slotted trigger nor anchor id resolves", async () => {
-    const host = (await fixture(html`<div></div>`)) as HTMLElement & { anchor?: string };
+  it("returns null when `for` is unset", async () => {
+    const host = (await fixture(html`<div></div>`)) as HTMLElement & { for?: string };
     expect(resolveAnchor(host)).to.equal(null);
+  });
+
+  it("returns null when `for` points at a non-existent id", async () => {
+    const host = (await fixture(html`<div for="nope"></div>`)) as HTMLElement & { for?: string };
+    expect(resolveAnchor(host)).to.equal(null);
+  });
+
+  it("resolves against the host's ownerDocument (fixture-scoped)", async () => {
+    const wrap = (await fixture(html`
+      <div>
+        <button id="owner-doc-trigger">Trigger</button>
+        <div for="owner-doc-trigger"></div>
+      </div>
+    `)) as HTMLElement;
+    const host = wrap.querySelector("div[for]") as HTMLElement & { for?: string };
+    expect(host.ownerDocument).to.equal(document);
+    expect(resolveAnchor(host)).to.equal(wrap.querySelector("#owner-doc-trigger"));
   });
 });
 
@@ -73,6 +91,45 @@ describe("warnIfBadTrigger", () => {
 
   it("does not warn for null", () => {
     warnIfBadTrigger(null);
+    expect(calls.length).to.equal(0);
+  });
+});
+
+describe("warnIfUnresolvedFor", () => {
+  let calls: unknown[][];
+  let original: typeof console.warn;
+  beforeEach(() => {
+    calls = [];
+    original = console.warn;
+    console.warn = (...args: unknown[]) => {
+      calls.push(args);
+    };
+  });
+  afterEach(() => {
+    console.warn = original;
+  });
+
+  it("warns when `for` is set but resolves to no element", async () => {
+    const host = (await fixture(html`<div for="ghost"></div>`)) as HTMLElement & { for?: string };
+    warnIfUnresolvedFor(host, null);
+    expect(calls.length).to.equal(1);
+  });
+
+  it("does not warn when `for` resolves to an element", async () => {
+    const wrap = (await fixture(html`
+      <div>
+        <button id="real">x</button>
+        <div for="real"></div>
+      </div>
+    `)) as HTMLElement;
+    const host = wrap.querySelector("div[for]") as HTMLElement & { for?: string };
+    warnIfUnresolvedFor(host, wrap.querySelector("#real") as HTMLElement);
+    expect(calls.length).to.equal(0);
+  });
+
+  it("does not warn when `for` is unset (no trigger requested)", async () => {
+    const host = (await fixture(html`<div></div>`)) as HTMLElement & { for?: string };
+    warnIfUnresolvedFor(host, null);
     expect(calls.length).to.equal(0);
   });
 });

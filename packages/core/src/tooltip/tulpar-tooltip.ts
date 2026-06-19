@@ -5,6 +5,7 @@ import { warnDev } from "../_internal/warn-dev";
 import {
   resolveAnchor,
   warnIfBadTrigger,
+  warnIfUnresolvedFor,
   supportsPopover,
 } from "../_internal/overlay/anchor";
 import { linkDescribedBy, unlinkDescribedBy } from "../_internal/overlay/aria";
@@ -54,11 +55,14 @@ let tooltipKeySeq = 0;
  *   skip-delay grace between sibling tooltips).
  * - top-layer + Escape/topmost stack: `_internal/overlay/overlay-root`.
  *
- * The host is `display:contents` — it owns no box; the slotted
- * `[slot="trigger"]` is the anchor. The surface is rendered in the shadow root
- * and, when opened, promoted to the top layer via the native Popover API (when
- * supported) or by reading rects + applying fixed coordinates in the shadow
- * root. WCAG 1.4.13 (hoverable / dismissible / persistent) is honored.
+ * Trigger binding is by id: the tooltip references an EXTERNAL trigger via the
+ * `for` attribute (`<tulpar-tooltip for="saveBtn">`) and self-wires listeners +
+ * `aria-describedby` onto it. The tooltip never wraps its trigger. The host owns
+ * no layout box (`display:none`); only the surface (rendered in the shadow root)
+ * is shown. When opened the surface is promoted to the top layer via the native
+ * Popover API (when supported) or by reading rects + applying fixed coordinates
+ * in the shadow root. WCAG 1.4.13 (hoverable / dismissible / persistent) is
+ * honored.
  */
 export class TulparTooltip extends LitElement {
   static override styles = tooltipStyles;
@@ -95,8 +99,14 @@ export class TulparTooltip extends LitElement {
   @property({ type: Boolean, attribute: "default-open" })
   defaultOpen?: boolean;
 
+  /**
+   * Id of the EXTERNAL trigger element this tooltip describes. Resolved against
+   * the host's `ownerDocument`; the tooltip wires hover/focus/Esc listeners and
+   * `aria-describedby` onto the resolved element. Reflected so the attribute and
+   * property stay in sync.
+   */
   @property({ type: String, reflect: true })
-  anchor?: string;
+  for?: string;
 
   /**
    * Internal open flag, mirrored to `[data-open]` on the surface. Deliberately
@@ -120,6 +130,11 @@ export class TulparTooltip extends LitElement {
 
   /** The currently-resolved anchor element (trigger), if any. */
   protected _anchorEl: HTMLElement | null = null;
+
+  /** Test-only accessor for the resolved trigger element. */
+  get _anchorElForTest(): HTMLElement | null {
+    return this._anchorEl;
+  }
 
   /** Unique key for the shared delay controller (per instance). */
   private readonly _delayKey = `tooltip-${(tooltipKeySeq += 1)}`;
@@ -156,6 +171,9 @@ export class TulparTooltip extends LitElement {
   }
 
   override updated(changed: Map<string, unknown>): void {
+    // Re-wire when the trigger reference changes (detach the old trigger's
+    // listeners/aria first; `_wireTrigger` handles that via the diff).
+    if (changed.has("for")) this._wireTrigger();
     // Ignore the `open` change we wrote back ourselves during an internal
     // open/close transition — only react to externally-driven changes.
     if (changed.has("open") && !this._internalOpenChange) {
@@ -200,15 +218,20 @@ export class TulparTooltip extends LitElement {
     const next = resolveAnchor(this);
     if (next === this._anchorEl) {
       if (this._anchorEl && this._surface) linkDescribedBy(this._anchorEl, this._surface);
+      // Dev-warn the unresolved-`for` case even when nothing changed (e.g. the
+      // trigger simply never existed) so a typo'd id is still surfaced once.
+      else warnIfUnresolvedFor(this, next);
       return;
     }
     this._detachTriggerListeners();
     if (this._anchorEl && this._surface) unlinkDescribedBy(this._anchorEl, this._surface);
     this._anchorEl = next;
-    warnIfBadTrigger(next);
     if (next) {
+      warnIfBadTrigger(next);
       this._attachTriggerListeners(next);
       if (this._surface) linkDescribedBy(next, this._surface);
+    } else {
+      warnIfUnresolvedFor(this, next);
     }
   };
 
@@ -568,11 +591,10 @@ export class TulparTooltip extends LitElement {
 
   override render() {
     return html`
-      <slot name="trigger" @slotchange=${this._wireTrigger}></slot>
       <div class="surface" role="tooltip" data-placement=${this.placement} part="surface">
         <span class="content">
           ${this.text ?? ""}
-          <slot name="content" @slotchange=${this._onContentSlotChange}></slot>
+          <slot @slotchange=${this._onContentSlotChange}></slot>
         </span>
         ${this.arrow ? html`<span class="arrow" part="arrow" aria-hidden="true"></span>` : ""}
         <span class="bridge" aria-hidden="true"></span>

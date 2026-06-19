@@ -18,6 +18,10 @@ import { css } from "lit";
  */
 export const tooltipStyles = css`
   :host {
+    /* The host owns no layout box in normal flow: the trigger is an external
+       element referenced by the for attribute, and the surface is
+       position:fixed (promoted to the top layer when opened). display:contents
+       keeps the host out of layout while still rendering the shadow surface. */
     display: contents;
 
     /* Motion knobs (token-fed, with conservative fallbacks). */
