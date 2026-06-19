@@ -715,6 +715,38 @@ describe("<tulpar-toast> timer ring — reactive properties", () => {
   });
 });
 
+// ─── Group-count badge (fix #1) ──────────────────────────────────────────────
+
+describe("<tulpar-toast> group-count badge", () => {
+  it("count defaults to 1 and no .toast-count badge is rendered", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+    expect(el.count).to.equal(1);
+    const badge = shadow(el).querySelector(".toast-count");
+    expect(badge, ".toast-count must NOT be present when count=1").to.be.null;
+  });
+
+  it("count=2 renders a .toast-count badge with ×2 text", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T" .count=${2}></tulpar-toast>`);
+    await el.updateComplete;
+    const badge = shadow(el).querySelector(".toast-count");
+    expect(badge, ".toast-count must be present when count=2").to.exist;
+    expect(badge!.textContent?.trim()).to.include("2");
+  });
+
+  it("badge is absent (count=1) then appears when count changes to 3", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+    expect(shadow(el).querySelector(".toast-count")).to.be.null;
+
+    el.count = 3;
+    await el.updateComplete;
+    const badge = shadow(el).querySelector(".toast-count");
+    expect(badge, ".toast-count must appear when count becomes 3").to.exist;
+    expect(badge!.textContent?.trim()).to.include("3");
+  });
+});
+
 // ─── Styles ──────────────────────────────────────────────────────────────────
 
 describe("<tulpar-toast> styles", () => {

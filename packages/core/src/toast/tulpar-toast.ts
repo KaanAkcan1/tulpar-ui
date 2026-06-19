@@ -445,6 +445,9 @@ export class TulparToast extends LitElement {
           <!-- Title: slot wins over prop -->
           <div class="toast-title" part="title">
             <slot name="title">${this.heading ?? ""}</slot>
+            ${this.count > 1
+              ? html`<span class="toast-count" aria-label="×${this.count} notifications">×${this.count}</span>`
+              : nothing}
           </div>
 
           <!-- Description: always-rendered wrapper; visibility controlled by

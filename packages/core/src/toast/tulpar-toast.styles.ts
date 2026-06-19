@@ -171,6 +171,40 @@ export const toastStyles = css`
     opacity: 1;
   }
 
+  /* ── Group-count badge (×N) ──────────────────────────────────────────── */
+  /*
+   * Shown inline in the title row when count > 1.
+   * Rendered as a small pill via Lit template (not ::after pseudo-element)
+   * so it participates in normal layout without CSS content tricks.
+   * The element is only rendered when count > 1 (attribute pattern: no requestUpdate loop).
+   */
+  .toast-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 18px;
+    padding: 0 5px;
+    margin-left: 6px;
+    border-radius: 9px;
+    background: var(--_toast-accent);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  /* In high-contrast mode the badge reads as on-surface text on a highlight bg */
+  @media (forced-colors: active) {
+    .toast-count {
+      background: Highlight;
+      color: HighlightText;
+    }
+  }
+
   /* ── Actions ──────────────────────────────────────────────────────────── */
   .toast-actions {
     display: flex;

@@ -711,6 +711,148 @@ describe("toast.setDefaults()", () => {
   });
 });
 
+// ─── Group-count badge (fix #1) ──────────────────────────────────────────────
+
+describe("message() group-count badge", () => {
+  it("grouped message shows .toast-count element in shadow DOM after a duplicate", async () => {
+    message("Saved", { duration: 0 });
+    await nextFrame();
+    message("Saved", { duration: 0 }); // duplicate → group merge
+    await nextFrame();
+
+    const el = toastsInLocation("top-center")[0] as TulparToast;
+    // count property must be > 1
+    expect(el.count).to.be.greaterThan(1);
+    // data-count attribute must be set on host
+    expect(el.hasAttribute("data-count")).to.be.true;
+    expect(el.getAttribute("data-count")).to.equal(String(el.count));
+    // .toast-count element must exist in shadow DOM and show the number
+    const badge = el.shadowRoot!.querySelector(".toast-count");
+    expect(badge, ".toast-count badge must be in shadow DOM after grouping").to.exist;
+    expect(badge!.textContent?.trim()).to.include(String(el.count));
+  });
+
+  it("initial message (count=1) has NO data-count attribute", async () => {
+    message("Saved", { duration: 0 });
+    await nextFrame();
+    const el = toastsInLocation("top-center")[0] as TulparToast;
+    expect(el.count).to.equal(1);
+    expect(el.hasAttribute("data-count")).to.be.false;
+  });
+
+  it("triple duplicate increments count to 3 and badge shows ×3", async () => {
+    message("Retry", { duration: 0 });
+    await nextFrame();
+    message("Retry", { duration: 0 });
+    await nextFrame();
+    message("Retry", { duration: 0 });
+    await nextFrame();
+
+    const el = toastsInLocation("top-center")[0] as TulparToast;
+    expect(el.count).to.equal(3);
+    const badge = el.shadowRoot!.querySelector(".toast-count");
+    expect(badge).to.exist;
+    expect(badge!.textContent?.trim()).to.include("3");
+  });
+});
+
+// ─── toast.update() restarts timer on duration change (fix #2) ───────────────
+
+describe("toast.update() — timer restart on duration change", () => {
+  it("updating to a short duration causes dismissal on the new schedule", async () => {
+    // Start with a long-lived toast (5000ms — won't expire in this test).
+    const id = toast("Update timer test", { duration: 5000 });
+    await nextFrame();
+    expect(toastsInLocation("bottom-right").length).to.equal(1);
+
+    // Update to a very short duration — should dismiss within ~100ms.
+    toast.update(id, { duration: 60 });
+    await nextFrame();
+
+    // After 120ms the new timer should have fired.
+    await wait(120);
+    expect(toastsInLocation("bottom-right").length).to.equal(0);
+  });
+
+  it("updating to duration=0 makes the toast persistent (no auto-dismiss)", async () => {
+    const id = toast("Become persistent", { duration: 80 });
+    await nextFrame();
+
+    // Switch to persistent before the original 80ms timer fires.
+    toast.update(id, { duration: 0 });
+    await nextFrame();
+
+    // Wait longer than the original duration.
+    await wait(150);
+    // Toast must still be visible.
+    expect(toastsInLocation("bottom-right").length).to.equal(1);
+    toast.dismiss(id);
+  });
+});
+
+// ─── dismiss-on-action (fix #4) ──────────────────────────────────────────────
+
+describe("toast action — dismiss with reason 'action'", () => {
+  it("clicking an action button dismisses the toast with onDismiss reason='action'", async () => {
+    let capturedReason: string | undefined;
+    toast("File deleted", {
+      duration: 0,
+      actions: [{ label: "Undo", onClick: () => {} }],
+      onDismiss: (r) => { capturedReason = r; },
+    });
+    await nextFrame();
+    expect(toastsInLocation("bottom-right").length).to.equal(1);
+
+    const el = toastsInLocation("bottom-right")[0];
+    // Dispatch the tulpar-action event as the element would after an action click.
+    el.dispatchEvent(
+      new CustomEvent("tulpar-action", {
+        detail: { label: "Undo" },
+        bubbles: true,
+        composed: true,
+        cancelable: false,
+      })
+    );
+    await nextFrame();
+
+    expect(toastsInLocation("bottom-right").length).to.equal(0);
+    expect(capturedReason).to.equal("action");
+  });
+
+  it("the action's own onClick callback runs before dismiss", async () => {
+    const log: string[] = [];
+    const action = {
+      label: "Undo",
+      onClick: () => { log.push("action"); },
+    };
+    let dismissReason: string | undefined;
+    toast("Deleted", {
+      duration: 0,
+      actions: [action],
+      onDismiss: (r) => { log.push("dismiss"); dismissReason = r; },
+    });
+    await nextFrame();
+
+    const el = toastsInLocation("bottom-right")[0];
+    // Simulate the element's _onActionClick: first onClick fires, then tulpar-action.
+    action.onClick(); // element calls this first
+    el.dispatchEvent(
+      new CustomEvent("tulpar-action", {
+        detail: { label: "Undo" },
+        bubbles: true,
+        composed: true,
+        cancelable: false,
+      })
+    );
+    await nextFrame();
+
+    // onClick must have been logged before dismiss
+    expect(log[0]).to.equal("action");
+    expect(log[1]).to.equal("dismiss");
+    expect(dismissReason).to.equal("action");
+  });
+});
+
 // ─── Reset / isolation ────────────────────────────────────────────────────────
 
 describe("__resetToastServiceForTest", () => {

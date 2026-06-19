@@ -261,21 +261,22 @@ function _mountToast(
   });
 
   // ── Grouped? → update existing element ─────────────────────────────────────
-  if (enqueuedId !== opts.id && _entries.has(enqueuedId)) {
-    // The queue merged into existing; bump count on the live element
+  // Explicit grouping check: if the returned id is already tracked in _entries,
+  // the queue merged the request into an existing record (group merge). We bump
+  // the count on the live element rather than mounting a new one.
+  // This is cleaner than relying on `enqueuedId !== opts.id` (which was fragile
+  // when opts.id was undefined or coincidentally matched).
+  if (_entries.has(enqueuedId)) {
     const existing = _entries.get(enqueuedId)!;
-    (existing.element as TulparToast & { count: number }).count++;
-    // update the data-count attr imperatively (no requestUpdate loop)
-    existing.element.setAttribute("data-count", String((existing.element as TulparToast & { count: number }).count));
+    existing.element.count++;
+    // Set or clear data-count attribute imperatively (no requestUpdate loop).
+    // data-count is only present when count > 1 so CSS / tests can gate on it cleanly.
+    if (existing.element.count > 1) {
+      existing.element.setAttribute("data-count", String(existing.element.count));
+    } else {
+      existing.element.removeAttribute("data-count");
+    }
     return enqueuedId;
-  }
-
-  // Also handle the case where caller supplied an id that already exists (dedupe)
-  if (opts.id && _entries.has(opts.id)) {
-    const existing = _entries.get(opts.id)!;
-    (existing.element as TulparToast & { count: number }).count++;
-    existing.element.setAttribute("data-count", String((existing.element as TulparToast & { count: number }).count));
-    return opts.id;
   }
 
   const id = enqueuedId;
@@ -334,6 +335,16 @@ function _mountToast(
     const ce = e as CustomEvent<{ reason: string }>;
     const reason = (ce.detail?.reason ?? "user") as DismissReason;
     _doRemove(id, reason);
+  });
+
+  // ── tulpar-action event → dismiss with reason 'action' ────────────────────────
+  // After an action button's own onClick runs, <tulpar-toast> fires 'tulpar-action'.
+  // Default UX: actions close the toast (Undo/Retry pattern). We dismiss with
+  // reason='action' so callers can distinguish it from manual/timeout/programmatic.
+  // The toast element's own _onActionClick already calls action.onClick() first,
+  // so the user's callback runs before we remove the element.
+  el.addEventListener("tulpar-action", () => {
+    _doRemove(id, "action");
   });
 
   // ── Register entry ───────────────────────────────────────────────────────────
@@ -414,7 +425,6 @@ _toast.update = (id: string, partialOpts: Partial<ToastOptions>): void => {
   if (partialOpts.highContrast !== undefined) el.highContrast = partialOpts.highContrast;
   if (partialOpts.closable !== undefined) el.closable = partialOpts.closable;
   if (partialOpts.timer !== undefined) el.timer = partialOpts.timer;
-  if (partialOpts.duration !== undefined) el.duration = partialOpts.duration;
   if (partialOpts.timerStyle !== undefined) el.timerStyle = partialOpts.timerStyle;
   if (partialOpts.icon === false) {
     el.iconProp = false;
@@ -422,6 +432,32 @@ _toast.update = (id: string, partialOpts: Partial<ToastOptions>): void => {
     el.icon = partialOpts.icon;
   }
   if (partialOpts.actions !== undefined) el.actions = partialOpts.actions;
+
+  // ── Restart timer when duration changes ──────────────────────────────────────
+  // When a new duration is supplied and the toast is not persistent, we clear the
+  // existing timer and schedule a fresh one so the new duration takes effect
+  // immediately (instead of the old countdown continuing to run on the old duration).
+  if (partialOpts.duration !== undefined) {
+    el.duration = partialOpts.duration;
+    const newDuration = partialOpts.duration;
+    const isPersistent = newDuration <= 0 || el.timer === false;
+
+    // Cancel the old timer unconditionally.
+    entry.timer?.clear();
+    entry.timer = null;
+
+    if (!isPersistent) {
+      // Wire the new timer into the entry so pause/resume still works.
+      const newTimer = new ToastTimer({
+        duration: newDuration,
+        onAutoClose: (partialOpts as ToastOptions).onAutoClose,
+        onExpire: () => {
+          _doRemove(id, "timeout");
+        },
+      });
+      entry.timer = newTimer;
+    }
+  }
 };
 
 /**
