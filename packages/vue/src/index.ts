@@ -73,3 +73,7 @@ export type {
   ToastLocation,
   ToastPromiseMsgs,
 } from "./toast/index";
+
+// Declarative / rich SFC (Task 6.2).
+export { default as TulparToast } from "./toast/TulparToast.vue";
+export type { ToastAction, ToneValue } from "@tulpar-ui/core/toast";
