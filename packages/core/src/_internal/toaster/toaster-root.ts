@@ -114,6 +114,30 @@ function ensureKeydownListener(): void {
 // ─── public API ──────────────────────────────────────────────────────────────
 
 /**
+ * Restore focus to the element that had focus before the F6 jump into the
+ * toaster region, then clear the stored reference.
+ *
+ * Called by the toast service's `_doRemove` path when the dismissed toast
+ * contained focus and no other toast remains in the same location to receive it.
+ * This coordinates with the `previousFocus` WeakRef that the F6 handler stores.
+ *
+ * No-op (and does not throw) when:
+ * - `previousFocus` is null (no F6 jump occurred before dismiss)
+ * - The referenced element has been GC'd or disconnected
+ *
+ * @returns `true` if focus was successfully restored, `false` otherwise.
+ */
+export function restorePreviousFocus(): boolean {
+  const prev = previousFocus?.deref();
+  previousFocus = null; // always clear to avoid stale re-use
+  if (prev && prev.isConnected) {
+    prev.focus();
+    return true;
+  }
+  return false;
+}
+
+/**
  * Lazily create (or return) the single toaster portal root. The root is appended
  * to `document.body` with `role="region"` and a label, and kept in sync with the
  * document theme via a MutationObserver on `documentElement`.

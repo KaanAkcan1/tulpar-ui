@@ -25,7 +25,7 @@
 
 import { ToasterQueue } from "../_internal/toaster/queue";
 import type { Location } from "../_internal/toaster/queue";
-import { getLocationContainer, __resetToasterRootForTest } from "../_internal/toaster/toaster-root";
+import { getLocationContainer, restorePreviousFocus, __resetToasterRootForTest } from "../_internal/toaster/toaster-root";
 import { ToastTimer } from "../_internal/toaster/timer-controller";
 import { collapsedLayout, expandedLayout } from "../_internal/toaster/stacking";
 import { TulparToast } from "./tulpar-toast";
@@ -194,16 +194,44 @@ function _applyStacking(location: Location): void {
 
 /**
  * Perform the full dismiss lifecycle for a toast entry:
- * 1. Remove from queue
- * 2. Clear timer
- * 3. Remove element from DOM
- * 4. Re-apply stacking for the location
- * 5. Fire onDismiss callback
- * 6. Remove from _entries
+ * 1. Detect whether focus is currently inside the dismissed toast
+ * 2. Remove from queue
+ * 3. Clear timer
+ * 4. Remove element from DOM
+ * 5. Re-apply stacking for the location
+ * 6. Promote queued toasts for the location
+ * 7. Move focus to the next visible toast (if focus was inside the dismissed one)
+ *    or restore the pre-region focus via toaster-root's WeakRef helper when none remain.
+ *    If the toast did NOT contain focus, do NOT move focus (no steal).
+ * 8. Fire onDismiss callback
+ * 9. Remove from _entries
+ *
+ * FOCUS CONTRACT (spec §5.3 / Task 4.3):
+ * - Focused toast dismissed → focus goes to the NEXT toast in the same location.
+ * - Focused toast dismissed (last in location) → restorePreviousFocus() is called;
+ *   if no previous focus was captured (no F6 jump), focus falls to body naturally.
+ * - Non-focused toast dismissed → no focus movement (no steal).
+ *
+ * MANUAL SR PASS REQUIRED (spec §14): Verify with NVDA+Chrome and VoiceOver+Safari
+ * that dismissing the focused toast announces the new focused toast (or returns to
+ * the correct prior context). Automated tests cover the DOM/focus-element contract
+ * but cannot prove AT announcement.
  */
 function _doRemove(id: string, reason: DismissReason): void {
   const entry = _entries.get(id);
   if (!entry) return;
+
+  // ── Capture focus state BEFORE DOM removal ──────────────────────────────────
+  // Check if the dismissed element or any of its descendants currently has focus.
+  // We check document.activeElement and use `contains` to handle shadow-hosted
+  // focus targets (close button, action buttons) — composedPath would also work
+  // but `contains` on the host is simpler and reliable for host-owned content.
+  const active = document.activeElement as HTMLElement | null;
+  const focusedToastEl = entry.element;
+  const hadFocus =
+    active !== null &&
+    active !== document.body &&
+    (active === focusedToastEl || focusedToastEl.contains(active));
 
   _queue.dismiss(id);
   entry.timer?.clear();
@@ -217,6 +245,22 @@ function _doRemove(id: string, reason: DismissReason): void {
   // Check if a queued toast should now be visible (queue promotion already done by _queue.dismiss)
   // — promote any queued entries not yet in DOM
   _promoteQueued(entry.location);
+
+  // ── Focus management (only when the dismissed toast had focus) ──────────────
+  if (hadFocus) {
+    // Find the next visible toast in the same location.
+    const remaining = _queue.visible(entry.location);
+    const nextEntry = remaining.length > 0 ? _entries.get(remaining[0].id) : null;
+
+    if (nextEntry?.element.isConnected) {
+      // Move focus to the next toast's host (it has tabindex="-1").
+      nextEntry.element.focus();
+    } else {
+      // No remaining toasts — try to restore the focus that was held before
+      // the F6 jump into the region. Falls back gracefully when not captured.
+      restorePreviousFocus();
+    }
+  }
 
   _entries.delete(id);
 

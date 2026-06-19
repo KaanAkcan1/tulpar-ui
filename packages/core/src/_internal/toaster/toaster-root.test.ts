@@ -2,6 +2,7 @@ import { expect } from "@open-wc/testing";
 import {
   getToasterRoot,
   getLocationContainer,
+  restorePreviousFocus,
   __resetToasterRootForTest,
 } from "./toaster-root";
 import type { Location } from "./queue";
@@ -171,6 +172,62 @@ describe("toaster-root", () => {
       // focusCount is 1 if the root actually received focus (it may be 0 in headless
       // if focus() is a no-op, which is fine — we just verify it doesn't throw).
       expect(focusCount).to.be.lessThan(2);
+    });
+  });
+
+  // ─── restorePreviousFocus (Task 4.3) ────────────────────────────────────────
+
+  describe("restorePreviousFocus", () => {
+    it("restores focus to the element captured by F6", async () => {
+      // Ensure the F6 listener is installed by initialising the root first.
+      getToasterRoot();
+
+      const btn = document.createElement("button");
+      btn.textContent = "Before region";
+      document.body.appendChild(btn);
+      btn.focus();
+      expect(document.activeElement).to.equal(btn);
+
+      // F6 captures previousFocus and moves focus to the region.
+      document.dispatchEvent(new KeyboardEvent("keydown", { key: "F6", bubbles: true }));
+      // After F6, focus is on the region (not btn).
+      expect(document.activeElement).to.not.equal(btn);
+
+      // restorePreviousFocus should move it back to btn.
+      restorePreviousFocus();
+      expect(document.activeElement).to.equal(btn);
+
+      btn.remove();
+    });
+
+    it("is a no-op (does not throw) when no previous focus was captured", () => {
+      // Ensure previousFocus is null (reset clears it); no getToasterRoot needed.
+      expect(() => restorePreviousFocus()).to.not.throw();
+    });
+
+    it("clears the previousFocus WeakRef after restoring (subsequent call is no-op)", async () => {
+      // Ensure the F6 listener is installed.
+      getToasterRoot();
+
+      const btn = document.createElement("button");
+      document.body.appendChild(btn);
+      btn.focus();
+
+      document.dispatchEvent(new KeyboardEvent("keydown", { key: "F6", bubbles: true }));
+      restorePreviousFocus(); // first call — restores
+      expect(document.activeElement).to.equal(btn);
+
+      // Move focus somewhere else.
+      const input = document.createElement("input");
+      document.body.appendChild(input);
+      input.focus();
+
+      // Second call must not restore btn (previousFocus is cleared).
+      restorePreviousFocus();
+      expect(document.activeElement).to.not.equal(btn); // still on input
+
+      btn.remove();
+      input.remove();
     });
   });
 

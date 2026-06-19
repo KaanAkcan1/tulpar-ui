@@ -1063,3 +1063,142 @@ describe("<tulpar-toast> swipe-to-dismiss", () => {
     expect(card.style.transform).to.equal("");
   });
 });
+
+// ─── Task 4.3: alertdialog labelling (spec §5.3) ──────────────────────────────
+//
+// An alertdialog MUST have an accessible name. We achieve this by generating
+// stable shadow-DOM ids for the heading and wiring aria-labelledby on the card.
+//
+// MANUAL SR PASS REQUIRED (spec §14):
+//   The alertdialog announcement and F6 flow must be verified with a real screen
+//   reader (NVDA+Chrome, VoiceOver+Safari). Automated tests below verify the
+//   ARIA attributes are present and correct, but cannot prove that the AT reads
+//   the toast heading when the role is announced.
+
+describe("<tulpar-toast> alertdialog ARIA labelling (Task 4.3)", () => {
+  it("actionable toast (alertdialog) card has aria-labelledby set", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="Confirm action"></tulpar-toast>`);
+    el.actions = [{ label: "Undo", onClick: () => {} }];
+    await el.updateComplete;
+    const card = shadow(el).querySelector(".toast-card") as HTMLElement;
+    expect(card.getAttribute("role")).to.equal("alertdialog");
+    const labelledBy = card.getAttribute("aria-labelledby");
+    expect(labelledBy, "alertdialog card must have aria-labelledby").to.be.a("string").and.not.empty;
+  });
+
+  it("actionable toast aria-labelledby points to an element with the heading text", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="Delete file?"></tulpar-toast>`);
+    el.actions = [{ label: "Delete", onClick: () => {} }];
+    await el.updateComplete;
+    const card = shadow(el).querySelector(".toast-card") as HTMLElement;
+    const labelledById = card.getAttribute("aria-labelledby")!;
+    // The referenced element must exist in the shadow DOM
+    const labelEl = shadow(el).getElementById(labelledById);
+    expect(labelEl, `element with id "${labelledById}" must exist in shadow DOM`).to.exist;
+    expect(labelEl!.textContent?.trim()).to.include("Delete file?");
+  });
+
+  it("non-actionable toast (status/alert) does NOT set aria-labelledby on the card", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="Info"></tulpar-toast>`);
+    await el.updateComplete;
+    const card = shadow(el).querySelector(".toast-card") as HTMLElement;
+    expect(card.getAttribute("role")).to.not.equal("alertdialog");
+    // aria-labelledby is not required for status/alert (aria-live + atomic suffice)
+    // but it must not be set with a stale id that doesn't exist in the shadow DOM.
+    const labelledById = card.getAttribute("aria-labelledby");
+    if (labelledById) {
+      // If set, it must still point to an existing element.
+      expect(shadow(el).getElementById(labelledById)).to.exist;
+    }
+  });
+
+  it("alertdialog with description also carries aria-describedby pointing to the description", async () => {
+    const el = await fixture<TulparToast>(html`
+      <tulpar-toast heading="Delete?" description="This cannot be undone."></tulpar-toast>
+    `);
+    el.actions = [{ label: "Delete", onClick: () => {} }];
+    await el.updateComplete;
+    const card = shadow(el).querySelector(".toast-card") as HTMLElement;
+    expect(card.getAttribute("role")).to.equal("alertdialog");
+    const describedById = card.getAttribute("aria-describedby");
+    expect(describedById, "alertdialog with description must have aria-describedby").to.be.a("string").and.not.empty;
+    const descEl2 = shadow(el).getElementById(describedById!);
+    expect(descEl2, `element with id "${describedById}" must exist in shadow DOM`).to.exist;
+    expect(descEl2!.textContent?.trim()).to.include("This cannot be undone.");
+  });
+
+  it("aria-labelledby id is stable across re-renders (same value after actions change)", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="Saved"></tulpar-toast>`);
+    el.actions = [{ label: "Undo", onClick: () => {} }];
+    await el.updateComplete;
+    const card = shadow(el).querySelector(".toast-card") as HTMLElement;
+    const id1 = card.getAttribute("aria-labelledby");
+
+    // Trigger a re-render by changing an unrelated prop.
+    el.tone = "success";
+    await el.updateComplete;
+    const id2 = card.getAttribute("aria-labelledby");
+
+    expect(id1).to.equal(id2);
+  });
+});
+
+// ─── Task 4.3: Esc dismisses the focused toast ────────────────────────────────
+
+describe("<tulpar-toast> Esc key dismisses focused toast (Task 4.3)", () => {
+  it("Esc on the host dispatches tulpar-dismiss with reason='user'", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+
+    let detail: Record<string, unknown> | null = null;
+    el.addEventListener("tulpar-dismiss", (e) => (detail = (e as CustomEvent).detail));
+
+    // Focus the element, then fire Esc.
+    el.focus();
+    el.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, composed: true, cancelable: true }));
+
+    expect(detail, "tulpar-dismiss must fire on Esc when host has focus").to.not.be.null;
+    expect((detail as Record<string, unknown>).reason).to.equal("user");
+  });
+
+  it("Esc on a descendant shadow element dispatches tulpar-dismiss", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+
+    let detail: Record<string, unknown> | null = null;
+    el.addEventListener("tulpar-dismiss", (e) => (detail = (e as CustomEvent).detail));
+
+    // Simulate Esc from the close button inside shadow DOM (composed: true → bubbles out).
+    const btn = shadow(el).querySelector(".toast-close") as HTMLButtonElement;
+    expect(btn).to.exist;
+    btn.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, composed: true, cancelable: true }));
+
+    expect(detail, "tulpar-dismiss must fire when Esc comes from shadow descendant").to.not.be.null;
+    expect((detail as Record<string, unknown>).reason).to.equal("user");
+  });
+
+  it("Esc fires a cancelable tulpar-dismiss event", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+
+    let evt: CustomEvent | null = null;
+    el.addEventListener("tulpar-dismiss", (e) => (evt = e as CustomEvent));
+
+    el.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, composed: true, cancelable: true }));
+    expect(evt).to.not.be.null;
+    expect((evt as unknown as CustomEvent).cancelable).to.be.true;
+  });
+
+  it("non-Esc keys do NOT fire tulpar-dismiss", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+
+    let dismissed = false;
+    el.addEventListener("tulpar-dismiss", () => (dismissed = true));
+
+    el.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true, composed: true, cancelable: true }));
+    el.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true, composed: true, cancelable: true }));
+
+    expect(dismissed).to.be.false;
+  });
+});

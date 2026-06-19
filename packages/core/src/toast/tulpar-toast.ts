@@ -42,6 +42,13 @@ type IconContent =
   | { kind: "svg"; markup: string }
   | { kind: "text"; value: string };
 
+// ─── ID generator ────────────────────────────────────────────────────────────
+
+let _toastIdSeq = 0;
+function nextToastId(): string {
+  return `tulpar-toast-${++_toastIdSeq}`;
+}
+
 // ─── Element ──────────────────────────────────────────────────────────────────
 
 /**
@@ -91,6 +98,19 @@ type IconContent =
  */
 export class TulparToast extends LitElement {
   static override styles = toastStyles;
+
+  // ── Stable per-instance IDs for ARIA labelling ────────────────────────────
+  //
+  // These IDs live in the shadow DOM so they are scoped — no global collision.
+  // Generated once per instance in the constructor and never changed, making
+  // aria-labelledby / aria-describedby stable across re-renders.
+  //
+  // MANUAL SCREEN-READER PASS REQUIRED (spec §14):
+  //   The alertdialog role + aria-labelledby combo must be verified with a real
+  //   AT (NVDA+Chrome, VoiceOver+Safari). Automated tests confirm the ARIA
+  //   attributes are wired correctly but cannot prove the AT announcement.
+  private readonly _headingId: string = nextToastId() + "-heading";
+  private readonly _descId: string = nextToastId() + "-desc";
 
   // ── Tone ──────────────────────────────────────────────────────────────────
 
@@ -237,6 +257,16 @@ export class TulparToast extends LitElement {
     if (!this.hasAttribute("tabindex")) {
       this.setAttribute("tabindex", "-1");
     }
+    // Esc handler: when this toast or any of its shadow descendants has focus
+    // and Esc is pressed, dispatch a cancelable tulpar-dismiss event with
+    // reason:'user'. The host listens at the shadow root so composed keyboard
+    // events from shadow children bubble up here first.
+    //
+    // We listen on the host element itself (not document) so the handler only
+    // fires when focus is inside *this* toast — zero collision risk with other
+    // Esc consumers (modals, dropdowns) because those handle Esc at higher
+    // levels and stop propagation there if needed.
+    this.addEventListener("keydown", this._onKeydown);
   }
 
   override updated(changed: Map<string, unknown>): void {
@@ -397,6 +427,30 @@ export class TulparToast extends LitElement {
     );
   }
 
+  /**
+   * Keyboard handler bound on the host so it fires for the host itself and for
+   * composed keydown events bubbling up from shadow descendants (close button,
+   * action buttons).
+   *
+   * Esc only: dismisses the toast with reason:'user'. No other keys are handled.
+   * We do NOT call stopPropagation() — we let the event continue to bubble so
+   * outer Esc handlers (e.g. modal backdrop) can also react if they need to.
+   *
+   * MANUAL SR PASS (spec §14): confirm that pressing Esc while screen-reader
+   * focus is on the toast's close button or action announces the dismissal.
+   */
+  private _onKeydown = (e: KeyboardEvent): void => {
+    if (e.key !== "Escape") return;
+    this.dispatchEvent(
+      new CustomEvent("tulpar-dismiss", {
+        detail: { reason: "user" },
+        bubbles: true,
+        composed: true,
+        cancelable: true,
+      }),
+    );
+  };
+
   // ─── ARIA helpers ─────────────────────────────────────────────────────────
 
   /** ARIA role derived from actions and tone (spec §5.3). */
@@ -429,6 +483,16 @@ export class TulparToast extends LitElement {
 
   override render(): TemplateResult {
     const showIcon = this.icon !== "" && this.iconProp !== false;
+    const isAlertDialog = this._ariaRole() === "alertdialog";
+    // alertdialog MUST have an accessible name (spec §5.3).
+    // We wire aria-labelledby to the heading element's id so the AT reads the
+    // toast heading when announcing the alertdialog role.
+    // aria-describedby is additionally wired to the description element (when
+    // description content is present) so the AT reads the body text.
+    // For status/alert roles these attributes are omitted — aria-live + aria-atomic
+    // already deliver the content to the AT without an explicit labelling contract.
+    const ariaLabelledBy = isAlertDialog ? this._headingId : nothing;
+    const ariaDescribedBy = isAlertDialog && this.description ? this._descId : nothing;
 
     return html`
       <div
@@ -437,13 +501,17 @@ export class TulparToast extends LitElement {
         role=${this._ariaRole()}
         aria-live=${this._ariaLive()}
         aria-atomic="true"
+        aria-labelledby=${ariaLabelledBy}
+        aria-describedby=${ariaDescribedBy}
       >
         ${this._renderRing()}
         ${showIcon ? this._renderIcon() : nothing}
 
         <div class="toast-body" part="body">
-          <!-- Title: slot wins over prop -->
-          <div class="toast-title" part="title">
+          <!-- Title: slot wins over prop.
+               id is always present so aria-labelledby can reference it even when
+               the card is not yet an alertdialog (keeps the id stable). -->
+          <div class="toast-title" id=${this._headingId} part="title">
             <slot name="title">${this.heading ?? ""}</slot>
             ${this.count > 1
               ? html`<span class="toast-count" aria-label="×${this.count} notifications">×${this.count}</span>`
@@ -453,8 +521,9 @@ export class TulparToast extends LitElement {
           <!-- Description: always-rendered wrapper; visibility controlled by
                [data-has-description] attribute toggled from _onDescSlotChange.
                This avoids the slotchange → requestUpdate → slot-removal-slotchange
-               infinite loop that results from replacing the <slot> element itself. -->
-          <div class="toast-description" part="description">
+               infinite loop that results from replacing the <slot> element itself.
+               id is always present so aria-describedby can reference it. -->
+          <div class="toast-description" id=${this._descId} part="description">
             <slot name="description" @slotchange=${this._onDescSlotChange}>${this.description ?? ""}</slot>
           </div>
 
