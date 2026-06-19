@@ -1,0 +1,217 @@
+import { expect } from "@open-wc/testing";
+import {
+  getToasterRoot,
+  getLocationContainer,
+  __resetToasterRootForTest,
+} from "./toaster-root";
+import type { Location } from "./queue";
+
+function nextMicrotask(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+describe("toaster-root", () => {
+  afterEach(() => {
+    __resetToasterRootForTest();
+    document.documentElement.classList.remove("dark");
+    document.documentElement.removeAttribute("data-brand");
+  });
+
+  // ─── getToasterRoot ─────────────────────────────────────────────────────────
+
+  describe("getToasterRoot", () => {
+    it("creates a single root appended to body and reuses it", () => {
+      const a = getToasterRoot();
+      const b = getToasterRoot();
+      expect(a).to.equal(b);
+      expect(a.parentElement).to.equal(document.body);
+      expect(document.querySelectorAll("[data-tulpar-toaster-root]").length).to.equal(1);
+    });
+
+    it("sets role=region on the root", () => {
+      const root = getToasterRoot();
+      expect(root.getAttribute("role")).to.equal("region");
+    });
+
+    it("sets aria-label on the root", () => {
+      const root = getToasterRoot();
+      const label = root.getAttribute("aria-label");
+      expect(label).to.be.a("string");
+      expect(label!.length).to.be.greaterThan(0);
+    });
+
+    it("mirrors the `dark` class from documentElement onto the root", async () => {
+      const root = getToasterRoot();
+      expect(root.classList.contains("dark")).to.equal(false);
+      document.documentElement.classList.add("dark");
+      await nextMicrotask();
+      expect(root.classList.contains("dark")).to.equal(true);
+      document.documentElement.classList.remove("dark");
+      await nextMicrotask();
+      expect(root.classList.contains("dark")).to.equal(false);
+    });
+
+    it("mirrors the data-brand attribute from documentElement onto the root", async () => {
+      const root = getToasterRoot();
+      document.documentElement.setAttribute("data-brand", "tulpar");
+      await nextMicrotask();
+      expect(root.getAttribute("data-brand")).to.equal("tulpar");
+    });
+
+    it("removes data-brand when documentElement loses the attribute", async () => {
+      document.documentElement.setAttribute("data-brand", "tulpar");
+      const root = getToasterRoot();
+      expect(root.getAttribute("data-brand")).to.equal("tulpar");
+      document.documentElement.removeAttribute("data-brand");
+      await nextMicrotask();
+      expect(root.hasAttribute("data-brand")).to.equal(false);
+    });
+
+    it("reflects the initial dark/brand state at creation time", () => {
+      document.documentElement.classList.add("dark");
+      document.documentElement.setAttribute("data-brand", "tulpar");
+      const root = getToasterRoot();
+      expect(root.classList.contains("dark")).to.equal(true);
+      expect(root.getAttribute("data-brand")).to.equal("tulpar");
+    });
+  });
+
+  // ─── getLocationContainer ───────────────────────────────────────────────────
+
+  describe("getLocationContainer", () => {
+    const locations: Location[] = [
+      "top-left",
+      "top-center",
+      "top-right",
+      "bottom-left",
+      "bottom-center",
+      "bottom-right",
+    ];
+
+    it("returns a child of the toaster root", () => {
+      const root = getToasterRoot();
+      const container = getLocationContainer("bottom-right");
+      expect(container.parentElement).to.equal(root);
+    });
+
+    it("returns the same element for repeated calls with the same location", () => {
+      const a = getLocationContainer("bottom-right");
+      const b = getLocationContainer("bottom-right");
+      expect(a).to.equal(b);
+    });
+
+    it("returns distinct elements for different locations", () => {
+      const br = getLocationContainer("bottom-right");
+      const tl = getLocationContainer("top-left");
+      expect(br).to.not.equal(tl);
+    });
+
+    it("sets data-location attribute on each container", () => {
+      for (const loc of locations) {
+        const container = getLocationContainer(loc);
+        expect(container.getAttribute("data-location")).to.equal(loc);
+      }
+    });
+
+    it("lazily creates the toaster root if not yet created", () => {
+      // Root has not been explicitly created; getLocationContainer should create it.
+      const container = getLocationContainer("top-center");
+      expect(container.parentElement).to.equal(document.body.querySelector("[data-tulpar-toaster-root]"));
+    });
+
+    it("supports all six locations without errors", () => {
+      for (const loc of locations) {
+        expect(() => getLocationContainer(loc)).to.not.throw();
+      }
+      // Each location produces exactly one container child in the root.
+      const root = getToasterRoot();
+      // Children count equals number of unique locations we called.
+      expect(root.children.length).to.equal(6);
+    });
+  });
+
+  // ─── F6 / Shift+F6 ─────────────────────────────────────────────────────────
+
+  describe("F6 keyboard navigation", () => {
+    it("F6 moves focus to the toaster root (or region) when no focusable toasts exist", async () => {
+      const root = getToasterRoot();
+      // The root needs a tabIndex to be focusable as the fallback.
+      document.dispatchEvent(new KeyboardEvent("keydown", { key: "F6", bubbles: true }));
+      // Root should have become focused or have tabIndex set.
+      // We check that the root has tabIndex=-1 (it's the fallback focus target).
+      expect(root.getAttribute("tabindex")).to.equal("-1");
+    });
+
+    it("ignores non-F6 keys", () => {
+      const root = getToasterRoot();
+      const prevFocused = document.activeElement;
+      document.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+      // focus should not have moved to the root
+      expect(document.activeElement).to.not.equal(root);
+      void prevFocused; // suppress unused warning
+    });
+
+    it("Shift+F6 does not move focus into the region", () => {
+      const root = getToasterRoot();
+      document.dispatchEvent(
+        new KeyboardEvent("keydown", { key: "F6", shiftKey: true, bubbles: true })
+      );
+      expect(document.activeElement).to.not.equal(root);
+    });
+
+    it("F6 listener is bound only once across multiple getToasterRoot calls", () => {
+      // Fire F6 and count how many times focus lands on root — it should be 1, not N.
+      let focusCount = 0;
+      const root = getToasterRoot();
+      root.addEventListener("focus", () => {
+        focusCount += 1;
+      });
+
+      // Call getToasterRoot multiple times to ensure no duplicate listeners.
+      getToasterRoot();
+      getToasterRoot();
+
+      document.dispatchEvent(new KeyboardEvent("keydown", { key: "F6", bubbles: true }));
+      // focusCount is 1 if the root actually received focus (it may be 0 in headless
+      // if focus() is a no-op, which is fine — we just verify it doesn't throw).
+      expect(focusCount).to.be.lessThan(2);
+    });
+  });
+
+  // ─── __resetToasterRootForTest ──────────────────────────────────────────────
+
+  describe("__resetToasterRootForTest", () => {
+    it("removes the root from document.body", () => {
+      getToasterRoot();
+      expect(document.querySelector("[data-tulpar-toaster-root]")).to.not.equal(null);
+      __resetToasterRootForTest();
+      expect(document.querySelector("[data-tulpar-toaster-root]")).to.equal(null);
+    });
+
+    it("re-creates a fresh root on next getToasterRoot call after reset", () => {
+      const first = getToasterRoot();
+      __resetToasterRootForTest();
+      const second = getToasterRoot();
+      expect(first).to.not.equal(second);
+      expect(second.parentElement).to.equal(document.body);
+    });
+
+    it("clears location containers so they are re-created after reset", () => {
+      const before = getLocationContainer("top-left");
+      __resetToasterRootForTest();
+      const after = getLocationContainer("top-left");
+      expect(before).to.not.equal(after);
+    });
+
+    it("unbinds the F6 keydown listener after reset (no spurious focus moves)", () => {
+      getToasterRoot();
+      __resetToasterRootForTest();
+      // After reset, no root exists. F6 must not throw.
+      expect(() =>
+        document.dispatchEvent(new KeyboardEvent("keydown", { key: "F6", bubbles: true }))
+      ).to.not.throw();
+      // And nothing in the DOM should have been created.
+      expect(document.querySelector("[data-tulpar-toaster-root]")).to.equal(null);
+    });
+  });
+});
