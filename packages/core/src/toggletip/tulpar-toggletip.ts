@@ -8,11 +8,7 @@ import {
   supportsPopover,
 } from "../_internal/overlay/anchor";
 import { setHasPopup, clearHasPopup, makeLiveRegion } from "../_internal/overlay/aria";
-import {
-  pushOverlay,
-  popOverlay,
-  topOverlay,
-} from "../_internal/overlay/overlay-root";
+import { pushOverlay, popOverlay, topOverlay } from "../_internal/overlay/overlay-root";
 import {
   computePosition,
   type Placement,
@@ -498,10 +494,7 @@ export class TulparToggletip extends LitElement {
     this._applyArrow(result.side, result.arrow);
   }
 
-  private _applyArrow(
-    side: Side,
-    arrow: { x: number; y: number; hidden: boolean } | null,
-  ): void {
+  private _applyArrow(side: Side, arrow: { x: number; y: number; hidden: boolean } | null): void {
     const el = this._arrowEl;
     if (!el) return;
     if (!arrow || arrow.hidden) {

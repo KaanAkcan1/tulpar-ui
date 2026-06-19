@@ -40,7 +40,9 @@ export function linkDescribedBy(trigger: Element, surface: Element): void {
  */
 export function unlinkDescribedBy(trigger: Element, surface: Element): void {
   if (!surface.id) return;
-  const tokens = tokenList(trigger.getAttribute("aria-describedby")).filter((t) => t !== surface.id);
+  const tokens = tokenList(trigger.getAttribute("aria-describedby")).filter(
+    (t) => t !== surface.id,
+  );
   if (tokens.length === 0) trigger.removeAttribute("aria-describedby");
   else trigger.setAttribute("aria-describedby", tokens.join(" "));
 }

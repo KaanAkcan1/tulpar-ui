@@ -3,6 +3,9 @@ import { html } from "lit";
 import "@tulpar-ui/core/popover";
 import "@tulpar-ui/core/tooltip";
 
+/** Imperative handle for the overlay element (Storybook has no typed element ref). */
+type OverlayEl = HTMLElement & { show(): void; hide(): void; toggle(): void; reposition(): void };
+
 /**
  * `<tulpar-popover>` — a **non-modal** dialog-pattern overlay for rich /
  * interactive content. Click-triggered; content lives as the overlay's default
@@ -145,7 +148,7 @@ export const FormInPopover: Story = {
             e.preventDefault();
             (e.currentTarget as HTMLElement).closest("tulpar-popover") &&
               (document.getElementById("form-pop")?.dispatchEvent(new Event("noop")),
-              (document.querySelector("tulpar-popover[for='form-pop']") as any)?.hide());
+              (document.querySelector("tulpar-popover[for='form-pop']") as OverlayEl | null)?.hide());
           }}
         >
           <h3 style="margin:0; font-size:0.95rem;">Edit profile</h3>
@@ -154,7 +157,7 @@ export const FormInPopover: Story = {
           <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:4px;">
             <button
               type="button"
-              @click=${() => (document.querySelector("tulpar-popover[for='form-pop']") as any)?.hide()}
+              @click=${() => (document.querySelector("tulpar-popover[for='form-pop']") as OverlayEl | null)?.hide()}
               style="font:inherit; padding:7px 12px; border-radius:7px; border:1px solid var(--tulpar-color-border-default,#d9e0df); background:transparent; cursor:pointer;"
             >
               Cancel
@@ -302,13 +305,13 @@ export const ControlledOpen: Story = {
           <div style="min-width:200px; font-size:0.85rem;">3 new notifications.</div>
         </tulpar-popover>
         <button
-          @click=${() => (document.getElementById("ctl-pop") as any)?.show()}
+          @click=${() => (document.getElementById("ctl-pop") as OverlayEl | null)?.show()}
           style="font:inherit; padding:6px 12px; border-radius:7px; border:1px solid var(--tulpar-color-border-default,#d9e0df); background:var(--tulpar-color-bg-raised,#fff); cursor:pointer;"
         >
           show()
         </button>
         <button
-          @click=${() => (document.getElementById("ctl-pop") as any)?.toggle()}
+          @click=${() => (document.getElementById("ctl-pop") as OverlayEl | null)?.toggle()}
           style="font:inherit; padding:6px 12px; border-radius:7px; border:1px solid var(--tulpar-color-border-default,#d9e0df); background:var(--tulpar-color-bg-raised,#fff); cursor:pointer;"
         >
           toggle()

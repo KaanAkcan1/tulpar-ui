@@ -50,8 +50,13 @@ export interface OverlayDirectiveSpec {
  * camelCase properties directly. The optional `onOpenChange` config callback is
  * the directive analogue of `v-model:open`.
  */
-export function createOverlayDirective(spec: OverlayDirectiveSpec): Directive<HTMLElement, OverlayDirectiveValue> {
-  const getConfig = (host: HTMLElement, binding: DirectiveBinding<OverlayDirectiveValue>): OverlayDirectiveConfig => {
+export function createOverlayDirective(
+  spec: OverlayDirectiveSpec,
+): Directive<HTMLElement, OverlayDirectiveValue> {
+  const getConfig = (
+    host: HTMLElement,
+    binding: DirectiveBinding<OverlayDirectiveValue>,
+  ): OverlayDirectiveConfig => {
     void host;
     return normalizeValue(binding.value);
   };
@@ -63,9 +68,9 @@ export function createOverlayDirective(spec: OverlayDirectiveSpec): Directive<HT
 
       if (refId) {
         // Ref mode: anchor an existing declared element. Don't create/destroy it.
-        const declared = (host.ownerDocument ?? document).getElementById(refId) as
-          | TulparOverlayElement
-          | null;
+        const declared = (host.ownerDocument ?? document).getElementById(
+          refId,
+        ) as TulparOverlayElement | null;
         if (!declared) return;
         declared.setAttribute("for", id);
         const unbridge = bridgeEvents(declared, () => normalizeValue(binding.value));

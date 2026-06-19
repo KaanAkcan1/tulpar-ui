@@ -36,10 +36,11 @@ export type { OverlayDirectiveConfig, OverlayDirectiveValue } from "./overlay-di
  * Booleans (`flip`/`arrow`) are set as DOM properties; `crossOffset`,
  * `containerPadding`, `defaultOpen` are set as camelCase properties.
  */
-export const vTulparPopover: Directive<HTMLElement, OverlayDirectiveValue> =
-  createOverlayDirective({
+export const vTulparPopover: Directive<HTMLElement, OverlayDirectiveValue> = createOverlayDirective(
+  {
     tag: "tulpar-popover",
     applyText: (el: TulparOverlayElement, text: string) => {
       el.textContent = text;
     },
-  });
+  },
+);

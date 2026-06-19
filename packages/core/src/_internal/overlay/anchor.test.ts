@@ -6,7 +6,13 @@ import {
   supportsPopover,
   supportsCssAnchor,
 } from "./anchor";
-import { linkDescribedBy, unlinkDescribedBy, setHasPopup, clearHasPopup, makeLiveRegion } from "./aria";
+import {
+  linkDescribedBy,
+  unlinkDescribedBy,
+  setHasPopup,
+  clearHasPopup,
+  makeLiveRegion,
+} from "./aria";
 
 describe("resolveAnchor", () => {
   it("resolves the trigger from the host's `for` attribute via getElementById", async () => {

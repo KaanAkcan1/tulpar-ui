@@ -462,7 +462,7 @@ export class TulparPopover extends LitElement {
   /** A content heading (an `h1`–`h6` or `[role=heading]`) among the children. */
   private _slottedHeading(): HTMLElement | null {
     const roots = this._contentRoots();
-    const HEADING = "h1,h2,h3,h4,h5,h6,[role=\"heading\"]";
+    const HEADING = 'h1,h2,h3,h4,h5,h6,[role="heading"]';
     for (const root of roots) {
       if (root.matches(HEADING)) return root;
       const inner = root.querySelector<HTMLElement>(HEADING);

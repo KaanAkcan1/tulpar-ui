@@ -136,7 +136,10 @@ export abstract class OverlayDirectiveBase {
    * Set a string/boolean attribute on the core element, removing it when the
    * value is `undefined`/`null`. Booleans use the empty-string presence form.
    */
-  protected setOverlayAttr(name: string, value: string | number | boolean | undefined | null): void {
+  protected setOverlayAttr(
+    name: string,
+    value: string | number | boolean | undefined | null,
+  ): void {
     const el = this.overlayEl;
     if (!el) return;
     if (value === undefined || value === null || value === false) {

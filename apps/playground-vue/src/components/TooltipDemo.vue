@@ -242,9 +242,10 @@ const forIdCode = `<!-- The plain core form — no Vue directive at all. Declare
       <p class="section-desc">
         The full <code class="inline-code">side-align</code> grammar:
         <code class="inline-code">top|bottom|left|right</code> ×
-        <code class="inline-code">start|center|end</code>. <code class="inline-code">auto</code> lets
-        the positioner pick the side with the most room and reflects the resolved value onto the
-        surface's <code class="inline-code">data-placement</code>.
+        <code class="inline-code">start|center|end</code>.
+        <code class="inline-code">auto</code> lets the positioner pick the side with the most room
+        and reflects the resolved value onto the surface's
+        <code class="inline-code">data-placement</code>.
       </p>
       <div class="preview placement-grid">
         <button
@@ -270,7 +271,8 @@ const forIdCode = `<!-- The plain core form — no Vue directive at all. Declare
       <h2 class="section-title">4. Arrow &amp; offset</h2>
       <p class="section-desc">
         The arrow is on by default. Pass <code class="inline-code">{ arrow: false }</code> to drop
-        it, and <code class="inline-code">{ offset }</code> to tune the gap between trigger and chip.
+        it, and <code class="inline-code">{ offset }</code> to tune the gap between trigger and
+        chip.
       </p>
       <div class="preview preview--baseline">
         <button class="plain-btn" v-tulpar-tooltip="'With a pointer arrow'">Arrow on</button>
@@ -306,7 +308,11 @@ const forIdCode = `<!-- The plain core form — no Vue directive at all. Declare
             <button class="fmt-btn" aria-label="Underline" v-tulpar-tooltip="'Underline (Ctrl+U)'">
               <Underline :size="16" />
             </button>
-            <button class="fmt-btn" aria-label="Insert link" v-tulpar-tooltip="'Insert link (Ctrl+K)'">
+            <button
+              class="fmt-btn"
+              aria-label="Insert link"
+              v-tulpar-tooltip="'Insert link (Ctrl+K)'"
+            >
               <Link2 :size="16" />
             </button>
           </div>
@@ -358,7 +364,9 @@ const forIdCode = `<!-- The plain core form — no Vue directive at all. Declare
       <div class="preview">
         <button
           class="plain-btn"
-          v-tulpar-tooltip="'Move your cursor onto this tip — it stays open because the surface itself is hoverable.'"
+          v-tulpar-tooltip="
+            'Move your cursor onto this tip — it stays open because the surface itself is hoverable.'
+          "
         >
           Hover, then reach the tip
         </button>
@@ -399,10 +407,10 @@ const forIdCode = `<!-- The plain core form — no Vue directive at all. Declare
     <section class="doc-section">
       <h2 class="section-title">9. Ref reuse — one chip, many triggers</h2>
       <p class="section-desc">
-        Declare a single <code class="inline-code">&lt;tulpar-tooltip id&gt;</code> and point several
-        triggers at it with the <code class="inline-code">:ref</code> arg. Each host re-targets the
-        declared element's <code class="inline-code">for</code> on activation (last-wins
-        single-active-trigger). You own the declared element's lifecycle.
+        Declare a single <code class="inline-code">&lt;tulpar-tooltip id&gt;</code> and point
+        several triggers at it with the <code class="inline-code">:ref</code> arg. Each host
+        re-targets the declared element's <code class="inline-code">for</code> on activation
+        (last-wins single-active-trigger). You own the declared element's lifecycle.
       </p>
       <div class="preview preview--baseline">
         <tulpar-tooltip id="shared-tip" text="Shared explanation chip"></tulpar-tooltip>
@@ -422,7 +430,10 @@ const forIdCode = `<!-- The plain core form — no Vue directive at all. Declare
       </p>
       <div class="preview preview--baseline">
         <button id="forid-btn" class="plain-btn">Hover me</button>
-        <tulpar-tooltip for="forid-btn" text="Wired purely by the for-id attribute"></tulpar-tooltip>
+        <tulpar-tooltip
+          for="forid-btn"
+          text="Wired purely by the for-id attribute"
+        ></tulpar-tooltip>
       </div>
       <pre class="code"><code>{{ forIdCode }}</code></pre>
     </section>
@@ -430,10 +441,10 @@ const forIdCode = `<!-- The plain core form — no Vue directive at all. Declare
     <!-- ── Footnote ────────────────────────────────────────────────────── -->
     <section class="doc-section doc-section--note">
       <p class="note">
-        <strong>Dark mode</strong> — toggle the sidenav theme switch; the chip recolours via semantic
-        tokens. <strong>Reduced motion</strong> — the open/close animation is suppressed under
-        <code class="inline-code">prefers-reduced-motion: reduce</code>; the tip simply appears and
-        disappears.
+        <strong>Dark mode</strong> — toggle the sidenav theme switch; the chip recolours via
+        semantic tokens. <strong>Reduced motion</strong> — the open/close animation is suppressed
+        under <code class="inline-code">prefers-reduced-motion: reduce</code>; the tip simply
+        appears and disappears.
       </p>
     </section>
   </div>

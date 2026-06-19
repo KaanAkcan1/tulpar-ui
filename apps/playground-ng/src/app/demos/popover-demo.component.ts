@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import {
   TulparButtonComponent,
   TulparPopoverDirective,
@@ -124,10 +119,11 @@ const NESTED_CODE = `<!-- A tooltip can live inside an open popover. The overlay
       <span class="page-tag">Overlay · Directive</span>
       <h1 class="page-title">Popover</h1>
       <p class="page-lede">
-        The richest overlay — a click-triggered, NON-MODAL dialog surface
-        (<code class="inline-code">role="dialog"</code>) that hosts forms, menus and controls. No focus trap,
-        no scroll lock: focus moves in on open, Tab flows back out, <kbd>Esc</kbd> / outside-click dismiss and
-        return focus. The <code class="inline-code">[tulparPopoverRef]</code> form is primary.
+        The richest overlay — a click-triggered, NON-MODAL dialog surface (<code class="inline-code"
+          >role="dialog"</code
+        >) that hosts forms, menus and controls. No focus trap, no scroll lock: focus moves in on
+        open, Tab flows back out, <kbd>Esc</kbd> / outside-click dismiss and return focus. The
+        <code class="inline-code">[tulparPopoverRef]</code> form is primary.
       </p>
     </header>
 
@@ -161,9 +157,9 @@ const NESTED_CODE = `<!-- A tooltip can live inside an open popover. The overlay
     <section class="doc-section">
       <h2 class="section-title">1. Ref form — the primary API</h2>
       <p class="section-desc">
-        Declare a <code class="inline-code">&lt;tulpar-popover id&gt;</code> with rich content, then point a
-        trigger at it via <code class="inline-code">[tulparPopoverRef]</code>. You own the surface markup and
-        its lifecycle; the directive only wires the trigger.
+        Declare a <code class="inline-code">&lt;tulpar-popover id&gt;</code> with rich content, then
+        point a trigger at it via <code class="inline-code">[tulparPopoverRef]</code>. You own the
+        surface markup and its lifecycle; the directive only wires the trigger.
       </p>
       <div class="preview">
         <tulpar-popover id="pop-profile" label="Profile">
@@ -190,8 +186,8 @@ const NESTED_CODE = `<!-- A tooltip can live inside an open popover. The overlay
     <section class="doc-section">
       <h2 class="section-title">2. Inline directive — plain text only</h2>
       <p class="section-desc">
-        For a trivial note, <code class="inline-code">[tulparPopover]="text"</code> creates the surface from a
-        string. Anything richer should use the Ref form above.
+        For a trivial note, <code class="inline-code">[tulparPopover]="text"</code> creates the
+        surface from a string. Anything richer should use the Ref form above.
       </p>
       <div class="preview">
         <button class="plain-btn" tulparPopover="A quick note rendered on the popover surface.">
@@ -205,9 +201,9 @@ const NESTED_CODE = `<!-- A tooltip can live inside an open popover. The overlay
     <section class="doc-section">
       <h2 class="section-title">3. Form in a popover — non-modal focus model</h2>
       <p class="section-desc">
-        On open, focus moves to the first focusable element (the input). <kbd>Tab</kbd> flows naturally out of
-        the surface — there's no trap. <kbd>Esc</kbd> or an outside click closes it and returns focus to the
-        trigger.
+        On open, focus moves to the first focusable element (the input). <kbd>Tab</kbd> flows
+        naturally out of the surface — there's no trap. <kbd>Esc</kbd> or an outside click closes it
+        and returns focus to the trigger.
       </p>
       <div class="preview">
         <tulpar-popover id="pop-form" label="Rename project">
@@ -249,7 +245,9 @@ const NESTED_CODE = `<!-- A tooltip can live inside an open popover. The overlay
         <button class="plain-btn" tulparPopoverRef="pop-warning">Warning</button>
 
         <tulpar-popover id="pop-danger" tone="danger" label="Delete project">
-          <p class="pop-text">This permanently deletes <strong>Tulpar UI</strong> and all its data.</p>
+          <p class="pop-text">
+            This permanently deletes <strong>Tulpar UI</strong> and all its data.
+          </p>
           <div class="pop-row">
             <button class="plain-btn" type="button">Cancel</button>
             <button class="plain-btn plain-btn--danger" type="button">Delete</button>
@@ -264,13 +262,16 @@ const NESTED_CODE = `<!-- A tooltip can live inside an open popover. The overlay
     <section class="doc-section">
       <h2 class="section-title">5. Auto &amp; flip at the edge</h2>
       <p class="section-desc">
-        With <code class="inline-code">placement="auto"</code> (or any explicit side), the surface flips to
-        stay inside the viewport when the trigger sits near an edge. The trigger below is pinned to the right.
+        With <code class="inline-code">placement="auto"</code> (or any explicit side), the surface
+        flips to stay inside the viewport when the trigger sits near an edge. The trigger below is
+        pinned to the right.
       </p>
       <div class="preview">
         <tulpar-popover id="pop-edge" placement="auto" label="Filters">
           <div class="pop-menu">
-            <p class="pop-text">This popover flips its side to stay on-screen near the viewport edge.</p>
+            <p class="pop-text">
+              This popover flips its side to stay on-screen near the viewport edge.
+            </p>
             <button class="pop-menu-item">Newest first</button>
             <button class="pop-menu-item">Oldest first</button>
             <button class="pop-menu-item">A–Z</button>
@@ -314,7 +315,8 @@ const NESTED_CODE = `<!-- A tooltip can live inside an open popover. The overlay
       <h2 class="section-title">7. Async content + reposition()</h2>
       <p class="section-desc">
         Open first, load later. When the body grows, the surface re-anchors — a built-in
-        <code class="inline-code">ResizeObserver</code> calls <code class="inline-code">reposition()</code>
+        <code class="inline-code">ResizeObserver</code> calls
+        <code class="inline-code">reposition()</code>
         on growth, and you can call it imperatively too.
       </p>
       <div class="preview">
@@ -341,15 +343,17 @@ const NESTED_CODE = `<!-- A tooltip can live inside an open popover. The overlay
     <section class="doc-section">
       <h2 class="section-title">8. Controlled from elsewhere</h2>
       <p class="section-desc">
-        Drive open state from any control via <code class="inline-code">[openControlled]</code>, and read every
-        transition back through <code class="inline-code">(openChange)</code>.
+        Drive open state from any control via <code class="inline-code">[openControlled]</code>, and
+        read every transition back through <code class="inline-code">(openChange)</code>.
       </p>
       <div class="preview preview--baseline">
         <button class="plain-btn plain-btn--accent" (click)="ext.set(!ext())">
           {{ ext() ? 'Close' : 'Open' }} from here
         </button>
         <tulpar-popover id="pop-ext">
-          <p class="pop-text">This surface was opened by the button on the left, not by its anchor.</p>
+          <p class="pop-text">
+            This surface was opened by the button on the left, not by its anchor.
+          </p>
         </tulpar-popover>
         <button
           class="plain-btn"
@@ -359,7 +363,9 @@ const NESTED_CODE = `<!-- A tooltip can live inside an open popover. The overlay
         >
           Anchor
         </button>
-        <span class="state-badge" [class.state-badge--on]="ext()">{{ ext() ? 'open' : 'closed' }}</span>
+        <span class="state-badge" [class.state-badge--on]="ext()">{{
+          ext() ? 'open' : 'closed'
+        }}</span>
       </div>
       <pre class="code"><code>{{ controlledCode }}</code></pre>
     </section>
@@ -369,7 +375,8 @@ const NESTED_CODE = `<!-- A tooltip can live inside an open popover. The overlay
       <h2 class="section-title">9. Nested tooltip inside a popover</h2>
       <p class="section-desc">
         Overlays stack. A tooltip inside an open popover closes first on <kbd>Esc</kbd>; a second
-        <kbd>Esc</kbd> closes the popover. Hover the control inside the surface to see the inner tip.
+        <kbd>Esc</kbd> closes the popover. Hover the control inside the surface to see the inner
+        tip.
       </p>
       <div class="preview">
         <tulpar-popover id="pop-nested" label="Project settings">
@@ -395,10 +402,10 @@ const NESTED_CODE = `<!-- A tooltip can live inside an open popover. The overlay
     <!-- ── Footnote ────────────────────────────────────────────────────── -->
     <section class="doc-section doc-section--note">
       <p class="note">
-        <strong>Non-modal by design</strong> — the popover never traps focus or locks scroll. A future
-        <code class="inline-code">&lt;tulpar-dialog&gt;</code> covers the modal case.
-        <strong>Dark mode</strong> recolours the surface via tokens; <strong>reduced motion</strong> drops the
-        animation.
+        <strong>Non-modal by design</strong> — the popover never traps focus or locks scroll. A
+        future <code class="inline-code">&lt;tulpar-dialog&gt;</code> covers the modal case.
+        <strong>Dark mode</strong> recolours the surface via tokens;
+        <strong>reduced motion</strong> drops the animation.
       </p>
     </section>
   `,
@@ -830,7 +837,9 @@ export class PopoverDemoComponent {
     }
     setTimeout(() => {
       this.asyncLoaded.set(true);
-      const el = document.getElementById('pop-async') as (HTMLElement & { reposition?(): void }) | null;
+      const el = document.getElementById('pop-async') as
+        | (HTMLElement & { reposition?(): void })
+        | null;
       el?.reposition?.();
     }, 700);
   }

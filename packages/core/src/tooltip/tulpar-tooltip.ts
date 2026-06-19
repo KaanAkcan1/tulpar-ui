@@ -9,11 +9,7 @@ import {
   supportsPopover,
 } from "../_internal/overlay/anchor";
 import { linkDescribedBy, unlinkDescribedBy } from "../_internal/overlay/aria";
-import {
-  pushOverlay,
-  popOverlay,
-  topOverlay,
-} from "../_internal/overlay/overlay-root";
+import { pushOverlay, popOverlay, topOverlay } from "../_internal/overlay/overlay-root";
 import { overlayDelay } from "../_internal/overlay/delay-controller";
 import {
   computePosition,
@@ -501,10 +497,7 @@ export class TulparTooltip extends LitElement {
     this._applyBridge(result.side);
   }
 
-  private _applyArrow(
-    side: Side,
-    arrow: { x: number; y: number; hidden: boolean } | null,
-  ): void {
+  private _applyArrow(side: Side, arrow: { x: number; y: number; hidden: boolean } | null): void {
     const el = this._arrowEl;
     if (!el) return;
     if (!arrow || arrow.hidden) {
@@ -578,7 +571,9 @@ export class TulparTooltip extends LitElement {
     const interactive = slot
       .assignedElements({ flatten: true })
       .some((el) =>
-        el.matches('a[href], button, input, select, textarea, [tabindex], [contenteditable="true"]'),
+        el.matches(
+          'a[href], button, input, select, textarea, [tabindex], [contenteditable="true"]',
+        ),
       );
     if (interactive) {
       warnDev(

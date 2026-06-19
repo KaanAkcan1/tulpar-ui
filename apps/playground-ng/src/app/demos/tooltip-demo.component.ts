@@ -2,10 +2,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
-  ElementRef,
   signal,
   viewChild,
 } from '@angular/core';
+import type { ElementRef } from '@angular/core';
 import {
   TulparButtonComponent,
   TulparTooltipDirective,
@@ -139,10 +139,11 @@ const FOR_ID_CODE = `<!-- The plain core form — no Angular directive at all. D
       <span class="page-tag">Overlay · Directive</span>
       <h1 class="page-title">Tooltip</h1>
       <p class="page-lede">
-        A hover/focus-triggered descriptive chip wired by a directive — <code class="inline-code">[tulparTooltip]</code>
-        attaches a <code class="inline-code">&lt;tulpar-tooltip&gt;</code> to <em>any</em> host element without
-        wrapping it. Collision-aware placement, an optional arrow, a shared delay group, and full WCAG 1.4.13
-        (hoverable / dismissible / persistent) behaviour.
+        A hover/focus-triggered descriptive chip wired by a directive —
+        <code class="inline-code">[tulparTooltip]</code> attaches a
+        <code class="inline-code">&lt;tulpar-tooltip&gt;</code> to <em>any</em> host element without
+        wrapping it. Collision-aware placement, an optional arrow, a shared delay group, and full
+        WCAG 1.4.13 (hoverable / dismissible / persistent) behaviour.
       </p>
     </header>
 
@@ -161,7 +162,11 @@ const FOR_ID_CODE = `<!-- The plain core form — no Angular directive at all. D
         >
           <lucide-angular slot="start" [img]="Bell" [size]="16" />
         </tulpar-button-ng>
-        <span class="hero-chip" tabindex="0" tulparTooltip="Tooltips attach to non-button elements too">
+        <span
+          class="hero-chip"
+          tabindex="0"
+          tulparTooltip="Tooltips attach to non-button elements too"
+        >
           Focus me (a span)
         </span>
       </div>
@@ -171,9 +176,10 @@ const FOR_ID_CODE = `<!-- The plain core form — no Angular directive at all. D
     <section class="doc-section">
       <h2 class="section-title">1. Inline directive — the for-id model</h2>
       <p class="section-desc">
-        <code class="inline-code">[tulparTooltip]="text"</code> mints an id on the host (if it has none),
-        creates a <code class="inline-code">&lt;tulpar-tooltip&gt;</code>, sets its <code class="inline-code">for</code>
-        to that id, and appends it next to the host. No <code class="inline-code">*-ng</code> component, no slot-wrap.
+        <code class="inline-code">[tulparTooltip]="text"</code> mints an id on the host (if it has
+        none), creates a <code class="inline-code">&lt;tulpar-tooltip&gt;</code>, sets its
+        <code class="inline-code">for</code> to that id, and appends it next to the host. No
+        <code class="inline-code">*-ng</code> component, no slot-wrap.
       </p>
       <div class="preview">
         <button class="plain-btn" tulparTooltip="Save your changes">Save</button>
@@ -185,17 +191,26 @@ const FOR_ID_CODE = `<!-- The plain core form — no Angular directive at all. D
     <section class="doc-section">
       <h2 class="section-title">2. Attaches to any element</h2>
       <p class="section-desc">
-        Button, icon-only button, or a non-button element (a focusable span / icon). The directive never
-        wraps the host — it sits beside it in the light DOM and resolves the <code class="inline-code">for</code> id.
+        Button, icon-only button, or a non-button element (a focusable span / icon). The directive
+        never wraps the host — it sits beside it in the light DOM and resolves the
+        <code class="inline-code">for</code> id.
       </p>
       <div class="preview preview--baseline">
         <tulpar-button-ng tulparTooltip="Open settings" ariaLabel="Open settings" [iconOnly]="true">
           <lucide-angular slot="start" [img]="Settings" [size]="16" />
         </tulpar-button-ng>
-        <span class="info-dot" tabindex="0" role="button" aria-label="Source info" tulparTooltip="Pulled from the billing API">
+        <span
+          class="info-dot"
+          tabindex="0"
+          role="button"
+          aria-label="Source info"
+          tulparTooltip="Pulled from the billing API"
+        >
           <lucide-angular [img]="Info" [size]="18" />
         </span>
-        <span class="ref-text" tabindex="0" tulparTooltip="The unique customer reference">CUST-4815</span>
+        <span class="ref-text" tabindex="0" tulparTooltip="The unique customer reference"
+          >CUST-4815</span
+        >
       </div>
       <pre class="code"><code>{{ anyElementCode }}</code></pre>
     </section>
@@ -206,15 +221,20 @@ const FOR_ID_CODE = `<!-- The plain core form — no Angular directive at all. D
       <p class="section-desc">
         The full <code class="inline-code">side-align</code> grammar:
         <code class="inline-code">top|bottom|left|right</code> ×
-        <code class="inline-code">start|center|end</code>. <code class="inline-code">auto</code> lets the
-        positioner pick the side with the most room and reflects the resolved value onto the surface's
+        <code class="inline-code">start|center|end</code>.
+        <code class="inline-code">auto</code> lets the positioner pick the side with the most room
+        and reflects the resolved value onto the surface's
         <code class="inline-code">data-placement</code>.
       </p>
       <div class="preview placement-grid">
         @for (p of placements; track p) {
           <button class="plain-btn" [tulparTooltip]="p" [tooltipPlacement]="p">{{ p }}</button>
         }
-        <button class="plain-btn plain-btn--accent" tulparTooltip="auto-resolved" tooltipPlacement="auto">
+        <button
+          class="plain-btn plain-btn--accent"
+          tulparTooltip="auto-resolved"
+          tooltipPlacement="auto"
+        >
           auto
         </button>
       </div>
@@ -225,13 +245,16 @@ const FOR_ID_CODE = `<!-- The plain core form — no Angular directive at all. D
     <section class="doc-section">
       <h2 class="section-title">4. Arrow &amp; offset</h2>
       <p class="section-desc">
-        The arrow is on by default. Pass <code class="inline-code">[tooltipArrow]="false"</code> to drop it,
-        and <code class="inline-code">[tooltipOffset]</code> to tune the gap between trigger and chip.
+        The arrow is on by default. Pass <code class="inline-code">[tooltipArrow]="false"</code> to
+        drop it, and <code class="inline-code">[tooltipOffset]</code> to tune the gap between
+        trigger and chip.
       </p>
       <div class="preview preview--baseline">
         <button class="plain-btn" tulparTooltip="With a pointer arrow">Arrow on</button>
         <button class="plain-btn" tulparTooltip="No arrow" [tooltipArrow]="false">Arrow off</button>
-        <button class="plain-btn" tulparTooltip="Pushed further out" [tooltipOffset]="16">Offset 16</button>
+        <button class="plain-btn" tulparTooltip="Pushed further out" [tooltipOffset]="16">
+          Offset 16
+        </button>
       </div>
       <pre class="code"><code>{{ arrowCode }}</code></pre>
     </section>
@@ -240,9 +263,10 @@ const FOR_ID_CODE = `<!-- The plain core form — no Angular directive at all. D
     <section class="doc-section">
       <h2 class="section-title">5. Delay group — skip-delay toolbar</h2>
       <p class="section-desc">
-        Tooltips share a delay controller. The first hover waits the normal grace (so a cursor passing over
-        doesn't flash tips), but moving <em>between</em> sibling triggers skips that delay — the toolbar feels
-        instant. Compare the grouped toolbar with the lone, ungrouped button.
+        Tooltips share a delay controller. The first hover waits the normal grace (so a cursor
+        passing over doesn't flash tips), but moving <em>between</em> sibling triggers skips that
+        delay — the toolbar feels instant. Compare the grouped toolbar with the lone, ungrouped
+        button.
       </p>
       <div class="preview preview--col">
         <div>
@@ -264,7 +288,9 @@ const FOR_ID_CODE = `<!-- The plain core form — no Angular directive at all. D
         </div>
         <div>
           <p class="preview-label">Lone trigger (full open-delay each time)</p>
-          <button class="plain-btn" tulparTooltip="Waits the full grace every hover">Ungrouped</button>
+          <button class="plain-btn" tulparTooltip="Waits the full grace every hover">
+            Ungrouped
+          </button>
         </div>
       </div>
       <pre class="code"><code>{{ delayGroupCode }}</code></pre>
@@ -274,15 +300,19 @@ const FOR_ID_CODE = `<!-- The plain core form — no Angular directive at all. D
     <section class="doc-section">
       <h2 class="section-title">6. The disabled trap</h2>
       <p class="section-desc">
-        A real <code class="inline-code">[disabled]</code> button swallows pointer events, so a tooltip on it
-        could never show. Use <code class="inline-code">[dataDisabled]</code> (looks disabled, still
-        hoverable/focusable) and tooltip that. Tooltipping a genuinely disabled host logs a dev warning.
+        A real <code class="inline-code">[disabled]</code> button swallows pointer events, so a
+        tooltip on it could never show. Use <code class="inline-code">[dataDisabled]</code> (looks
+        disabled, still hoverable/focusable) and tooltip that. Tooltipping a genuinely disabled host
+        logs a dev warning.
       </p>
       <div class="preview preview--baseline">
         <tulpar-button-ng [dataDisabled]="true" tulparTooltip="You need edit permission to publish">
           Publish (data-disabled)
         </tulpar-button-ng>
-        <tulpar-button-ng [disabled]="true" tulparTooltip="This tip will not show (and warns in dev)">
+        <tulpar-button-ng
+          [disabled]="true"
+          tulparTooltip="This tip will not show (and warns in dev)"
+        >
           Publish (disabled)
         </tulpar-button-ng>
       </div>
@@ -293,12 +323,15 @@ const FOR_ID_CODE = `<!-- The plain core form — no Angular directive at all. D
     <section class="doc-section">
       <h2 class="section-title">7. Hoverable &amp; persistent (WCAG 1.4.13)</h2>
       <p class="section-desc">
-        An invisible bridge pad spans the offset gap, so you can travel from the trigger onto the chip without
-        it disappearing. The tip stays until you leave (persistent) and <kbd>Esc</kbd> dismisses it while
-        returning focus to the trigger (dismissible).
+        An invisible bridge pad spans the offset gap, so you can travel from the trigger onto the
+        chip without it disappearing. The tip stays until you leave (persistent) and
+        <kbd>Esc</kbd> dismisses it while returning focus to the trigger (dismissible).
       </p>
       <div class="preview">
-        <button class="plain-btn" tulparTooltip="Move your cursor onto this tip — it stays open because the surface itself is hoverable.">
+        <button
+          class="plain-btn"
+          tulparTooltip="Move your cursor onto this tip — it stays open because the surface itself is hoverable."
+        >
           Hover, then reach the tip
         </button>
       </div>
@@ -309,10 +342,11 @@ const FOR_ID_CODE = `<!-- The plain core form — no Angular directive at all. D
     <section class="doc-section">
       <h2 class="section-title">8. Controlled &amp; imperative</h2>
       <p class="section-desc">
-        <code class="inline-code">(openChange)</code> emits on every open/close transition. For imperative
-        control, grab the directive-created <code class="inline-code">&lt;tulpar-tooltip&gt;</code> (it carries
-        the host id in its <code class="inline-code">for</code>) and call
-        <code class="inline-code">show()</code> / <code class="inline-code">hide()</code> on the element.
+        <code class="inline-code">(openChange)</code> emits on every open/close transition. For
+        imperative control, grab the directive-created
+        <code class="inline-code">&lt;tulpar-tooltip&gt;</code> (it carries the host id in its
+        <code class="inline-code">for</code>) and call <code class="inline-code">show()</code> /
+        <code class="inline-code">hide()</code> on the element.
       </p>
       <div class="preview preview--col">
         <button
@@ -339,10 +373,10 @@ const FOR_ID_CODE = `<!-- The plain core form — no Angular directive at all. D
     <section class="doc-section">
       <h2 class="section-title">9. Ref reuse — one chip, many triggers</h2>
       <p class="section-desc">
-        Declare a single <code class="inline-code">&lt;tulpar-tooltip id&gt;</code> and point several triggers
-        at it with <code class="inline-code">[tulparTooltipRef]</code>. Each host re-targets the declared
-        element's <code class="inline-code">for</code> on activation (last-wins single-active-trigger). You own
-        the declared element's lifecycle.
+        Declare a single <code class="inline-code">&lt;tulpar-tooltip id&gt;</code> and point
+        several triggers at it with <code class="inline-code">[tulparTooltipRef]</code>. Each host
+        re-targets the declared element's <code class="inline-code">for</code> on activation
+        (last-wins single-active-trigger). You own the declared element's lifecycle.
       </p>
       <div class="preview preview--baseline">
         <tulpar-tooltip id="shared-tip" text="Shared explanation chip"></tulpar-tooltip>
@@ -357,12 +391,15 @@ const FOR_ID_CODE = `<!-- The plain core form — no Angular directive at all. D
     <section class="doc-section">
       <h2 class="section-title">10. Plain core form — no directive</h2>
       <p class="section-desc">
-        The directive is sugar over the core element's <code class="inline-code">for</code>-id binding. You can
-        always drop to the raw element and wire it by id yourself.
+        The directive is sugar over the core element's <code class="inline-code">for</code>-id
+        binding. You can always drop to the raw element and wire it by id yourself.
       </p>
       <div class="preview preview--baseline">
         <button id="forid-btn" class="plain-btn">Hover me</button>
-        <tulpar-tooltip for="forid-btn" text="Wired purely by the for-id attribute"></tulpar-tooltip>
+        <tulpar-tooltip
+          for="forid-btn"
+          text="Wired purely by the for-id attribute"
+        ></tulpar-tooltip>
       </div>
       <pre class="code"><code>{{ forIdCode }}</code></pre>
     </section>
@@ -370,9 +407,10 @@ const FOR_ID_CODE = `<!-- The plain core form — no Angular directive at all. D
     <!-- ── Footnote ────────────────────────────────────────────────────── -->
     <section class="doc-section doc-section--note">
       <p class="note">
-        <strong>Dark mode</strong> — toggle the sidenav theme switch; the chip recolours via semantic tokens.
-        <strong>Reduced motion</strong> — the open/close animation is suppressed under
-        <code class="inline-code">prefers-reduced-motion: reduce</code>; the tip simply appears and disappears.
+        <strong>Dark mode</strong> — toggle the sidenav theme switch; the chip recolours via
+        semantic tokens. <strong>Reduced motion</strong> — the open/close animation is suppressed
+        under <code class="inline-code">prefers-reduced-motion: reduce</code>; the tip simply
+        appears and disappears.
       </p>
     </section>
   `,

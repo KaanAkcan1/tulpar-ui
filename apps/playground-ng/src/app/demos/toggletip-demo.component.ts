@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import {
   TulparButtonComponent,
   TulparToggletipDirective,
@@ -85,10 +81,11 @@ const KEYBOARD_CODE = `<!-- The trigger is a real button, so Enter / Space toggl
       <span class="page-tag">Overlay · Directive</span>
       <h1 class="page-title">Toggletip</h1>
       <p class="page-lede">
-        A click-triggered disclosure bubble — <code class="inline-code">[tulparToggletip]</code> attaches a
-        <code class="inline-code">&lt;tulpar-toggletip&gt;</code> to any host. Unlike a tooltip it toggles on
-        click, announces via a polite live region, carries a semantic <em>tone</em>, and returns focus on
-        <kbd>Esc</kbd>. Content is brief and non-interactive.
+        A click-triggered disclosure bubble —
+        <code class="inline-code">[tulparToggletip]</code> attaches a
+        <code class="inline-code">&lt;tulpar-toggletip&gt;</code> to any host. Unlike a tooltip it
+        toggles on click, announces via a polite live region, carries a semantic <em>tone</em>, and
+        returns focus on <kbd>Esc</kbd>. Content is brief and non-interactive.
       </p>
     </header>
 
@@ -111,12 +108,16 @@ const KEYBOARD_CODE = `<!-- The trigger is a real button, so Enter / Space toggl
     <section class="doc-section">
       <h2 class="section-title">1. Click to disclose</h2>
       <p class="section-desc">
-        Click (or <kbd>Enter</kbd>/<kbd>Space</kbd>) toggles the bubble. An outside click or <kbd>Esc</kbd>
-        dismisses it. The content is announced through a pre-inserted <code class="inline-code">aria-live</code>
+        Click (or <kbd>Enter</kbd>/<kbd>Space</kbd>) toggles the bubble. An outside click or
+        <kbd>Esc</kbd> dismisses it. The content is announced through a pre-inserted
+        <code class="inline-code">aria-live</code>
         region, so screen readers hear it without focus moving in.
       </p>
       <div class="preview">
-        <button class="plain-btn" tulparToggletip="This metric counts active users in the last 28 days.">
+        <button
+          class="plain-btn"
+          tulparToggletip="This metric counts active users in the last 28 days."
+        >
           What is MAU?
         </button>
       </div>
@@ -128,16 +129,42 @@ const KEYBOARD_CODE = `<!-- The trigger is a real button, so Enter / Space toggl
       <h2 class="section-title">2. Tone showcase</h2>
       <p class="section-desc">
         Five tones via <code class="inline-code">[toggletipTone]</code>:
-        <code class="inline-code">neutral · info · success · warning · danger</code>. The inline form sets the
-        tone on the text bubble; the icon variants below declare the element so a status icon can sit in
-        <code class="inline-code">slot="icon"</code>.
+        <code class="inline-code">neutral · info · success · warning · danger</code>. The inline
+        form sets the tone on the text bubble; the icon variants below declare the element so a
+        status icon can sit in <code class="inline-code">slot="icon"</code>.
       </p>
       <div class="preview">
-        <button class="plain-btn" tulparToggletip="Synced 2 minutes ago." toggletipTone="neutral">Neutral</button>
-        <button class="plain-btn" tulparToggletip="Read replicas may lag briefly." toggletipTone="info">Info</button>
-        <button class="plain-btn" tulparToggletip="Your changes were saved." toggletipTone="success">Success</button>
-        <button class="plain-btn" tulparToggletip="This plan expires in 3 days." toggletipTone="warning">Warning</button>
-        <button class="plain-btn" tulparToggletip="Two payments failed this cycle." toggletipTone="danger">Danger</button>
+        <button class="plain-btn" tulparToggletip="Synced 2 minutes ago." toggletipTone="neutral">
+          Neutral
+        </button>
+        <button
+          class="plain-btn"
+          tulparToggletip="Read replicas may lag briefly."
+          toggletipTone="info"
+        >
+          Info
+        </button>
+        <button
+          class="plain-btn"
+          tulparToggletip="Your changes were saved."
+          toggletipTone="success"
+        >
+          Success
+        </button>
+        <button
+          class="plain-btn"
+          tulparToggletip="This plan expires in 3 days."
+          toggletipTone="warning"
+        >
+          Warning
+        </button>
+        <button
+          class="plain-btn"
+          tulparToggletip="Two payments failed this cycle."
+          toggletipTone="danger"
+        >
+          Danger
+        </button>
       </div>
       <pre class="code"><code>{{ toneCode }}</code></pre>
     </section>
@@ -146,8 +173,9 @@ const KEYBOARD_CODE = `<!-- The trigger is a real button, so Enter / Space toggl
     <section class="doc-section">
       <h2 class="section-title">3. Tone with a status icon</h2>
       <p class="section-desc">
-        To pair a tone with an icon, declare a <code class="inline-code">&lt;tulpar-toggletip&gt;</code> with
-        an icon in <code class="inline-code">slot="icon"</code> and reference it via
+        To pair a tone with an icon, declare a
+        <code class="inline-code">&lt;tulpar-toggletip&gt;</code> with an icon in
+        <code class="inline-code">slot="icon"</code> and reference it via
         <code class="inline-code">[tulparToggletipRef]</code>.
       </p>
       <div class="preview preview--baseline">
@@ -182,16 +210,34 @@ const KEYBOARD_CODE = `<!-- The trigger is a real button, so Enter / Space toggl
     <section class="doc-section">
       <h2 class="section-title">4. Placement &amp; arrow</h2>
       <p class="section-desc">
-        The same collision-aware <code class="inline-code">side-align</code> grammar as the tooltip, plus
-        <code class="inline-code">auto</code>. The arrow is on by default — drop it with
+        The same collision-aware <code class="inline-code">side-align</code> grammar as the tooltip,
+        plus <code class="inline-code">auto</code>. The arrow is on by default — drop it with
         <code class="inline-code">[toggletipArrow]="false"</code>.
       </p>
       <div class="preview preview--baseline">
-        <button class="plain-btn" tulparToggletip="Opens above the trigger" toggletipPlacement="top">top</button>
-        <button class="plain-btn" tulparToggletip="Opens to the right" toggletipPlacement="right">right</button>
-        <button class="plain-btn" tulparToggletip="Opens below" toggletipPlacement="bottom">bottom</button>
-        <button class="plain-btn" tulparToggletip="No arrow on this one" [toggletipArrow]="false">arrow off</button>
-        <button class="plain-btn" tulparToggletip="Best-fit side picked automatically" toggletipPlacement="auto">auto</button>
+        <button
+          class="plain-btn"
+          tulparToggletip="Opens above the trigger"
+          toggletipPlacement="top"
+        >
+          top
+        </button>
+        <button class="plain-btn" tulparToggletip="Opens to the right" toggletipPlacement="right">
+          right
+        </button>
+        <button class="plain-btn" tulparToggletip="Opens below" toggletipPlacement="bottom">
+          bottom
+        </button>
+        <button class="plain-btn" tulparToggletip="No arrow on this one" [toggletipArrow]="false">
+          arrow off
+        </button>
+        <button
+          class="plain-btn"
+          tulparToggletip="Best-fit side picked automatically"
+          toggletipPlacement="auto"
+        >
+          auto
+        </button>
       </div>
       <pre class="code"><code>{{ placementCode }}</code></pre>
     </section>
@@ -200,8 +246,9 @@ const KEYBOARD_CODE = `<!-- The trigger is a real button, so Enter / Space toggl
     <section class="doc-section">
       <h2 class="section-title">5. Brief text vs short markup</h2>
       <p class="section-desc">
-        Pass plain text via the directive value for the trivial case, or declare the element with light markup
-        (kept non-interactive) and reference it. Both stay terse — a toggletip is a disclosure, not a dialog.
+        Pass plain text via the directive value for the trivial case, or declare the element with
+        light markup (kept non-interactive) and reference it. Both stay terse — a toggletip is a
+        disclosure, not a dialog.
       </p>
       <div class="preview preview--baseline">
         <button class="plain-btn" tulparToggletip="A short, plain-text explanation.">Brief</button>
@@ -218,7 +265,8 @@ const KEYBOARD_CODE = `<!-- The trigger is a real button, so Enter / Space toggl
     <section class="doc-section">
       <h2 class="section-title">6. Keyboard — Enter/Space toggle, Esc returns focus</h2>
       <p class="section-desc">
-        The trigger is a native button, so <kbd>Enter</kbd> and <kbd>Space</kbd> toggle it. <kbd>Esc</kbd>
+        The trigger is a native button, so <kbd>Enter</kbd> and <kbd>Space</kbd> toggle it.
+        <kbd>Esc</kbd>
         closes the bubble and moves focus back to the trigger. Try it: tab to the button, press
         <kbd>Enter</kbd>, then <kbd>Esc</kbd>.
       </p>

@@ -2,10 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { TestBed } from "@angular/core/testing";
 import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from "@angular/core";
 
-import {
-  TulparTooltipDirective,
-  TulparTooltipRefDirective,
-} from "./tulpar-tooltip.directive";
+import { TulparTooltipDirective, TulparTooltipRefDirective } from "./tulpar-tooltip.directive";
 
 @Component({
   standalone: true,

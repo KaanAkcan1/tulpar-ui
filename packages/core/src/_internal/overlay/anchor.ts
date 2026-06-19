@@ -86,7 +86,7 @@ export function warnIfBadTrigger(el: Element | null): void {
   }
   if (!isFocusable(el)) {
     warnDev(
-      "[tulpar overlay] Trigger is not focusable; keyboard and assistive-tech users cannot open the overlay. Use a <button> or add tabindex=\"0\".",
+      '[tulpar overlay] Trigger is not focusable; keyboard and assistive-tech users cannot open the overlay. Use a <button> or add tabindex="0".',
       el,
     );
   }

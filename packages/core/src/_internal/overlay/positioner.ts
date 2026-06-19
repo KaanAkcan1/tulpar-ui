@@ -70,10 +70,7 @@ function spaceOnSide(side: Side, anchor: Rect, viewport: Rect): number {
 }
 
 /** Does the floating element fit on `side` given the offset + padding? */
-function fitsOnSide(
-  side: Side,
-  i: ComputeInput,
-): boolean {
+function fitsOnSide(side: Side, i: ComputeInput): boolean {
   const need =
     (isVertical(side) ? i.floating.height : i.floating.width) + i.offset + i.containerPadding;
   return spaceOnSide(side, i.anchor, i.viewport) >= need;

@@ -35,7 +35,9 @@ function onAsyncOpen(open: boolean) {
   }
   setTimeout(() => {
     asyncLoaded.value = true;
-    const el = document.getElementById("pop-async") as (HTMLElement & { reposition?(): void }) | null;
+    const el = document.getElementById("pop-async") as
+      | (HTMLElement & { reposition?(): void })
+      | null;
     el?.reposition?.();
   }, 700);
 }
@@ -136,10 +138,10 @@ const nestedCode = `<!-- A tooltip can live inside an open popover. The overlay 
       <span class="page-tag">Overlay · Directive</span>
       <h1 class="page-title">Popover</h1>
       <p class="page-lede">
-        The richest overlay — a click-triggered, NON-MODAL dialog surface
-        (<code class="inline-code">role="dialog"</code>) that hosts forms, menus and controls. No
-        focus trap, no scroll lock: focus moves in on open, Tab flows back out, <kbd>Esc</kbd> /
-        outside-click dismiss and return focus. The
+        The richest overlay — a click-triggered, NON-MODAL dialog surface (<code class="inline-code"
+          >role="dialog"</code
+        >) that hosts forms, menus and controls. No focus trap, no scroll lock: focus moves in on
+        open, Tab flows back out, <kbd>Esc</kbd> / outside-click dismiss and return focus. The
         <code class="inline-code">v-tulpar-popover:ref</code> form is primary.
       </p>
     </header>
@@ -262,7 +264,9 @@ const nestedCode = `<!-- A tooltip can live inside an open popover. The overlay 
         <button class="plain-btn" v-tulpar-popover:ref="'pop-warning'">Warning</button>
 
         <tulpar-popover id="pop-danger" tone="danger" label="Delete project">
-          <p class="pop-text">This permanently deletes <strong>Tulpar UI</strong> and all its data.</p>
+          <p class="pop-text">
+            This permanently deletes <strong>Tulpar UI</strong> and all its data.
+          </p>
           <div class="pop-row">
             <button class="plain-btn" type="button">Cancel</button>
             <button class="plain-btn plain-btn--danger" type="button">Delete</button>
@@ -284,7 +288,9 @@ const nestedCode = `<!-- A tooltip can live inside an open popover. The overlay 
       <div class="preview">
         <tulpar-popover id="pop-edge" placement="auto" label="Filters">
           <div class="pop-menu">
-            <p class="pop-text">This popover flips its side to stay on-screen near the viewport edge.</p>
+            <p class="pop-text">
+              This popover flips its side to stay on-screen near the viewport edge.
+            </p>
             <button class="pop-menu-item">Newest first</button>
             <button class="pop-menu-item">Oldest first</button>
             <button class="pop-menu-item">A–Z</button>
@@ -327,7 +333,8 @@ const nestedCode = `<!-- A tooltip can live inside an open popover. The overlay 
       <p class="section-desc">
         Open first, load later. When the body grows, the surface re-anchors — a built-in
         <code class="inline-code">ResizeObserver</code> calls
-        <code class="inline-code">reposition()</code> on growth, and you can call it imperatively too.
+        <code class="inline-code">reposition()</code> on growth, and you can call it imperatively
+        too.
       </p>
       <div class="preview">
         <tulpar-popover id="pop-async" label="Details">
@@ -339,7 +346,10 @@ const nestedCode = `<!-- A tooltip can live inside an open popover. The overlay 
             </span>
           </div>
         </tulpar-popover>
-        <button class="plain-btn" v-tulpar-popover="{ ref: 'pop-async', onOpenChange: onAsyncOpen }">
+        <button
+          class="plain-btn"
+          v-tulpar-popover="{ ref: 'pop-async', onOpenChange: onAsyncOpen }"
+        >
           Load details
         </button>
       </div>
@@ -350,15 +360,18 @@ const nestedCode = `<!-- A tooltip can live inside an open popover. The overlay 
     <section class="doc-section">
       <h2 class="section-title">8. Controlled from elsewhere</h2>
       <p class="section-desc">
-        Drive open state from any control via the config <code class="inline-code">open</code> field,
-        and read every transition back through <code class="inline-code">onOpenChange</code>.
+        Drive open state from any control via the config
+        <code class="inline-code">open</code> field, and read every transition back through
+        <code class="inline-code">onOpenChange</code>.
       </p>
       <div class="preview preview--baseline">
         <button class="plain-btn plain-btn--accent" @click="ext = !ext">
           {{ ext ? "Close" : "Open" }} from here
         </button>
         <tulpar-popover id="pop-ext">
-          <p class="pop-text">This surface was opened by the button on the left, not by its anchor.</p>
+          <p class="pop-text">
+            This surface was opened by the button on the left, not by its anchor.
+          </p>
         </tulpar-popover>
         <button
           class="plain-btn"
@@ -378,7 +391,8 @@ const nestedCode = `<!-- A tooltip can live inside an open popover. The overlay 
       <h2 class="section-title">9. Nested tooltip inside a popover</h2>
       <p class="section-desc">
         Overlays stack. A tooltip inside an open popover closes first on <kbd>Esc</kbd>; a second
-        <kbd>Esc</kbd> closes the popover. Hover the control inside the surface to see the inner tip.
+        <kbd>Esc</kbd> closes the popover. Hover the control inside the surface to see the inner
+        tip.
       </p>
       <div class="preview">
         <tulpar-popover id="pop-nested" label="Project settings">
@@ -387,7 +401,10 @@ const nestedCode = `<!-- A tooltip can live inside an open popover. The overlay 
               <span>Visibility</span>
               <HelpCircle :size="14" />
             </button>
-            <button class="pop-menu-item" v-tulpar-tooltip="'Email + in-app alerts for this project'">
+            <button
+              class="pop-menu-item"
+              v-tulpar-tooltip="'Email + in-app alerts for this project'"
+            >
               <span>Notifications</span>
               <HelpCircle :size="14" />
             </button>

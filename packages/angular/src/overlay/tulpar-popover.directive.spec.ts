@@ -2,10 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { TestBed } from "@angular/core/testing";
 import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from "@angular/core";
 
-import {
-  TulparPopoverDirective,
-  TulparPopoverRefDirective,
-} from "./tulpar-popover.directive";
+import { TulparPopoverDirective, TulparPopoverRefDirective } from "./tulpar-popover.directive";
 
 @Component({
   standalone: true,

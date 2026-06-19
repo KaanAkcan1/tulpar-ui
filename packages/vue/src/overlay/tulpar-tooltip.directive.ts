@@ -26,10 +26,11 @@ export type { OverlayDirectiveConfig, OverlayDirectiveValue } from "./overlay-di
  * Tooltips have no `tone` (the inverted chip is fixed). `arrow` is set as a DOM
  * property (Lit reads any present boolean attr as `true`).
  */
-export const vTulparTooltip: Directive<HTMLElement, OverlayDirectiveValue> =
-  createOverlayDirective({
+export const vTulparTooltip: Directive<HTMLElement, OverlayDirectiveValue> = createOverlayDirective(
+  {
     tag: "tulpar-tooltip",
     applyText: (el: TulparOverlayElement, text: string) => {
       el.text = text;
     },
-  });
+  },
+);

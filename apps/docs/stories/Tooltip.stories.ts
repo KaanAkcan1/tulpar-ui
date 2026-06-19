@@ -2,6 +2,9 @@ import type { Meta, StoryObj } from "@storybook/web-components";
 import { html } from "lit";
 import "@tulpar-ui/core/tooltip";
 
+/** Imperative handle for the overlay element (Storybook has no typed element ref). */
+type OverlayEl = HTMLElement & { show(): void; hide(): void; toggle(): void; reposition(): void };
+
 /**
  * `<tulpar-tooltip>` — an accessible, collision-aware tooltip chip.
  *
@@ -328,19 +331,19 @@ export const ControlledOpen: Story = {
         <tulpar-tooltip id="ctl-tip" for="ctl-anchor" placement="right" text="Controlled tooltip"></tulpar-tooltip>
         <button
           @click=${() => document.getElementById("ctl-tip")?.dispatchEvent(new Event("noop")) ||
-          (document.getElementById("ctl-tip") as any)?.show()}
+          (document.getElementById("ctl-tip") as OverlayEl | null)?.show()}
           style="font:inherit; padding:6px 12px; border-radius:7px; border:1px solid var(--tulpar-color-border-default,#d9e0df); background:var(--tulpar-color-bg-raised,#fff); cursor:pointer;"
         >
           show()
         </button>
         <button
-          @click=${() => (document.getElementById("ctl-tip") as any)?.hide()}
+          @click=${() => (document.getElementById("ctl-tip") as OverlayEl | null)?.hide()}
           style="font:inherit; padding:6px 12px; border-radius:7px; border:1px solid var(--tulpar-color-border-default,#d9e0df); background:var(--tulpar-color-bg-raised,#fff); cursor:pointer;"
         >
           hide()
         </button>
         <button
-          @click=${() => (document.getElementById("ctl-tip") as any)?.toggle()}
+          @click=${() => (document.getElementById("ctl-tip") as OverlayEl | null)?.toggle()}
           style="font:inherit; padding:6px 12px; border-radius:7px; border:1px solid var(--tulpar-color-border-default,#d9e0df); background:var(--tulpar-color-bg-raised,#fff); cursor:pointer;"
         >
           toggle()

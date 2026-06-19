@@ -67,10 +67,11 @@ const keyboardCode = `<!-- The trigger is a real button, so Enter / Space toggle
       <span class="page-tag">Overlay · Directive</span>
       <h1 class="page-title">Toggletip</h1>
       <p class="page-lede">
-        A click-triggered disclosure bubble — <code class="inline-code">v-tulpar-toggletip</code>
-        attaches a <code class="inline-code">&lt;tulpar-toggletip&gt;</code> to any host. Unlike a
-        tooltip it toggles on click, announces via a polite live region, carries a semantic
-        <em>tone</em>, and returns focus on <kbd>Esc</kbd>. Content is brief and non-interactive.
+        A click-triggered disclosure bubble —
+        <code class="inline-code">v-tulpar-toggletip</code> attaches a
+        <code class="inline-code">&lt;tulpar-toggletip&gt;</code> to any host. Unlike a tooltip it
+        toggles on click, announces via a polite live region, carries a semantic <em>tone</em>, and
+        returns focus on <kbd>Esc</kbd>. Content is brief and non-interactive.
       </p>
     </header>
 
@@ -216,7 +217,10 @@ const keyboardCode = `<!-- The trigger is a real button, so Enter / Space toggle
         <button class="plain-btn" v-tulpar-toggletip="{ text: 'Opens below', placement: 'bottom' }">
           bottom
         </button>
-        <button class="plain-btn" v-tulpar-toggletip="{ text: 'No arrow on this one', arrow: false }">
+        <button
+          class="plain-btn"
+          v-tulpar-toggletip="{ text: 'No arrow on this one', arrow: false }"
+        >
           arrow off
         </button>
         <button
