@@ -876,3 +876,280 @@ describe("__resetToastServiceForTest", () => {
     toast.dismiss();
   });
 });
+
+// ─── toast.promise() ─────────────────────────────────────────────────────────
+
+describe("toast.promise()", () => {
+  it("toast.promise is a function", () => {
+    expect(typeof toast.promise).to.equal("function");
+  });
+
+  it("shows a loading toast immediately (persistent, not closable)", async () => {
+    const p = new Promise<string>(() => {}); // never resolves in this test
+    toast.promise(p, { loading: "Saving…", success: "Saved!", error: "Failed" });
+    await nextFrame();
+
+    const els = toastsInLocation("bottom-right");
+    expect(els.length).to.equal(1);
+    const el = els[0];
+    expect(el.heading).to.equal("Saving…");
+    expect(el.closable).to.equal(false);
+    // timer should be false (persistent)
+    expect(el.timer).to.equal(false);
+    toast.dismiss();
+  });
+
+  it("loading toast has a spinner icon (raw SVG injected)", async () => {
+    const p = new Promise<string>(() => {});
+    toast.promise(p, { loading: "Loading…", success: "Done", error: "Oops" });
+    await nextFrame();
+
+    const el = toastsInLocation("bottom-right")[0];
+    // The icon prop should be set to a raw SVG string starting with '<svg'
+    expect(el.icon).to.be.a("string");
+    expect((el.icon as string).trimStart().startsWith("<svg")).to.be.true;
+    toast.dismiss();
+  });
+
+  it("on resolve → updates toast to success tone, closable, auto-dismiss", async () => {
+    let resolveP!: (v: string) => void;
+    const p = new Promise<string>((res) => { resolveP = res; });
+    toast.promise(p, { loading: "Saving…", success: "Saved!", error: "Failed" });
+    await nextFrame();
+
+    resolveP("done");
+    await p; // wait for microtask settle
+    await nextFrame();
+
+    const el = toastsInLocation("bottom-right")[0];
+    expect(el.tone).to.equal("success");
+    expect(el.heading).to.equal("Saved!");
+    expect(el.closable).to.equal(true);
+    expect(el.timer).to.equal(true);
+    toast.dismiss();
+  });
+
+  it("on reject → updates toast to danger tone, persistent (timer:false), closable", async () => {
+    let rejectP!: (e: unknown) => void;
+    const p = new Promise<string>((_, rej) => { rejectP = rej; });
+
+    // Attach a catch so the unhandled rejection doesn't pollute the test suite.
+    const guarded = p.catch(() => {});
+    toast.promise(p, { loading: "Working…", success: "OK", error: "Boom" });
+    await nextFrame();
+
+    rejectP(new Error("network error"));
+    await guarded; // wait for rejection to settle
+    await nextFrame();
+
+    const el = toastsInLocation("bottom-right")[0];
+    expect(el.tone).to.equal("danger");
+    expect(el.heading).to.equal("Boom");
+    expect(el.closable).to.equal(true);
+    // error state must be persistent (timer:false)
+    expect(el.timer).to.equal(false);
+    toast.dismiss();
+  });
+
+  it("success as a function receives the resolved value", async () => {
+    let resolveP!: (v: number) => void;
+    const p = new Promise<number>((res) => { resolveP = res; });
+    toast.promise(p, {
+      loading: "Computing…",
+      success: (v) => `Result: ${v}`,
+      error: "Failed",
+    });
+    await nextFrame();
+
+    resolveP(42);
+    await p;
+    await nextFrame();
+
+    const el = toastsInLocation("bottom-right")[0];
+    expect(el.heading).to.equal("Result: 42");
+    toast.dismiss();
+  });
+
+  it("error as a function receives the rejection reason", async () => {
+    let rejectP!: (e: unknown) => void;
+    const p = new Promise<string>((_, rej) => { rejectP = rej; });
+    const guarded = p.catch(() => {});
+    toast.promise(p, {
+      loading: "Working…",
+      success: "OK",
+      error: (e) => `Error: ${(e as Error).message}`,
+    });
+    await nextFrame();
+
+    rejectP(new Error("timeout"));
+    await guarded;
+    await nextFrame();
+
+    const el = toastsInLocation("bottom-right")[0];
+    expect(el.heading).to.equal("Error: timeout");
+    toast.dismiss();
+  });
+
+  it("resolving promise resolves to the value (rethrows / passthrough)", async () => {
+    const p = Promise.resolve(99);
+    const result = await toast.promise(p, { loading: "…", success: "OK", error: "Fail" });
+    expect(result).to.equal(99);
+    toast.dismiss();
+  });
+
+  it("rejecting promise rejects to the caller (rethrows, does NOT swallow)", async () => {
+    const err = new Error("upstream failure");
+    const p = Promise.reject<string>(err);
+    let caught: unknown = null;
+    try {
+      await toast.promise(p, { loading: "…", success: "OK", error: "Fail" });
+    } catch (e) {
+      caught = e;
+    }
+    expect(caught).to.equal(err);
+    toast.dismiss();
+  });
+
+  it("opts.duration controls the success auto-dismiss duration", async () => {
+    let resolveP!: (v: string) => void;
+    const p = new Promise<string>((res) => { resolveP = res; });
+    toast.promise(
+      p,
+      { loading: "…", success: "Done!", error: "Fail" },
+      { duration: 80 },
+    );
+    await nextFrame();
+
+    resolveP("ok");
+    await p;
+    await nextFrame();
+    // After resolve the element should still be visible
+    expect(toastsInLocation("bottom-right").length).to.equal(1);
+    // After the short duration it should be gone
+    await wait(150);
+    expect(toastsInLocation("bottom-right").length).to.equal(0);
+  });
+
+  it("opts.location places the loading + resolved toast in that location", async () => {
+    let resolveP!: (v: string) => void;
+    const p = new Promise<string>((res) => { resolveP = res; });
+    toast.promise(
+      p,
+      { loading: "…", success: "Done!", error: "Fail" },
+      { location: "top-left", duration: 0 },
+    );
+    await nextFrame();
+    expect(toastsInLocation("top-left").length).to.equal(1);
+    expect(toastsInLocation("bottom-right").length).to.equal(0);
+
+    resolveP("ok");
+    await p;
+    await nextFrame();
+    // Still in the same location after update
+    expect(toastsInLocation("top-left").length).to.equal(1);
+    toast.dismiss();
+  });
+});
+
+// ─── onAutoClose wiring ───────────────────────────────────────────────────────
+
+describe("onAutoClose lifecycle callback", () => {
+  it("fires onAutoClose on timeout (before onDismiss)", async () => {
+    const log: string[] = [];
+    toast("Quick", {
+      duration: 60,
+      onAutoClose: () => { log.push("autoClose"); },
+      onDismiss: () => { log.push("dismiss"); },
+    });
+    await wait(120);
+    expect(log).to.include("autoClose");
+    expect(log[0]).to.equal("autoClose");
+    expect(log[1]).to.equal("dismiss");
+  });
+
+  it("does NOT fire onAutoClose on manual (user) dismiss", async () => {
+    let autoCloseFired = false;
+    toast("Manual", {
+      duration: 5000,
+      onAutoClose: () => { autoCloseFired = true; },
+    });
+    await nextFrame();
+    const el = toastsInLocation("bottom-right")[0];
+    el.dispatchEvent(
+      new CustomEvent("tulpar-dismiss", {
+        detail: { reason: "user" },
+        bubbles: true,
+        composed: true,
+        cancelable: true,
+      })
+    );
+    await nextFrame();
+    expect(autoCloseFired).to.equal(false);
+  });
+
+  it("does NOT fire onAutoClose on programmatic dismiss", async () => {
+    let autoCloseFired = false;
+    const id = toast("Prog", {
+      duration: 5000,
+      onAutoClose: () => { autoCloseFired = true; },
+    });
+    await nextFrame();
+    toast.dismiss(id);
+    await nextFrame();
+    expect(autoCloseFired).to.equal(false);
+  });
+});
+
+// ─── onDismiss all paths ──────────────────────────────────────────────────────
+
+describe("onDismiss fires for every dismiss path", () => {
+  it("fires with reason='timeout' on auto-dismiss", async () => {
+    let reason: string | undefined;
+    toast("T", { duration: 60, onDismiss: (r) => { reason = r; } });
+    await wait(120);
+    expect(reason).to.equal("timeout");
+  });
+
+  it("fires with reason='user' on user close (tulpar-dismiss user)", async () => {
+    let reason: string | undefined;
+    toast("T", { duration: 0, onDismiss: (r) => { reason = r; } });
+    await nextFrame();
+    const el = toastsInLocation("bottom-right")[0];
+    el.dispatchEvent(new CustomEvent("tulpar-dismiss", { detail: { reason: "user" }, bubbles: true, composed: true, cancelable: true }));
+    await nextFrame();
+    expect(reason).to.equal("user");
+  });
+
+  it("fires with reason='swipe' on swipe dismiss", async () => {
+    let reason: string | undefined;
+    toast("T", { duration: 0, onDismiss: (r) => { reason = r; } });
+    await nextFrame();
+    const el = toastsInLocation("bottom-right")[0];
+    el.dispatchEvent(new CustomEvent("tulpar-dismiss", { detail: { reason: "swipe" }, bubbles: true, composed: true, cancelable: true }));
+    await nextFrame();
+    expect(reason).to.equal("swipe");
+  });
+
+  it("fires with reason='programmatic' on toast.dismiss(id)", async () => {
+    let reason: string | undefined;
+    const id = toast("T", { duration: 0, onDismiss: (r) => { reason = r; } });
+    await nextFrame();
+    toast.dismiss(id);
+    await nextFrame();
+    expect(reason).to.equal("programmatic");
+  });
+
+  it("fires with reason='action' on action button click", async () => {
+    let reason: string | undefined;
+    toast("T", {
+      duration: 0,
+      actions: [{ label: "Undo", onClick: () => {} }],
+      onDismiss: (r) => { reason = r; },
+    });
+    await nextFrame();
+    const el = toastsInLocation("bottom-right")[0];
+    el.dispatchEvent(new CustomEvent("tulpar-action", { detail: { label: "Undo" }, bubbles: true, composed: true, cancelable: false }));
+    await nextFrame();
+    expect(reason).to.equal("action");
+  });
+});

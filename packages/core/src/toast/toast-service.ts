@@ -31,6 +31,15 @@ import { collapsedLayout, expandedLayout } from "../_internal/toaster/stacking";
 import { TulparToast } from "./tulpar-toast";
 import type { ToastAction } from "./tulpar-toast";
 
+// ─── Loading spinner SVG ──────────────────────────────────────────────────────
+//
+// Minimal CSS-animated spinner injected as the icon during toast.promise loading
+// state. Uses a stroke-dasharray/dashoffset technique inside a <circle> with a
+// CSS @keyframes spin (rotateZ). Injected via el.icon (raw SVG path) — the same
+// mechanism as the built-in tone icons in tulpar-toast.ts.
+
+const ICON_SPINNER = `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false" style="animation:tulpar-spin 0.8s linear infinite;"><style>@keyframes tulpar-spin{to{transform:rotate(360deg)}}</style><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" stroke-dasharray="28 56" stroke-linecap="round"/></svg>`;
+
 // ─── Public types ─────────────────────────────────────────────────────────────
 
 export type DismissReason = "timeout" | "user" | "action" | "programmatic" | "swipe";
@@ -90,6 +99,15 @@ export interface MessageOptions {
   location?: Location;
   /** Caller-supplied id */
   id?: string;
+}
+
+export interface ToastPromiseMsgs<T> {
+  /** Shown immediately while the promise is pending */
+  loading: string;
+  /** Shown on resolve — string or a function receiving the resolved value */
+  success: string | ((value: T) => string);
+  /** Shown on reject — string or a function receiving the rejection reason */
+  error: string | ((err: unknown) => string);
 }
 
 export interface ToasterDefaults {
@@ -485,6 +503,65 @@ _toast.setDefaults = (defaults: ToasterDefaults): void => {
   if (defaults.maxVisible !== undefined && defaults.maxVisible !== prevMaxVisible) {
     _createQueue();
   }
+};
+
+/**
+ * Show a loading toast immediately, then update it to success or error
+ * when the given promise settles.
+ *
+ * Contract:
+ * - While pending: neutral/info tone, spinner icon, persistent (timer:false), closable:false.
+ * - On resolve: updates to tone:'success', success message (string or fn(value)), restores
+ *   timer and closable, uses opts.duration (or default) for auto-dismiss.
+ * - On reject: updates to tone:'danger', error message (string or fn(err)), persistent
+ *   (timer:false), closable:true. Errors persist so users can read them.
+ * - Returns the ORIGINAL promise (p), so the caller receives the value or rejection.
+ *   The toast update is a side-effect; it never swallows rejections.
+ */
+_toast.promise = <T>(
+  p: Promise<T>,
+  msgs: ToastPromiseMsgs<T>,
+  opts: Omit<ToastOptions, "tone" | "icon" | "closable" | "timer"> = {},
+): Promise<T> => {
+  const id = _mountToast(msgs.loading, {
+    ...opts,
+    tone: "info",
+    icon: ICON_SPINNER,
+    closable: false,
+    timer: false,
+  }, "toast");
+
+  // Attach side-effects on the returned promise WITHOUT altering the original settle chain.
+  // We use p.then(onFulfilled, onRejected) to catch both paths in one microtask queue tick.
+  p.then(
+    (value) => {
+      const successMsg = typeof msgs.success === "function"
+        ? msgs.success(value)
+        : msgs.success;
+      _toast.update(id, {
+        tone: "success",
+        title: successMsg,
+        icon: "success",
+        closable: true,
+        timer: true,
+        duration: opts.duration ?? _defaults.duration,
+      });
+    },
+    (err) => {
+      const errorMsg = typeof msgs.error === "function"
+        ? msgs.error(err)
+        : msgs.error;
+      _toast.update(id, {
+        tone: "danger",
+        title: errorMsg,
+        icon: "danger",
+        closable: true,
+        timer: false,
+      });
+    },
+  );
+
+  return p;
 };
 
 /** The public `toast` export */
