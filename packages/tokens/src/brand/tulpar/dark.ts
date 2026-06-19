@@ -383,15 +383,18 @@ export const tulparDark: SemanticTokens = {
 
   feedback: {
     tone: {
-      // Tonal surface model (dark): surface=family[900], onSurface=family[100], border=family[800], accent=family[400].
+      // Tonal surface model (dark): surface=family[900], onSurface=family[100], accent=family[400].
       // Families mirror the overlay family→intent mapping exactly:
       //   info → gok (blue), success → otuken (green), warning → ulgen (amber), danger → al (red).
-      // border lifted to family[800] so it separates from the [900] surface on dark backgrounds.
       // accent = family[400] — a mid-luminance step that stays legible on deep [900] surfaces.
-      info:    { surface: c.gok[900],    onSurface: c.gok[100],    border: c.gok[800],    accent: c.gok[400]    },
-      success: { surface: c.otuken[900], onSurface: c.otuken[100], border: c.otuken[800], accent: c.otuken[400] },
-      warning: { surface: c.ulgen[900],  onSurface: c.ulgen[100],  border: c.ulgen[800],  accent: c.ulgen[400]  },
-      danger:  { surface: c.al[900],     onSurface: c.al[100],     border: c.al[800],     accent: c.al[400]     },
+      //
+      // border raised to clear WCAG 3:1 against the [900] surface (enforced by feedback.contrast.test.ts).
+      // [800] is near-invisible on [900]; the same fix was applied to overlay dark bindings (see comment there).
+      //   info [500]=3.04, success [400]=3.42, warning [600]=3.35, danger [400]=3.78.
+      info:    { surface: c.gok[900],    onSurface: c.gok[100],    border: c.gok[500],    accent: c.gok[400]    },
+      success: { surface: c.otuken[900], onSurface: c.otuken[100], border: c.otuken[400], accent: c.otuken[400] },
+      warning: { surface: c.ulgen[900],  onSurface: c.ulgen[100],  border: c.ulgen[600],  accent: c.ulgen[400]  },
+      danger:  { surface: c.al[900],     onSurface: c.al[100],     border: c.al[400],     accent: c.al[400]     },
     },
     // High-contrast danger: al[500] surface (slightly lighter than [600] so it's still readable
     // against dark surroundings) + white text.
