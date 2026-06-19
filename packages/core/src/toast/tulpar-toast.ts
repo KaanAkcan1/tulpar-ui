@@ -1,4 +1,4 @@
-import { LitElement, html, nothing, type TemplateResult } from "lit";
+import { LitElement, html, nothing, type PropertyValues, type TemplateResult } from "lit";
 import { property, query } from "lit/decorators.js";
 import { toastStyles } from "./tulpar-toast.styles";
 import { resolveTone, type ToneValue } from "./tone-resolver";
@@ -682,8 +682,8 @@ export class TulparToast extends LitElement {
    * apply the initial ring duration CSS var.
    * Also wires the swipe-to-dismiss pointer listeners on the card element.
    */
-  override firstUpdated(): void {
-    super.firstUpdated();
+  override firstUpdated(changed: PropertyValues): void {
+    super.firstUpdated(changed);
     this._syncDescriptionAttr();
     this._syncTimerAttr();
     this._applyRingDuration();
