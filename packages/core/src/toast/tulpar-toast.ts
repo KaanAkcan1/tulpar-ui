@@ -214,6 +214,15 @@ export class TulparToast extends LitElement {
   @property({ type: String, reflect: true, attribute: "timer-style" })
   timerStyle: "track" | "soft" = "track";
 
+  /**
+   * Grouping count — for message grouping. When >1, the toast service has
+   * merged duplicate messages and this shows the deduplicated count (e.g. ×3).
+   * Rendered as a `data-count` attribute; CSS / `::after` can show the badge.
+   * Updated imperatively by the service (no requestUpdate loop).
+   */
+  @property({ type: Number, attribute: false })
+  count = 1;
+
   // ── DOM refs for imperative innerHTML injection ────────────────────────────
 
   @query(".icon-prop-target")
