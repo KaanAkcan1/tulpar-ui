@@ -484,6 +484,156 @@ export class TulparToast extends LitElement {
     `;
   }
 
+  // ─── Swipe-to-dismiss (Task 3.4) ──────────────────────────────────────────
+
+  /**
+   * State for an in-progress horizontal swipe gesture.
+   * Cleared on pointerup/pointercancel.
+   */
+  private _swipe: {
+    startX: number;
+    startTime: number;
+    pointerId: number;
+    card: HTMLElement;
+  } | null = null;
+
+  /**
+   * Attach pointer-event listeners for swipe-to-dismiss on the .toast-card.
+   * Called once from firstUpdated() — no Lit re-render involvement.
+   *
+   * Gate: pointerdown on a <button> (close, action) is ignored so those
+   * interactions remain independent.
+   *
+   * Disabled when `prefers-reduced-motion: reduce` is active — checked at
+   * each pointerdown so the gate responds to system preference changes in
+   * long-lived sessions.
+   */
+  private _initSwipe(card: HTMLElement): void {
+    card.addEventListener("pointerdown", this._onSwipeDown);
+    card.addEventListener("pointermove", this._onSwipeMove);
+    card.addEventListener("pointerup", this._onSwipeUp);
+    card.addEventListener("pointercancel", this._onSwipeCancel);
+  }
+
+  private _onSwipeDown = (e: PointerEvent): void => {
+    // Ignore if another swipe is already active.
+    if (this._swipe) return;
+
+    // Gate: prefers-reduced-motion — check at event time.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    // Gate: ignore pointerdown that originated on a button (close / action).
+    // e.target is the deepest element in the shadow DOM that received the event.
+    const target = e.composedPath()[0] as Element | null;
+    if (target instanceof HTMLButtonElement || target?.closest("button")) return;
+
+    const card = e.currentTarget as HTMLElement;
+
+    // Attempt pointer capture so we receive move/up even outside the element.
+    // setPointerCapture may throw in non-real-pointer environments (tests).
+    try {
+      card.setPointerCapture(e.pointerId);
+    } catch {
+      // Guard: continue without capture (synthetic test events, non-standard env).
+    }
+
+    this._swipe = {
+      startX: e.clientX,
+      startTime: Date.now(),
+      pointerId: e.pointerId,
+      card,
+    };
+  };
+
+  private _onSwipeMove = (e: PointerEvent): void => {
+    const s = this._swipe;
+    if (!s || e.pointerId !== s.pointerId) return;
+
+    const dx = e.clientX - s.startX;
+    // Apply 1:1 follow (no rubber-band — keeps motion predictable).
+    s.card.style.transform = `translateX(${dx}px)`;
+
+    // Reduce opacity as distance grows (max reduction at 160px away).
+    const ratio = Math.min(Math.abs(dx) / 160, 1);
+    s.card.style.opacity = String(1 - ratio * 0.6);
+  };
+
+  private _onSwipeUp = (e: PointerEvent): void => {
+    const s = this._swipe;
+    if (!s || e.pointerId !== s.pointerId) return;
+    this._swipe = null;
+
+    const dx = e.clientX - s.startX;
+    const elapsed = Date.now() - s.startTime;
+    const velocity = elapsed > 0 ? Math.abs(dx) / elapsed : 0;
+
+    const width = s.card.offsetWidth || 360; // fallback for test env
+    const threshold = width * 0.45;
+    const pastThreshold = Math.abs(dx) >= threshold;
+    const fastEnough = velocity >= 0.11; // px/ms
+
+    if (pastThreshold || fastEnough) {
+      this._dismissViaSipe(s.card, dx);
+    } else {
+      this._springBack(s.card);
+    }
+  };
+
+  private _onSwipeCancel = (e: PointerEvent): void => {
+    const s = this._swipe;
+    if (!s || e.pointerId !== s.pointerId) return;
+    this._swipe = null;
+    this._springBack(s.card);
+  };
+
+  /**
+   * Fire the cancelable `tulpar-dismiss` event with `reason:'swipe'`.
+   * If a listener calls `preventDefault()`, spring back instead of removing.
+   * The actual DOM removal is the service's responsibility (Task 4.x); we
+   * animate out and fire the event only.
+   */
+  private _dismissViaSipe(card: HTMLElement, dx: number): void {
+    const evt = new CustomEvent("tulpar-dismiss", {
+      detail: { reason: "swipe" },
+      bubbles: true,
+      composed: true,
+      cancelable: true,
+    });
+
+    const dispatched = this.dispatchEvent(evt);
+
+    if (!dispatched) {
+      // preventDefault() was called — spring back.
+      this._springBack(card);
+    } else {
+      // Animate out in the swipe direction, then clear.
+      const direction = dx >= 0 ? 1 : -1;
+      const exitX = direction * (card.offsetWidth + 24);
+      card.style.transition = "transform 200ms ease, opacity 160ms ease";
+      card.style.transform = `translateX(${exitX}px)`;
+      card.style.opacity = "0";
+    }
+  }
+
+  /**
+   * Animate the card back to origin (no dismiss).
+   */
+  private _springBack(card: HTMLElement): void {
+    card.style.transition = "transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 200ms ease";
+    card.style.transform = "translateX(0px)";
+    card.style.opacity = "1";
+
+    // After the spring-back animation completes, clear the inline properties
+    // so they don't interfere with other transitions (e.g. toast enter/exit).
+    const cleanup = () => {
+      card.style.transition = "";
+      card.style.transform = "";
+      card.style.opacity = "";
+      card.removeEventListener("transitionend", cleanup);
+    };
+    card.addEventListener("transitionend", cleanup);
+  }
+
   // ─── Slot helpers ──────────────────────────────────────────────────────────
 
   /**
@@ -513,12 +663,19 @@ export class TulparToast extends LitElement {
   /**
    * Seed [data-has-description] and [data-no-timer] on first render, and
    * apply the initial ring duration CSS var.
+   * Also wires the swipe-to-dismiss pointer listeners on the card element.
    */
   override firstUpdated(): void {
     super.firstUpdated();
     this._syncDescriptionAttr();
     this._syncTimerAttr();
     this._applyRingDuration();
+
+    // Wire swipe gesture listeners on the card.
+    const card = this.shadowRoot?.querySelector<HTMLElement>(".toast-card");
+    if (card) {
+      this._initSwipe(card);
+    }
   }
 
   private _syncDescriptionAttr(): void {

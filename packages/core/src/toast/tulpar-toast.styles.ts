@@ -101,6 +101,10 @@ export const toastStyles = css`
     border: 1px solid var(--_toast-border);
     color: var(--_toast-on-surface);
     box-shadow: var(--tulpar-feedback-shadow, 0 4px 6px -2px rgba(10, 37, 64, 0.10), 0 12px 28px -6px rgba(10, 37, 64, 0.18), 0 0 0 1px rgba(0,0,0,0.04));
+    /* pan-y: browser handles vertical scrolling; JS handles horizontal swipe */
+    touch-action: pan-y;
+    /* will-change hint for the swipe transform (avoids repaints during drag) */
+    will-change: transform;
   }
 
   /* ── Icon ─────────────────────────────────────────────────────────────── */

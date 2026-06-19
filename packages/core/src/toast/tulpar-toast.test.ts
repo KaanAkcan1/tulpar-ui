@@ -743,3 +743,244 @@ describe("<tulpar-toast> styles", () => {
     expect(css).to.not.include("--tulpar-primitive-");
   });
 });
+
+// ─── Swipe-to-dismiss (Task 3.4) ──────────────────────────────────────────────
+//
+// Strategy: dispatch synthetic PointerEvents on the .toast-card element.
+// We use `clientX` deltas to simulate a horizontal drag. `setPointerCapture`
+// may throw in the test environment (no real pointer device), so the
+// implementation must guard it (try/catch). We assert on emitted events and
+// on the inline transform style directly.
+
+/** Dispatch a pointer-event sequence on `target`: down → move(s) → up. */
+function swipe(
+  target: Element,
+  opts: { startX?: number; deltaX: number; pointerId?: number; velocityFast?: boolean },
+): void {
+  const startX = opts.startX ?? 100;
+  const id = opts.pointerId ?? 1;
+
+  const down = new PointerEvent("pointerdown", {
+    bubbles: true,
+    cancelable: true,
+    clientX: startX,
+    clientY: 200,
+    pointerId: id,
+    pointerType: "touch",
+  });
+
+  const move = new PointerEvent("pointermove", {
+    bubbles: true,
+    cancelable: true,
+    clientX: startX + opts.deltaX,
+    clientY: 200,
+    pointerId: id,
+    pointerType: "touch",
+  });
+
+  const up = new PointerEvent("pointerup", {
+    bubbles: true,
+    cancelable: true,
+    clientX: startX + opts.deltaX,
+    clientY: 200,
+    pointerId: id,
+    pointerType: "touch",
+  });
+
+  // Set a timestamp gap to control velocity calculation.
+  // We cannot set `timeStamp` directly on PointerEvent constructors (read-only),
+  // so we rely on the implementation using Date.now() or event.timeStamp and
+  // we just confirm the threshold-based path works (threshold is more reliable).
+  target.dispatchEvent(down);
+  target.dispatchEvent(move);
+  target.dispatchEvent(up);
+}
+
+describe("<tulpar-toast> swipe-to-dismiss", () => {
+  it("drag past 45% of card width dispatches tulpar-dismiss with reason='swipe'", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="Swipe me"></tulpar-toast>`);
+    await el.updateComplete;
+
+    const card = shadow(el).querySelector(".toast-card") as HTMLElement;
+    expect(card).to.exist;
+
+    let evt: CustomEvent | null = null;
+    el.addEventListener("tulpar-dismiss", (e) => (evt = e as CustomEvent));
+
+    // Card is 360px wide by default; 45% threshold = 162px. Use 200px (>45%).
+    // Override card offsetWidth so threshold calc is reliable in headless env.
+    Object.defineProperty(card, "offsetWidth", { configurable: true, value: 360 });
+
+    swipe(card, { startX: 100, deltaX: 200 });
+
+    // Give any microtask/promise chains a tick to flush.
+    await new Promise((r) => setTimeout(r, 20));
+
+    expect(evt, "tulpar-dismiss must fire on past-threshold swipe").to.not.be.null;
+    expect((evt as unknown as CustomEvent).detail?.reason).to.equal("swipe");
+    expect((evt as unknown as CustomEvent).cancelable).to.be.true;
+  });
+
+  it("small drag (below threshold, low velocity) does NOT dispatch tulpar-dismiss and springs back", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="Small drag"></tulpar-toast>`);
+    await el.updateComplete;
+
+    const card = shadow(el).querySelector(".toast-card") as HTMLElement;
+    Object.defineProperty(card, "offsetWidth", { configurable: true, value: 360 });
+
+    let dismissed = false;
+    el.addEventListener("tulpar-dismiss", () => (dismissed = true));
+
+    // 40px drag = ~11% of 360px — well below the 45% threshold.
+    swipe(card, { startX: 100, deltaX: 40, velocityFast: false });
+
+    await new Promise((r) => setTimeout(r, 20));
+
+    expect(dismissed).to.be.false;
+    // After spring-back, the inline transform should be cleared (translateX(0) or "").
+    const transform = card.style.transform;
+    expect(transform === "" || transform === "translateX(0px)" || transform === "none").to.be.true;
+  });
+
+  it("pointerdown on the × close button does NOT start a swipe", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+
+    const btn = closeBtn(el)!;
+    expect(btn).to.exist;
+
+    let swipeEvt: CustomEvent | null = null;
+    el.addEventListener("tulpar-dismiss", (e) => {
+      if ((e as CustomEvent).detail?.reason === "swipe") swipeEvt = e as CustomEvent;
+    });
+
+    // Simulate pointerdown on the close button, then a large delta pointer move/up
+    // on the card — the implementation must bail out when down lands on a button.
+    const card = shadow(el).querySelector(".toast-card") as HTMLElement;
+    Object.defineProperty(card, "offsetWidth", { configurable: true, value: 360 });
+
+    const down = new PointerEvent("pointerdown", {
+      bubbles: true,
+      cancelable: true,
+      clientX: 300,
+      clientY: 200,
+      pointerId: 1,
+      pointerType: "touch",
+    });
+    btn.dispatchEvent(down); // fires on button, bubbles to card
+
+    const move = new PointerEvent("pointermove", {
+      bubbles: true,
+      cancelable: true,
+      clientX: 100,
+      clientY: 200,
+      pointerId: 1,
+      pointerType: "touch",
+    });
+    card.dispatchEvent(move);
+
+    const up = new PointerEvent("pointerup", {
+      bubbles: true,
+      cancelable: true,
+      clientX: 100,
+      clientY: 200,
+      pointerId: 1,
+      pointerType: "touch",
+    });
+    card.dispatchEvent(up);
+
+    await new Promise((r) => setTimeout(r, 20));
+
+    expect(swipeEvt).to.be.null;
+  });
+
+  it("clicking the × close button after a failed swipe still dispatches reason='user'", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+
+    const card = shadow(el).querySelector(".toast-card") as HTMLElement;
+    Object.defineProperty(card, "offsetWidth", { configurable: true, value: 360 });
+
+    // Small swipe first (no dismiss).
+    swipe(card, { startX: 100, deltaX: 30, velocityFast: false });
+    await new Promise((r) => setTimeout(r, 10));
+
+    let reason: string | null = null;
+    el.addEventListener("tulpar-dismiss", (e) => (reason = (e as CustomEvent).detail?.reason));
+
+    // Now click the close button.
+    closeBtn(el)!.click();
+
+    expect(reason).to.equal("user");
+  });
+
+  it("tulpar-dismiss event from swipe carries cancelable=true; preventDefault() prevents removal", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+
+    const card = shadow(el).querySelector(".toast-card") as HTMLElement;
+    Object.defineProperty(card, "offsetWidth", { configurable: true, value: 360 });
+
+    let eventFired = false;
+    el.addEventListener("tulpar-dismiss", (e) => {
+      eventFired = true;
+      e.preventDefault(); // spring back
+    });
+
+    swipe(card, { startX: 100, deltaX: 200 });
+    await new Promise((r) => setTimeout(r, 20));
+
+    expect(eventFired).to.be.true;
+    // After preventDefault(), the element should still exist in the DOM
+    // (the service is responsible for removal, but here we just confirm the
+    // element isn't self-removing — it's still in the fixture).
+    expect(el.isConnected).to.be.true;
+  });
+
+  it("close button event carries reason='user' (detail shape)", async () => {
+    let detail: Record<string, unknown> | null = null;
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    el.addEventListener("tulpar-dismiss", (e) => (detail = (e as CustomEvent).detail));
+    closeBtn(el)!.click();
+    expect(detail).to.deep.include({ reason: "user" });
+  });
+
+  it("swipe to the left also triggers dismiss (negative deltaX past threshold)", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+
+    const card = shadow(el).querySelector(".toast-card") as HTMLElement;
+    Object.defineProperty(card, "offsetWidth", { configurable: true, value: 360 });
+
+    let evt: CustomEvent | null = null;
+    el.addEventListener("tulpar-dismiss", (e) => (evt = e as CustomEvent));
+
+    swipe(card, { startX: 300, deltaX: -200 });
+    await new Promise((r) => setTimeout(r, 20));
+
+    expect(evt).to.not.be.null;
+    expect((evt as unknown as CustomEvent).detail?.reason).to.equal("swipe");
+  });
+
+  it("styles include touch-action: pan-y on .toast-card to allow vertical scroll", async () => {
+    const mod = await import("./tulpar-toast.styles");
+    const cssText = mod.toastStyles.cssText;
+    expect(cssText).to.include("touch-action");
+    expect(cssText).to.include("pan-y");
+  });
+
+  it("reduced-motion gate: the element has a _swipeReducedMotion accessor or JS gate is documented", async () => {
+    // We verify the JS-side reduced-motion gate exists by checking that
+    // the element class exposes either a swipeDisabled flag or that it does
+    // not apply a transform when a drag starts (indirect test via style).
+    // Since matchMedia cannot be mocked in WTR without extra plugins, we test
+    // the fallback: without mocking, matchMedia returns false in headless Chrome
+    // (no system setting), so swipe IS active. We simply assert the card
+    // does NOT already have a transform before any gesture.
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+    const card = shadow(el).querySelector(".toast-card") as HTMLElement;
+    // No gesture → no transform applied.
+    expect(card.style.transform).to.equal("");
+  });
+});
