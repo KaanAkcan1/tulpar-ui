@@ -572,8 +572,14 @@ export class TulparToast extends LitElement {
     const pastThreshold = Math.abs(dx) >= threshold;
     const fastEnough = velocity >= 0.11; // px/ms
 
+    try {
+      s.card.releasePointerCapture(s.pointerId);
+    } catch {
+      // Guard: may throw if capture was never acquired or element detached.
+    }
+
     if (pastThreshold || fastEnough) {
-      this._dismissViaSipe(s.card, dx);
+      this._dismissViaSwipe(s.card, dx);
     } else {
       this._springBack(s.card);
     }
@@ -583,6 +589,13 @@ export class TulparToast extends LitElement {
     const s = this._swipe;
     if (!s || e.pointerId !== s.pointerId) return;
     this._swipe = null;
+
+    try {
+      s.card.releasePointerCapture(s.pointerId);
+    } catch {
+      // Guard: may throw if capture was never acquired or element detached.
+    }
+
     this._springBack(s.card);
   };
 
@@ -592,7 +605,7 @@ export class TulparToast extends LitElement {
    * The actual DOM removal is the service's responsibility (Task 4.x); we
    * animate out and fire the event only.
    */
-  private _dismissViaSipe(card: HTMLElement, dx: number): void {
+  private _dismissViaSwipe(card: HTMLElement, dx: number): void {
     const evt = new CustomEvent("tulpar-dismiss", {
       detail: { reason: "swipe" },
       bubbles: true,
@@ -625,7 +638,11 @@ export class TulparToast extends LitElement {
 
     // After the spring-back animation completes, clear the inline properties
     // so they don't interfere with other transitions (e.g. toast enter/exit).
-    const cleanup = () => {
+    // Guard: wait for the transform transition (300ms) to finish — the opacity
+    // transition (200ms) fires its transitionend first; clearing styles then
+    // would abort the still-running transform spring.
+    const cleanup = (e: TransitionEvent) => {
+      if (e.propertyName !== "transform") return;
       card.style.transition = "";
       card.style.transform = "";
       card.style.opacity = "";
@@ -761,8 +778,6 @@ export class TulparToast extends LitElement {
                 y="1px"
                 width="calc(100% - 2px)"
                 height="calc(100% - 2px)"
-                rx="11.5px"
-                ry="11.5px"
                 fill="none"
               />`
             : nothing}
@@ -772,8 +787,6 @@ export class TulparToast extends LitElement {
             y="1px"
             width="calc(100% - 2px)"
             height="calc(100% - 2px)"
-            rx="11.5px"
-            ry="11.5px"
             fill="none"
             pathLength="100"
           />

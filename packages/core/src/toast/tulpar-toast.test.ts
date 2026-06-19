@@ -962,6 +962,53 @@ describe("<tulpar-toast> swipe-to-dismiss", () => {
     expect((evt as unknown as CustomEvent).detail?.reason).to.equal("swipe");
   });
 
+  it("pointercancel springs back and does NOT dispatch tulpar-dismiss", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="Cancel test"></tulpar-toast>`);
+    await el.updateComplete;
+
+    const card = shadow(el).querySelector(".toast-card") as HTMLElement;
+    Object.defineProperty(card, "offsetWidth", { configurable: true, value: 360 });
+
+    let dismissed = false;
+    el.addEventListener("tulpar-dismiss", () => (dismissed = true));
+
+    // Start a drag.
+    const down = new PointerEvent("pointerdown", {
+      bubbles: true, cancelable: true,
+      clientX: 100, clientY: 200,
+      pointerId: 1, pointerType: "touch",
+    });
+    card.dispatchEvent(down);
+
+    // Move some distance.
+    const move = new PointerEvent("pointermove", {
+      bubbles: true, cancelable: true,
+      clientX: 180, clientY: 200,
+      pointerId: 1, pointerType: "touch",
+    });
+    card.dispatchEvent(move);
+
+    // Cancel instead of ending normally.
+    const cancel = new PointerEvent("pointercancel", {
+      bubbles: true, cancelable: false,
+      clientX: 180, clientY: 200,
+      pointerId: 1, pointerType: "touch",
+    });
+    card.dispatchEvent(cancel);
+
+    await new Promise((r) => setTimeout(r, 20));
+
+    // No dismiss event must fire on pointercancel.
+    expect(dismissed, "tulpar-dismiss must NOT fire on pointercancel").to.be.false;
+
+    // Spring-back transition must have been applied (transform resets to 0 or empty).
+    const transform = card.style.transform;
+    expect(
+      transform === "" || transform === "translateX(0px)" || transform === "none",
+      `card transform must reset after cancel (got: "${transform}")`,
+    ).to.be.true;
+  });
+
   it("styles include touch-action: pan-y on .toast-card to allow vertical scroll", async () => {
     const mod = await import("./tulpar-toast.styles");
     const cssText = mod.toastStyles.cssText;

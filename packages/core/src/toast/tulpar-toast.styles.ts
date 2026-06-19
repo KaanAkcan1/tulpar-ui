@@ -328,17 +328,23 @@ export const toastStyles = css`
   .toast-ring .ring-track {
     stroke: var(--_toast-accent);
     stroke-width: 1.5;
+    stroke-linecap: round;
     opacity: 0.14;
+    rx: calc(var(--tulpar-feedback-size-toast-radius, 12px) - 0.5px);
+    ry: calc(var(--tulpar-feedback-size-toast-radius, 12px) - 0.5px);
   }
 
   /* Animated depleting fill */
   .toast-ring .ring-fill {
     stroke: var(--_toast-accent);
     stroke-width: 1.5;
+    stroke-linecap: round;
     opacity: 0.7;
     stroke-dasharray: 100;
     stroke-dashoffset: 0;
     animation: tulpar-ring-deplete var(--_toast-ring-dur, 5000ms) linear forwards;
+    rx: calc(var(--tulpar-feedback-size-toast-radius, 12px) - 0.5px);
+    ry: calc(var(--tulpar-feedback-size-toast-radius, 12px) - 0.5px);
   }
 
   /* timerStyle='soft': fill only, slightly reduced opacity */
