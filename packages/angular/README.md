@@ -48,6 +48,40 @@ import {
 } from "@tulpar-ui/angular";
 ```
 
+### Overlay family
+
+Overlays attach to a trigger via a **directive on the trigger** — nothing
+wraps the trigger. The directive drives a core overlay (`for` = the host
+element), so "a tooltip on a button" never inverts into "a button inside a
+tooltip".
+
+```ts
+import {
+  TulparTooltipDirective,
+  TulparToggletipDirective,
+  TulparPopoverDirective,
+} from "@tulpar-ui/angular";
+```
+
+```html
+<!-- inline: the directive carries the config -->
+<button tulparTooltip="Kaydet" tooltipPlacement="top">Save</button>
+<button tulparToggletip="Optional billing field" toggletipTone="info" aria-label="Info">ⓘ</button>
+
+<!-- reference-by-id: declare a rich overlay once, reference it from triggers -->
+<tulpar-popover-ng id="acctMenu" placement="bottom-start" label="Account">
+  <form><!-- inputs, Save / Cancel --></form>
+</tulpar-popover-ng>
+<button tulparPopoverRef="acctMenu">Account</button>
+```
+
+`open` is a signal input with an `openChange` output. `tone`
+(`neutral | info | success | warning | danger`) applies to toggletip and
+popover (conventional status hues: info = blue, success = green, warning =
+amber, danger = red); pair it with the matching status icon — color is never
+the sole carrier. Tooltips have no tone and **degrade to a toggletip on
+touch**, so never put load-bearing info in one.
+
 ## Requirements
 
 - Angular 22+
