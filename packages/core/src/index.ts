@@ -11,3 +11,4 @@ export * from "./radio-group";
 export * from "./tooltip";
 export * from "./toggletip";
 export * from "./popover";
+export * from "./toast";
