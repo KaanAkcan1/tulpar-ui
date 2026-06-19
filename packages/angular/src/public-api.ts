@@ -51,6 +51,9 @@ export {
   TulparMessageService,
   provideTulparToast,
 } from "./toast/tulpar-toast.service";
+
+export { TulparToastComponent } from "./toast/tulpar-toast.component";
+export type { ToastAction } from "./toast/tulpar-toast.component";
 export type {
   ToastOptions,
   MessageOptions,
