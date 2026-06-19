@@ -1,7 +1,12 @@
 import { LitElement, html } from "lit";
 import { property, query } from "lit/decorators.js";
 import { popoverStyles } from "./tulpar-popover.styles";
-import { resolveAnchor, warnIfBadTrigger, supportsPopover } from "../_internal/overlay/anchor";
+import {
+  resolveAnchor,
+  warnIfBadTrigger,
+  warnIfUnresolvedFor,
+  supportsPopover,
+} from "../_internal/overlay/anchor";
 import { setHasPopup, clearHasPopup } from "../_internal/overlay/aria";
 import { pushOverlay, popOverlay } from "../_internal/overlay/overlay-root";
 import {
@@ -60,6 +65,12 @@ const FOCUSABLE_SELECTOR = [
  * container) but Tab then flows naturally OUT; `Escape` closes and returns focus
  * to the trigger; an outside pointerdown light-dismisses.
  *
+ * Trigger binding is by id (matching the tooltip/toggletip): the popover
+ * references an EXTERNAL trigger via the `for` attribute
+ * (`<tulpar-popover for="acctBtn">`) and self-wires click listeners +
+ * `aria-haspopup="dialog"`/`aria-expanded` onto it. The popover never wraps its
+ * trigger. Its rich content is the popover's OWN children (default slot).
+ *
  * Composition mirrors the toggletip:
  * - positioning math: `_internal/overlay/positioner` (pure, DOM-free).
  * - anchor resolution + capability probes: `_internal/overlay/anchor`.
@@ -109,8 +120,14 @@ export class TulparPopover extends LitElement {
   @property({ type: Boolean, attribute: "default-open" })
   defaultOpen?: boolean;
 
+  /**
+   * Id of the EXTERNAL trigger element this popover is disclosed from. Resolved
+   * against the host's `ownerDocument`; the popover wires click listeners +
+   * `aria-haspopup="dialog"`/`aria-expanded` onto the resolved element. Reflected
+   * so the attribute and property stay in sync.
+   */
   @property({ type: String, reflect: true })
-  anchor?: string;
+  for?: string;
 
   /**
    * Internal open flag, mirrored to `[data-open]` on the surface. Deliberately
@@ -130,6 +147,11 @@ export class TulparPopover extends LitElement {
 
   /** The currently-resolved anchor element (trigger), if any. */
   protected _anchorEl: HTMLElement | null = null;
+
+  /** Test-only accessor for the resolved trigger element. */
+  get _anchorElForTest(): HTMLElement | null {
+    return this._anchorEl;
+  }
 
   /**
    * Set while an internal open/close transition writes back to the reflected
@@ -162,6 +184,9 @@ export class TulparPopover extends LitElement {
   }
 
   override updated(changed: Map<string, unknown>): void {
+    // Re-wire when the trigger reference changes (detach the old trigger's
+    // listeners/aria first; `_wireTrigger` handles that via the diff).
+    if (changed.has("for")) this._wireTrigger();
     if (changed.has("open") && !this._internalOpenChange) {
       if (this.open && !this._isOpen) this._doOpen();
       else if (this.open === false && this._isOpen) this._doClose();
@@ -198,16 +223,23 @@ export class TulparPopover extends LitElement {
 
   protected _wireTrigger = (): void => {
     const next = resolveAnchor(this);
-    if (next === this._anchorEl) return;
+    if (next === this._anchorEl) {
+      // Dev-warn the unresolved-`for` case even when nothing changed (e.g. the
+      // trigger simply never existed) so a typo'd id is still surfaced once.
+      if (!this._anchorEl) warnIfUnresolvedFor(this, next);
+      return;
+    }
     this._detachTriggerListeners();
     if (this._anchorEl) clearHasPopup(this._anchorEl);
     this._anchorEl = next;
-    warnIfBadTrigger(next);
     if (next) {
+      warnIfBadTrigger(next);
       this._attachTriggerListeners(next);
       // A popover is a dialog surface (interactive content disclosed on click).
       setHasPopup(next, "dialog");
       next.setAttribute("aria-expanded", this._isOpen ? "true" : "false");
+    } else {
+      warnIfUnresolvedFor(this, next);
     }
   };
 
@@ -382,17 +414,27 @@ export class TulparPopover extends LitElement {
     surface.focus();
   }
 
-  /** First focusable element among the light-DOM `slot="content"` nodes. */
+  /** First focusable element among the default-slot (light-DOM) content nodes. */
   private _firstFocusableInContent(): HTMLElement | null {
-    const roots = Array.from(this.children).filter(
-      (c) => c.getAttribute("slot") === "content",
-    ) as HTMLElement[];
+    const roots = this._contentRoots();
     for (const root of roots) {
       if (root.matches(FOCUSABLE_SELECTOR)) return root;
       const inner = root.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
       if (inner) return inner;
     }
     return null;
+  }
+
+  /**
+   * The popover's default-slot content children. In the for-id model the trigger
+   * is external, so every child of the host is rich content (no `slot` attribute,
+   * tolerating a stray legacy `slot="content"`).
+   */
+  private _contentRoots(): HTMLElement[] {
+    return Array.from(this.children).filter((c) => {
+      const slot = c.getAttribute("slot");
+      return slot === null || slot === "" || slot === "content";
+    }) as HTMLElement[];
   }
 
   // ------------------------------------------------------------------
@@ -417,12 +459,10 @@ export class TulparPopover extends LitElement {
     }
   }
 
-  /** A slotted heading (`[slot=title]`, an `h1`–`h6`, or `[role=heading]`). */
+  /** A content heading (an `h1`–`h6` or `[role=heading]`) among the children. */
   private _slottedHeading(): HTMLElement | null {
-    const roots = Array.from(this.children).filter(
-      (c) => c.getAttribute("slot") === "content" || c.getAttribute("slot") === "title",
-    ) as HTMLElement[];
-    const HEADING = '[slot="title"],h1,h2,h3,h4,h5,h6,[role="heading"]';
+    const roots = this._contentRoots();
+    const HEADING = "h1,h2,h3,h4,h5,h6,[role=\"heading\"]";
     for (const root of roots) {
       if (root.matches(HEADING)) return root;
       const inner = root.querySelector<HTMLElement>(HEADING);
@@ -636,10 +676,9 @@ export class TulparPopover extends LitElement {
 
   override render() {
     return html`
-      <slot name="trigger" @slotchange=${this._wireTrigger}></slot>
       <div class="surface" role="dialog" data-placement=${this.placement} part="surface">
         <div class="body" part="body">
-          <slot name="content" @slotchange=${this._onContentSlotChange}></slot>
+          <slot @slotchange=${this._onContentSlotChange}></slot>
         </div>
         ${this.arrow ? html`<span class="arrow" part="arrow" aria-hidden="true"></span>` : ""}
       </div>
