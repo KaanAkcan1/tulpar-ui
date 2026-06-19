@@ -37,14 +37,25 @@ function readFor(host: HTMLElement & { for?: string }): string | null {
 }
 
 /**
- * Resolve the trigger element for an overlay host from its `for` id. Uses the
- * host's `ownerDocument` so resolution works inside test fixtures and any
- * document the host is adopted into. Returns `null` when `for` is unset or
- * points at no element.
+ * Resolve the trigger element for an overlay host from its `for` id.
+ *
+ * Resolution is scoped to the host's containing root: a host inside a shadow
+ * root resolves the id against that shadow root (`getElementById` is available
+ * on `ShadowRoot`), while a host in the light DOM resolves against its
+ * `ownerDocument`. This keeps for-id wiring working when an overlay and its
+ * trigger are siblings inside the same shadow tree (e.g. `<tulpar-button>`
+ * delegating its `tooltip` convenience attribute to a shadow-sibling
+ * `<tulpar-tooltip>` pointing at the inner control) — `document.getElementById`
+ * cannot see into a shadow root. Returns `null` when `for` is unset or points
+ * at no element in that root.
  */
 export function resolveAnchor(host: HTMLElement & { for?: string }): HTMLElement | null {
   const id = readFor(host);
   if (!id) return null;
+  const root = host.getRootNode();
+  if (root instanceof ShadowRoot || root instanceof Document) {
+    return root.getElementById(id);
+  }
   return host.ownerDocument.getElementById(id);
 }
 

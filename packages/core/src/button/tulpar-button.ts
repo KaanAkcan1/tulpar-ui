@@ -171,11 +171,17 @@ export class TulparButton extends LitElement {
   // --- Tooltip ---
   /**
    * Convenience string tooltip. When set, the button delegates to a real
-   * `<tulpar-tooltip>` rendered in its shadow root: the inner control becomes
-   * the tooltip's `[slot="trigger"]`, so it gets collision-aware positioning,
-   * hover/focus reveal with delay, hover-bridge, Escape-to-dismiss and a
-   * working `aria-describedby` — i.e. WCAG 1.4.13 (hoverable / dismissible /
-   * persistent) compliance.
+   * `<tulpar-tooltip>` rendered as a sibling in its shadow root: the inner
+   * control is given a stable id and the tooltip references it by `for`, so the
+   * control gets collision-aware positioning, hover/focus reveal with delay,
+   * hover-bridge, Escape-to-dismiss and a working `aria-describedby` (the
+   * tooltip self-wires that onto the resolved trigger) — i.e. WCAG 1.4.13
+   * (hoverable / dismissible / persistent) compliance.
+   *
+   * The for-id binding (not a slot-wrap) keeps `<tulpar-tooltip>` at
+   * `display:contents` with a `position:fixed` top-layer surface, so adding it
+   * as a shadow sibling never disturbs the button's own layout (icon slots,
+   * loading, icon-only, groups).
    *
    * Lazy: when this attribute is unset, no `<tulpar-tooltip>` is rendered and no
    * overlay machinery is instantiated.
@@ -185,6 +191,16 @@ export class TulparButton extends LitElement {
    */
   @property({ type: String, reflect: true })
   tooltip?: string;
+
+  /**
+   * Stable per-instance id minted for the inner interactive control (the shadow
+   * `<button>`/`<a>`). Used as the `for` target of the delegated
+   * `<tulpar-tooltip>`. Resolved within this button's shadow root (the tooltip
+   * is a sibling), so it never collides with light-DOM ids.
+   */
+  private readonly _controlId = `tulpar-btn-control-${(TulparButton._seq += 1)}`;
+
+  private static _seq = 0;
 
   constructor() {
     super();
@@ -266,22 +282,28 @@ export class TulparButton extends LitElement {
   };
 
   override render() {
-    const slotted = !!this.tooltip;
-    const control = this.href ? this._renderAnchor(slotted) : this._renderButton(slotted);
+    const hasTooltip = !!this.tooltip;
+    const control = this.href ? this._renderAnchor(hasTooltip) : this._renderButton(hasTooltip);
     // Lazy: only instantiate <tulpar-tooltip> (and its overlay machinery) when a
-    // tooltip string is actually set. The control is handed to the tooltip as
-    // its `[slot="trigger"]`; the tooltip is `display:contents`, so it adds no
-    // box and the button's own layout (icons, loading, sizing) is unaffected.
-    if (!slotted) return control;
-    return html`<tulpar-tooltip .text=${this.tooltip}>${control}</tulpar-tooltip>`;
+    // tooltip string is actually set. The tooltip is rendered as a SIBLING of the
+    // control and references it by `for` (the control carries `id=_controlId`).
+    // The tooltip is `display:contents` with a `position:fixed` surface, so it
+    // adds no box and the button's own layout (icons, loading, sizing) is
+    // unaffected. The tooltip self-wires hover/focus/Esc + aria-describedby onto
+    // the resolved inner control.
+    if (!hasTooltip) return control;
+    return html`
+      ${control}
+      <tulpar-tooltip .for=${this._controlId} .text=${this.tooltip}></tulpar-tooltip>
+    `;
   }
 
-  private _renderButton(slotted = false): TemplateResult {
+  private _renderButton(hasTooltip = false): TemplateResult {
     return html`
       <button
         class="btn"
         type="button"
-        slot=${slotted ? "trigger" : nothing}
+        id=${hasTooltip ? this._controlId : nothing}
         ?disabled=${this.disabled}
         aria-busy=${this.loading ? "true" : "false"}
       >
@@ -290,11 +312,11 @@ export class TulparButton extends LitElement {
     `;
   }
 
-  private _renderAnchor(slotted = false): TemplateResult {
+  private _renderAnchor(hasTooltip = false): TemplateResult {
     return html`
       <a
         class="btn"
-        slot=${slotted ? "trigger" : nothing}
+        id=${hasTooltip ? this._controlId : nothing}
         href=${this.disabled ? nothing : (this.href ?? nothing)}
         target=${this.target ?? nothing}
         rel=${this.rel ?? nothing}

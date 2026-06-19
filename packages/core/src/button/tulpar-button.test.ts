@@ -436,7 +436,7 @@ describe("<tulpar-button>", () => {
     });
   });
 
-  describe("tooltip (delegates to <tulpar-tooltip>, WCAG 1.4.13)", () => {
+  describe("tooltip (delegates to <tulpar-tooltip> via for-id, WCAG 1.4.13)", () => {
     it("composes a real <tulpar-tooltip> carrying the tooltip string as text", async () => {
       const el = await fixture<TulparButton>(
         html`<tulpar-button tooltip="Delete item">X</tulpar-button>`,
@@ -457,15 +457,20 @@ describe("<tulpar-button>", () => {
       expect(el.shadowRoot!.querySelector("#tulpar-btn-tooltip")).to.not.exist;
     });
 
-    it("places the inner button into the tooltip's trigger slot", async () => {
+    it("points the tooltip's `for` at the inner control's id (for-id model, no slot-wrap)", async () => {
       const el = await fixture<TulparButton>(
         html`<tulpar-button tooltip="Delete item">X</tulpar-button>`,
       );
       await el.updateComplete;
       const tip = el.shadowRoot!.querySelector("tulpar-tooltip")!;
       const btn = el.shadowRoot!.querySelector("button.btn")!;
-      expect(btn.getAttribute("slot")).to.equal("trigger");
-      expect(btn.parentElement).to.equal(tip);
+      // The inner control has a stable id and the tooltip references it by `for`.
+      expect(btn.id, "inner control has an id").to.be.a("string").and.not.empty;
+      expect(tip.getAttribute("for")).to.equal(btn.id);
+      // No slot-wrap: the control is NOT slotted into a trigger, and the tooltip
+      // is a sibling of the control, not its parent.
+      expect(btn.hasAttribute("slot")).to.be.false;
+      expect(btn.parentElement).to.not.equal(tip);
     });
 
     it("renders NO tulpar-tooltip / overlay machinery when tooltip is unset (lazy)", async () => {
@@ -502,7 +507,11 @@ describe("<tulpar-button>", () => {
       const tip = el.shadowRoot!.querySelector("tulpar-tooltip") as TulparTooltip;
       await tip.updateComplete;
       const anchor = el.shadowRoot!.querySelector("a.btn")!;
-      expect(anchor.getAttribute("slot")).to.equal("trigger");
+      // The anchor is the for-id trigger: it has an id the tooltip points at,
+      // and is not slotted/wrapped.
+      expect(anchor.id, "inner anchor has an id").to.be.a("string").and.not.empty;
+      expect(tip.getAttribute("for")).to.equal(anchor.id);
+      expect(anchor.hasAttribute("slot")).to.be.false;
       const surface = tip.shadowRoot!.querySelector('[role="tooltip"]')!;
       expect(anchor.getAttribute("aria-describedby")).to.contain(surface.id);
     });

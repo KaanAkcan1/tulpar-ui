@@ -54,6 +54,24 @@ describe("resolveAnchor", () => {
     expect(host.ownerDocument).to.equal(document);
     expect(resolveAnchor(host)).to.equal(wrap.querySelector("#owner-doc-trigger"));
   });
+
+  it("resolves a sibling trigger inside the same shadow root (not the document)", async () => {
+    // for-id wiring must work when the overlay host and its trigger are siblings
+    // inside a shadow root (e.g. <tulpar-button> delegating its `tooltip` to a
+    // shadow-sibling <tulpar-tooltip>). document.getElementById cannot see into
+    // a shadow root, so resolution is scoped to the host's containing root.
+    const wrap = (await fixture(html`<div></div>`)) as HTMLElement;
+    const root = wrap.attachShadow({ mode: "open" });
+    root.innerHTML = `
+      <button id="shadow-trigger">Trigger</button>
+      <div for="shadow-trigger"></div>
+    `;
+    const host = root.querySelector("div[for]") as HTMLElement & { for?: string };
+    const trigger = root.querySelector("#shadow-trigger");
+    // Not reachable from the document — proves we're not falling back to it.
+    expect(document.getElementById("shadow-trigger")).to.equal(null);
+    expect(resolveAnchor(host)).to.equal(trigger);
+  });
 });
 
 describe("warnIfBadTrigger", () => {
