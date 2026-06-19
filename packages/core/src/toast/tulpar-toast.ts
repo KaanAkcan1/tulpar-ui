@@ -230,6 +230,12 @@ export class TulparToast extends LitElement {
     if (iconRelated.some((k) => changed.has(k))) {
       this._applyIconContent();
     }
+
+    // Re-sync [data-has-description] when the description prop changes so
+    // the CSS visibility rule stays correct without a slot interaction.
+    if (changed.has("description")) {
+      this._syncDescriptionAttr();
+    }
   }
 
   // ─── Tone application ──────────────────────────────────────────────────────
@@ -404,18 +410,13 @@ export class TulparToast extends LitElement {
             <slot name="title">${this.heading ?? ""}</slot>
           </div>
 
-          <!-- Description: wrapper rendered when prop is set OR slot has content.
-               When neither is true, render a bare slot so slotchange can fire and
-               update _hasDescSlot, which triggers a re-render into the styled wrapper. -->
-          ${this.description !== undefined || this._hasDescSlot
-            ? html`
-                <div class="toast-description" part="description">
-                  <slot name="description" @slotchange=${this._onDescSlotChange}>${this.description ?? ""}</slot>
-                </div>
-              `
-            : html`
-                <slot name="description" @slotchange=${this._onDescSlotChange}></slot>
-              `}
+          <!-- Description: always-rendered wrapper; visibility controlled by
+               [data-has-description] attribute toggled from _onDescSlotChange.
+               This avoids the slotchange → requestUpdate → slot-removal-slotchange
+               infinite loop that results from replacing the <slot> element itself. -->
+          <div class="toast-description" part="description">
+            <slot name="description" @slotchange=${this._onDescSlotChange}>${this.description ?? ""}</slot>
+          </div>
 
           <!-- Actions -->
           ${this.actions.length > 0
@@ -458,27 +459,46 @@ export class TulparToast extends LitElement {
   // ─── Slot helpers ──────────────────────────────────────────────────────────
 
   /**
-   * When a description slot gets content without a `description` prop, force re-render
-   * so the slot wrapper is rendered in a div (allowing CSS styling).
-   * The guard `_hasDescSlot` ensures we don't loop: we only re-render when the
-   * presence changes (empty → occupied or vice versa), never on every slotchange.
+   * Toggle the host [data-has-description] attribute without triggering a
+   * Lit re-render.  Because the .toast-description wrapper is always in the
+   * DOM, there is no slot element replacement and therefore no
+   * slotchange → requestUpdate → slot-removal-slotchange infinite loop.
+   * CSS uses :host([data-has-description]) to show the wrapper; it is hidden
+   * by default via display:none on .toast-description.
+   *
+   * The attribute is seeded in firstUpdated() to cover the prop-only path
+   * (slotchange does not fire when the slot has no assigned light DOM).
    */
-  private _hasDescSlot = false;
-  private _descSlotUpdateScheduled = false;
-
   private _onDescSlotChange = (e: Event): void => {
     const slot = e.target as HTMLSlotElement;
     const hasContent = slot.assignedNodes({ flatten: true }).length > 0;
-    if (hasContent !== this._hasDescSlot && !this._descSlotUpdateScheduled) {
-      this._hasDescSlot = hasContent;
-      this._descSlotUpdateScheduled = true;
-      // Defer one tick to avoid the slotchange → requestUpdate → re-render → slotchange loop.
-      Promise.resolve().then(() => {
-        this._descSlotUpdateScheduled = false;
-        this.requestUpdate();
-      });
+    // Mirror the established SelectionControlBase pattern: toggle a data
+    // attribute on the host instead of calling requestUpdate().  No Lit
+    // update cycle is triggered, so there is no loop.
+    if (hasContent || this.description !== undefined) {
+      this.setAttribute("data-has-description", "");
+    } else {
+      this.removeAttribute("data-has-description");
     }
   };
+
+  /**
+   * Seed [data-has-description] on first render (covers the prop-only case
+   * where slotchange never fires).
+   */
+  override firstUpdated(): void {
+    super.firstUpdated();
+    this._syncDescriptionAttr();
+  }
+
+  private _syncDescriptionAttr(): void {
+    const hasSlot = Array.from(this.children).some((c) => (c as Element).slot === "description");
+    if (this.description !== undefined || hasSlot) {
+      this.setAttribute("data-has-description", "");
+    } else {
+      this.removeAttribute("data-has-description");
+    }
+  }
 }
 
 declare global {

@@ -147,13 +147,20 @@ export const toastStyles = css`
     color: var(--_toast-on-surface);
   }
 
+  /* .toast-description is always in the DOM; hidden unless the host has
+     [data-has-description] (set by _syncDescriptionAttr / _onDescSlotChange). */
   .toast-description {
+    display: none;
     font-size: 12px;
     font-weight: 400;
     line-height: 1.5;
     margin-top: 2px;
     color: var(--_toast-on-surface);
     opacity: 0.85;
+  }
+
+  :host([data-has-description]) .toast-description {
+    display: block;
   }
 
   :host([data-hc]) .toast-description {

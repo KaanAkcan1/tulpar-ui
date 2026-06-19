@@ -271,9 +271,11 @@ describe("<tulpar-toast> title/description props", () => {
     expect(d!.textContent?.trim()).to.include("More info");
   });
 
-  it("no description prop → no description element rendered", async () => {
+  it("no description prop → description wrapper is hidden (no [data-has-description])", async () => {
     const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
-    expect(descEl(el)).to.be.null;
+    // The .toast-description wrapper is always in the DOM; its visibility is
+    // controlled by [data-has-description] on the host (absent = hidden via CSS).
+    expect(el.hasAttribute("data-has-description")).to.be.false;
   });
 });
 
@@ -437,18 +439,20 @@ describe("<tulpar-toast> ARIA", () => {
 // ─── Slotted description wrapper (fix #1) ────────────────────────────────────
 
 describe("<tulpar-toast> slotted description wrapper", () => {
-  it("slotted description with no prop still gets .toast-description wrapper", async () => {
+  it("slotted description with no prop still gets .toast-description wrapper (visible)", async () => {
     const el = await fixture<TulparToast>(html`
       <tulpar-toast heading="T">
         <span slot="description" data-desc>Slotted body</span>
       </tulpar-toast>
     `);
-    // Allow the slotchange microtask to propagate then re-render.
-    await el.updateComplete;
-    await new Promise((r) => setTimeout(r, 0));
-    await el.updateComplete;
+    // The .toast-description wrapper is always in the DOM.
+    // Verify it is VISIBLE: [data-has-description] must be on the host.
     const wrapper = descEl(el);
-    expect(wrapper, ".toast-description wrapper must be present for slotted content").to.exist;
+    expect(wrapper, ".toast-description wrapper must be present in shadow DOM").to.exist;
+    expect(
+      el.hasAttribute("data-has-description"),
+      "[data-has-description] must be set so CSS shows the wrapper",
+    ).to.be.true;
   });
 });
 
