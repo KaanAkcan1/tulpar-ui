@@ -135,20 +135,16 @@ describe("toaster-root", () => {
   describe("F6 keyboard navigation", () => {
     it("F6 moves focus to the toaster root (or region) when no focusable toasts exist", async () => {
       const root = getToasterRoot();
-      // The root needs a tabIndex to be focusable as the fallback.
       document.dispatchEvent(new KeyboardEvent("keydown", { key: "F6", bubbles: true }));
-      // Root should have become focused or have tabIndex set.
-      // We check that the root has tabIndex=-1 (it's the fallback focus target).
-      expect(root.getAttribute("tabindex")).to.equal("-1");
+      // Focus must actually have moved to the region root, not just the attribute be set.
+      expect(document.activeElement).to.equal(root);
     });
 
     it("ignores non-F6 keys", () => {
       const root = getToasterRoot();
-      const prevFocused = document.activeElement;
       document.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
       // focus should not have moved to the root
       expect(document.activeElement).to.not.equal(root);
-      void prevFocused; // suppress unused warning
     });
 
     it("Shift+F6 does not move focus into the region", () => {

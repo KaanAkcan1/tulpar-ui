@@ -52,6 +52,14 @@ function syncTheme(el: HTMLElement): void {
 /**
  * Returns the first element inside `container` that can receive focus, or null.
  * We look for elements with tabindex >= 0 or natively focusable tags not disabled.
+ *
+ * **Shadow DOM limitation:** this query does NOT pierce shadow roots. Once
+ * `<tulpar-toast>` elements render their close button / action inside a shadow
+ * root, `firstFocusable` will return `null` and F6 will fall back to focusing
+ * the region root element itself. The follow-up rendering task must handle this
+ * via `delegatesFocus: true` on the toast's shadow root, or by setting a host
+ * `tabindex` so that the host element itself is returned here and delegates
+ * inward automatically.
  */
 function firstFocusable(container: HTMLElement): HTMLElement | null {
   const candidates = container.querySelectorAll<HTMLElement>(
@@ -63,6 +71,10 @@ function firstFocusable(container: HTMLElement): HTMLElement | null {
 
 function onKeydown(e: KeyboardEvent): void {
   if (e.key !== "F6") return;
+
+  // Prevent the browser's built-in F6 focus-ring / address-bar navigation so
+  // only our region jump fires (applies to both F6 and Shift+F6).
+  e.preventDefault();
 
   if (e.shiftKey) {
     // Shift+F6: return focus to the element that had it before the F6 jump.
