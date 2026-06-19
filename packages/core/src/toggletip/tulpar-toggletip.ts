@@ -4,6 +4,7 @@ import { toggletipStyles } from "./tulpar-toggletip.styles";
 import {
   resolveAnchor,
   warnIfBadTrigger,
+  warnIfUnresolvedFor,
   supportsPopover,
 } from "../_internal/overlay/anchor";
 import { setHasPopup, clearHasPopup, makeLiveRegion } from "../_internal/overlay/aria";
@@ -48,6 +49,12 @@ const ARROW_SIZE = 11;
  * `aria-live="polite"` region (the region exists in the DOM before injection so
  * SRs announce the change) rather than `aria-describedby`. Focus never moves into
  * the bubble; Escape returns focus to the trigger; outside-click light-dismisses.
+ *
+ * Trigger binding is by id (matching the tooltip): the toggletip references an
+ * EXTERNAL trigger via the `for` attribute (`<tulpar-toggletip for="moreBtn">`)
+ * and self-wires click listeners + `aria-haspopup`/`aria-expanded` onto it. The
+ * toggletip never wraps its trigger. Its content is the toggletip's OWN children
+ * (default slot) or the `text` prop.
  *
  * Composition mirrors the tooltip:
  * - positioning math: `_internal/overlay/positioner` (pure, DOM-free).
@@ -97,8 +104,14 @@ export class TulparToggletip extends LitElement {
   @property({ type: Boolean, attribute: "default-open" })
   defaultOpen?: boolean;
 
+  /**
+   * Id of the EXTERNAL trigger element this toggletip is disclosed from. Resolved
+   * against the host's `ownerDocument`; the toggletip wires click listeners +
+   * `aria-haspopup`/`aria-expanded` onto the resolved element. Reflected so the
+   * attribute and property stay in sync.
+   */
   @property({ type: String, reflect: true })
-  anchor?: string;
+  for?: string;
 
   /**
    * Internal open flag, mirrored to `[data-open]` on the surface. Deliberately
@@ -123,6 +136,11 @@ export class TulparToggletip extends LitElement {
 
   /** The currently-resolved anchor element (trigger), if any. */
   protected _anchorEl: HTMLElement | null = null;
+
+  /** Test-only accessor for the resolved trigger element. */
+  get _anchorElForTest(): HTMLElement | null {
+    return this._anchorEl;
+  }
 
   /**
    * Set while an internal open/close transition writes back to the reflected
@@ -153,6 +171,9 @@ export class TulparToggletip extends LitElement {
   }
 
   override updated(changed: Map<string, unknown>): void {
+    // Re-wire when the trigger reference changes (detach the old trigger's
+    // listeners/aria first; `_wireTrigger` handles that via the diff).
+    if (changed.has("for")) this._wireTrigger();
     if (changed.has("open") && !this._internalOpenChange) {
       if (this.open && !this._isOpen) this._doOpen();
       else if (this.open === false && this._isOpen) this._doClose();
@@ -203,16 +224,23 @@ export class TulparToggletip extends LitElement {
 
   protected _wireTrigger = (): void => {
     const next = resolveAnchor(this);
-    if (next === this._anchorEl) return;
+    if (next === this._anchorEl) {
+      // Dev-warn the unresolved-`for` case even when nothing changed (e.g. the
+      // trigger simply never existed) so a typo'd id is still surfaced once.
+      if (!this._anchorEl) warnIfUnresolvedFor(this, next);
+      return;
+    }
     this._detachTriggerListeners();
     if (this._anchorEl) clearHasPopup(this._anchorEl);
     this._anchorEl = next;
-    warnIfBadTrigger(next);
     if (next) {
+      warnIfBadTrigger(next);
       this._attachTriggerListeners(next);
       // Disclosure semantics: a toggletip reveals additional info on activation.
       setHasPopup(next, "dialog");
       next.setAttribute("aria-expanded", this._isOpen ? "true" : "false");
+    } else {
+      warnIfUnresolvedFor(this, next);
     }
   };
 
@@ -316,10 +344,10 @@ export class TulparToggletip extends LitElement {
     this._emit("tulpar-toggle");
   }
 
-  /** Resolve the text to announce: the `text` prop, else the slotted content. */
+  /** Resolve the text to announce: the `text` prop, else the default-slot content. */
   private _announceText(): string {
     if (this.text) return this.text;
-    const slot = this.shadowRoot?.querySelector<HTMLSlotElement>('slot[name="content"]');
+    const slot = this.shadowRoot?.querySelector<HTMLSlotElement>("slot:not([name])");
     const nodes = slot?.assignedNodes({ flatten: true }) ?? [];
     return nodes
       .map((n) => n.textContent ?? "")
@@ -500,7 +528,6 @@ export class TulparToggletip extends LitElement {
 
   override render() {
     return html`
-      <slot name="trigger" @slotchange=${this._wireTrigger}></slot>
       <div class="surface" data-placement=${this.placement} part="surface">
         <div class="body">
           <span class="icon" part="icon">
@@ -508,7 +535,7 @@ export class TulparToggletip extends LitElement {
           </span>
           <span class="content">
             ${this.text ?? ""}
-            <slot name="content"></slot>
+            <slot></slot>
           </span>
         </div>
         ${this.arrow ? html`<span class="arrow" part="arrow" aria-hidden="true"></span>` : ""}

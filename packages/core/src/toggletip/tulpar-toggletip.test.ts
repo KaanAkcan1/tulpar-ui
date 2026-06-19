@@ -8,7 +8,7 @@ function surface(el: TulparToggletip): HTMLElement {
 }
 
 function live(el: TulparToggletip): HTMLElement {
-  return el.shadowRoot!.querySelector('[aria-live]') as HTMLElement;
+  return el.shadowRoot!.querySelector("[aria-live]") as HTMLElement;
 }
 
 function isOpen(el: TulparToggletip): boolean {
@@ -17,6 +17,35 @@ function isOpen(el: TulparToggletip): boolean {
 
 function key(target: EventTarget, k: string): void {
   target.dispatchEvent(new KeyboardEvent("keydown", { key: k, bubbles: true }));
+}
+
+let seq = 0;
+/** Unique trigger id per fixture so cross-test leakage can't resolve stale ids. */
+function uid(): string {
+  seq += 1;
+  return `tg-trigger-${seq}`;
+}
+
+/**
+ * Render an external trigger button + a toggletip referencing it by `for`, in a
+ * wrapping div (the for-id model — nothing wraps the trigger).
+ */
+async function mkBound(opts?: {
+  text?: string;
+  tone?: string;
+}): Promise<{ el: TulparToggletip; trigger: HTMLButtonElement; wrap: HTMLElement }> {
+  const id = uid();
+  const text = opts?.text ?? "More info";
+  const tone = opts?.tone ?? "neutral";
+  const wrap = (await fixture(html`
+    <div>
+      <button id="${id}">?</button>
+      <tulpar-toggletip for="${id}" text="${text}" tone="${tone}"></tulpar-toggletip>
+    </div>
+  `)) as HTMLElement;
+  const el = wrap.querySelector("tulpar-toggletip") as TulparToggletip;
+  await el.updateComplete;
+  return { el, trigger: wrap.querySelector("button")!, wrap };
 }
 
 afterEach(() => {
@@ -34,33 +63,34 @@ describe("public type exports", () => {
   });
 });
 
-describe("<tulpar-toggletip> skeleton + disclosure + live region", () => {
-  async function mk(): Promise<{ el: TulparToggletip; trigger: HTMLButtonElement }> {
-    const el = await fixture<TulparToggletip>(
-      html`<tulpar-toggletip text="More info"
-        ><button slot="trigger">?</button></tulpar-toggletip
-      >`,
-    );
-    await el.updateComplete;
-    return { el, trigger: el.querySelector("button")! };
-  }
-
+describe("<tulpar-toggletip> skeleton + disclosure + live region (for-id model)", () => {
   it("registers the custom element", () => {
     expect(customElements.get("tulpar-toggletip")).to.exist;
   });
 
   it("host is display:contents", async () => {
-    const { el } = await mk();
+    const { el } = await mkBound();
     expect(getComputedStyle(el).display).to.equal("contents");
   });
 
+  it("does NOT render a slot[name=trigger] (no slot-wrap)", async () => {
+    const { el } = await mkBound();
+    expect(el.shadowRoot!.querySelector('slot[name="trigger"]')).to.equal(null);
+  });
+
+  it("reflects the `for` property to the attribute", async () => {
+    const { el } = await mkBound();
+    expect(el.getAttribute("for")).to.be.a("string").and.not.empty;
+    expect(el.for).to.equal(el.getAttribute("for"));
+  });
+
   it("renders a surface", async () => {
-    const { el } = await mk();
+    const { el } = await mkBound();
     expect(surface(el)).to.exist;
   });
 
   it("pre-inserts an aria-live=polite region in the DOM before injection", async () => {
-    const { el } = await mk();
+    const { el } = await mkBound();
     const region = live(el);
     expect(region).to.exist;
     expect(region.getAttribute("aria-live")).to.equal("polite");
@@ -69,13 +99,13 @@ describe("<tulpar-toggletip> skeleton + disclosure + live region", () => {
   });
 
   it("defaults placement=top and reflects data-placement on the surface", async () => {
-    const { el } = await mk();
+    const { el } = await mkBound();
     expect(el.placement).to.equal("top");
     expect(surface(el).hasAttribute("data-placement")).to.be.true;
   });
 
   it("has sensible numeric/boolean defaults", async () => {
-    const { el } = await mk();
+    const { el } = await mkBound();
     expect(el.offset).to.equal(8);
     expect(el.crossOffset).to.equal(0);
     expect(el.containerPadding).to.equal(12);
@@ -85,13 +115,18 @@ describe("<tulpar-toggletip> skeleton + disclosure + live region", () => {
     expect(el.tone).to.equal("neutral");
   });
 
+  it("wires aria-haspopup=dialog onto the EXTERNAL trigger", async () => {
+    const { trigger } = await mkBound();
+    expect(trigger.getAttribute("aria-haspopup")).to.equal("dialog");
+  });
+
   it("trigger gets aria-expanded=false initially (disclosure)", async () => {
-    const { trigger } = await mk();
+    const { trigger } = await mkBound();
     expect(trigger.getAttribute("aria-expanded")).to.equal("false");
   });
 
   it("clicking the trigger toggles open/closed", async () => {
-    const { el, trigger } = await mk();
+    const { el, trigger } = await mkBound();
     expect(isOpen(el)).to.be.false;
     trigger.click();
     await el.updateComplete;
@@ -107,7 +142,7 @@ describe("<tulpar-toggletip> skeleton + disclosure + live region", () => {
     // A native <button> synthesizes a `click` for mouse AND Enter/Space, so the
     // real activation path is a `click` — exercise that, not a synthetic keydown
     // (which does not synthesize a click in the browser and masked the wedge bug).
-    const { el, trigger } = await mk();
+    const { el, trigger } = await mkBound();
     trigger.click();
     await el.updateComplete;
     expect(isOpen(el)).to.be.true;
@@ -131,9 +166,7 @@ describe("<tulpar-toggletip> skeleton + disclosure + live region", () => {
     // paired synthesized click (it's cancelled), then later genuine clicks. With
     // the fix, keydown never toggles and never sets a flag, so the keyboard
     // activation has no effect here and each subsequent click toggles cleanly.
-    // Against the OLD logic, the keydown would open AND strand the swallow flag,
-    // so the first genuine click below would be eaten and the assertion fails.
-    const { el, trigger } = await mk();
+    const { el, trigger } = await mkBound();
 
     // A keyboard activation. With the fix this is a no-op (the native click does
     // the toggling); against old logic it toggles AND sets the unbounded swallow
@@ -141,15 +174,11 @@ describe("<tulpar-toggletip> skeleton + disclosure + live region", () => {
     key(trigger, "Enter");
     await el.updateComplete;
 
-    // Count toggles caused strictly by the genuine clicks that follow.
     const clickToggles: boolean[] = [];
     el.addEventListener("tulpar-toggle", (e) => {
       clickToggles.push((e as CustomEvent<{ open: boolean }>).detail.open);
     });
 
-    // Three genuine mouse clicks. Each one MUST toggle exactly once — no click may
-    // be silently swallowed by a stranded flag. Against the old logic the first
-    // click is swallowed, so only two toggle events fire (and the parity inverts).
     trigger.click();
     await el.updateComplete;
     trigger.click();
@@ -157,9 +186,6 @@ describe("<tulpar-toggletip> skeleton + disclosure + live region", () => {
     trigger.click();
     await el.updateComplete;
 
-    // Every genuine click toggled: exactly three events, alternating from a clean
-    // closed start. (Old logic: keydown left it open + swallowed click #1, so this
-    // would be [false, true] — length 2 — and the assertion fails.)
     expect(clickToggles, "each genuine click toggles exactly once").to.deep.equal([
       true,
       false,
@@ -169,22 +195,38 @@ describe("<tulpar-toggletip> skeleton + disclosure + live region", () => {
   });
 
   it("prevents default on Space keydown (no page scroll while focused)", async () => {
-    const { trigger } = await mk();
+    const { trigger } = await mkBound();
     const ev = new KeyboardEvent("keydown", { key: " ", bubbles: true, cancelable: true });
     trigger.dispatchEvent(ev);
     expect(ev.defaultPrevented).to.be.true;
   });
 
   it("injects the content text into the live region on open", async () => {
-    const { el, trigger } = await mk();
+    const { el, trigger } = await mkBound();
     expect(live(el).textContent).to.equal("");
     trigger.click();
     await el.updateComplete;
     expect(live(el).textContent).to.contain("More info");
   });
 
+  it("announces default-slot content (no text prop) in the live region", async () => {
+    const id = uid();
+    const wrap = (await fixture(html`
+      <div>
+        <button id="${id}">?</button>
+        <tulpar-toggletip for="${id}">Slotted disclosure</tulpar-toggletip>
+      </div>
+    `)) as HTMLElement;
+    const el = wrap.querySelector("tulpar-toggletip") as TulparToggletip;
+    await el.updateComplete;
+    const trigger = wrap.querySelector("button")!;
+    trigger.click();
+    await el.updateComplete;
+    expect(live(el).textContent).to.contain("Slotted disclosure");
+  });
+
   it("does not move focus into the bubble on open", async () => {
-    const { el, trigger } = await mk();
+    const { el, trigger } = await mkBound();
     trigger.focus();
     trigger.click();
     await el.updateComplete;
@@ -192,14 +234,14 @@ describe("<tulpar-toggletip> skeleton + disclosure + live region", () => {
   });
 
   it("surface is not focusable", async () => {
-    const { el, trigger } = await mk();
+    const { el, trigger } = await mkBound();
     trigger.click();
     await el.updateComplete;
     expect(surface(el).hasAttribute("tabindex")).to.be.false;
   });
 
   it("Escape closes AND returns focus to the trigger", async () => {
-    const { el, trigger } = await mk();
+    const { el, trigger } = await mkBound();
     trigger.focus();
     trigger.click();
     await el.updateComplete;
@@ -211,7 +253,7 @@ describe("<tulpar-toggletip> skeleton + disclosure + live region", () => {
   });
 
   it("outside click (light-dismiss) closes", async () => {
-    const { el, trigger } = await mk();
+    const { el, trigger } = await mkBound();
     trigger.click();
     await el.updateComplete;
     expect(isOpen(el)).to.be.true;
@@ -221,26 +263,109 @@ describe("<tulpar-toggletip> skeleton + disclosure + live region", () => {
   });
 
   it("clicking inside the surface does not close", async () => {
-    const { el, trigger } = await mk();
+    const { el, trigger } = await mkBound();
     trigger.click();
     await el.updateComplete;
     surface(el).dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
     await el.updateComplete;
     expect(isOpen(el)).to.be.true;
   });
+
+  it("pressing the trigger again does not count as an outside dismiss (clean toggle off)", async () => {
+    const { el, trigger } = await mkBound();
+    trigger.click();
+    await el.updateComplete;
+    expect(isOpen(el)).to.be.true;
+    // A pointerdown on the trigger followed by its click: the pointerdown must not
+    // light-dismiss (the trigger is not "outside"), and the click toggles closed.
+    trigger.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
+    trigger.click();
+    await el.updateComplete;
+    expect(isOpen(el)).to.be.false;
+  });
+});
+
+describe("<tulpar-toggletip> trigger resolution + declaration order", () => {
+  it("warns (dev) when `for` resolves to no element", async () => {
+    const calls: unknown[][] = [];
+    const original = console.warn;
+    console.warn = (...args: unknown[]) => calls.push(args);
+    try {
+      const el = (await fixture(
+        html`<tulpar-toggletip for="ghost-id" text="Hi"></tulpar-toggletip>`,
+      )) as TulparToggletip;
+      await el.updateComplete;
+      expect(calls.length).to.be.greaterThan(0);
+      expect(el._anchorElForTest).to.equal(null);
+    } finally {
+      console.warn = original;
+    }
+  });
+
+  it("resolves a trigger declared AFTER the toggletip (declaration-order)", async () => {
+    const id = uid();
+    const wrap = (await fixture(html`
+      <div>
+        <tulpar-toggletip for="${id}" text="Hi"></tulpar-toggletip>
+        <button id="${id}">?</button>
+      </div>
+    `)) as HTMLElement;
+    const el = wrap.querySelector("tulpar-toggletip") as TulparToggletip;
+    await el.updateComplete;
+    const trigger = wrap.querySelector("button")!;
+    expect(el._anchorElForTest).to.equal(trigger);
+    expect(trigger.getAttribute("aria-haspopup")).to.equal("dialog");
+  });
+
+  it("lazily resolves on show() when the trigger was added after connect", async () => {
+    const id = uid();
+    const el = (await fixture(
+      html`<tulpar-toggletip for="${id}" text="Hi"></tulpar-toggletip>`,
+    )) as TulparToggletip;
+    await el.updateComplete;
+    expect(el._anchorElForTest).to.equal(null);
+    const trigger = document.createElement("button");
+    trigger.id = id;
+    document.body.appendChild(trigger);
+    try {
+      el.show();
+      await el.updateComplete;
+      expect(el._anchorElForTest).to.equal(trigger);
+      expect(isOpen(el)).to.be.true;
+    } finally {
+      el.hide();
+      trigger.remove();
+    }
+  });
+
+  it("re-wires when `for` changes (detaches the old trigger)", async () => {
+    const idA = uid();
+    const idB = uid();
+    const wrap = (await fixture(html`
+      <div>
+        <button id="${idA}">A</button>
+        <button id="${idB}">B</button>
+        <tulpar-toggletip for="${idA}" text="Hi"></tulpar-toggletip>
+      </div>
+    `)) as HTMLElement;
+    const el = wrap.querySelector("tulpar-toggletip") as TulparToggletip;
+    await el.updateComplete;
+    const a = wrap.querySelector(`#${idA}`)! as HTMLElement;
+    const b = wrap.querySelector(`#${idB}`)! as HTMLElement;
+    expect(a.getAttribute("aria-haspopup")).to.equal("dialog");
+
+    el.for = idB;
+    await el.updateComplete;
+    expect(el._anchorElForTest).to.equal(b);
+    // Old trigger's haspopup cleared, new trigger wired.
+    expect(a.hasAttribute("aria-haspopup")).to.be.false;
+    expect(b.getAttribute("aria-haspopup")).to.equal("dialog");
+  });
 });
 
 describe("<tulpar-toggletip> controlled + imperative + events", () => {
-  async function mk(): Promise<{ el: TulparToggletip; trigger: HTMLButtonElement }> {
-    const el = await fixture<TulparToggletip>(
-      html`<tulpar-toggletip text="Hi"><button slot="trigger">?</button></tulpar-toggletip>`,
-    );
-    await el.updateComplete;
-    return { el, trigger: el.querySelector("button")! };
-  }
-
   it("show() opens and emits tulpar-open with detail.open=true", async () => {
-    const { el } = await mk();
+    const { el } = await mkBound();
     let detail: { open: boolean } | undefined;
     el.addEventListener("tulpar-open", (e) => {
       detail = (e as CustomEvent<{ open: boolean }>).detail;
@@ -252,7 +377,7 @@ describe("<tulpar-toggletip> controlled + imperative + events", () => {
   });
 
   it("hide() closes and emits tulpar-close", async () => {
-    const { el } = await mk();
+    const { el } = await mkBound();
     el.show();
     await el.updateComplete;
     let closed = false;
@@ -266,7 +391,7 @@ describe("<tulpar-toggletip> controlled + imperative + events", () => {
   });
 
   it("toggle() flips state and emits tulpar-toggle", async () => {
-    const { el } = await mk();
+    const { el } = await mkBound();
     const toggles: boolean[] = [];
     el.addEventListener("tulpar-toggle", (e) => {
       toggles.push((e as CustomEvent<{ open: boolean }>).detail.open);
@@ -279,7 +404,7 @@ describe("<tulpar-toggletip> controlled + imperative + events", () => {
   });
 
   it("controlled open property reflects to the surface", async () => {
-    const { el } = await mk();
+    const { el } = await mkBound();
     el.open = true;
     await el.updateComplete;
     expect(isOpen(el)).to.be.true;
@@ -289,14 +414,14 @@ describe("<tulpar-toggletip> controlled + imperative + events", () => {
   });
 
   it("reflects data-side for origin-aware motion", async () => {
-    const { el } = await mk();
+    const { el } = await mkBound();
     el.show();
     await el.updateComplete;
     expect(surface(el).hasAttribute("data-side")).to.be.true;
   });
 
   it("keeps the surface inside the shadow root while open (stays styled)", async () => {
-    const { el } = await mk();
+    const { el } = await mkBound();
     el.show();
     await el.updateComplete;
     const s = surface(el);
@@ -310,7 +435,7 @@ describe("<tulpar-toggletip> controlled + imperative + events", () => {
   });
 
   it("reposition() re-measures without throwing", async () => {
-    const { el } = await mk();
+    const { el } = await mkBound();
     el.show();
     await el.updateComplete;
     el.reposition();
@@ -321,23 +446,16 @@ describe("<tulpar-toggletip> controlled + imperative + events", () => {
 
 describe("<tulpar-toggletip> tone (semantic intents)", () => {
   async function mk(tone?: string): Promise<{ el: TulparToggletip; trigger: HTMLButtonElement }> {
-    const el = await fixture<TulparToggletip>(
-      html`<tulpar-toggletip text="Hi" tone=${tone ?? "neutral"}
-        ><button slot="trigger">?</button></tulpar-toggletip
-      >`,
-    );
-    await el.updateComplete;
+    const { el, trigger } = await mkBound({ text: "Hi", tone });
     el.show();
     await el.updateComplete;
-    return { el, trigger: el.querySelector("button")! };
+    return { el, trigger };
   }
 
   /**
    * Resolve one of the component's internal surface props (`--_tg-bg`, etc.) to
    * its computed color via a probe inside the shadow root. These props are the
-   * single source of truth the surface + arrow paint from, and they carry the
-   * tone token (with the same in-CSS fallback), so the assertion holds whether
-   * or not the external tokens stylesheet is loaded in the test harness.
+   * single source of truth the surface + arrow paint from.
    */
   function resolveInternal(el: TulparToggletip, prop: string): string {
     const probe = document.createElement("span");
@@ -357,7 +475,6 @@ describe("<tulpar-toggletip> tone (semantic intents)", () => {
   it("default neutral uses the neutral overlay surface bg", async () => {
     const { el } = await mk("neutral");
     const s = surface(el);
-    // Internal bg prop resolves to the neutral overlay surface token.
     expect(getComputedStyle(s).backgroundColor).to.equal(resolveInternal(el, "--_tg-bg"));
   });
 
@@ -366,15 +483,10 @@ describe("<tulpar-toggletip> tone (semantic intents)", () => {
       const { el } = await mk(tone);
       const s = surface(el);
       const cs = getComputedStyle(s);
-      // The tone remaps the internal surface props; the surface paints from them.
       expect(cs.backgroundColor).to.equal(resolveInternal(el, "--_tg-bg"));
       expect(cs.color).to.equal(resolveInternal(el, "--_tg-fg"));
       expect(cs.borderTopColor).to.equal(resolveInternal(el, "--_tg-border"));
-      // And the tone bg differs from the neutral surface (proves the override).
-      const neutral = await fixture<TulparToggletip>(
-        html`<tulpar-toggletip text="x"><button slot="trigger">?</button></tulpar-toggletip>`,
-      );
-      await neutral.updateComplete;
+      const { el: neutral } = await mkBound({ text: "x" });
       expect(cs.backgroundColor).to.not.equal(resolveInternal(neutral, "--_tg-bg"));
     });
   });
@@ -386,24 +498,27 @@ describe("<tulpar-toggletip> tone (semantic intents)", () => {
   });
 
   it("renders a slotted status icon", async () => {
-    const el = await fixture<TulparToggletip>(
-      html`<tulpar-toggletip text="Heads up" tone="warning">
-        <button slot="trigger">?</button>
-        <svg slot="icon" width="16" height="16" aria-hidden="true"></svg>
-      </tulpar-toggletip>`,
-    );
+    const id = uid();
+    const wrap = (await fixture(html`
+      <div>
+        <button id="${id}">?</button>
+        <tulpar-toggletip for="${id}" text="Heads up" tone="warning">
+          <svg slot="icon" width="16" height="16" aria-hidden="true"></svg>
+        </tulpar-toggletip>
+      </div>
+    `)) as HTMLElement;
+    const el = wrap.querySelector("tulpar-toggletip") as TulparToggletip;
     await el.updateComplete;
     const iconSlot = el.shadowRoot!.querySelector('slot[name="icon"]') as HTMLSlotElement;
     expect(iconSlot.assignedElements().length).to.equal(1);
-    // The icon wrapper becomes visible when filled.
-    const wrap = el.shadowRoot!.querySelector(".icon") as HTMLElement;
-    expect(wrap.classList.contains("icon--filled")).to.be.true;
+    const w = el.shadowRoot!.querySelector(".icon") as HTMLElement;
+    expect(w.classList.contains("icon--filled")).to.be.true;
   });
 
   it("icon wrapper stays collapsed when no icon is slotted", async () => {
     const { el } = await mk("info");
-    const wrap = el.shadowRoot!.querySelector(".icon") as HTMLElement;
-    expect(wrap.classList.contains("icon--filled")).to.be.false;
-    expect(getComputedStyle(wrap).display).to.equal("none");
+    const w = el.shadowRoot!.querySelector(".icon") as HTMLElement;
+    expect(w.classList.contains("icon--filled")).to.be.false;
+    expect(getComputedStyle(w).display).to.equal("none");
   });
 });
