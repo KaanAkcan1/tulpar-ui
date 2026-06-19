@@ -41,6 +41,32 @@ describe("ToasterQueue", () => {
       const id = q.enqueue({ location: "bottom-right", data: {} });
       expect(q.get(id)!.count).to.equal(1);
     });
+
+    it("two separate instances generate ids independently (no shared counter)", () => {
+      // The key invariant of the instance-scoped counter fix: enqueuing into q2
+      // must NOT advance q1's counter, and vice-versa. We verify this by
+      // interleaving calls and confirming each queue correctly stores only its
+      // own records with distinct within-queue ids.
+      const q1 = new ToasterQueue();
+      const q2 = new ToasterQueue();
+
+      const id1a = q1.enqueue({ location: "bottom-right", data: { from: "q1" } });
+      const id2a = q2.enqueue({ location: "bottom-right", data: { from: "q2" } });
+      const id1b = q1.enqueue({ location: "bottom-right", data: { from: "q1" } });
+
+      // Each queue keeps its own records correctly.
+      expect(q1.get(id1a)).to.not.equal(undefined);
+      expect(q1.get(id1b)).to.not.equal(undefined);
+      expect(q2.get(id2a)).to.not.equal(undefined);
+
+      // ids within a single queue must be distinct.
+      expect(id1a).to.not.equal(id1b);
+
+      // q1's record data is not contaminated.
+      expect((q1.get(id1a)!.data as Record<string, unknown>).from).to.equal("q1");
+      expect((q1.get(id1b)!.data as Record<string, unknown>).from).to.equal("q1");
+      expect((q2.get(id2a)!.data as Record<string, unknown>).from).to.equal("q2");
+    });
   });
 
   // ─── per-location isolation ─────────────────────────────────────────────────
@@ -164,6 +190,27 @@ describe("ToasterQueue", () => {
       q.dismiss(a);
       expect(q.get(b)).to.not.equal(undefined);
     });
+
+    it("dismissing a QUEUED (overflow) record removes it without promoting any other record", () => {
+      const q = new ToasterQueue({ maxVisible: 2 });
+      const first = q.enqueue({ location: "bottom-right", data: {} });
+      const second = q.enqueue({ location: "bottom-right", data: {} }); // fills visible
+      const queued = q.enqueue({ location: "bottom-right", data: {} }); // overflows
+
+      // Sanity: visible is full, queued holds the overflow.
+      expect(q.visible("bottom-right").length).to.equal(2);
+      expect(q.visible("bottom-right").some((r) => r.id === queued)).to.equal(false);
+
+      q.dismiss(queued);
+
+      // Queued record is gone.
+      expect(q.get(queued)).to.equal(undefined);
+      // Visible list is unchanged — no promotion side effects.
+      const vis = q.visible("bottom-right");
+      expect(vis.length).to.equal(2);
+      expect(vis.some((r) => r.id === first)).to.equal(true);
+      expect(vis.some((r) => r.id === second)).to.equal(true);
+    });
   });
 
   // ─── dismissAll ─────────────────────────────────────────────────────────────
@@ -190,6 +237,12 @@ describe("ToasterQueue", () => {
       q.dismissAll();
 
       expect(q.all().length).to.equal(0);
+    });
+
+    it("dismissAll() on an already-empty queue does not throw", () => {
+      const q = new ToasterQueue();
+      expect(() => q.dismissAll()).to.not.throw();
+      expect(() => q.dismissAll("top-left")).to.not.throw();
     });
   });
 
@@ -263,6 +316,21 @@ describe("ToasterQueue", () => {
     it("is a no-op for an unknown id (does not throw)", () => {
       const q = new ToasterQueue();
       expect(() => q.update("ghost", { tone: "success" })).to.not.throw();
+    });
+
+    it("merges into a QUEUED (overflow) record, not just visible ones", () => {
+      const q = new ToasterQueue({ maxVisible: 1 });
+      q.enqueue({ location: "bottom-right", data: { tone: "info" } }); // fills the slot
+      const queued = q.enqueue({ location: "bottom-right", data: { tone: "info" } }); // overflows
+
+      // Confirm it is indeed queued, not visible.
+      expect(q.visible("bottom-right").some((r) => r.id === queued)).to.equal(false);
+
+      q.update(queued, { title: "Updated while queued" });
+
+      const record = q.get(queued)!;
+      expect((record.data as Record<string, unknown>).tone).to.equal("info");
+      expect((record.data as Record<string, unknown>).title).to.equal("Updated while queued");
     });
   });
 

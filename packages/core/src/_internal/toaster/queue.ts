@@ -69,13 +69,6 @@ export interface EnqueueInput {
   groupKey?: string;
 }
 
-let _counter = 0;
-
-function generateId(): string {
-  _counter = (_counter + 1) % Number.MAX_SAFE_INTEGER;
-  return `toast-${Date.now().toString(36)}-${_counter}`;
-}
-
 interface LocationBucket {
   /** Newest-first. Length ≤ maxVisible. */
   visible: ToastRecord[];
@@ -88,12 +81,19 @@ export class ToasterQueue {
   private readonly _locations: Map<Location, LocationBucket> = new Map();
   /** Fast record lookup across all locations. */
   private readonly _byId: Map<string, ToastRecord> = new Map();
+  /** Per-instance counter — two ToasterQueue instances never share counter state. */
+  private _counter = 0;
 
   constructor(options: ToasterQueueOptions = {}) {
     this._maxVisible = options.maxVisible ?? 3;
   }
 
   // ─── private helpers ──────────────────────────────────────────────────────
+
+  private _generateId(): string {
+    this._counter = (this._counter + 1) % Number.MAX_SAFE_INTEGER;
+    return `toast-${Date.now().toString(36)}-${this._counter}`;
+  }
 
   private _bucket(location: Location): LocationBucket {
     let bucket = this._locations.get(location);
@@ -148,7 +148,7 @@ export class ToasterQueue {
     }
 
     // New record.
-    const id = input.id ?? generateId();
+    const id = input.id ?? this._generateId();
     const record: ToastRecord = { id, location, groupKey, count: 1, data };
     this._byId.set(id, record);
 
@@ -166,6 +166,10 @@ export class ToasterQueue {
   /**
    * Shallow-merge `partialData` into the record's `data` field.
    * No-op when the id is not found.
+   *
+   * Note: `data` is assumed to be a plain object; if it isn't, the spread
+   * produces a new plain object containing only `partialData` properties
+   * (i.e., the shallow merge is effectively a no-op for the original value).
    */
   update(id: string, partialData: Record<string, unknown>): void {
     const record = this._byId.get(id);
@@ -233,7 +237,9 @@ export class ToasterQueue {
 
   /**
    * Returns all records (visible + queued) for `location`, or across every
-   * location when `location` is omitted.
+   * location that has been enqueued into when `location` is omitted (not
+   * literally all six location slots — locations that have never received a
+   * record are absent from the internal map and therefore skipped).
    *
    * Within a location: visible records (newest-first) followed by queued records
    * (oldest-first — FIFO order).
