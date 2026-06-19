@@ -47,6 +47,20 @@ export { TulparRadioGroupComponent } from "./radio-group/tulpar-radio-group.comp
 export { TulparCheckboxGroupComponent } from "./checkbox-group/tulpar-checkbox-group.component";
 
 export {
+  TulparToastService,
+  TulparMessageService,
+  provideTulparToast,
+} from "./toast/tulpar-toast.service";
+export type {
+  ToastOptions,
+  MessageOptions,
+  ToasterDefaults,
+  DismissReason,
+  ToastLocation,
+  ToastPromiseMsgs,
+} from "./toast/tulpar-toast.service";
+
+export {
   TulparTooltipDirective,
   TulparTooltipRefDirective,
 } from "./overlay/tulpar-tooltip.directive";

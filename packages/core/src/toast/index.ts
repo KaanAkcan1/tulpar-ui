@@ -9,4 +9,5 @@ export type {
   ToasterDefaults,
   DismissReason,
   Location as ToastLocation,
+  ToastPromiseMsgs,
 } from "./toast-service";
