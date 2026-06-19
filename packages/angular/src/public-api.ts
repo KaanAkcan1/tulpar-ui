@@ -45,3 +45,21 @@ export { TulparRadioComponent } from "./radio/tulpar-radio.component";
 export { TulparRadioGroupComponent } from "./radio-group/tulpar-radio-group.component";
 
 export { TulparCheckboxGroupComponent } from "./checkbox-group/tulpar-checkbox-group.component";
+
+export {
+  TulparTooltipDirective,
+  TulparTooltipRefDirective,
+} from "./overlay/tulpar-tooltip.directive";
+export type { TooltipPlacement } from "./overlay/tulpar-tooltip.directive";
+
+export {
+  TulparToggletipDirective,
+  TulparToggletipRefDirective,
+} from "./overlay/tulpar-toggletip.directive";
+export type { ToggletipPlacement, ToggletipTone } from "./overlay/tulpar-toggletip.directive";
+
+export {
+  TulparPopoverDirective,
+  TulparPopoverRefDirective,
+} from "./overlay/tulpar-popover.directive";
+export type { PopoverPlacement, PopoverTone } from "./overlay/tulpar-popover.directive";
