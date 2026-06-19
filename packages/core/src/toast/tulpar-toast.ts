@@ -492,7 +492,10 @@ export class TulparToast extends LitElement {
     // For status/alert roles these attributes are omitted — aria-live + aria-atomic
     // already deliver the content to the AT without an explicit labelling contract.
     const ariaLabelledBy = isAlertDialog ? this._headingId : nothing;
-    const ariaDescribedBy = isAlertDialog && this.description ? this._descId : nothing;
+    const ariaDescribedBy =
+      isAlertDialog && (this.description || this.hasAttribute("data-has-description"))
+        ? this._descId
+        : nothing;
 
     return html`
       <div

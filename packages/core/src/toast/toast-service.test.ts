@@ -1188,28 +1188,38 @@ describe("Task 4.3 — no focus steal on appearance", () => {
 
 describe("Task 4.3 — focus moves to next toast on dismiss when focused", () => {
   it("dismissing the focused toast moves focus to the next visible toast in the same location", async () => {
-    // Mount two toasts.
-    const id1 = toast("First", { duration: 0 });
-    const id2 = toast("Second", { duration: 0 });
+    // Mount two toasts. The service PREPENDS newest to DOM, so after both are
+    // created: els[0] = newerToast (id2), els[1] = olderToast (id1).
+    toast("First (older)", { duration: 0 });
+    const id2 = toast("Second (newer)", { duration: 0 });
     await nextFrame();
 
     const els = toastsInLocation("bottom-right");
-    // Newest is at index 0 (DOM order).
     expect(els.length).to.equal(2);
 
-    // Focus the first toast (newest, index 0).
-    els[0].focus();
-    expect(document.activeElement).to.equal(els[0]);
+    // els[0] is the newer toast (id2), els[1] is the older toast (id1).
+    const newerEl = els[0]; // id2
+    const olderEl = els[1]; // id1
 
-    // Dismiss it — focus should move to the remaining toast.
-    toast.dismiss(id1.endsWith(id2) ? id1 : toastsInLocation("bottom-right")[0] === els[0] ? id1 : id2);
+    // Focus the NEWER toast (id2, index 0) — this is the one we will dismiss.
+    newerEl.focus();
+    expect(document.activeElement).to.equal(newerEl);
+
+    // Dismiss the FOCUSED one (id2). This drives _doRemove's hadFocus branch.
+    toast.dismiss(id2);
     await nextFrame();
 
+    // Verify: one toast remains (the older one, id1).
     const remaining = toastsInLocation("bottom-right");
     expect(remaining.length).to.equal(1);
-    // Focus must now be on the remaining toast (or its host), not on body/null.
+    expect(remaining[0]).to.equal(olderEl);
+
+    // Focus must have moved to the surviving toast — NOT to body.
     expect(document.activeElement).to.not.equal(document.body);
-    expect(remaining[0].contains(document.activeElement) || document.activeElement === remaining[0]).to.be.true;
+    expect(
+      document.activeElement === remaining[0] || remaining[0].contains(document.activeElement),
+      "focus must be on the remaining toast or one of its descendants",
+    ).to.be.true;
   });
 
   it("dismissing the focused toast (last one) restores focus to pre-region element when none remain", async () => {

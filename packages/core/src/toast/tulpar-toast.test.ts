@@ -1127,6 +1127,42 @@ describe("<tulpar-toast> alertdialog ARIA labelling (Task 4.3)", () => {
     expect(descEl2!.textContent?.trim()).to.include("This cannot be undone.");
   });
 
+  it("alertdialog with SLOTTED description (no prop) exposes aria-describedby", async () => {
+    // Verifies the fix: aria-describedby is wired via [data-has-description] attribute,
+    // not only via the description prop. A slotted description sets [data-has-description]
+    // via the slotchange handler, so the aria-describedby must be present even when
+    // the `description` prop itself is undefined.
+    const el = await fixture<TulparToast>(html`
+      <tulpar-toast heading="Action required?">
+        <span slot="description">This action cannot be undone.</span>
+      </tulpar-toast>
+    `);
+    el.actions = [{ label: "Confirm", onClick: () => {} }];
+    await el.updateComplete;
+
+    // [data-has-description] must be set by the slotchange handler.
+    expect(
+      el.hasAttribute("data-has-description"),
+      "[data-has-description] must be set when description slot is filled",
+    ).to.be.true;
+
+    const card = shadow(el).querySelector(".toast-card") as HTMLElement;
+    expect(card.getAttribute("role")).to.equal("alertdialog");
+
+    const describedById = card.getAttribute("aria-describedby");
+    expect(
+      describedById,
+      "alertdialog with slotted description must carry aria-describedby",
+    ).to.be.a("string").and.not.empty;
+
+    // The referenced element must exist in the shadow DOM.
+    const descTarget = shadow(el).getElementById(describedById!);
+    expect(
+      descTarget,
+      `shadow element with id "${describedById}" must exist`,
+    ).to.exist;
+  });
+
   it("aria-labelledby id is stable across re-renders (same value after actions change)", async () => {
     const el = await fixture<TulparToast>(html`<tulpar-toast heading="Saved"></tulpar-toast>`);
     el.actions = [{ label: "Undo", onClick: () => {} }];

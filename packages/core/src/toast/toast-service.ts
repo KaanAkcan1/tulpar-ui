@@ -603,7 +603,8 @@ _toast.promise = <T>(
         timer: false,
       });
     },
-  );
+  ).catch(() => {}); // Guard: prevent unhandled rejection if a handler throws unexpectedly.
+  // The original `p` is returned unchanged — rejections still propagate to the caller.
 
   return p;
 };
