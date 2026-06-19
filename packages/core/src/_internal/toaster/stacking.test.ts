@@ -43,9 +43,9 @@ describe("isTopAnchor", () => {
 describe("collapsedLayout — bottom anchor (bottom-right)", () => {
   const loc: Location = "bottom-right";
 
-  it("front item (i=0) → scale(1) translateY(0) identity", () => {
+  it("front item (i=0) → translateY(0) scale(1) identity", () => {
     const result = collapsedLayout(0, loc);
-    expect(result.transform).to.equal("scale(1) translateY(0px)");
+    expect(result.transform).to.equal("translateY(0px) scale(1)");
   });
 
   it("front item (i=0) → opacity 1, zIndex 3, visible", () => {
@@ -55,9 +55,9 @@ describe("collapsedLayout — bottom anchor (bottom-right)", () => {
     expect(result.visible).to.equal(true);
   });
 
-  it("i=1 → scale(0.95) and lift 14px upward (negative Y for bottom anchor)", () => {
+  it("i=1 → lift 14px upward (negative Y for bottom anchor) then scale(0.95)", () => {
     const result = collapsedLayout(1, loc);
-    expect(result.transform).to.equal("scale(0.95) translateY(-14px)");
+    expect(result.transform).to.equal("translateY(-14px) scale(0.95)");
   });
 
   it("i=1 → opacity and zIndex step down", () => {
@@ -67,9 +67,9 @@ describe("collapsedLayout — bottom anchor (bottom-right)", () => {
     expect(result.visible).to.equal(true);
   });
 
-  it("i=2 → scale(0.9) and lift 28px upward (negative Y for bottom anchor)", () => {
+  it("i=2 → lift 28px upward (negative Y for bottom anchor) then scale(0.9)", () => {
     const result = collapsedLayout(2, loc);
-    expect(result.transform).to.equal("scale(0.9) translateY(-28px)");
+    expect(result.transform).to.equal("translateY(-28px) scale(0.9)");
   });
 
   it("i=2 → visible (within maxVisible)", () => {
@@ -102,19 +102,19 @@ describe("collapsedLayout — bottom anchor (bottom-right)", () => {
 describe("collapsedLayout — top anchor (top-center)", () => {
   const loc: Location = "top-center";
 
-  it("front item (i=0) → scale(1) translateY(0) identity", () => {
+  it("front item (i=0) → translateY(0) scale(1) identity", () => {
     const result = collapsedLayout(0, loc);
-    expect(result.transform).to.equal("scale(1) translateY(0px)");
+    expect(result.transform).to.equal("translateY(0px) scale(1)");
   });
 
-  it("i=1 → positive Y (top stacks grow downward, so lift is +14px)", () => {
+  it("i=1 → positive Y (top stacks grow downward, so lift is +14px) then scale(0.95)", () => {
     const result = collapsedLayout(1, loc);
-    expect(result.transform).to.equal("scale(0.95) translateY(14px)");
+    expect(result.transform).to.equal("translateY(14px) scale(0.95)");
   });
 
-  it("i=2 → positive Y 28px", () => {
+  it("i=2 → positive Y 28px then scale(0.9)", () => {
     const result = collapsedLayout(2, loc);
-    expect(result.transform).to.equal("scale(0.9) translateY(28px)");
+    expect(result.transform).to.equal("translateY(28px) scale(0.9)");
   });
 });
 

@@ -68,7 +68,7 @@ export interface CollapsedOptions {
  * Compute the collapsed-stack `StackEntry` for a single toast at depth `i`
  * (0 = front/newest toast).
  *
- * Transform format: `"scale(<s>) translateY(<y>px)"`
+ * Transform format: `"translateY(<y>px) scale(<s>)"`
  */
 export function collapsedLayout(
   i: number,
@@ -80,9 +80,9 @@ export function collapsedLayout(
 
   if (!visible) {
     return {
-      transform: `scale(${1 - SCALE_STEP * i}) translateY(${_lift(i, location)}px)`,
+      transform: `translateY(${_lift(i, location)}px) scale(${1 - SCALE_STEP * i})`,
       opacity: 0,
-      zIndex: Math.max(1, maxVisible - i),
+      zIndex: Math.max(0, maxVisible - i),
       visible: false,
     };
   }
@@ -91,7 +91,7 @@ export function collapsedLayout(
   const translateY = _lift(i, location);
 
   return {
-    transform: `scale(${+scale.toFixed(10).replace(/\.?0+$/, "") || 0}) translateY(${translateY}px)`,
+    transform: `translateY(${translateY}px) scale(${scale})`,
     opacity: i === 0 ? 1 : 1 - i * 0.15,
     zIndex: maxVisible - i,
     visible: true,
