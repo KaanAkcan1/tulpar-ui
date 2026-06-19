@@ -237,7 +237,7 @@ describe("resolveTone — part overrides", () => {
   });
 
   it("total vars count stays 8 even with overrides", () => {
-    const r = resolveTone({ tone: "custom", color: "ilay", bg: "#red", accent: "blue" });
+    const r = resolveTone({ tone: "custom", color: "ilay", bg: "#ff0000", accent: "blue" });
     expect(Object.keys(r.vars).length).to.equal(8);
   });
 });

@@ -55,6 +55,11 @@ export type ToneInput = {
    * For custom: a brand family name (e.g. 'ilay', 'gok') or any raw CSS color
    * value (e.g. '#0d9488', 'rgb(13,148,136)'). Unknown strings that are not
    * recognised family names are treated as raw CSS colors.
+   *
+   * IMPORTANT: When this string is a raw CSS color it is injected verbatim into
+   * `color-mix()` expressions and set as inline style values. The caller is
+   * responsible for ensuring it is a valid CSS color — no sanitization is
+   * performed here.
    */
   color?: string;
   /** Part override: replaces both the light and dark surface var with this literal. */
@@ -169,7 +174,11 @@ export function resolveTone(input: ToneInput): ToneResult {
       "--tulpar-toast-border-l": primitiveVar(color, 500),
       "--tulpar-toast-accent-l": primitiveVar(color, 600),
 
-      // Dark model: surface=900, onSurface=100, border=500, accent=400
+      // Dark model: surface=900, onSurface=100, border=500, accent=400.
+      // NOTE: built-in dark tones use higher steps (700–800) for border to meet
+      // WCAG 3:1 against their deep surfaces. The 500 step used here is a
+      // generic best-effort for the custom escape hatch; callers can override via
+      // `bg`/`accent`/`text` part overrides if contrast is critical.
       "--tulpar-toast-surface-d": primitiveVar(color, 900),
       "--tulpar-toast-on-surface-d": primitiveVar(color, 100),
       "--tulpar-toast-border-d": primitiveVar(color, 500),
