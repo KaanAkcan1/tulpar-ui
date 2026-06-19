@@ -457,6 +457,7 @@ export const tulparLight: SemanticTokens = {
     },
     size: {
       toastMaxWidth:  "360px",
+      toastRadius:    "12px",
       toastPadding:   "12px 16px",
       messagePadding: "8px 14px",
       ringStroke:     "1.5px",

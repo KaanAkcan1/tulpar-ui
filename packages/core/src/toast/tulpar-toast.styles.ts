@@ -96,11 +96,11 @@ export const toastStyles = css`
     gap: 10px;
     align-items: flex-start;
     padding: var(--tulpar-feedback-size-toast-padding, 12px 16px);
-    border-radius: var(--tulpar-feedback-toast-radius, 12px);
+    border-radius: var(--tulpar-feedback-size-toast-radius, 12px);
     background: var(--_toast-surface);
     border: 1px solid var(--_toast-border);
     color: var(--_toast-on-surface);
-    box-shadow: var(--tulpar-feedback-shadow, 0 4px 6px -2px rgba(10, 37, 64, 0.10), 0 12px 28px -6px rgba(10, 37, 64, 0.18));
+    box-shadow: var(--tulpar-feedback-shadow, 0 4px 6px -2px rgba(10, 37, 64, 0.10), 0 12px 28px -6px rgba(10, 37, 64, 0.18), 0 0 0 1px rgba(0,0,0,0.04));
   }
 
   /* ── Icon ─────────────────────────────────────────────────────────────── */
@@ -232,7 +232,7 @@ export const toastStyles = css`
   :host(:focus-visible) {
     outline: 2px solid var(--tulpar-color-focus-ring, rgba(81, 78, 207, 0.4));
     outline-offset: 2px;
-    border-radius: var(--tulpar-feedback-toast-radius, 12px);
+    border-radius: var(--tulpar-feedback-size-toast-radius, 12px);
   }
 
   .toast-close:focus-visible {

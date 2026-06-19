@@ -434,6 +434,86 @@ describe("<tulpar-toast> ARIA", () => {
   });
 });
 
+// ─── Slotted description wrapper (fix #1) ────────────────────────────────────
+
+describe("<tulpar-toast> slotted description wrapper", () => {
+  it("slotted description with no prop still gets .toast-description wrapper", async () => {
+    const el = await fixture<TulparToast>(html`
+      <tulpar-toast heading="T">
+        <span slot="description" data-desc>Slotted body</span>
+      </tulpar-toast>
+    `);
+    // Allow the slotchange microtask to propagate then re-render.
+    await el.updateComplete;
+    await new Promise((r) => setTimeout(r, 0));
+    await el.updateComplete;
+    const wrapper = descEl(el);
+    expect(wrapper, ".toast-description wrapper must be present for slotted content").to.exist;
+  });
+});
+
+// ─── Reactive icon (fix #2) ──────────────────────────────────────────────────
+
+describe("<tulpar-toast> reactive iconProp", () => {
+  it("setting iconProp=false then back to undefined re-shows the icon", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+    // Icon is visible initially.
+    expect(iconEl(el)).to.exist;
+
+    // Suppress the icon.
+    (el as TulparToast).iconProp = false;
+    await el.updateComplete;
+    expect(iconEl(el)).to.be.null;
+
+    // Re-enable by clearing iconProp.
+    (el as TulparToast).iconProp = undefined;
+    await el.updateComplete;
+    // The icon container should be back and its target should have SVG content.
+    const ic = iconEl(el);
+    expect(ic, "icon container must reappear after iconProp reset to undefined").to.exist;
+    const target = ic!.querySelector(".icon-prop-target");
+    expect(target, "icon-prop-target must exist").to.exist;
+    expect(target!.querySelector("svg"), "default SVG must be re-injected").to.exist;
+  });
+});
+
+// ─── alertdialog role (fix #3) ───────────────────────────────────────────────
+
+describe("<tulpar-toast> alertdialog role", () => {
+  it("toast with actions uses role=alertdialog (spec §5.3)", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="Confirm"></tulpar-toast>`);
+    el.actions = [{ label: "Undo", onClick: () => {} }];
+    await el.updateComplete;
+    const card = shadow(el).querySelector(".toast-card") as HTMLElement;
+    expect(card.getAttribute("role")).to.equal("alertdialog");
+  });
+
+  it("toast with actions + danger tone still uses role=alertdialog (actions win)", async () => {
+    const el = await fixture<TulparToast>(
+      html`<tulpar-toast tone="danger" heading="Danger"></tulpar-toast>`,
+    );
+    el.actions = [{ label: "Dismiss", onClick: () => {} }];
+    await el.updateComplete;
+    const card = shadow(el).querySelector(".toast-card") as HTMLElement;
+    expect(card.getAttribute("role")).to.equal("alertdialog");
+  });
+
+  it("danger tone without actions retains role=alert", async () => {
+    const el = await fixture<TulparToast>(
+      html`<tulpar-toast tone="danger" heading="Error"></tulpar-toast>`,
+    );
+    const card = shadow(el).querySelector(".toast-card") as HTMLElement;
+    expect(card.getAttribute("role")).to.equal("alert");
+  });
+
+  it("non-danger tone without actions retains role=status", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="Info"></tulpar-toast>`);
+    const card = shadow(el).querySelector(".toast-card") as HTMLElement;
+    expect(card.getAttribute("role")).to.equal("status");
+  });
+});
+
 // ─── Styles ──────────────────────────────────────────────────────────────────
 
 describe("<tulpar-toast> styles", () => {

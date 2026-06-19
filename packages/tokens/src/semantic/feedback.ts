@@ -46,6 +46,8 @@ export interface FeedbackMotionTokens {
 export interface FeedbackSizeTokens {
   /** Maximum width of a single toast card (desktop). */
   toastMaxWidth: string;
+  /** Corner radius of a toast card. */
+  toastRadius: string;
   /** Internal padding of a toast card (block-inline shorthand). */
   toastPadding: string;
   /** Internal padding of a message pill (block-inline shorthand). */

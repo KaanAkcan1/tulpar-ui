@@ -144,6 +144,11 @@ export class TulparToast extends LitElement {
    * Icon control.  String form sets the attribute (`icon="success"` /
    * `icon="🎉"` / `icon="<svg>..."` / `icon=""`).
    * `slot="icon"` wins over this prop.
+   *
+   * **Security note:** SVG / raw-markup values are injected via `innerHTML`
+   * (the element's internal `.icon-prop-target` span).  Only pass trusted,
+   * sanitised markup — never unsanitised user input.  This mirrors the
+   * constraint on `ToneInput.color` and other raw-markup props.
    */
   @property({ type: String, reflect: true })
   icon?: string;
@@ -160,7 +165,15 @@ export class TulparToast extends LitElement {
 
   // ── Behaviour ────────────────────────────────────────────────────────────
 
-  /** Show the × close button (always visible when true). */
+  /**
+   * Show the × close button (always visible when true).
+   *
+   * **Attribute-binding caveat:** `closable="false"` as an HTML string attribute
+   * coerces to `true` because Lit's Boolean converter treats any non-absent
+   * attribute as truthy.  To disable the close button, use a **property binding**:
+   * `.closable=${false}` (Lit / Vue) or `[closable]="false"` (Angular).
+   * Setting the JS property directly (`toast.closable = false`) also works.
+   */
   @property({ type: Boolean, reflect: true })
   closable = true;
 
@@ -213,7 +226,7 @@ export class TulparToast extends LitElement {
 
     // Update icon innerHTML imperatively (avoids unsafeSVG/unsafeHTML directive
     // dual-instance crash — see CLAUDE.md Lit directive gotcha).
-    const iconRelated = ["icon", "tone"];
+    const iconRelated = ["icon", "tone", "iconProp"];
     if (iconRelated.some((k) => changed.has(k))) {
       this._applyIconContent();
     }
@@ -344,8 +357,11 @@ export class TulparToast extends LitElement {
 
   // ─── ARIA helpers ─────────────────────────────────────────────────────────
 
-  /** ARIA role derived from tone. */
+  /** ARIA role derived from actions and tone (spec §5.3). */
   private _ariaRole(): string {
+    // Actionable toasts require user input → alertdialog takes precedence over
+    // tone-based status/alert (spec §5.3).
+    if (this.actions.length > 0) return "alertdialog";
     return this.tone === "danger" ? "alert" : "status";
   }
 
@@ -388,11 +404,13 @@ export class TulparToast extends LitElement {
             <slot name="title">${this.heading ?? ""}</slot>
           </div>
 
-          <!-- Description: rendered when prop is set or slot has content -->
-          ${this.description !== undefined
+          <!-- Description: wrapper rendered when prop is set OR slot has content.
+               When neither is true, render a bare slot so slotchange can fire and
+               update _hasDescSlot, which triggers a re-render into the styled wrapper. -->
+          ${this.description !== undefined || this._hasDescSlot
             ? html`
                 <div class="toast-description" part="description">
-                  <slot name="description">${this.description}</slot>
+                  <slot name="description" @slotchange=${this._onDescSlotChange}>${this.description ?? ""}</slot>
                 </div>
               `
             : html`
