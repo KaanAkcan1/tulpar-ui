@@ -291,6 +291,82 @@ export const toastStyles = css`
     }
   }
 
+  /* ── Timer ring ───────────────────────────────────────────────────────── */
+
+  /*
+   * The ring wrapper is always in the DOM; [data-no-timer] on the host hides it.
+   * This follows the data-has-description pattern — attribute flip, no Lit
+   * re-render loop.
+   */
+  .toast-ring {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+    /* visible by default; hidden by [data-no-timer] below */
+  }
+
+  :host([data-no-timer]) .toast-ring {
+    display: none;
+  }
+
+  .toast-ring svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  /* Static full-perimeter faint track (track style only) */
+  .toast-ring .ring-track {
+    stroke: var(--_toast-accent);
+    stroke-width: 1.5;
+    opacity: 0.14;
+  }
+
+  /* Animated depleting fill */
+  .toast-ring .ring-fill {
+    stroke: var(--_toast-accent);
+    stroke-width: 1.5;
+    opacity: 0.7;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 0;
+    animation: tulpar-ring-deplete var(--_toast-ring-dur, 5000ms) linear forwards;
+  }
+
+  /* timerStyle='soft': fill only, slightly reduced opacity */
+  :host([timer-style="soft"]) .toast-ring .ring-fill {
+    opacity: 0.6;
+  }
+
+  @keyframes tulpar-ring-deplete {
+    from { stroke-dashoffset: 0; }
+    to   { stroke-dashoffset: 100; }
+  }
+
+  /* Pause the ring animation on hover or when the card (or a child) has focus.
+     This is a purely visual pause — the actual timer-controller pause
+     (auto-dismiss) is wired in Task 4.x. */
+  :host(:hover) .toast-ring .ring-fill,
+  :host(:focus-within) .toast-ring .ring-fill {
+    animation-play-state: paused;
+  }
+
+  /* Forced-colors: ring may drop out (author colors overridden) — that is fine.
+     Ensure the visible border is intact; ring color falls back to CanvasText
+     automatically, so we don't need extra rules here — it will just vanish in
+     HCM which is acceptable per spec (border conveys the boundary). */
+  @media (forced-colors: active) {
+    .toast-ring .ring-fill,
+    .toast-ring .ring-track {
+      stroke: CanvasText;
+      opacity: 0.4;
+    }
+  }
+
   /* ── Reduced motion ───────────────────────────────────────────────────── */
   @media (prefers-reduced-motion: reduce) {
     .toast-card {
@@ -300,6 +376,13 @@ export const toastStyles = css`
     .toast-close,
     .toast-actions button {
       transition: none !important;
+    }
+
+    /* Ring does not animate under reduced-motion: freeze at full perimeter
+       (static visual indicator only — no depletion motion). */
+    .toast-ring .ring-fill {
+      animation: none !important;
+      stroke-dashoffset: 0;
     }
   }
 `;

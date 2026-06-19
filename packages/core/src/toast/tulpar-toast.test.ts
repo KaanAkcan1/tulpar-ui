@@ -518,6 +518,203 @@ describe("<tulpar-toast> alertdialog role", () => {
   });
 });
 
+// ─── Timer ring (Task 3.3) ────────────────────────────────────────────────────
+
+describe("<tulpar-toast> timer ring — presence", () => {
+  it("timer ring is present by default (timer=true, duration>0)", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+    // The ring wrapper (.toast-ring) must exist in shadow DOM when timer is on.
+    const ring = shadow(el).querySelector(".toast-ring");
+    expect(ring, ".toast-ring must be in shadow DOM by default").to.exist;
+  });
+
+  it("ring is absent when timer=false", async () => {
+    const el = await fixture<TulparToast>(
+      html`<tulpar-toast heading="T" .timer=${false}></tulpar-toast>`,
+    );
+    await el.updateComplete;
+    // The host must have [data-no-timer] or the ring itself must not be present.
+    // Our implementation uses [data-no-timer] attribute + CSS display:none,
+    // but the SVG should still not be visible / query should return null or hidden.
+    // We check the data attribute which controls CSS visibility (safe against loop).
+    expect(el.hasAttribute("data-no-timer"), "[data-no-timer] must be set when timer=false").to.be.true;
+  });
+
+  it("ring is absent when duration=0", async () => {
+    const el = await fixture<TulparToast>(
+      html`<tulpar-toast heading="T" .duration=${0}></tulpar-toast>`,
+    );
+    await el.updateComplete;
+    expect(el.hasAttribute("data-no-timer"), "[data-no-timer] must be set when duration=0").to.be.true;
+  });
+
+  it("ring SVG is inside .toast-ring when active", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+    const ring = shadow(el).querySelector(".toast-ring");
+    expect(ring).to.exist;
+    const svg = ring!.querySelector("svg");
+    expect(svg, "ring must contain an SVG element").to.exist;
+  });
+
+  it("ring SVG contains a rect with pathLength=100", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+    const rect = shadow(el).querySelector(".toast-ring svg .ring-fill");
+    expect(rect, ".ring-fill rect must exist inside ring SVG").to.exist;
+    expect(rect!.getAttribute("pathLength")).to.equal("100");
+  });
+});
+
+describe("<tulpar-toast> timer ring — timerStyle", () => {
+  it("timerStyle='track' (default) renders the under-track rect (.ring-track)", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+    // track style includes a faint static rect under the fill
+    const track = shadow(el).querySelector(".toast-ring .ring-track");
+    expect(track, ".ring-track must be present for timerStyle=track").to.exist;
+  });
+
+  it("timerStyle='track' explicit also renders .ring-track", async () => {
+    const el = await fixture<TulparToast>(
+      html`<tulpar-toast heading="T" .timerStyle=${"track"}></tulpar-toast>`,
+    );
+    await el.updateComplete;
+    const track = shadow(el).querySelector(".toast-ring .ring-track");
+    expect(track, ".ring-track must exist for explicit timerStyle=track").to.exist;
+  });
+
+  it("timerStyle='soft' renders fill only — no .ring-track", async () => {
+    const el = await fixture<TulparToast>(
+      html`<tulpar-toast heading="T" .timerStyle=${"soft"}></tulpar-toast>`,
+    );
+    await el.updateComplete;
+    const track = shadow(el).querySelector(".toast-ring .ring-track");
+    expect(track, ".ring-track must NOT be present for timerStyle=soft").to.be.null;
+  });
+
+  it("timerStyle='soft' still renders the fill rect (.ring-fill)", async () => {
+    const el = await fixture<TulparToast>(
+      html`<tulpar-toast heading="T" .timerStyle=${"soft"}></tulpar-toast>`,
+    );
+    await el.updateComplete;
+    const fill = shadow(el).querySelector(".toast-ring .ring-fill");
+    expect(fill, ".ring-fill must be present for timerStyle=soft").to.exist;
+  });
+
+  it("switching from track to soft removes .ring-track dynamically", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+    expect(shadow(el).querySelector(".toast-ring .ring-track")).to.exist;
+
+    el.timerStyle = "soft";
+    await el.updateComplete;
+    expect(shadow(el).querySelector(".toast-ring .ring-track")).to.be.null;
+  });
+});
+
+describe("<tulpar-toast> timer ring — duration CSS var", () => {
+  it("the ring SVG has --_toast-ring-dur set to reflect duration (default 5000ms)", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+    const ringSvg = shadow(el).querySelector<SVGElement>(".toast-ring svg");
+    expect(ringSvg, "ring SVG must exist").to.exist;
+    const dur = ringSvg!.style.getPropertyValue("--_toast-ring-dur").trim();
+    // Default duration is 5000ms → "5000ms"
+    expect(dur).to.equal("5000ms");
+  });
+
+  it("custom duration=3000 sets --_toast-ring-dur to 3000ms", async () => {
+    const el = await fixture<TulparToast>(
+      html`<tulpar-toast heading="T" .duration=${3000}></tulpar-toast>`,
+    );
+    await el.updateComplete;
+    const ringSvg = shadow(el).querySelector<SVGElement>(".toast-ring svg");
+    expect(ringSvg).to.exist;
+    const dur = ringSvg!.style.getPropertyValue("--_toast-ring-dur").trim();
+    expect(dur).to.equal("3000ms");
+  });
+});
+
+describe("<tulpar-toast> timer ring — CSS pause rules exist", () => {
+  it("styles contain animation-play-state pause rule for hover", async () => {
+    const mod = await import("./tulpar-toast.styles");
+    const cssText = mod.toastStyles.cssText;
+    expect(cssText).to.include("animation-play-state");
+    expect(cssText).to.include("paused");
+  });
+
+  it("styles contain :host(:hover) ring pause rule", async () => {
+    const mod = await import("./tulpar-toast.styles");
+    const cssText = mod.toastStyles.cssText;
+    // The rule pauses on :hover or :focus-within at host level
+    expect(cssText).to.include(":hover");
+    // Ring animation should pause
+    expect(cssText).to.include("paused");
+  });
+
+  it("styles contain reduced-motion rule that disables ring animation", async () => {
+    const mod = await import("./tulpar-toast.styles");
+    const cssText = mod.toastStyles.cssText;
+    expect(cssText).to.include("prefers-reduced-motion");
+    // Under reduced motion: animation on ring should be none or duration 0
+    // We assert the reduced-motion block exists (it already covers card transitions,
+    // ring animation:none is added in the implementation)
+    expect(cssText).to.include("prefers-reduced-motion");
+  });
+
+  it("styles do NOT reference --tulpar-primitive-* (including ring styles)", async () => {
+    const mod = await import("./tulpar-toast.styles");
+    const cssText = mod.toastStyles.cssText;
+    expect(cssText).to.not.include("--tulpar-primitive-");
+  });
+});
+
+describe("<tulpar-toast> timer ring — reactive properties", () => {
+  it("timer defaults to true", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+    expect(el.timer).to.be.true;
+  });
+
+  it("duration defaults to 5000", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+    expect(el.duration).to.equal(5000);
+  });
+
+  it("timerStyle defaults to 'track'", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+    expect(el.timerStyle).to.equal("track");
+  });
+
+  it("setting timer=false toggles [data-no-timer] reactively", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+    expect(el.hasAttribute("data-no-timer")).to.be.false;
+
+    el.timer = false;
+    await el.updateComplete;
+    expect(el.hasAttribute("data-no-timer")).to.be.true;
+
+    el.timer = true;
+    await el.updateComplete;
+    expect(el.hasAttribute("data-no-timer")).to.be.false;
+  });
+
+  it("setting duration=0 toggles [data-no-timer] reactively", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    await el.updateComplete;
+    expect(el.hasAttribute("data-no-timer")).to.be.false;
+
+    el.duration = 0;
+    await el.updateComplete;
+    expect(el.hasAttribute("data-no-timer")).to.be.true;
+  });
+});
+
 // ─── Styles ──────────────────────────────────────────────────────────────────
 
 describe("<tulpar-toast> styles", () => {

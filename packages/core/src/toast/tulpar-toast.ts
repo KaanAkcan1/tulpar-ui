@@ -188,17 +188,31 @@ export class TulparToast extends LitElement {
   @property({ attribute: false })
   actions: ToastAction[] = [];
 
-  // ── Placeholder no-ops for Task 3.3 / 3.4 props ──────────────────────────
-  // These are accepted as properties but have no behavior yet.
+  // ── Timer ring (Task 3.3) ────────────────────────────────────────────────
 
-  /** Timer ring countdown. Task 3.3. */
-  timer?: boolean;
+  /**
+   * Show the perimeter countdown ring.
+   * Set to `false` for persistent toasts (no ring, no auto-dismiss).
+   * Reflected as `timer` attribute so CSS can key off it.
+   */
+  @property({ type: Boolean, reflect: true })
+  timer = true;
 
-  /** Auto-dismiss duration in ms. Task 3.3. */
-  duration?: number;
+  /**
+   * Auto-dismiss duration in ms.
+   * `0` = persistent (treated same as `timer:false`).
+   * Default: 5000ms.
+   */
+  @property({ type: Number, reflect: true })
+  duration = 5000;
 
-  /** Timer ring style. Task 3.3. */
-  timerStyle?: "track" | "soft";
+  /**
+   * Ring visual style.
+   * - `'track'` (default): faint static full-perimeter track + depleting fill.
+   * - `'soft'`: depleting fill only (~1.5px, ~0.6 opacity).
+   */
+  @property({ type: String, reflect: true, attribute: "timer-style" })
+  timerStyle: "track" | "soft" = "track";
 
   // ── DOM refs for imperative innerHTML injection ────────────────────────────
 
@@ -235,6 +249,19 @@ export class TulparToast extends LitElement {
     // the CSS visibility rule stays correct without a slot interaction.
     if (changed.has("description")) {
       this._syncDescriptionAttr();
+    }
+
+    // Sync [data-no-timer] when timer visibility props change.
+    // This is attribute-driven (no requestUpdate) — same pattern as data-has-description.
+    const timerRelated = ["timer", "duration"];
+    if (timerRelated.some((k) => changed.has(k))) {
+      this._syncTimerAttr();
+    }
+
+    // Update the ring SVG's --_toast-ring-dur CSS custom property imperatively
+    // when duration changes (avoids any Lit directive involvement).
+    if (changed.has("duration")) {
+      this._applyRingDuration();
     }
   }
 
@@ -402,6 +429,7 @@ export class TulparToast extends LitElement {
         aria-live=${this._ariaLive()}
         aria-atomic="true"
       >
+        ${this._renderRing()}
         ${showIcon ? this._renderIcon() : nothing}
 
         <div class="toast-body" part="body">
@@ -483,12 +511,14 @@ export class TulparToast extends LitElement {
   };
 
   /**
-   * Seed [data-has-description] on first render (covers the prop-only case
-   * where slotchange never fires).
+   * Seed [data-has-description] and [data-no-timer] on first render, and
+   * apply the initial ring duration CSS var.
    */
   override firstUpdated(): void {
     super.firstUpdated();
     this._syncDescriptionAttr();
+    this._syncTimerAttr();
+    this._applyRingDuration();
   }
 
   private _syncDescriptionAttr(): void {
@@ -498,6 +528,101 @@ export class TulparToast extends LitElement {
     } else {
       this.removeAttribute("data-has-description");
     }
+  }
+
+  // ─── Timer ring helpers ────────────────────────────────────────────────────
+
+  /**
+   * Returns true when the ring should be visible (timer on + positive duration).
+   * This is the single source of truth for the [data-no-timer] toggle.
+   */
+  private _ringActive(): boolean {
+    return this.timer === true && this.duration > 0;
+  }
+
+  /**
+   * Toggle [data-no-timer] on the host without triggering a Lit re-render.
+   * CSS uses :host([data-no-timer]) .toast-ring { display: none } to hide the ring.
+   * This follows the exact same pattern as [data-has-description] — attribute
+   * flip, no requestUpdate(), no loop.
+   */
+  private _syncTimerAttr(): void {
+    if (this._ringActive()) {
+      this.removeAttribute("data-no-timer");
+    } else {
+      this.setAttribute("data-no-timer", "");
+    }
+  }
+
+  /**
+   * Set the ring SVG's --_toast-ring-dur custom property imperatively so the
+   * CSS animation reads the current duration without using Lit directives.
+   * Plain el.style.setProperty — safe, no directive crash risk.
+   */
+  private _applyRingDuration(): void {
+    const ringSvg = this.shadowRoot?.querySelector<SVGElement>(".toast-ring svg");
+    if (ringSvg) {
+      ringSvg.style.setProperty("--_toast-ring-dur", `${this.duration}ms`);
+    }
+  }
+
+  // ─── Ring render ──────────────────────────────────────────────────────────
+
+  /**
+   * Render the perimeter timer ring SVG.
+   *
+   * The ring is always present in the DOM (following the data-has-description
+   * pattern) — it is hidden via CSS when [data-no-timer] is on the host.
+   * This avoids the slotchange-induced re-render loop that removing a DOM node
+   * in updated() can cause.
+   *
+   * SVG geometry:
+   * - x/y/width/height offset by 1px from the border so the ring sits ON the
+   *   card border edge (not outside it, not covering content).
+   * - pathLength="100" + stroke-dasharray:100 means dashoffset 0→100 depletes
+   *   the full perimeter regardless of actual pixel length.
+   * - `--_toast-ring-dur` is set imperatively in _applyRingDuration().
+   * - Stroke color = var(--_toast-accent) (tone accent, already in scope).
+   *
+   * track style: adds a faint static .ring-track rect under the animated fill.
+   * soft style: animated fill only.
+   */
+  private _renderRing(): TemplateResult {
+    const isTrack = this.timerStyle === "track";
+    return html`
+      <div class="toast-ring" aria-hidden="true">
+        <svg
+          width="100%"
+          height="100%"
+          preserveAspectRatio="none"
+          overflow="visible"
+        >
+          ${isTrack
+            ? html`<rect
+                class="ring-track"
+                x="1px"
+                y="1px"
+                width="calc(100% - 2px)"
+                height="calc(100% - 2px)"
+                rx="11.5px"
+                ry="11.5px"
+                fill="none"
+              />`
+            : nothing}
+          <rect
+            class="ring-fill"
+            x="1px"
+            y="1px"
+            width="calc(100% - 2px)"
+            height="calc(100% - 2px)"
+            rx="11.5px"
+            ry="11.5px"
+            fill="none"
+            pathLength="100"
+          />
+        </svg>
+      </div>
+    `;
   }
 }
 
