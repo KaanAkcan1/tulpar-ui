@@ -38,3 +38,23 @@ export { default as TulparRadio } from "./radio/TulparRadio.vue";
 export { default as TulparRadioGroup } from "./radio-group/TulparRadioGroup.vue";
 export { default as TulparCheckboxGroup } from "./checkbox-group/TulparCheckboxGroup.vue";
 export type { SelectionSize, SelectionLabelPosition } from "@tulpar-ui/core/switch";
+
+// --- Overlay directives (v0.11) -------------------------------------------
+// Custom Vue directives that attach a core overlay (<tulpar-tooltip> /
+// <tulpar-toggletip> / <tulpar-popover>) to ANY host element via the `for`=id
+// model, never wrapping it. Register on a component/app:
+//   import { vTulparTooltip } from "@tulpar-ui/vue";
+//   directives: { tulparTooltip: vTulparTooltip }   // → v-tulpar-tooltip
+export { vTulparTooltip } from "./overlay/tulpar-tooltip.directive";
+export type { TooltipPlacement } from "./overlay/tulpar-tooltip.directive";
+
+export { vTulparToggletip } from "./overlay/tulpar-toggletip.directive";
+export type { ToggletipPlacement, ToggletipTone } from "./overlay/tulpar-toggletip.directive";
+
+export { vTulparPopover } from "./overlay/tulpar-popover.directive";
+export type { PopoverPlacement, PopoverTone } from "./overlay/tulpar-popover.directive";
+
+export type {
+  OverlayDirectiveConfig,
+  OverlayDirectiveValue,
+} from "./overlay/overlay-directive-base";
