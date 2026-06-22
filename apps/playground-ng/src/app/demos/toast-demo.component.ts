@@ -138,16 +138,20 @@ toast.warning('Kalıcı toast — kapatmak için × tıklayın', { timer: false 
 
 // Hover/focus pauses the timer — try hovering on any toast above.`;
 
-const STACKING_CODE = `// Default: collapsed stack (hover/focus to expand)
-// Max 3 visible; overflow queued.
-for (let i = 1; i <= 6; i++) {
-  toast.info(\`Toast #\${i} — hızlı ardışık\`);
+const STACKING_CODE = `const toast = inject(TulparToastService);
+
+// Live controls — set BEFORE firing so the service rebuilds its queue
+toast.setDefaults({ maxVisible: 3, expand: false });
+
+// Fire (maxVisible + 3) toasts to see the cap + queue/overflow behavior.
+// Beyond maxVisible, toasts queue and promote as visible ones dismiss.
+const count = maxVisible + 3; // e.g. maxVisible=3 → fires 6
+for (let i = 1; i <= count; i++) {
+  toast.info(\`Toast #\${i} / \${count}\`, { duration: 5000 });
 }
 
-// Always-expanded list (no collapse)
-toast.setDefaults({ expand: true });
-toast.success('Expand modunda yeni toast');
-toast.setDefaults({ expand: false }); // reset`;
+// Toggle expand mode (always-expanded list, no hover-to-expand)
+toast.setDefaults({ expand: true });`;
 
 const LOCATION_CODE = `const toast = inject(TulparToastService);
 
@@ -427,25 +431,74 @@ toast.danger('Oturumunuz sona eriyor.', {
     <section class="doc-section">
       <h2 class="section-title">8. Stacking</h2>
       <p class="section-desc">
-        Default: collapsed stack of up to 3 visible toasts — hover or focus the stack to expand it
-        (and pause all timers). Beyond 3, toasts queue. Use <code class="inline-code">expand</code>
-        to show an always-expanded list. The "fire 6 rapidly" button demonstrates queue overflow.
+        Default: collapsed stack of up to <strong>3</strong> visible toasts — hover or focus the stack to expand it
+        (and pause all timers). Beyond <code class="inline-code">maxVisible</code>, toasts <strong>queue</strong> and
+        promote as visible ones dismiss (Sonner-style). Use <code class="inline-code">expand:true</code> to show an
+        always-expanded list instead of the collapsed fan.
       </p>
-      <div class="preview">
-        <div class="stack-demo-cols">
-          <div class="stack-demo-col">
-            <p class="preview-label">Collapsed (default)</p>
-            <button class="trigger-btn" (click)="showStackCollapsed()">Fire 3 (hover to expand)</button>
+
+      <!-- Live control panel -->
+      <div class="preview preview--col stack-controls-preview">
+
+        <!-- maxVisible row -->
+        <div class="stack-control-row">
+          <label class="stack-control-label" for="stack-max-visible">
+            Max visible
+          </label>
+          <div class="stack-stepper">
+            <button
+              class="stepper-btn"
+              [disabled]="stackMaxVisible() <= 1"
+              (click)="decrementMaxVisible()"
+              aria-label="Decrease max visible"
+            >−</button>
+            <span class="stepper-value" id="stack-max-visible">{{ stackMaxVisible() }}</span>
+            <button
+              class="stepper-btn"
+              [disabled]="stackMaxVisible() >= 8"
+              (click)="incrementMaxVisible()"
+              aria-label="Increase max visible"
+            >+</button>
           </div>
-          <div class="stack-demo-col">
-            <p class="preview-label">Expand mode</p>
-            <button class="trigger-btn" (click)="showStackExpand()">Fire 3 (always expanded)</button>
-          </div>
-          <div class="stack-demo-col">
-            <p class="preview-label">Queue overflow</p>
-            <button class="trigger-btn trigger-btn--warning" (click)="showStack6()">Fire 6 rapidly</button>
-          </div>
+          <span class="stack-control-hint">
+            Beyond this, toasts <strong>queue</strong> and promote as visible ones dismiss
+          </span>
         </div>
+
+        <!-- expand row -->
+        <div class="stack-control-row">
+          <label class="stack-control-label" for="stack-expand-toggle">
+            Expand mode
+          </label>
+          <button
+            id="stack-expand-toggle"
+            class="stack-toggle"
+            [class.stack-toggle--on]="stackExpand()"
+            (click)="toggleStackExpand()"
+            [attr.aria-pressed]="stackExpand()"
+          >
+            <span class="stack-toggle-knob"></span>
+          </button>
+          <span class="stack-control-hint">
+            {{ stackExpand() ? 'Always-expanded list' : 'Collapsed fan (hover / focus to expand)' }}
+          </span>
+        </div>
+
+        <!-- live state badge -->
+        <div class="stack-state-badge">
+          <code>setDefaults&#40;&#123; maxVisible: {{ stackMaxVisible() }}, expand: {{ stackExpand() }} &#125;&#41;</code>
+        </div>
+
+        <!-- fire button -->
+        <div class="stack-fire-row">
+          <button class="trigger-btn trigger-btn--info stack-fire-btn" (click)="fireStackToasts()">
+            Fire {{ stackMaxVisible() + 3 }} toasts
+          </button>
+          <span class="stack-fire-hint">
+            Fires maxVisible + 3 = <strong>{{ stackMaxVisible() + 3 }}</strong> toasts so you can see the cap, queue &amp; drain
+          </span>
+        </div>
+
       </div>
       <pre class="code"><code>{{ stackingCode }}</code></pre>
     </section>
@@ -784,18 +837,155 @@ toast.danger('Oturumunuz sona eriyor.', {
         max-width: 380px;
       }
 
-      /* ── Stacking section columns ────────────────────────────────────── */
-      .stack-demo-cols {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 24px;
-        width: 100%;
+      /* ── Stacking live controls ─────────────────────────────────────── */
+      .stack-controls-preview {
+        gap: 0;
+        padding: 20px 24px;
       }
 
-      .stack-demo-col {
+      .stack-control-row {
         display: flex;
-        flex-direction: column;
-        gap: 8px;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--tulpar-color-border-default, #d9e0df);
+        flex-wrap: wrap;
+      }
+
+      .stack-control-row:last-of-type {
+        border-bottom: none;
+      }
+
+      .stack-control-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--tulpar-color-text-primary, #15110b);
+        min-width: 90px;
+        flex-shrink: 0;
+      }
+
+      .stack-control-hint {
+        font-size: 12px;
+        color: var(--tulpar-color-text-muted, #74777a);
+        line-height: 1.4;
+      }
+
+      /* ── Number stepper ─────────────────────────────────────────────── */
+      .stack-stepper {
+        display: inline-flex;
+        align-items: center;
+        gap: 0;
+        border: 1px solid var(--tulpar-color-border-default, #d9e0df);
+        border-radius: 8px;
+        overflow: hidden;
+        background: var(--tulpar-color-bg-elevated, #fff);
+        flex-shrink: 0;
+      }
+
+      .stepper-btn {
+        font: inherit;
+        font-size: 16px;
+        font-weight: 700;
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: transparent;
+        color: var(--tulpar-color-text-primary, #15110b);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 100ms ease;
+        flex-shrink: 0;
+      }
+
+      .stepper-btn:hover:not(:disabled) {
+        background: var(--tulpar-color-bg-subtle, #e9f1ef);
+      }
+
+      .stepper-btn:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+
+      .stepper-value {
+        font-size: 14px;
+        font-weight: 700;
+        min-width: 28px;
+        text-align: center;
+        color: var(--tulpar-color-text-primary, #15110b);
+        border-left: 1px solid var(--tulpar-color-border-default, #d9e0df);
+        border-right: 1px solid var(--tulpar-color-border-default, #d9e0df);
+        line-height: 32px;
+      }
+
+      /* ── Expand toggle ──────────────────────────────────────────────── */
+      .stack-toggle {
+        position: relative;
+        width: 40px;
+        height: 22px;
+        border-radius: 11px;
+        border: 2px solid var(--tulpar-color-border-default, #d9e0df);
+        background: var(--tulpar-color-bg-subtle, #e9f1ef);
+        cursor: pointer;
+        transition: background 150ms ease, border-color 150ms ease;
+        flex-shrink: 0;
+        padding: 0;
+      }
+
+      .stack-toggle--on {
+        background: var(--tulpar-color-brand-default, #00c57a);
+        border-color: var(--tulpar-color-brand-default, #00c57a);
+      }
+
+      .stack-toggle-knob {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--tulpar-color-bg-elevated, #fff);
+        transition: transform 150ms ease;
+        pointer-events: none;
+      }
+
+      .stack-toggle--on .stack-toggle-knob {
+        transform: translateX(18px);
+      }
+
+      /* ── Live state badge ───────────────────────────────────────────── */
+      .stack-state-badge {
+        margin-top: 14px;
+        padding: 8px 12px;
+        border-radius: 6px;
+        background: var(--tulpar-color-bg-inverse, #15110b);
+        color: #d9e0df;
+        font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+        font-size: 12.5px;
+        display: inline-block;
+        max-width: 100%;
+        overflow-x: auto;
+      }
+
+      /* ── Fire button row ────────────────────────────────────────────── */
+      .stack-fire-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 16px;
+        flex-wrap: wrap;
+      }
+
+      .stack-fire-btn {
+        font-size: 13px;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+
+      .stack-fire-hint {
+        font-size: 12px;
+        color: var(--tulpar-color-text-muted, #74777a);
       }
 
       /* ── Promise flow diagram ────────────────────────────────────────── */
@@ -989,6 +1179,10 @@ export class ToastDemoComponent {
 
   readonly lastDismissReason = signal<string | null>(null);
 
+  // ── 8. Stacking — live control signals ───────────────────────────────────
+  readonly stackMaxVisible = signal<number>(3);
+  readonly stackExpand     = signal<boolean>(false);
+
   // ── Code snippets ────────────────────────────────────────────────────────
   readonly tonesCode = TONES_CODE;
   readonly contentPropCode = CONTENT_PROP_CODE;
@@ -1082,23 +1276,33 @@ export class ToastDemoComponent {
   showTimerFalse()         { this.toast.warning('Kalıcı — timer:false, otomatik kapanmaz.', { timer: false }); }
   showTimerPauseDemo()     { this.toast.info('Üzerinde bekle — timer duraklar. Fareyi çek — devam eder.', { duration: 8_000 }); }
 
-  // ── 8. Stacking ───────────────────────────────────────────────────────────
-  showStackCollapsed() {
-    for (let i = 1; i <= 3; i++) {
-      this.toast.info(`Yığılmış toast #${i}`);
-    }
+  // ── 8. Stacking — live control methods ───────────────────────────────────
+  decrementMaxVisible() {
+    const next = Math.max(1, this.stackMaxVisible() - 1);
+    this.stackMaxVisible.set(next);
+    this.toast.setDefaults({ maxVisible: next });
   }
-  showStackExpand() {
-    this.toast.setDefaults({ expand: true });
-    for (let i = 1; i <= 3; i++) {
-      this.toast.info(`Expand modunda toast #${i}`);
-    }
-    // Reset to default after a short delay so the demo doesn't affect other sections.
-    setTimeout(() => this.toast.setDefaults({ expand: false }), 200);
+
+  incrementMaxVisible() {
+    const next = Math.min(8, this.stackMaxVisible() + 1);
+    this.stackMaxVisible.set(next);
+    this.toast.setDefaults({ maxVisible: next });
   }
-  showStack6() {
-    for (let i = 1; i <= 6; i++) {
-      this.toast.warning(`Hızlı ateş #${i} — 4-6 sırada bekler`);
+
+  toggleStackExpand() {
+    const next = !this.stackExpand();
+    this.stackExpand.set(next);
+    this.toast.setDefaults({ expand: next });
+  }
+
+  fireStackToasts() {
+    const maxVisible = this.stackMaxVisible();
+    const expand     = this.stackExpand();
+    // Apply current settings BEFORE firing so the queue rebuilds with them.
+    this.toast.setDefaults({ maxVisible, expand });
+    const count = maxVisible + 3;
+    for (let i = 1; i <= count; i++) {
+      this.toast.info(`Toast #${i} / ${count}`, { duration: 5000 });
     }
   }
 
