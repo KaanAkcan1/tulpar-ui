@@ -423,6 +423,47 @@ export const tulparLight: SemanticTokens = {
     z: { topbar: "100", mask: "150", sidenav: "200", aside: "300" },
   },
 
+  feedback: {
+    tone: {
+      // Tonal surface model (light): surface=family[50], onSurface=family[900], border=family[200], accent=semantic default.
+      // Families mirror the overlay family→intent mapping exactly:
+      //   info → gok (blue), success → otuken (green), warning → ulgen (amber), danger → al (red).
+      // accent = the "default" step for that intent in the semantic color layer (lighter/more saturated
+      // than the surface step so it reads on the tinted card and serves as icon fill / ring stroke).
+      // border raised to clear WCAG 3:1 against the [50] surface (enforced by feedback.contrast.test.ts):
+      //   info [500]=3.69, success [400]=3.60, warning [700]=4.72 ([600] only 2.97), danger [400]=3.11.
+      // warning accent also raised to [700] — [600]=2.97 narrowly fails 3:1.
+      info:    { surface: c.gok[50],    onSurface: c.gok[900],    border: c.gok[500],    accent: c.gok[600]    },
+      success: { surface: c.otuken[50], onSurface: c.otuken[900], border: c.otuken[400], accent: c.otuken[500] },
+      warning: { surface: c.ulgen[50],  onSurface: c.ulgen[900],  border: c.ulgen[700],  accent: c.ulgen[700]  },
+      danger:  { surface: c.al[50],     onSurface: c.al[900],     border: c.al[400],     accent: c.al[600]     },
+    },
+    // High-contrast danger: saturated al[600] surface + white text (Carbon HC notification model).
+    dangerHc: { surface: c.al[600], on: "#ffffff" },
+    // Toast elevation — distinct from card/overlay shadows; stronger vertical lift.
+    shadow:
+      "0 4px 6px -2px rgba(10, 37, 64, 0.10), " +
+      "0 12px 28px -6px rgba(10, 37, 64, 0.18), " +
+      "0 0 0 1px rgba(0, 0, 0, 0.04)",
+    // Must sit above overlay (1000) + shell/sidenav (200/300).
+    zIndex: "9000",
+    motion: {
+      durationEnter:      "220ms",
+      durationExit:       "160ms",
+      durationReposition: "300ms",
+      easing:             "cubic-bezier(.22,1,.36,1)",
+      defaultDuration:    "5000ms",
+      messageDuration:    "3000ms",
+    },
+    size: {
+      toastMaxWidth:  "360px",
+      toastRadius:    "12px",
+      toastPadding:   "12px 16px",
+      messagePadding: "8px 14px",
+      ringStroke:     "1.5px",
+    },
+  },
+
   easing: { decelerate: primitiveTransition.easing.decelerate },
   shadow: {
     sm: primitiveShadow.sm,

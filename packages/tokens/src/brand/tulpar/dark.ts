@@ -381,6 +381,35 @@ export const tulparDark: SemanticTokens = {
     z: { topbar: "100", mask: "150", sidenav: "200", aside: "300" },
   },
 
+  feedback: {
+    tone: {
+      // Tonal surface model (dark): surface=family[900], onSurface=family[100], accent=family[400].
+      // Families mirror the overlay family→intent mapping exactly:
+      //   info → gok (blue), success → otuken (green), warning → ulgen (amber), danger → al (red).
+      // accent = family[400] — a mid-luminance step that stays legible on deep [900] surfaces.
+      //
+      // border raised to clear WCAG 3:1 against the [900] surface (enforced by feedback.contrast.test.ts).
+      // [800] is near-invisible on [900]; the same fix was applied to overlay dark bindings (see comment there).
+      //   info [500]=3.04, success [400]=3.42, warning [600]=3.35, danger [400]=3.78.
+      info:    { surface: c.gok[900],    onSurface: c.gok[100],    border: c.gok[500],    accent: c.gok[400]    },
+      success: { surface: c.otuken[900], onSurface: c.otuken[100], border: c.otuken[400], accent: c.otuken[400] },
+      warning: { surface: c.ulgen[900],  onSurface: c.ulgen[100],  border: c.ulgen[600],  accent: c.ulgen[400]  },
+      danger:  { surface: c.al[900],     onSurface: c.al[100],     border: c.al[400],     accent: c.al[400]     },
+    },
+    // High-contrast danger: al[500] surface (slightly lighter than [600] so it's still readable
+    // against dark surroundings) + white text.
+    dangerHc: { surface: c.al[500], on: "#ffffff" },
+    // Toast elevation on dark: pure-black shadow so cards separate from dark surfaces.
+    shadow:
+      "0 4px 6px -2px rgba(0, 0, 0, 0.32), " +
+      "0 12px 28px -6px rgba(0, 0, 0, 0.40), " +
+      "0 0 0 1px rgba(255, 255, 255, 0.06)",
+    // Must sit above overlay (1000) + shell/sidenav (200/300) — same tier as light.
+    zIndex: "9000",
+    motion: tulparLight.feedback.motion,
+    size: tulparLight.feedback.size,
+  },
+
   easing: { decelerate: primitiveTransition.easing.decelerate },
   shadow: {
     // dark mode is border-led: sm/md intentionally reuse the navy-tinted primitives

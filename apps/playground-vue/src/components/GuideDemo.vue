@@ -280,6 +280,40 @@ const a11yLabels: PropRow[] = [
         </div>
       </dl>
     </section>
+
+    <!-- ── Feedback family (v0.12) ────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">Feedback family — Toast &amp; Message</h2>
+      <p class="section-desc">
+        Transient, code-triggered notifications powered by a single imperative service. Two channels
+        split by weight:
+      </p>
+      <dl class="def">
+        <div class="def-row">
+          <dt><code>Toast</code></dt>
+          <dd>
+            Corner card — icon · title · description · action(s) · close. Stacks, timers out (5 s
+            default), supports <code>toast.promise</code> for async flows. Use for background events,
+            confirmations with an Undo action, and non-critical errors.
+            <br /><router-link class="feedback-link" to="/toast">Toast demo →</router-link>
+          </dd>
+        </div>
+        <div class="def-row">
+          <dt><code>Message</code></dt>
+          <dd>
+            Top-center pill — single line, auto-dismiss (3 s), deduplicates repeated calls into a ×N
+            counter. No actions, no close button. Use for redundant confirmations: "Copied",
+            "Saved".
+            <br /><router-link class="feedback-link" to="/message">Message demo →</router-link>
+          </dd>
+        </div>
+      </dl>
+      <p class="section-desc" style="margin-top: 12px">
+        <strong>Decision rule:</strong> A Message that needs an action is a Toast. Toast that has no
+        actions and auto-dismisses in 3 s might be a Message. Both are wrong for critical /
+        irreversible info — that needs a Dialog (future spec).
+      </p>
+    </section>
   </div>
 </template>
 
@@ -421,6 +455,17 @@ const a11yLabels: PropRow[] = [
   font-family: var(--tulpar-font-family-mono, ui-monospace, monospace);
   font-size: 11px;
   color: var(--tulpar-color-text-muted, #74777a);
+}
+
+.feedback-link {
+  color: var(--tulpar-color-brand-default, #00c57a);
+  font-weight: 600;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.feedback-link:hover {
+  text-decoration: underline;
 }
 
 @media (max-width: 640px) {

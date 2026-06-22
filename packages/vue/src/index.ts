@@ -58,3 +58,22 @@ export type {
   OverlayDirectiveConfig,
   OverlayDirectiveValue,
 } from "./overlay/overlay-directive-base";
+
+// --- Toast + Message (v0.12) --------------------------------------------------
+// Imperative notification service.
+//   const toast = useTulparToast();   toast.success("Kaydedildi");
+//   const msg   = useTulparMessage(); msg.info("Bilgi");
+//   app.use(TulparToastPlugin)        ← idiomatic entry; composables work without it too
+export { useTulparToast, useTulparMessage, TulparToastPlugin } from "./toast/index";
+export type {
+  ToastOptions,
+  MessageOptions,
+  ToasterDefaults,
+  DismissReason,
+  ToastLocation,
+  ToastPromiseMsgs,
+} from "./toast/index";
+
+// Declarative / rich SFC (Task 6.2).
+export { default as TulparToast } from "./toast/TulparToast.vue";
+export type { ToastAction, ToneValue } from "@tulpar-ui/core/toast";

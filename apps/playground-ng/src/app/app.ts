@@ -2,12 +2,14 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { Router, RouterOutlet } from '@angular/router';
 import { LucideAngularModule, type LucideIconData } from 'lucide-angular';
 import {
+  Bell,
   BookOpen,
   CheckSquare,
   Circle,
   FormInput,
   Hash,
   Layers,
+  MessageCircle,
   MessageSquare,
   MessageSquareText,
   Palette,
@@ -169,6 +171,24 @@ class IconToggletip {
 })
 class IconPopover {
   readonly icon: LucideIconData = PanelTop;
+}
+@Component({
+  selector: 'app-icon-toast',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconToast {
+  readonly icon: LucideIconData = Bell;
+}
+@Component({
+  selector: 'app-icon-message',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconMessage {
+  readonly icon: LucideIconData = MessageCircle;
 }
 
 @Component({
@@ -525,6 +545,15 @@ export class App {
             { label: 'Popover', href: '/popover', icon: IconPopover },
           ],
         },
+      ],
+    },
+    // Feedback — transient notification family (v0.12).
+    {
+      type: 'section',
+      label: 'Feedback',
+      items: [
+        { label: 'Toast', href: '/toast', icon: IconToast },
+        { label: 'Message', href: '/message', icon: IconMessage },
       ],
     },
     {

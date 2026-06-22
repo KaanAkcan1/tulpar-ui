@@ -56,6 +56,10 @@
       "types": "./dist/textarea/index.d.ts",
       "import": "./dist/textarea/index.js"
     },
+    "./toast": {
+      "types": "./dist/toast/index.d.ts",
+      "import": "./dist/toast/index.js"
+    },
     "./toggletip": {
       "types": "./dist/toggletip/index.d.ts",
       "import": "./dist/toggletip/index.js"

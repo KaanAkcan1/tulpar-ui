@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import {
+  Bell,
   BookOpen,
   CheckSquare,
   CircleDot,
@@ -97,6 +98,15 @@ const menu: TulparNavItemVueData[] = [
           { label: "Popover", href: "/popover", icon: MessageSquareText },
         ],
       },
+    ],
+  },
+  // Feedback — transient notification family (v0.12).
+  {
+    type: "section",
+    label: "Feedback",
+    items: [
+      { label: "Toast", href: "/toast", icon: Bell },
+      { label: "Message", href: "/message", icon: MessageCircle },
     ],
   },
   {
