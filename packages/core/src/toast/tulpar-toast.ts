@@ -278,17 +278,41 @@ export class TulparToast extends LitElement {
       this.setAttribute("tabindex", "-1");
     }
     // ── Enter animation ──────────────────────────────────────────────────────
-    // Set [data-enter] so the CSS enter animation (@keyframes) plays from the
-    // first render frame.  Remove it one frame later so the animation naturally
-    // completes without the attribute locking the starting state forever.
-    // Loop-safe: no requestUpdate(), no Lit state — pure attribute + CSS.
-    // Guard: skip if already removed (edge case: element reinserted quickly).
+    // Set [data-enter] so the CSS @keyframes plays for the full enter duration.
+    // Remove it on `animationend` of the .toast-card (the element the keyframe
+    // is applied to).  A setTimeout fallback (~enter duration + buffer = 300ms)
+    // handles reduced-motion (animation:none → no animationend fires) and
+    // no-token / test environments where the animation may not run.
+    // Loop-safe: no requestUpdate(), no Lit state — pure attribute + listener/timeout.
     this.setAttribute("data-enter", "");
-    requestAnimationFrame(() => {
-      // Remove only if still connected and still in the enter state.
-      if (this.isConnected) {
+
+    // Fallback timer: removes [data-enter] after the enter duration + buffer.
+    // 300ms ≈ default enter (220ms) + 80ms buffer.  If animationend fires first,
+    // the timer is cleared and [data-enter] is already gone.
+    const fallbackTimer = setTimeout(() => {
+      if (this.isConnected && this.hasAttribute("data-enter")) {
         this.removeAttribute("data-enter");
       }
+    }, 300);
+
+    // Primary removal: listen for animationend on the .toast-card once the
+    // shadow DOM is ready (after the first Lit update).  We schedule via
+    // updateComplete so the shadow root exists when we query for the card.
+    this.updateComplete.then(() => {
+      const card = this.shadowRoot?.querySelector<HTMLElement>(".toast-card");
+      if (!card) return;
+
+      const onAnimEnd = (e: AnimationEvent) => {
+        // Only react to the enter keyframe (not ring or other animations on the card).
+        if (e.animationName === "tulpar-toast-enter-card") {
+          card.removeEventListener("animationend", onAnimEnd);
+          clearTimeout(fallbackTimer);
+          if (this.isConnected) {
+            this.removeAttribute("data-enter");
+          }
+        }
+      };
+      card.addEventListener("animationend", onAnimEnd);
     });
   }
 

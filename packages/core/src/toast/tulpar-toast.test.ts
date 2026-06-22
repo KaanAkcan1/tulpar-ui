@@ -1288,3 +1288,66 @@ describe("<tulpar-toast> Esc key dismisses focused toast (Task 4.3)", () => {
     expect(dismissed).to.be.false;
   });
 });
+
+// ─── Enter animation attribute lifecycle ──────────────────────────────────────
+//
+// Regression guard for the "enter animation never plays" bug:
+//   Old code removed [data-enter] after one requestAnimationFrame (before first
+//   paint), cancelling the keyframe before it could run.  The fix keeps
+//   [data-enter] present until `animationend` on .toast-card fires, with a
+//   setTimeout fallback (300ms) for reduced-motion / no-animation environments.
+
+describe("<tulpar-toast> enter animation attribute lifecycle", () => {
+  it("[data-enter] is present immediately after connectedCallback (synchronous set)", async () => {
+    // createElement + append so we can assert the attribute before Lit's first
+    // async update cycle has a chance to remove it.
+    const el = document.createElement("tulpar-toast") as TulparToast;
+    el.setAttribute("heading", "T");
+    document.body.appendChild(el);
+
+    // [data-enter] must be set synchronously in connectedCallback — check it
+    // before yielding to the microtask queue.
+    expect(
+      el.hasAttribute("data-enter"),
+      "[data-enter] must be present synchronously after append (before any async removal)",
+    ).to.be.true;
+
+    document.body.removeChild(el);
+  });
+
+  it("[data-enter] persists through at least one requestAnimationFrame (old 1-rAF bug is gone)", async () => {
+    // The OLD bug: [data-enter] was removed inside a requestAnimationFrame callback
+    // that ran before the first paint, cancelling the keyframe immediately.
+    // The FIX: [data-enter] is removed only on animationend or the 300ms fallback.
+    // This test ensures the attribute is STILL present after one rAF fires.
+    const el = document.createElement("tulpar-toast") as TulparToast;
+    el.setAttribute("heading", "T");
+    document.body.appendChild(el);
+
+    // Yield two animation frames — more than the old code's one-rAF removal.
+    await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
+
+    expect(
+      el.hasAttribute("data-enter"),
+      "[data-enter] must NOT be removed by a single requestAnimationFrame (regression guard)",
+    ).to.be.true;
+
+    document.body.removeChild(el);
+  });
+
+  it("[data-enter] is removed after the enter animation settles (~300ms fallback)", async () => {
+    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
+    // [data-enter] starts present.
+    expect(el.hasAttribute("data-enter"), "[data-enter] must be set on connect").to.be.true;
+
+    // Wait longer than the fallback timer (300ms + buffer) for the attribute to clear.
+    // In the headless test environment the CSS animation may not fire animationend,
+    // so the setTimeout fallback path is exercised here.
+    await new Promise((r) => setTimeout(r, 400));
+
+    expect(
+      el.hasAttribute("data-enter"),
+      "[data-enter] must be removed after enter settles (animationend or 300ms fallback)",
+    ).to.be.false;
+  });
+});
