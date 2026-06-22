@@ -49,11 +49,26 @@ describe("<tulpar-avatar>", () => {
       expect(i).to.exist;
       expect(i!.getAttribute("loading")).to.equal("lazy");
       expect(i!.getAttribute("src")).to.equal(src);
+      // intrinsic width/height HTML attributes reserve layout (md = 32px)
+      expect(i!.getAttribute("width")).to.equal("32");
+      expect(i!.getAttribute("height")).to.equal("32");
       // image is laid out at the host box size (md = 32px)
       expect(getComputedStyle(i!).objectFit).to.equal("cover");
       // image avatar exposes its name via alt, NOT role=img on the host
       expect(i!.getAttribute("alt")).to.equal("Jane Doe");
       expect(el.hasAttribute("role")).to.be.false;
+    });
+
+    it("intrinsic width/height track the size tier (lg = 40px)", async () => {
+      const src =
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+      const el = await fixture<TulparAvatar>(
+        html`<tulpar-avatar size="lg" src=${src} name="Jane Doe"></tulpar-avatar>`,
+      );
+      await el.updateComplete;
+      const i = img(el)!;
+      expect(i.getAttribute("width")).to.equal("40");
+      expect(i.getAttribute("height")).to.equal("40");
     });
 
     it("alt falls back to name; explicit alt wins", async () => {

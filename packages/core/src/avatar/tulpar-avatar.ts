@@ -8,6 +8,20 @@ export type AvatarShape = "rounded-square" | "circle";
 export type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 /**
+ * Box size per tier, in CSS px. Mirrors the `--_av-size` table in
+ * tulpar-avatar.styles.ts and is used to stamp intrinsic `width`/`height`
+ * HTML attributes on the rendered `<img>` so the browser reserves layout
+ * before the image loads (prevents CLS).
+ */
+const AVATAR_SIZE_PX: Record<AvatarSize, number> = {
+  xs: 20,
+  sm: 24,
+  md: 32,
+  lg: 40,
+  xl: 48,
+};
+
+/**
  * `<tulpar-avatar>` — identity atom.
  *
  * Renders a user's identity with a graceful fallback cascade:
@@ -199,6 +213,8 @@ export class TulparAvatar extends LitElement {
     const showInitials = !showImage && this._showInitials;
     const showIcon = !showImage && !showInitials;
     const altText = this.alt ?? this.name ?? "";
+    // Intrinsic px box for the current tier → reserve layout (prevent CLS).
+    const px = AVATAR_SIZE_PX[this.size] ?? AVATAR_SIZE_PX.md;
 
     // The status-dot slot is RESERVED for Wave 2 — intentionally not rendered.
     return html`
@@ -207,6 +223,8 @@ export class TulparAvatar extends LitElement {
             part="image"
             src=${this.src!}
             alt=${altText}
+            width=${px}
+            height=${px}
             loading="lazy"
             decoding="async"
             @error=${this._onImgError}
