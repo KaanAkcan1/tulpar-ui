@@ -14,6 +14,7 @@ import {
   MessageSquareText,
   Palette,
   PanelTop,
+  Shapes,
   SquareMousePointer,
   TextCursorInput,
   ToggleLeft,
@@ -189,6 +190,15 @@ class IconToast {
 })
 class IconMessage {
   readonly icon: LucideIconData = MessageCircle;
+}
+@Component({
+  selector: 'app-icon-atoms',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconAtoms {
+  readonly icon: LucideIconData = Shapes;
 }
 
 @Component({
@@ -555,6 +565,12 @@ export class App {
         { label: 'Toast', href: '/toast', icon: IconToast },
         { label: 'Message', href: '/message', icon: IconMessage },
       ],
+    },
+    // Display & Status atoms — Tag/Badge/Chip/Avatar/Skeleton/Spinner/Progress (v0.13).
+    {
+      type: 'section',
+      label: 'Display & Status atoms',
+      items: [{ label: 'Atoms', href: '/atoms', icon: IconAtoms }],
     },
     {
       type: 'section',

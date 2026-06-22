@@ -160,7 +160,12 @@ export class TulparSpinner extends LitElement {
 
   private _onLabelSlotChange = (e: Event): void => {
     const slot = e.target as HTMLSlotElement;
-    const nodes = slot.assignedNodes({ flatten: true });
+    // NOTE: plain assignedNodes() (no flatten) — the label slot renders the
+    // `label` prop as FALLBACK content, and flatten:true counts fallback nodes
+    // as assigned, flipping `_hasSlotLabel` every render and locking the page
+    // (slotchange→requestUpdate loop, see CLAUDE.md). Real slotted content still
+    // wins because assignedNodes() only returns true light-DOM children.
+    const nodes = slot.assignedNodes();
     this._hasSlotLabel = nodes.some((n) => {
       if (n.nodeType === Node.TEXT_NODE) return (n.textContent ?? "").trim().length > 0;
       return true;

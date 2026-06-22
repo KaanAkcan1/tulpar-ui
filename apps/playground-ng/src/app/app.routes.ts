@@ -15,6 +15,7 @@ import { ToggletipDemoComponent } from './demos/toggletip-demo.component';
 import { PopoverDemoComponent } from './demos/popover-demo.component';
 import { ToastDemoComponent } from './demos/toast-demo.component';
 import { MessageDemoComponent } from './demos/message-demo.component';
+import { AtomsDemoComponent } from './demos/atoms-demo.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'button' },
@@ -37,5 +38,6 @@ export const routes: Routes = [
   { path: 'popover', component: PopoverDemoComponent, title: 'Popover — Tulpar UI' },
   { path: 'toast', component: ToastDemoComponent, title: 'Toast — Tulpar UI' },
   { path: 'message', component: MessageDemoComponent, title: 'Message — Tulpar UI' },
+  { path: 'atoms', component: AtomsDemoComponent, title: 'Display & Status atoms — Tulpar UI' },
   { path: '**', redirectTo: 'button' },
 ];

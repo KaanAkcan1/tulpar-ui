@@ -204,7 +204,13 @@ export class TulparTag extends LitElement {
 
   private _onSlotChange = (e: Event): void => {
     const slot = e.target as HTMLSlotElement;
-    const nodes = slot.assignedNodes({ flatten: true });
+    // NOTE: do NOT pass { flatten: true } here. The default slot renders the
+    // `label` prop as FALLBACK content, and flatten:true counts fallback nodes
+    // as assigned — which flips `_hasSlotLabel` true→false→true on every render
+    // and locks the page (slotchange→requestUpdate loop, see CLAUDE.md). Plain
+    // assignedNodes() returns only real light-DOM content, so the prop fallback
+    // is correctly ignored and "slot wins over prop" still holds.
+    const nodes = slot.assignedNodes();
     this._hasSlotLabel = nodes.some((n) => {
       if (n.nodeType === Node.TEXT_NODE) return (n.textContent ?? "").trim().length > 0;
       return true;
