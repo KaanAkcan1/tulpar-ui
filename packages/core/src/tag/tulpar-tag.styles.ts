@@ -185,6 +185,21 @@ export const tagStyles = css`
     --_tag-border: var(--tulpar-tag-border-d, transparent);
   }
 
+  /* Custom solid: fill with the resolved accent and use on-fill white text.
+     NOTE: custom-tone solid contrast is the author responsibility — custom is
+     the explicit escape hatch (per spec), so we do not attempt to derive a
+     contrast-safe on-fill color here. */
+  :host([tone="custom"][variant="solid"]) {
+    --_tag-bg: var(--tulpar-tag-accent-l, transparent);
+    --_tag-text: #fff;
+    --_tag-border: transparent;
+  }
+  :host-context(.dark)[tone="custom"][variant="solid"] {
+    --_tag-bg: var(--tulpar-tag-accent-d, transparent);
+    --_tag-text: #fff;
+    --_tag-border: transparent;
+  }
+
   /* ── Host / chip layout ───────────────────────────────────────────────── */
   :host {
     display: inline-flex;

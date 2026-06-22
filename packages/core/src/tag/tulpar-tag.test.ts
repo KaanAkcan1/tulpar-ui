@@ -158,6 +158,18 @@ describe("<tulpar-tag>", () => {
       expect(el.getAttribute("title")).to.equal(long);
     });
 
+    it("sets the native title when a SLOTTED label overflows", async () => {
+      const long = "this is a very very very long slotted label that should certainly overflow";
+      const el = await fixture<TulparTag>(
+        html`<tulpar-tag style="--tulpar-tag-max-width:60px">${long}</tulpar-tag>`,
+      );
+      await el.updateComplete;
+      // slotchange + firstUpdated both schedule an overflow re-check; wait two
+      // frames so scrollWidth is laid out and the title is synced from _slotText.
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+      expect(el.getAttribute("title")).to.equal(long);
+    });
+
     it("does NOT set title for a short label", async () => {
       const el = await fixture<TulparTag>(html`<tulpar-tag label="ok"></tulpar-tag>`);
       await el.updateComplete;
@@ -197,6 +209,34 @@ describe("<tulpar-tag>", () => {
       el.tone = "success";
       await el.updateComplete;
       expect(el.style.getPropertyValue("--tulpar-tag-surface-l").trim()).to.equal("");
+    });
+
+    it("solid variant fills with the resolved accent, not the soft surface", async () => {
+      // A raw CSS color resolves via color-mix (a real computed value even when
+      // the token sheet isn't loaded), unlike brand-family primitive vars.
+      const raw = "#0d9488";
+      const solid = await fixture<TulparTag>(
+        html`<tulpar-tag tone="custom" variant="solid" color=${raw} label="x"></tulpar-tag>`,
+      );
+      await solid.updateComplete;
+      const solidBg = getComputedStyle(tagEl(solid)).backgroundColor;
+      // a real fill (not the transparent fallback)
+      expect(solidBg).to.not.be.oneOf(["rgba(0, 0, 0, 0)", "transparent"]);
+
+      // For the same custom color, soft-tonal tints toward white; solid uses the
+      // saturated accent — so the two backgrounds must differ.
+      const soft = await fixture<TulparTag>(
+        html`<tulpar-tag tone="custom" variant="soft-tonal" color=${raw} label="x"></tulpar-tag>`,
+      );
+      await soft.updateComplete;
+      const softBg = getComputedStyle(tagEl(soft)).backgroundColor;
+      expect(solidBg).to.not.equal(softBg);
+
+      // solid uses the accent inline var, distinct from the soft surface var
+      const surfaceL = solid.style.getPropertyValue("--tulpar-tag-surface-l").trim();
+      const accentL = solid.style.getPropertyValue("--tulpar-tag-accent-l").trim();
+      expect(accentL).to.not.equal("");
+      expect(accentL).to.not.equal(surfaceL);
     });
   });
 

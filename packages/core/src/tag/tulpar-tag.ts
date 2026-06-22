@@ -21,7 +21,10 @@ export type TagSize = "xs" | "sm" | "md" | "lg" | "xl";
  *   auto-flip for `.dark` via the generated token sheet (no inline styles).
  * - `tone="custom"` calls `resolveTone(this, { prefix: "tag" })` and applies
  *   the returned `-l` / `-d` var pairs as inline styles; the styles pick the
- *   right pair via `:host-context(.dark)` (custom path only).
+ *   right pair via `:host-context(.dark)` (custom path only). For
+ *   `variant="solid"` the resolved accent becomes the fill with white on-fill
+ *   text — custom-tone solid contrast is the AUTHOR's responsibility (custom is
+ *   the explicit escape hatch, per spec).
  *
  * ## Content
  * - Default slot OR `label` prop → the tag text (prop is an alias of the slot).
@@ -76,6 +79,9 @@ export class TulparTag extends LitElement {
   /** True while the default slot has assigned content (slot wins over `label`). */
   @state() private _hasSlotLabel = false;
 
+  /** Text content of the default slot, for the overflow title fallback. */
+  @state() private _slotText = "";
+
   /** True while the `icon` slot has assigned content (slot wins over the prop). */
   @state() private _hasSlotIcon = false;
 
@@ -116,7 +122,13 @@ export class TulparTag extends LitElement {
     }
 
     // Set/clear the native title when the label overflows its box.
-    if (changed.has("label") || changed.has("size") || changed.has("icon") || changed.has("dot")) {
+    if (
+      changed.has("label") ||
+      changed.has("size") ||
+      changed.has("icon") ||
+      changed.has("dot") ||
+      changed.has("_slotText")
+    ) {
       this._syncOverflowTitle();
     }
   }
@@ -180,7 +192,9 @@ export class TulparTag extends LitElement {
   private _syncOverflowTitle(): void {
     const labelEl = this.renderRoot?.querySelector(".label") as HTMLElement | null;
     if (!labelEl) return;
-    const full = (this.label ?? labelEl.textContent ?? "").trim();
+    // `labelEl` wraps a <slot>; reading textContent on a slot returns only its
+    // fallback, so slotted labels need the captured _slotText (mirrors badge).
+    const full = (this.label ?? this._slotText ?? labelEl.textContent ?? "").trim();
     if (full && labelEl.scrollWidth > labelEl.clientWidth) {
       this.setAttribute("title", full);
     } else {
@@ -190,10 +204,15 @@ export class TulparTag extends LitElement {
 
   private _onSlotChange = (e: Event): void => {
     const slot = e.target as HTMLSlotElement;
-    this._hasSlotLabel = slot.assignedNodes({ flatten: true }).some((n) => {
+    const nodes = slot.assignedNodes({ flatten: true });
+    this._hasSlotLabel = nodes.some((n) => {
       if (n.nodeType === Node.TEXT_NODE) return (n.textContent ?? "").trim().length > 0;
       return true;
     });
+    this._slotText = nodes
+      .map((n) => n.textContent ?? "")
+      .join("")
+      .trim();
     this._syncOverflowTitle();
   };
 
@@ -224,6 +243,12 @@ export class TulparTag extends LitElement {
         </span>
       </span>
     `;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "tulpar-tag": TulparTag;
   }
 }
 

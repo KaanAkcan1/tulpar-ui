@@ -197,6 +197,12 @@ export class TulparBadge extends LitElement {
   }
 }
 
+declare global {
+  interface HTMLElementTagNameMap {
+    "tulpar-badge": TulparBadge;
+  }
+}
+
 if (!customElements.get("tulpar-badge")) {
   customElements.define("tulpar-badge", TulparBadge);
 }
