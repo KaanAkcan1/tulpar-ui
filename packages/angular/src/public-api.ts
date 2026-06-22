@@ -80,3 +80,40 @@ export {
   TulparPopoverRefDirective,
 } from "./overlay/tulpar-popover.directive";
 export type { PopoverPlacement, PopoverTone } from "./overlay/tulpar-popover.directive";
+
+// ── v0.13 display & status atoms ─────────────────────────────────────────────
+
+export { TulparTagComponent } from "./tag/tulpar-tag.component";
+export type { TagVariant, TagShape, TagSize } from "./tag/tulpar-tag.component";
+
+export { TulparBadgeComponent } from "./badge/tulpar-badge.component";
+export type {
+  BadgeTone,
+  BadgeVariant,
+  BadgeShape,
+  BadgeSize,
+} from "./badge/tulpar-badge.component";
+
+export { TulparChipComponent } from "./chip/tulpar-chip.component";
+export type { ChipVariant, ChipShape, ChipSize } from "./chip/tulpar-chip.component";
+
+export { TulparAvatarComponent } from "./avatar/tulpar-avatar.component";
+export type { AvatarShape, AvatarSize } from "./avatar/tulpar-avatar.component";
+
+export { TulparSkeletonComponent } from "./skeleton/tulpar-skeleton.component";
+export type {
+  SkeletonVariant,
+  SkeletonAnimation,
+} from "./skeleton/tulpar-skeleton.component";
+
+export { TulparSpinnerComponent } from "./spinner/tulpar-spinner.component";
+export type { SpinnerSize, SpinnerTone } from "./spinner/tulpar-spinner.component";
+
+export { TulparProgressComponent } from "./progress/tulpar-progress.component";
+export type {
+  ProgressVariant,
+  ProgressTone,
+  ProgressThickness,
+  ProgressSize,
+  ProgressValueFormatter,
+} from "./progress/tulpar-progress.component";
