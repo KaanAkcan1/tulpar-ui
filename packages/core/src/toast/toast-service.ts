@@ -149,6 +149,47 @@ let _queue: ToasterQueue = new ToasterQueue({ maxVisible: _defaults.maxVisible }
 /** Fast lookup from id → ToastEntry */
 const _entries = new Map<string, ToastEntry>();
 
+/**
+ * Per-location hover/focus counter for hover-to-expand.
+ * Incremented on pointerenter/focusin, decremented on pointerleave/focusout.
+ * Moving between sibling cards fires leave-A + enter-B (in that order or
+ * enter-B + leave-A depending on browser), so we use a COUNTER (not a
+ * boolean) to avoid a false collapse during the cross-card transition.
+ * hovered(location) ⟺ counter > 0.
+ */
+const _hoverCount = new Map<Location, number>();
+
+function _isHovered(location: Location): boolean {
+  return (_hoverCount.get(location) ?? 0) > 0;
+}
+
+function _incrementHover(location: Location): void {
+  _hoverCount.set(location, (_hoverCount.get(location) ?? 0) + 1);
+}
+
+function _decrementHover(location: Location): void {
+  const c = (_hoverCount.get(location) ?? 0) - 1;
+  _hoverCount.set(location, Math.max(0, c));
+}
+
+/** Pause all timers in a location (called when location becomes hovered). */
+function _pauseLocation(location: Location): void {
+  for (const entry of _entries.values()) {
+    if (entry.location === location) {
+      entry.timer?.pause();
+    }
+  }
+}
+
+/** Resume all timers in a location (called when location un-hovers). */
+function _resumeLocation(location: Location): void {
+  for (const entry of _entries.values()) {
+    if (entry.location === location) {
+      entry.timer?.resume();
+    }
+  }
+}
+
 // ─── Internal helpers ─────────────────────────────────────────────────────────
 
 function _createQueue(): void {
@@ -156,32 +197,54 @@ function _createQueue(): void {
 }
 
 /**
+ * Whether a location uses horizontal centering.
+ * Center-aligned locations need "translateX(-50%)" prepended to the stacking
+ * transform so horizontal centering and vertical stacking work together.
+ * The container anchor is at left:50%; each child is left:0 in the CSS; the
+ * -50% here shifts the child left by half its own width.
+ */
+function _isCenterLocation(location: Location): boolean {
+  return location.endsWith("-center");
+}
+
+/**
  * Apply stacking transforms to all elements in a location.
- * Uses collapsedLayout (default) or expandedLayout when expand=true.
+ *
+ * Layout mode selection (Sonner model):
+ *  - expanded when _defaults.expand is true (always-expanded via setDefaults)
+ *  - expanded when the location is currently hovered/focused (hover-to-expand)
+ *  - collapsed otherwise (tight fan)
+ *
+ * Center-location adjustment: the CSS container anchor is at left:50%, children
+ * are left:0, so we prepend translateX(-50%) to every stacking transform to
+ * horizontally center each card on the anchor.
  */
 function _applyStacking(location: Location): void {
   const container = getLocationContainer(location);
   const visible = _queue.visible(location);
   const elements = visible.map((r) => _entries.get(r.id)?.element).filter(Boolean) as TulparToast[];
 
-  if (_defaults.expand) {
-    // Expanded: measure actual heights
+  const useExpanded = _defaults.expand || _isHovered(location);
+  const centerPrefix = _isCenterLocation(location) ? "translateX(-50%) " : "";
+
+  if (useExpanded) {
+    // Expanded: measure actual heights for true vertical stacking
     const heights = elements.map((el) => el.offsetHeight || 60);
     const entries = expandedLayout(heights, location, { gap: 8 });
     elements.forEach((el, i) => {
       const entry = entries[i];
       if (entry) {
-        el.style.transform = entry.transform;
+        el.style.transform = centerPrefix + entry.transform;
         el.style.opacity = String(entry.opacity);
         el.style.zIndex = String(entry.zIndex);
         el.style.display = entry.visible ? "" : "none";
       }
     });
   } else {
-    // Collapsed (default)
+    // Collapsed (default): tight fan with scale + lift
     elements.forEach((el, i) => {
       const entry = collapsedLayout(i, location, { maxVisible: _defaults.maxVisible });
-      el.style.transform = entry.transform;
+      el.style.transform = centerPrefix + entry.transform;
       el.style.opacity = String(entry.opacity);
       el.style.zIndex = String(entry.zIndex);
       el.style.display = entry.visible ? "" : "none";
@@ -472,11 +535,57 @@ function _mountToast(
     });
   }
 
-  // ── Hover / focus pause ───────────────────────────────────────────────────────
-  el.addEventListener("pointerenter", () => { toastTimer?.pause(); });
-  el.addEventListener("pointerleave", () => { toastTimer?.resume(); });
-  el.addEventListener("focusin", () => { toastTimer?.pause(); });
-  el.addEventListener("focusout", () => { toastTimer?.resume(); });
+  // ── Hover / focus pause + hover-to-expand ──────────────────────────────────────
+  //
+  // We maintain a per-location hover COUNTER (not a boolean) so that moving
+  // the pointer between sibling cards (which fires leave-A then enter-B, or
+  // enter-B then leave-A in some browsers) never collapses the stack mid-move.
+  // The counter goes: 0 → 1 (enter A) → 2 (enter B) → 1 (leave A) → 0 (leave B).
+  //
+  // On hover-enter  (count 0→1): switch location to expanded layout + pause ALL timers.
+  // On hover-leave  (count N→0): revert to collapsed (unless _defaults.expand) + resume timers.
+  // Per-card timer pause/resume is kept for the case where only one card is present.
+
+  el.addEventListener("pointerenter", () => {
+    toastTimer?.pause();
+    const wasHovered = _isHovered(location);
+    _incrementHover(location);
+    if (!wasHovered) {
+      // Location just became hovered — pause all timers, switch to expanded.
+      _pauseLocation(location);
+      _applyStacking(location);
+    }
+  });
+
+  el.addEventListener("pointerleave", () => {
+    _decrementHover(location);
+    if (!_isHovered(location)) {
+      // Location is no longer hovered — resume timers (unless expand:true keeps expanded).
+      _resumeLocation(location);
+      _applyStacking(location);
+    }
+    // Always resume this card's own timer on leave in case it is the only card.
+    toastTimer?.resume();
+  });
+
+  el.addEventListener("focusin", () => {
+    toastTimer?.pause();
+    const wasHovered = _isHovered(location);
+    _incrementHover(location);
+    if (!wasHovered) {
+      _pauseLocation(location);
+      _applyStacking(location);
+    }
+  });
+
+  el.addEventListener("focusout", () => {
+    _decrementHover(location);
+    if (!_isHovered(location)) {
+      _resumeLocation(location);
+      _applyStacking(location);
+    }
+    toastTimer?.resume();
+  });
 
   // ── tulpar-dismiss event ──────────────────────────────────────────────────────
   el.addEventListener("tulpar-dismiss", (e: Event) => {
@@ -773,6 +882,9 @@ export function __resetToastServiceForTest(): void {
     }
   }
   _entries.clear();
+
+  // Reset hover counters
+  _hoverCount.clear();
 
   // Reset queue and defaults
   _defaults = {

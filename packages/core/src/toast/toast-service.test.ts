@@ -1322,3 +1322,128 @@ describe("Task 4.3 — Esc dismiss integration via service", () => {
     expect(capturedReason).to.equal("user");
   });
 });
+
+// ─── Hover-to-expand (Fix 2) ──────────────────────────────────────────────────
+//
+// Spec §6.1: hovering the stack expands it to a clean vertical list +
+// pauses ALL timers in that location.  Un-hover collapses back (unless
+// _defaults.expand:true).  Moving the pointer between sibling cards must
+// NOT collapse the stack mid-move (counter stays > 0 until last leave).
+
+describe("hover-to-expand: pointerenter switches location to expanded layout", () => {
+  it("entering a toast expands the stack (all toasts use expanded transform)", async () => {
+    toast("A", { duration: 0 });
+    toast("B", { duration: 0 });
+    await nextFrame();
+    const els = toastsInLocation("bottom-right");
+    expect(els.length).to.equal(2);
+
+    // Simulate hover enter on the front (newest) toast
+    els[0].dispatchEvent(new PointerEvent("pointerenter", { bubbles: true }));
+
+    // In expanded mode all visible toasts have scale(1) in their transform
+    for (const el of els) {
+      expect(el.style.transform).to.include("scale(1)");
+    }
+  });
+
+  it("leaving the last hovered toast collapses back to fan (scale < 1 for non-front)", async () => {
+    toast("A", { duration: 0 });
+    toast("B", { duration: 0 });
+    await nextFrame();
+    const els = toastsInLocation("bottom-right");
+
+    // Enter then leave
+    els[0].dispatchEvent(new PointerEvent("pointerenter", { bubbles: true }));
+    els[0].dispatchEvent(new PointerEvent("pointerleave", { bubbles: true }));
+
+    // Collapsed: second toast (i=1) should have scale < 1
+    const secondTransform = els[1].style.transform;
+    expect(secondTransform).to.include("scale(0.95)");
+  });
+
+  it("moving between two cards (enter B before leave A) does NOT collapse mid-move", async () => {
+    toast("A", { duration: 0 });
+    toast("B", { duration: 0 });
+    await nextFrame();
+    const els = toastsInLocation("bottom-right");
+
+    // Simulates: enter A → enter B → leave A (pointer moved, both counters active)
+    els[0].dispatchEvent(new PointerEvent("pointerenter", { bubbles: true }));
+    els[1].dispatchEvent(new PointerEvent("pointerenter", { bubbles: true }));
+    // Counter is now 2; leave A brings it to 1 — should stay expanded
+    els[0].dispatchEvent(new PointerEvent("pointerleave", { bubbles: true }));
+
+    // Still expanded because counter = 1
+    for (const el of els) {
+      expect(el.style.transform).to.include("scale(1)");
+    }
+
+    // Now leave B too — counter hits 0 → collapses
+    els[1].dispatchEvent(new PointerEvent("pointerleave", { bubbles: true }));
+    const secondTransform = els[1].style.transform;
+    expect(secondTransform).to.include("scale(0.95)");
+  });
+
+  it("hovering pauses ALL timers in the location", async () => {
+    // Use short durations so we can verify the timers were paused
+    toast("A", { duration: 80 });
+    toast("B", { duration: 80 });
+    await nextFrame();
+    const els = toastsInLocation("bottom-right");
+
+    // Enter hover: ALL timers in location should pause
+    els[0].dispatchEvent(new PointerEvent("pointerenter", { bubbles: true }));
+
+    await wait(120); // would have auto-dismissed without pause
+
+    // Both toasts must still be visible (timers were paused)
+    expect(toastsInLocation("bottom-right").length).to.equal(2);
+
+    // Leave hover — timers resume
+    els[0].dispatchEvent(new PointerEvent("pointerleave", { bubbles: true }));
+
+    await wait(150); // generous wait for remaining duration
+
+    // Now they should be gone
+    expect(toastsInLocation("bottom-right").length).to.equal(0);
+  });
+
+  it("when _defaults.expand is true, stays expanded even after unhover", async () => {
+    toast.setDefaults({ expand: true });
+    toast("A", { duration: 0 });
+    toast("B", { duration: 0 });
+    await nextFrame();
+    const els = toastsInLocation("bottom-right");
+
+    // Even without hover, expanded mode → scale(1) everywhere
+    for (const el of els) {
+      expect(el.style.transform).to.include("scale(1)");
+    }
+
+    // Hover and unhover — still expanded
+    els[0].dispatchEvent(new PointerEvent("pointerenter", { bubbles: true }));
+    els[0].dispatchEvent(new PointerEvent("pointerleave", { bubbles: true }));
+
+    for (const el of els) {
+      expect(el.style.transform).to.include("scale(1)");
+    }
+  });
+
+  it("focusin/focusout drives expand/collapse the same way as pointer events", async () => {
+    toast("A", { duration: 0 });
+    toast("B", { duration: 0 });
+    await nextFrame();
+    const els = toastsInLocation("bottom-right");
+
+    // Focus on first toast → expanded
+    els[0].dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+    for (const el of els) {
+      expect(el.style.transform).to.include("scale(1)");
+    }
+
+    // Blur → collapsed
+    els[0].dispatchEvent(new FocusEvent("focusout", { bubbles: true }));
+    expect(els[1].style.transform).to.include("scale(0.95)");
+  });
+});

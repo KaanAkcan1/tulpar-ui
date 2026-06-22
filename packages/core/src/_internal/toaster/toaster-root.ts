@@ -77,13 +77,18 @@ function injectGlobalStyles(): void {
   z-index: var(--tulpar-feedback-z-index, 9000);
 }
 
-/* ── Location containers ── */
+/* ── Location containers ──
+ * Each container is a fixed-position anchor sized to zero.
+ * Individual toast hosts are position:absolute, pinned to the anchored
+ * edge.  The JS _applyStacking() transform is the SINGLE source of
+ * position for both collapsed and expanded modes — no flex layout fights it.
+ */
 [data-location] {
   position: fixed;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
   pointer-events: none;
+  /* Zero-size anchor — children escape via position:absolute */
+  width: 0;
+  height: 0;
 }
 
 /* top edge */
@@ -99,25 +104,46 @@ function injectGlobalStyles(): void {
 /* left-aligned */
 [data-location$="-left"] {
   left: 16px;
-  align-items: flex-start;
 }
 
 /* right-aligned */
 [data-location$="-right"] {
   right: 16px;
-  align-items: flex-end;
 }
 
-/* center-aligned (horizontal) */
+/* center-aligned (horizontal): anchor at the horizontal midpoint.
+ * Children use a negative margin technique to avoid transform conflicts
+ * with the service-applied translateY+scale transform. */
 [data-location$="-center"] {
   left: 50%;
-  transform: translateX(-50%);
-  align-items: center;
 }
 
-/* ── Individual toast hosts: restore pointer-events so they are interactive ── */
+/* ── Individual toast hosts: absolutely anchored to the container edge ── */
 [data-location] > * {
+  position: absolute;
   pointer-events: auto;
+}
+
+/* Pin to the anchored edge so translateY(0) means "at the corner" */
+[data-location^="top-"] > * {
+  top: 0;
+}
+[data-location^="bottom-"] > * {
+  bottom: 0;
+}
+
+/* Horizontal alignment */
+[data-location$="-left"] > * {
+  left: 0;
+}
+[data-location$="-right"] > * {
+  right: 0;
+}
+/* Center: shift left by half the element's own width via negative translate.
+ * The JS service will prepend "translateX(-50%)" to the stacking transform
+ * so that horizontal centering + vertical stacking work together. */
+[data-location$="-center"] > * {
+  left: 0;
 }
 `;
 
