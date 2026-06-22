@@ -13,3 +13,4 @@ export * from "./toggletip";
 export * from "./popover";
 export * from "./toast";
 export * from "./tag";
+export * from "./badge";
