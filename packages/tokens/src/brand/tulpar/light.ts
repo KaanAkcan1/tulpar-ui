@@ -464,6 +464,25 @@ export const tulparLight: SemanticTokens = {
     },
   },
 
+  atom: {
+    // Display-atom tone palette (light). Family→tone mapping:
+    //   neutral → kara (slate), info → gok (blue), success → otuken (green),
+    //   warning → ulgen (amber), danger → al (red).
+    // soft    = tinted [100] surface + [800] text + tone border (contrast-tuned).
+    // outline = tone text + tone border drawn on the page surface (white).
+    // solid   = saturated fill + on-color text (white, or yagiz ink on amber).
+    // Border steps raised above the spec starting points to clear WCAG 3:1 on the
+    // [100] fill / white page (enforced by atom.contrast.test.ts):
+    //   soft border [200|300]→[400|500|700]; info outline border [400]→[500].
+    tone: {
+      neutral: { soft: { surface: c.kara[100],   text: c.kara[800],   border: c.kara[500]   }, outline: { text: c.kara[700],   border: c.kara[400]   }, solid: { bg: c.kara[800],   text: c.colpan[50] } },
+      info:    { soft: { surface: c.gok[100],    text: c.gok[800],    border: c.gok[500]    }, outline: { text: c.gok[700],    border: c.gok[500]    }, solid: { bg: c.gok[600],    text: "#ffffff"    } },
+      success: { soft: { surface: c.otuken[100], text: c.otuken[800], border: c.otuken[400] }, outline: { text: c.otuken[700], border: c.otuken[400] }, solid: { bg: c.otuken[600], text: "#ffffff"    } },
+      warning: { soft: { surface: c.ulgen[100],  text: c.ulgen[800],  border: c.ulgen[700]  }, outline: { text: c.ulgen[800],  border: c.ulgen[600]  }, solid: { bg: c.ulgen[500],  text: c.yagiz[900] } },
+      danger:  { soft: { surface: c.al[100],     text: c.al[800],     border: c.al[500]     }, outline: { text: c.al[700],     border: c.al[400]     }, solid: { bg: c.al[600],     text: "#ffffff"    } },
+    },
+  },
+
   easing: { decelerate: primitiveTransition.easing.decelerate },
   shadow: {
     sm: primitiveShadow.sm,

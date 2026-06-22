@@ -410,6 +410,26 @@ export const tulparDark: SemanticTokens = {
     size: tulparLight.feedback.size,
   },
 
+  atom: {
+    // Display-atom tone palette (dark) — inverted from light. Same family map:
+    //   neutral → kara, info → gok, success → otuken, warning → ulgen, danger → al.
+    // soft    = deep [900] surface + light [100] text + tone border (contrast-tuned).
+    // outline = light tone text + tone border drawn on the page surface (mergen[900]).
+    // solid   = lighter saturated fill + dark yagiz ink (legible on the bright fill).
+    // On dark surfaces a *lighter* border reads better than the spec's deep starting
+    // step, so soft/outline borders are lowered, and success/danger solid bg lifted to
+    // [400] so the yagiz ink clears WCAG 4.5:1 (enforced by atom.contrast.test.ts):
+    //   soft border [600|700]→[400|500]; success/danger outline border [500]→[400] +
+    //   solid bg [500]→[400].
+    tone: {
+      neutral: { soft: { surface: c.kara[800],   text: c.kara[100],   border: c.kara[400]   }, outline: { text: c.kara[300],   border: c.kara[500]   }, solid: { bg: c.colpan[100], text: c.yagiz[950] } },
+      info:    { soft: { surface: c.gok[900],    text: c.gok[100],    border: c.gok[500]    }, outline: { text: c.gok[300],    border: c.gok[500]    }, solid: { bg: c.gok[500],    text: c.yagiz[950] } },
+      success: { soft: { surface: c.otuken[900], text: c.otuken[100], border: c.otuken[400] }, outline: { text: c.otuken[300], border: c.otuken[400] }, solid: { bg: c.otuken[400], text: c.yagiz[950] } },
+      warning: { soft: { surface: c.ulgen[900],  text: c.ulgen[100],  border: c.ulgen[600]  }, outline: { text: c.ulgen[300],  border: c.ulgen[500]  }, solid: { bg: c.ulgen[500],  text: c.yagiz[950] } },
+      danger:  { soft: { surface: c.al[900],     text: c.al[100],     border: c.al[400]     }, outline: { text: c.al[300],     border: c.al[400]     }, solid: { bg: c.al[400],     text: c.yagiz[950] } },
+    },
+  },
+
   easing: { decelerate: primitiveTransition.easing.decelerate },
   shadow: {
     // dark mode is border-led: sm/md intentionally reuse the navy-tinted primitives
