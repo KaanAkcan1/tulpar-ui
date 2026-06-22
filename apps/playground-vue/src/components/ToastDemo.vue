@@ -516,7 +516,7 @@ function dismissAll() {
 </script>
 
 <template>
-  <div class="demo-page">
+  <div class="demo-page demo-page--toast">
     <!-- ── Page header ─────────────────────────────────────────────────── -->
     <header class="page-header">
       <span class="page-tag">Feedback</span>
@@ -1067,28 +1067,7 @@ function dismissAll() {
   line-height: 1.7;
 }
 
-/* ── Dark mode — decision cols ───────────────────────────────────── */
-:global(.dark) .decision-col--yes {
-  background: #11302a;
-  border-color: #1e4a38;
-}
-:global(.dark) .decision-col--yes .decision-list {
-  color: #5fcfae;
-}
-:global(.dark) .decision-col--yes .decision-head {
-  color: #5fcfae;
-}
-
-:global(.dark) .decision-col--no {
-  background: #371714;
-  border-color: #552421;
-}
-:global(.dark) .decision-col--no .decision-list {
-  color: #f08b84;
-}
-:global(.dark) .decision-col--no .decision-head {
-  color: #f08b84;
-}
+/* ── Dark mode — decision cols (moved to non-scoped block below) ─── */
 
 /* ── Doc sections ────────────────────────────────────────────────── */
 .doc-section {
@@ -1210,36 +1189,7 @@ function dismissAll() {
   text-align: center;
 }
 
-/* ── Dark mode — tinted trigger buttons ──────────────────────────── */
-:global(.dark) .trigger-btn--info {
-  background: #15233f;
-  border-color: #1e3460;
-  color: #7ea6ff;
-}
-
-:global(.dark) .trigger-btn--success {
-  background: #11302a;
-  border-color: #1e4a38;
-  color: #5fcfae;
-}
-
-:global(.dark) .trigger-btn--warning {
-  background: #332810;
-  border-color: #4d3c18;
-  color: #e6b450;
-}
-
-:global(.dark) .trigger-btn--danger {
-  background: #371714;
-  border-color: #552421;
-  color: #f08b84;
-}
-
-:global(.dark) .trigger-btn--custom {
-  background: #2d1f4a;
-  border-color: #3e2c6b;
-  color: #c4a0ff;
-}
+/* ── Dark mode — tinted trigger buttons (moved to non-scoped block below) ── */
 
 /* ── Location grid ───────────────────────────────────────────────── */
 .location-grid {
@@ -1439,24 +1389,7 @@ function dismissAll() {
   color: #c0322b;
 }
 
-/* ── Dark mode — promise flow badges ─────────────────────────────── */
-:global(.dark) .step--loading {
-  background: #15233f;
-  border-color: #1e3460;
-  color: #7ea6ff;
-}
-
-:global(.dark) .step--success {
-  background: #11302a;
-  border-color: #1e4a38;
-  color: #5fcfae;
-}
-
-:global(.dark) .step--error {
-  background: #371714;
-  border-color: #552421;
-  color: #f08b84;
-}
+/* ── Dark mode — promise flow badges (moved to non-scoped block below) ──── */
 
 .arrow {
   color: var(--tulpar-color-text-muted, #74777a);
@@ -1611,5 +1544,88 @@ kbd {
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--tulpar-color-text-muted, #74777a);
+}
+</style>
+
+<!--
+  Dark-mode overrides — NOT scoped.
+  Vue 3's scoped-CSS compiler incorrectly compiles `:global(.dark) .child` to
+  `.dark { … }` (targeting the <html> element itself) and drops the descendant
+  selector entirely.  Rules that reference an ancestor global class (.dark on
+  <html>) combined with a descendant scoped class must live in an unscoped
+  <style> block and use an explicit ancestor path for specificity containment.
+-->
+<style>
+/* ── Dark mode — decision cols (Toast: yes=success, no=danger) ─────── */
+.dark .demo-page--toast .decision-col--yes {
+  background: #11302a;
+  border-color: #1e4a38;
+}
+.dark .demo-page--toast .decision-col--yes .decision-list {
+  color: #5fcfae;
+}
+.dark .demo-page--toast .decision-col--yes .decision-head {
+  color: #5fcfae;
+}
+
+.dark .demo-page--toast .decision-col--no {
+  background: #371714;
+  border-color: #552421;
+}
+.dark .demo-page--toast .decision-col--no .decision-list {
+  color: #f08b84;
+}
+.dark .demo-page--toast .decision-col--no .decision-head {
+  color: #f08b84;
+}
+
+/* ── Dark mode — tinted trigger buttons ───────────────────────────── */
+.dark .demo-page--toast .trigger-btn--info {
+  background: #15233f;
+  border-color: #1e3460;
+  color: #7ea6ff;
+}
+
+.dark .demo-page--toast .trigger-btn--success {
+  background: #11302a;
+  border-color: #1e4a38;
+  color: #5fcfae;
+}
+
+.dark .demo-page--toast .trigger-btn--warning {
+  background: #332810;
+  border-color: #4d3c18;
+  color: #e6b450;
+}
+
+.dark .demo-page--toast .trigger-btn--danger {
+  background: #371714;
+  border-color: #552421;
+  color: #f08b84;
+}
+
+.dark .demo-page--toast .trigger-btn--custom {
+  background: #2d1f4a;
+  border-color: #3e2c6b;
+  color: #c4a0ff;
+}
+
+/* ── Dark mode — promise flow badges ──────────────────────────────── */
+.dark .demo-page--toast .step--loading {
+  background: #15233f;
+  border-color: #1e3460;
+  color: #7ea6ff;
+}
+
+.dark .demo-page--toast .step--success {
+  background: #11302a;
+  border-color: #1e4a38;
+  color: #5fcfae;
+}
+
+.dark .demo-page--toast .step--error {
+  background: #371714;
+  border-color: #552421;
+  color: #f08b84;
 }
 </style>

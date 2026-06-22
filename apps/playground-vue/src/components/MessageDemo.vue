@@ -85,7 +85,7 @@ function show1s() {
 </script>
 
 <template>
-  <div class="demo-page">
+  <div class="demo-page demo-page--message">
     <!-- ── Page header ─────────────────────────────────────────────────── -->
     <header class="page-header">
       <span class="page-tag">Feedback</span>
@@ -309,29 +309,7 @@ function show1s() {
   line-height: 1.7;
 }
 
-/* ── Dark mode — decision cols ───────────────────────────────────── */
-:global(.dark) .decision-col--yes {
-  background: #11302a;
-  border-color: #1e4a38;
-}
-:global(.dark) .decision-col--yes .decision-list {
-  color: #5fcfae;
-}
-:global(.dark) .decision-col--yes .decision-head {
-  color: #5fcfae;
-}
-
-/* Message "when not": warning family (amber) */
-:global(.dark) .decision-col--no {
-  background: #332810;
-  border-color: #4d3c18;
-}
-:global(.dark) .decision-col--no .decision-list {
-  color: #e6b450;
-}
-:global(.dark) .decision-col--no .decision-head {
-  color: #e6b450;
-}
+/* ── Dark mode — decision cols (moved to non-scoped block below) ─── */
 
 /* ── Doc sections ────────────────────────────────────────────────── */
 .doc-section {
@@ -429,30 +407,7 @@ function show1s() {
   color: #c0322b;
 }
 
-/* ── Dark mode — tinted trigger buttons ──────────────────────────── */
-:global(.dark) .trigger-btn--info {
-  background: #15233f;
-  border-color: #1e3460;
-  color: #7ea6ff;
-}
-
-:global(.dark) .trigger-btn--success {
-  background: #11302a;
-  border-color: #1e4a38;
-  color: #5fcfae;
-}
-
-:global(.dark) .trigger-btn--warning {
-  background: #332810;
-  border-color: #4d3c18;
-  color: #e6b450;
-}
-
-:global(.dark) .trigger-btn--danger {
-  background: #371714;
-  border-color: #552421;
-  color: #f08b84;
-}
+/* ── Dark mode — tinted trigger buttons (moved to non-scoped block below) ── */
 
 /* ── Stacking / grouping demo cols ───────────────────────────────── */
 .stack-demo-cols {
@@ -531,5 +486,64 @@ function show1s() {
   border-radius: 3px;
   padding: 1px 5px;
   color: var(--tulpar-color-text-primary, #15110b);
+}
+</style>
+
+<!--
+  Dark-mode overrides — NOT scoped.
+  Vue 3's scoped-CSS compiler incorrectly compiles `:global(.dark) .child` to
+  `.dark { … }` (targeting the <html> element itself) and drops the descendant
+  selector entirely.  Rules that reference an ancestor global class (.dark on
+  <html>) combined with a descendant scoped class must live in an unscoped
+  <style> block and use an explicit ancestor path for specificity containment.
+-->
+<style>
+/* ── Dark mode — decision cols (Message: yes=success, no=warning) ──── */
+.dark .demo-page--message .decision-col--yes {
+  background: #11302a;
+  border-color: #1e4a38;
+}
+.dark .demo-page--message .decision-col--yes .decision-list {
+  color: #5fcfae;
+}
+.dark .demo-page--message .decision-col--yes .decision-head {
+  color: #5fcfae;
+}
+
+/* Message "when not": warning family (amber) */
+.dark .demo-page--message .decision-col--no {
+  background: #332810;
+  border-color: #4d3c18;
+}
+.dark .demo-page--message .decision-col--no .decision-list {
+  color: #e6b450;
+}
+.dark .demo-page--message .decision-col--no .decision-head {
+  color: #e6b450;
+}
+
+/* ── Dark mode — tinted trigger buttons ───────────────────────────── */
+.dark .demo-page--message .trigger-btn--info {
+  background: #15233f;
+  border-color: #1e3460;
+  color: #7ea6ff;
+}
+
+.dark .demo-page--message .trigger-btn--success {
+  background: #11302a;
+  border-color: #1e4a38;
+  color: #5fcfae;
+}
+
+.dark .demo-page--message .trigger-btn--warning {
+  background: #332810;
+  border-color: #4d3c18;
+  color: #e6b450;
+}
+
+.dark .demo-page--message .trigger-btn--danger {
+  background: #371714;
+  border-color: #552421;
+  color: #f08b84;
 }
 </style>
