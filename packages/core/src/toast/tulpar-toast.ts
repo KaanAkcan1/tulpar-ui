@@ -277,6 +277,19 @@ export class TulparToast extends LitElement {
     if (!this.hasAttribute("tabindex")) {
       this.setAttribute("tabindex", "-1");
     }
+    // ── Enter animation ──────────────────────────────────────────────────────
+    // Set [data-enter] so the CSS enter animation (@keyframes) plays from the
+    // first render frame.  Remove it one frame later so the animation naturally
+    // completes without the attribute locking the starting state forever.
+    // Loop-safe: no requestUpdate(), no Lit state — pure attribute + CSS.
+    // Guard: skip if already removed (edge case: element reinserted quickly).
+    this.setAttribute("data-enter", "");
+    requestAnimationFrame(() => {
+      // Remove only if still connected and still in the enter state.
+      if (this.isConnected) {
+        this.removeAttribute("data-enter");
+      }
+    });
   }
 
   override updated(changed: Map<string, unknown>): void {

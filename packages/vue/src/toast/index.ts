@@ -66,6 +66,14 @@ export type {
  */
 export function useTulparToast() {
   return {
+    /**
+     * Show a toast with full options. Alias for the base `toast(msg, opts)` call.
+     * Matches `TulparToastService.show()` in the Angular wrapper for parity.
+     * Returns the toast id.
+     */
+    show(message: string, opts?: Parameters<typeof toast>[1]) {
+      return toast(message, opts);
+    },
     /** Show a success toast. Returns the toast id. */
     success(message: string, opts?: Parameters<typeof toast.success>[1]) {
       return toast.success(message, opts);
@@ -127,6 +135,14 @@ export function useTulparToast() {
  */
 export function useTulparMessage() {
   return {
+    /**
+     * Show a message with full options. Alias for the base `message(text, opts)` call.
+     * Matches `TulparMessageService.show()` in the Angular wrapper for parity.
+     * Returns the message id.
+     */
+    show(text: string, opts?: Parameters<typeof message>[1]) {
+      return message(text, opts);
+    },
     /** Show a success message. Returns the message id. */
     success(text: string, opts?: Parameters<typeof message.success>[1]) {
       return message.success(text, opts);

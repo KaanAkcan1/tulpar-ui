@@ -411,8 +411,97 @@ export const toastStyles = css`
     }
   }
 
+  /* ── Enter animation ─────────────────────────────────────────────────── */
+
+  /*
+   * Loop-safe enter pattern: the service sets [data-enter] on the host in
+   * connectedCallback() before the first Lit render, then removes it via one
+   * requestAnimationFrame().  No requestUpdate() is involved — it's a pure
+   * attribute + CSS animation.
+   *
+   * Stacking applies el.style.transform (translateY + scale) on :host.
+   * To avoid fighting that, we animate geometric motion on .toast-card
+   * (swipe uses .toast-card transform too, but only during a gesture, never
+   * at mount time) and animate opacity on :host directly via a separate
+   * keyframe so both can coexist.
+   */
+  @keyframes tulpar-toast-enter-card {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes tulpar-toast-enter-host {
+    from { opacity: 0; }
+    to   { opacity: var(--_toast-enter-target-opacity, 1); }
+  }
+
+  /* Card enter: geometric slide-in on the inner card element.
+     Duration driven by the motion token (fallback 220ms). */
+  :host([data-enter]) .toast-card {
+    animation: tulpar-toast-enter-card
+               var(--tulpar-feedback-motion-duration-enter, 220ms)
+               var(--tulpar-feedback-motion-easing, cubic-bezier(.22,1,.36,1))
+               both;
+  }
+
+  /* ── Exit animation ───────────────────────────────────────────────────── */
+
+  /*
+   * When the service sets [data-exit] on the host, the card fades + slides
+   * out over the exit duration.  The service waits for this animation to
+   * finish (via transitionend / a timeout equal to the exit duration) before
+   * removing the element from the DOM.
+   *
+   * We use CSS transition (not a keyframe) so the service can trigger it by
+   * just adding the attribute — no JS imperative animation needed.
+   */
+  :host([data-exit]) .toast-card {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+    transition:
+      opacity var(--tulpar-feedback-motion-duration-exit, 160ms) ease,
+      transform var(--tulpar-feedback-motion-duration-exit, 160ms) ease;
+    pointer-events: none;
+  }
+
+  /* ── Reposition glide ────────────────────────────────────────────────── */
+
+  /*
+   * When a peer toast is dismissed and stacking re-lays out remaining toasts,
+   * the service applies a new inline transform on :host.  Adding a CSS
+   * transition on :host means that change glides instead of jumping.
+   *
+   * We only apply this transition when there is NO enter/exit animation active
+   * so the transition doesn't interfere with mount/unmount timing.
+   * The selector :not([data-enter]):not([data-exit]) guards this.
+   */
+  :host(:not([data-enter]):not([data-exit])) {
+    transition: transform var(--tulpar-feedback-motion-duration-reposition, 300ms)
+                var(--tulpar-feedback-motion-easing, cubic-bezier(.22,1,.36,1));
+  }
+
   /* ── Reduced motion ───────────────────────────────────────────────────── */
   @media (prefers-reduced-motion: reduce) {
+    :host([data-enter]) .toast-card {
+      animation: none !important;
+    }
+
+    :host([data-exit]) .toast-card {
+      /* Instant remove in reduced-motion: just kill opacity, no transform */
+      transform: none !important;
+      transition: opacity 80ms ease !important;
+    }
+
+    :host(:not([data-enter]):not([data-exit])) {
+      transition: none !important;
+    }
+
     .toast-card {
       transition: none !important;
     }

@@ -11,10 +11,10 @@ import type { ElementRef } from "@angular/core";
 
 import "@tulpar-ui/core/toast";
 
-import type { ToastAction } from "@tulpar-ui/core/toast";
+import type { ToastAction, ToneValue } from "@tulpar-ui/core/toast";
 
-// Re-export the ToastAction type so consumers can import from the wrapper.
-export type { ToastAction };
+// Re-export types so consumers can import from the wrapper without depending on core.
+export type { ToastAction, ToneValue };
 
 /**
  * Angular signal wrapper for `<tulpar-toast>`.

@@ -192,19 +192,58 @@ function _applyStacking(location: Location): void {
   void container;
 }
 
+// ─── Exit animation duration constant ────────────────────────────────────────
+//
+// Matches --tulpar-feedback-motion-duration-exit (160ms).
+// We read it from a CSS custom property if the token sheet is loaded;
+// otherwise fall back to 0 (so the DOM node is removed almost immediately
+// in test environments where no token CSS is present).
+// In a real browser with the token sheet, the CSS var is set and the full
+// 160ms transition plays before the DOM node is removed.
+
+const EXIT_DURATION_FALLBACK_MS = 0;
+
+function _getExitDuration(): number {
+  try {
+    const raw = getComputedStyle(document.documentElement)
+      .getPropertyValue("--tulpar-feedback-motion-duration-exit")
+      .trim();
+    if (raw) {
+      // Value is e.g. "160ms" or "0.16s"
+      if (raw.endsWith("ms")) return parseFloat(raw);
+      if (raw.endsWith("s")) return parseFloat(raw) * 1000;
+    }
+  } catch {
+    // Guard: getComputedStyle may not be available in some test environments.
+  }
+  return EXIT_DURATION_FALLBACK_MS;
+}
+
 /**
- * Perform the full dismiss lifecycle for a toast entry:
- * 1. Detect whether focus is currently inside the dismissed toast
- * 2. Remove from queue
- * 3. Clear timer
- * 4. Remove element from DOM
- * 5. Re-apply stacking for the location
- * 6. Promote queued toasts for the location
- * 7. Move focus to the next visible toast (if focus was inside the dismissed one)
- *    or restore the pre-region focus via toaster-root's WeakRef helper when none remain.
- *    If the toast did NOT contain focus, do NOT move focus (no steal).
- * 8. Fire onDismiss callback
- * 9. Remove from _entries
+ * Physically remove a dismissed toast's DOM node after the exit animation.
+ * Called asynchronously by _doRemove after logical state has been cleaned up.
+ */
+function _removeDomNode(el: HTMLElement): void {
+  if (el.parentElement) {
+    el.parentElement.removeChild(el);
+  }
+}
+
+/**
+ * Perform the full dismiss lifecycle for a toast entry.
+ *
+ * DESIGN: Synchronous-logical / animated-DOM removal.
+ *
+ * All logical state (queue, _entries, timer, stacking, focus promotion,
+ * onDismiss callback) is updated SYNCHRONOUSLY so tests can assert them
+ * immediately after the call returns.  Only the physical DOM node removal
+ * is deferred: we add [data-exit] so the CSS exit transition starts, then
+ * remove the node after the exit duration (0ms fallback when the token
+ * CSS sheet is not loaded, 160ms in a real browser).
+ *
+ * This means `toastsInLocation()` queries return the correct logical count
+ * right away; the DOM node is orphaned into an invisible state during the
+ * brief exit window and then physically removed.
  *
  * FOCUS CONTRACT (spec §5.3 / Task 4.3):
  * - Focused toast dismissed → focus goes to the NEXT toast in the same location.
@@ -221,11 +260,7 @@ function _doRemove(id: string, reason: DismissReason): void {
   const entry = _entries.get(id);
   if (!entry) return;
 
-  // ── Capture focus state BEFORE DOM removal ──────────────────────────────────
-  // Check if the dismissed element or any of its descendants currently has focus.
-  // We check document.activeElement and use `contains` to handle shadow-hosted
-  // focus targets (close button, action buttons) — composedPath would also work
-  // but `contains` on the host is simpler and reliable for host-owned content.
+  // ── Capture focus state BEFORE anything else ────────────────────────────────
   const active = document.activeElement as HTMLElement | null;
   const focusedToastEl = entry.element;
   const hadFocus =
@@ -233,38 +268,83 @@ function _doRemove(id: string, reason: DismissReason): void {
     active !== document.body &&
     (active === focusedToastEl || focusedToastEl.contains(active));
 
+  const location = entry.location;
+  const el = entry.element;
+
+  // ── Synchronous logical cleanup ──────────────────────────────────────────────
+  // All of these happen immediately, before the DOM node is removed, so that
+  // callers and tests see consistent state right after _doRemove() returns.
   _queue.dismiss(id);
   entry.timer?.clear();
 
-  if (entry.element.parentElement) {
-    entry.element.parentElement.removeChild(entry.element);
-  }
+  // Remove from logical registry so subsequent queries exclude this toast.
+  _entries.delete(id);
 
-  _applyStacking(entry.location);
-
-  // Check if a queued toast should now be visible (queue promotion already done by _queue.dismiss)
-  // — promote any queued entries not yet in DOM
-  _promoteQueued(entry.location);
+  // Re-apply stacking on the remaining visible toasts and promote any queued.
+  _applyStacking(location);
+  _promoteQueued(location);
 
   // ── Focus management (only when the dismissed toast had focus) ──────────────
+  // Done synchronously so focus lands correctly before any async animation.
   if (hadFocus) {
-    // Find the next visible toast in the same location.
-    const remaining = _queue.visible(entry.location);
+    const remaining = _queue.visible(location);
     const nextEntry = remaining.length > 0 ? _entries.get(remaining[0].id) : null;
 
     if (nextEntry?.element.isConnected) {
-      // Move focus to the next toast's host (it has tabindex="-1").
       nextEntry.element.focus();
     } else {
-      // No remaining toasts — try to restore the focus that was held before
-      // the F6 jump into the region. Falls back gracefully when not captured.
       restorePreviousFocus();
     }
   }
 
-  _entries.delete(id);
-
+  // ── Fire onDismiss synchronously ────────────────────────────────────────────
   entry.onDismiss?.(reason);
+
+  // ── Swipe path: element has already animated; remove DOM node immediately ───
+  if (reason === "swipe") {
+    _removeDomNode(el);
+    return;
+  }
+
+  // ── Non-swipe: start exit animation, then remove DOM node after exit duration ─
+  //
+  // [data-exit] triggers the CSS transition (opacity fade + slight translateY).
+  // Loop-safe: no requestUpdate(), pure attribute mutation on a detached-from-
+  // logical-state element (it's no longer in _entries).
+  el.setAttribute("data-exit", "");
+
+  // Get the exit duration from the CSS custom property (fallback 0ms in tests).
+  const exitMs = _getExitDuration();
+
+  // Use transitionend as the primary signal; fall back to a timeout for the
+  // case where the CSS transition doesn't fire (element not visible, test env
+  // with no layout, or reduced-motion cuts to 80ms).
+  let domRemoved = false;
+
+  const removeNode = () => {
+    if (domRemoved) return;
+    domRemoved = true;
+    _removeDomNode(el);
+  };
+
+  // Listen for transitionend on the card (opacity transition is the last to fire).
+  const card = el.shadowRoot?.querySelector<HTMLElement>(".toast-card");
+  if (card) {
+    const onTransitionEnd = (e: TransitionEvent) => {
+      if (e.target !== card) return;
+      if (e.propertyName !== "opacity") return;
+      card.removeEventListener("transitionend", onTransitionEnd);
+      removeNode();
+    };
+    card.addEventListener("transitionend", onTransitionEnd);
+  }
+
+  // Fallback timeout: exitMs + a small buffer (5ms).
+  // With the 0ms fallback in test environments this resolves in ~5ms, well
+  // within the ~16ms window before the next requestAnimationFrame.
+  // In a real browser with token CSS (exitMs=160ms) the node is removed at ~165ms
+  // giving the full CSS transition time to play.
+  setTimeout(removeNode, exitMs + 5);
 }
 
 /**
@@ -460,9 +540,29 @@ _toast.warning = (msg: string, opts: ToastOptions = {}): string =>
 _toast.danger = (msg: string, opts: ToastOptions = {}): string =>
   _mountToast(msg, { ...opts, tone: "danger" }, "toast");
 
-/** Show a custom-tone toast */
-_toast.custom = (msg: string, opts: ToastOptions = {}): string =>
-  _mountToast(msg, { ...opts, tone: "custom" }, "toast");
+/**
+ * Show a custom-tone toast.
+ *
+ * When `msg` is a string, behaves identically to the other tone helpers.
+ * When `msg` is an `HTMLElement`, the element is appended as a light-DOM
+ * child of the `<tulpar-toast>` host and projects into the element's default
+ * slot for fully custom rich content.  All `opts` still apply (tone, duration,
+ * closable, etc.).
+ */
+_toast.custom = (msg: string | HTMLElement, opts: ToastOptions = {}): string => {
+  if (msg instanceof HTMLElement) {
+    // Mount the toast with an empty heading (the rich node carries the content).
+    const id = _mountToast("", { ...opts, tone: "custom" }, "toast");
+    const entry = _entries.get(id);
+    if (entry) {
+      // Append the provided element as a light-DOM child so it projects into
+      // the <tulpar-toast> default slot for rich content.
+      entry.element.appendChild(msg);
+    }
+    return id;
+  }
+  return _mountToast(msg, { ...opts, tone: "custom" }, "toast");
+};
 
 /**
  * Update a live toast's options in place. Mutates the DOM element and queue record.

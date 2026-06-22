@@ -12,7 +12,7 @@ import { toast } from "@tulpar-ui/core/toast";
  * ```ts
  * import { toast } from "@tulpar-ui/core/toast";
  * toast.success("Saved");
- * toast.danger("Upload failed", { action: { label: "Retry", onClick: retry } });
+ * toast.danger("Upload failed", { actions: [{ label: "Retry", onClick: retry }] });
  * toast.promise(save(), { loading: "Saving…", success: "Saved!", error: "Failed" });
  * ```
  *

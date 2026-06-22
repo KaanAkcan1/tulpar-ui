@@ -74,7 +74,7 @@ function injectGlobalStyles(): void {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: var(--tulpar-z-toast, 9000);
+  z-index: var(--tulpar-feedback-z-index, 9000);
 }
 
 /* ── Location containers ── */
