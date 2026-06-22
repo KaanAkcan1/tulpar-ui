@@ -48,6 +48,10 @@
       "types": "./dist/switch/index.d.ts",
       "import": "./dist/switch/index.js"
     },
+    "./tag": {
+      "types": "./dist/tag/index.d.ts",
+      "import": "./dist/tag/index.js"
+    },
     "./text-input": {
       "types": "./dist/text-input/index.d.ts",
       "import": "./dist/text-input/index.js"
