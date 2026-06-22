@@ -161,4 +161,48 @@ describe("<tulpar-spinner>", () => {
       expect(spinnerStyles.cssText).to.include("CanvasText");
     });
   });
+
+  // Regression guard for the slotchange→requestUpdate infinite loop fixed in
+  // 816d2a4: assignedNodes({ flatten:true }) counts the rendered `label` prop
+  // fallback as assigned, flipping _hasSlotLabel every render and hard-locking
+  // the page when the prop form is used. Plain assignedNodes() must be used.
+  describe("slot/prop loop guard", () => {
+    it("prop-only label does NOT register as slot content", async () => {
+      const el = await fixture<TulparSpinner>(
+        html`<tulpar-spinner label="Loading"></tulpar-spinner>`,
+      );
+      await el.updateComplete;
+      // {flatten:true} would make this true (the regression).
+      expect((el as unknown as { _hasSlotLabel: boolean })._hasSlotLabel).to.be.false;
+    });
+
+    it("real slotted content wins (flag true, prop fallback suppressed)", async () => {
+      const el = await fixture<TulparSpinner>(
+        html`<tulpar-spinner label="Loading"
+          ><span slot="label">Uploading file</span></tulpar-spinner
+        >`,
+      );
+      await el.updateComplete;
+      await nextFrame();
+      expect((el as unknown as { _hasSlotLabel: boolean })._hasSlotLabel).to.be.true;
+      // The slotted content is projected; the prop fallback is suppressed.
+      const slot = el.shadowRoot!.querySelector('slot[name="label"]') as HTMLSlotElement;
+      const assigned = slot.assignedNodes().map((n) => n.textContent).join("");
+      expect(assigned).to.contain("Uploading file");
+      expect(assigned).to.not.contain("Loading");
+    });
+
+    it("prop form settles without flipping on a later slotchange (no loop)", async () => {
+      const el = await fixture<TulparSpinner>(
+        html`<tulpar-spinner label="Loading"></tulpar-spinner>`,
+      );
+      await el.updateComplete;
+      // Let any queued slotchange/requestUpdate cycles run; a true loop would
+      // also blow the per-test timeout.
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+      expect((el as unknown as { _hasSlotLabel: boolean })._hasSlotLabel).to.be.false;
+      // A subsequent update still resolves (the element is not wedged).
+      await el.updateComplete;
+    });
+  });
 });
