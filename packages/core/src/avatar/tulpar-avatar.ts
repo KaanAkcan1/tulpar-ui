@@ -38,10 +38,20 @@ const AVATAR_SIZE_PX: Record<AvatarSize, number> = {
  * name uses that family's primitive var; any other string is used as a raw CSS
  * color.
  *
+ * ## Custom content (default slot)
+ * The default slot overrides the entire fallback cascade: when it has assigned
+ * non-whitespace content (e.g. an icon component) ONLY the slotted content shows
+ * and the img/initials/icon cascade is hidden. The `<slot>` element is ALWAYS
+ * present in the shadow tree and its visibility is driven by a host data-attr +
+ * CSS — never by swapping the slot element in/out (which would re-fire
+ * slotchange and loop; see CLAUDE.md slotchange→requestUpdate gotcha).
+ *
  * ## Accessibility
  * - Image avatar → `alt` (falls back to `name`) on the `<img>`.
  * - Initials / icon fallback → host gets `role="img"` + `aria-label="{name}"`
  *   when a name is present; both clear when there is no name.
+ * - Custom slot content → the host does NOT force `role="img"`/`aria-label`
+ *   (the slotted content carries its own semantics); both are cleared.
  *
  * NOTE: AvatarGroup (stacking / overlap) and the status-dot slot are reserved
  * for Wave 2 — there is NO stacking or status-dot rendering in this element.
@@ -77,17 +87,29 @@ export class TulparAvatar extends LitElement {
   /** True once the image has failed to load (forces the initials/icon fallback). */
   @state() private _imgError = false;
 
+  /**
+   * True while the default slot has assigned non-whitespace content. When true
+   * the slotted content overrides the whole img/initials/icon cascade.
+   */
+  @state() private _hasSlotContent = false;
+
   protected override updated(changed: PropertyValues): void {
     super.updated(changed);
 
     // A new src clears any prior load error so the image can be retried.
     if (changed.has("src")) this._imgError = false;
 
+    // Mirror slot-content state to a host data-attr for the CSS visibility swap.
+    if (changed.has("_hasSlotContent")) {
+      this.toggleAttribute("data-slot-content", this._hasSlotContent);
+    }
+
     if (
       changed.has("color") ||
       changed.has("name") ||
       changed.has("src") ||
-      changed.has("_imgError")
+      changed.has("_imgError") ||
+      changed.has("_hasSlotContent")
     ) {
       this._applyColorVars();
     }
@@ -97,7 +119,8 @@ export class TulparAvatar extends LitElement {
       changed.has("alt") ||
       changed.has("initials") ||
       changed.has("src") ||
-      changed.has("_imgError")
+      changed.has("_imgError") ||
+      changed.has("_hasSlotContent")
     ) {
       this._syncA11y();
     }
@@ -105,6 +128,8 @@ export class TulparAvatar extends LitElement {
 
   // ─── Image ─────────────────────────────────────────────────────────────────
   private get _showImage(): boolean {
+    // Custom slot content overrides the entire cascade.
+    if (this._hasSlotContent) return false;
     return !!this.src && !this._imgError;
   }
 
@@ -115,6 +140,7 @@ export class TulparAvatar extends LitElement {
   // ─── Initials ────────────────────────────────────────────────────────────────
   /** Whether the initials fallback should render. */
   private get _showInitials(): boolean {
+    if (this._hasSlotContent) return false;
     if (this._showImage) return false;
     return this._initials.length > 0;
   }
@@ -193,6 +219,12 @@ export class TulparAvatar extends LitElement {
    * `aria-label="{name}"` so AT announces a single labeled graphic.
    */
   private _syncA11y(): void {
+    // Custom slot content provides its own semantics — never force role=img.
+    if (this._hasSlotContent) {
+      this.removeAttribute("role");
+      this.removeAttribute("aria-label");
+      return;
+    }
     if (this._showImage) {
       this.removeAttribute("role");
       this.removeAttribute("aria-label");
@@ -208,16 +240,37 @@ export class TulparAvatar extends LitElement {
     }
   }
 
+  // ─── Default slot ───────────────────────────────────────────────────────────
+  /**
+   * Track default-slot content. Sets `_hasSlotContent` from the slot's assigned
+   * nodes (whitespace-only text is ignored). This ONLY toggles a @state flag —
+   * the <slot> element itself stays in the render unconditionally, so slotchange
+   * keeps firing and there is no requestUpdate→re-render loop.
+   */
+  private _onSlotChange = (e: Event): void => {
+    const slot = e.target as HTMLSlotElement;
+    const nodes = slot.assignedNodes({ flatten: true });
+    this._hasSlotContent = nodes.some((n) => {
+      if (n.nodeType === Node.TEXT_NODE) return (n.textContent ?? "").trim().length > 0;
+      return true;
+    });
+  };
+
   override render() {
     const showImage = this._showImage;
     const showInitials = !showImage && this._showInitials;
-    const showIcon = !showImage && !showInitials;
+    // The icon fallback only shows when there is no slot content, image, or
+    // initials. Slotted content suppresses the whole cascade via _hasSlotContent.
+    const showIcon = !this._hasSlotContent && !showImage && !showInitials;
     const altText = this.alt ?? this.name ?? "";
     // Intrinsic px box for the current tier → reserve layout (prevent CLS).
     const px = AVATAR_SIZE_PX[this.size] ?? AVATAR_SIZE_PX.md;
 
+    // The default <slot> is ALWAYS rendered so slotchange keeps firing; its
+    // visibility (and the cascade's) is driven by [data-slot-content] + CSS.
     // The status-dot slot is RESERVED for Wave 2 — intentionally not rendered.
     return html`
+      <slot part="content" @slotchange=${this._onSlotChange}></slot>
       ${showImage
         ? html`<img
             part="image"

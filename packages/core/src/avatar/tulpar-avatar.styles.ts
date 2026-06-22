@@ -85,6 +85,30 @@ export const avatarStyles = css`
     border-radius: 50%;
   }
 
+  /* ── Custom default slot (overrides the cascade) ──────────────────────── */
+  /* The <slot> is always present. With no assigned content it stays
+     display:none so it never occupies the box; when the host carries
+     [data-slot-content] the slot fills the box and the img/initials/icon
+     cascade is hidden (CSS visibility swap — no slot element swap, no loop). */
+  slot {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+  :host([data-slot-content]) slot {
+    display: inline-flex;
+  }
+  /* A slotted glyph/icon component should scale to the box like the icon
+     fallback does (sizing is the slotted element's own responsibility, but
+     give SVG children a sensible default). */
+  ::slotted(svg) {
+    width: 60%;
+    height: 60%;
+    display: block;
+  }
+
   /* ── Image ────────────────────────────────────────────────────────────── */
   img {
     display: block;

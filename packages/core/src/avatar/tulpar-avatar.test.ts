@@ -200,6 +200,65 @@ describe("<tulpar-avatar>", () => {
     });
   });
 
+  describe("default slot (custom content overrides the cascade)", () => {
+    it("renders slotted content and hides the initials/icon cascade", async () => {
+      const el = await fixture<TulparAvatar>(
+        html`<tulpar-avatar name="Jane Doe"><span class="custom">★</span></tulpar-avatar>`,
+      );
+      await el.updateComplete;
+      // slotted content present → cascade suppressed
+      expect(img(el)).to.equal(null);
+      expect(initials(el)).to.equal(null);
+      expect(icon(el)).to.equal(null);
+      // the default <slot> is present and the slotted node is assigned to it
+      const slot = el.shadowRoot!.querySelector("slot") as HTMLSlotElement;
+      expect(slot).to.exist;
+      const assigned = slot.assignedNodes({ flatten: true }).filter((n) => n instanceof Element);
+      expect(assigned.length).to.equal(1);
+      expect((assigned[0] as Element).textContent).to.equal("★");
+      // host carries the data-attr that drives the CSS visibility swap
+      expect(el.hasAttribute("data-slot-content")).to.equal(true);
+    });
+
+    it("slotted content overrides even an image src", async () => {
+      const src = "data:image/gif;base64,R0lGODlhAQABAAAAACw=";
+      const el = await fixture<TulparAvatar>(
+        html`<tulpar-avatar src=${src} name="Jane Doe"><span>icon</span></tulpar-avatar>`,
+      );
+      await el.updateComplete;
+      expect(img(el)).to.equal(null);
+    });
+
+    it("whitespace-only slot content does NOT count (cascade still runs)", async () => {
+      const el = await fixture<TulparAvatar>(
+        html`<tulpar-avatar name="Jane Doe">   </tulpar-avatar>`,
+      );
+      await el.updateComplete;
+      expect(el.hasAttribute("data-slot-content")).to.equal(false);
+      // initials cascade still works
+      expect(initials(el)).to.exist;
+      expect(initials(el)!.textContent!.trim()).to.equal("JD");
+    });
+
+    it("clears role + aria-label when custom slot content is shown", async () => {
+      const el = await fixture<TulparAvatar>(
+        html`<tulpar-avatar name="Jane Doe"><span>icon</span></tulpar-avatar>`,
+      );
+      await el.updateComplete;
+      expect(el.hasAttribute("role")).to.equal(false);
+      expect(el.hasAttribute("aria-label")).to.equal(false);
+    });
+
+    it("the <slot> is always present even with no slotted content (cascade unaffected)", async () => {
+      const el = await fixture<TulparAvatar>(html`<tulpar-avatar name="Jane Doe"></tulpar-avatar>`);
+      await el.updateComplete;
+      expect(el.shadowRoot!.querySelector("slot")).to.exist;
+      expect(el.hasAttribute("data-slot-content")).to.equal(false);
+      // existing initials cascade unaffected
+      expect(initials(el)!.textContent!.trim()).to.equal("JD");
+    });
+  });
+
   describe("shape / size", () => {
     it("shape reflects to an attribute", async () => {
       const el = await fixture<TulparAvatar>(

@@ -46,7 +46,30 @@ export const progressStyles = css`
   }
   :host([variant="circular"]) {
     display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
     vertical-align: middle;
+  }
+
+  /* ── Descriptive label slot ───────────────────────────────────────────── */
+  /* The <slot name="label"> wrapper is always present so slotchange keeps
+     firing; CSS hides it when the slot is empty ([data-label] absent). */
+  .label {
+    display: block;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--tulpar-color-text-primary, #1a1c1e);
+    margin-block-end: 6px;
+  }
+  :host([variant="circular"]) .label {
+    margin-block-end: 0;
+    text-align: center;
+  }
+  :host(:not([data-label])) .label {
+    display: none;
   }
 
   /* ─────────────────────────── LINEAR ────────────────────────────────────── */

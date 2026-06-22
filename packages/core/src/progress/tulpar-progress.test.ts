@@ -111,6 +111,82 @@ describe("<tulpar-progress>", () => {
     });
   });
 
+  describe("descriptive label slot", () => {
+    it("renders slotted label content + wires aria-labelledby (linear)", async () => {
+      const el = await fixture<TulparProgress>(
+        html`<tulpar-progress value="40"><span slot="label">Uploading…</span></tulpar-progress>`,
+      );
+      await el.updateComplete;
+      // the label slot wrapper exists, is shown, and carries the labelledby id
+      const wrapper = el.shadowRoot!.querySelector(".label") as HTMLElement;
+      expect(wrapper).to.exist;
+      expect(getComputedStyle(wrapper).display).to.not.equal("none");
+      const slot = wrapper.querySelector("slot[name='label']") as HTMLSlotElement;
+      expect(slot).to.exist;
+      const assigned = slot.assignedNodes({ flatten: true }).filter((n) => n instanceof Element);
+      expect((assigned[0] as Element).textContent).to.equal("Uploading…");
+      // host carries data-label + aria-labelledby → the wrapper's id
+      expect(el.hasAttribute("data-label")).to.equal(true);
+      const labelledby = el.getAttribute("aria-labelledby");
+      expect(labelledby).to.be.a("string").and.not.equal("");
+      expect(wrapper.id).to.equal(labelledby);
+    });
+
+    it("wires aria-labelledby for the circular variant too", async () => {
+      const el = await fixture<TulparProgress>(
+        html`<tulpar-progress variant="circular" value="40"
+          ><span slot="label">Syncing</span></tulpar-progress
+        >`,
+      );
+      await el.updateComplete;
+      const wrapper = el.shadowRoot!.querySelector(".label") as HTMLElement;
+      expect(el.getAttribute("aria-labelledby")).to.equal(wrapper.id);
+    });
+
+    it("no slot content → no data-label, no aria-labelledby we own", async () => {
+      const el = await fixture<TulparProgress>(
+        html`<tulpar-progress value="40"></tulpar-progress>`,
+      );
+      await el.updateComplete;
+      expect(el.hasAttribute("data-label")).to.equal(false);
+      expect(el.hasAttribute("aria-labelledby")).to.equal(false);
+      // the slot wrapper is still in the shadow tree (always rendered)
+      expect(el.shadowRoot!.querySelector("slot[name='label']")).to.exist;
+    });
+
+    it("an element carrier with content registers (any element node counts)", async () => {
+      // The slotchange detector treats any assigned ELEMENT node as content
+      // (mirrors spinner/tag); only loose whitespace-only TEXT nodes are
+      // ignored. An empty-but-present element wrapper therefore registers.
+      const el = await fixture<TulparProgress>(
+        html`<tulpar-progress value="40"><b slot="label">Done</b></tulpar-progress>`,
+      );
+      await el.updateComplete;
+      expect(el.hasAttribute("data-label")).to.equal(true);
+    });
+
+    it("label (descriptive) and value-label (numeric %) are distinct + coexist", async () => {
+      const el = await fixture<TulparProgress>(
+        html`<tulpar-progress value="42"><span slot="label">Uploading…</span></tulpar-progress>`,
+      );
+      el.valueLabel = true;
+      await el.updateComplete;
+      // numeric value label still renders the %
+      expect(valueEl(el)?.textContent?.trim()).to.equal("42%");
+      // descriptive label slot also renders
+      expect(el.hasAttribute("data-label")).to.equal(true);
+      expect(el.hasAttribute("data-value-label")).to.equal(true);
+    });
+
+    it("does not stomp a consumer-supplied aria-labelledby when slot is empty", async () => {
+      const el = await fixture<TulparProgress>(
+        html`<tulpar-progress value="40" aria-labelledby="external-id"></tulpar-progress>`,
+      );
+      await el.updateComplete;
+      expect(el.getAttribute("aria-labelledby")).to.equal("external-id");
+    });
+  });
+
   describe("linear determinate", () => {
     it("fill width reflects the fraction", async () => {
       const el = await fixture<TulparProgress>(

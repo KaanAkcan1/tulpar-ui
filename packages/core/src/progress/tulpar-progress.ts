@@ -1,7 +1,10 @@
 import { LitElement, html, nothing, type PropertyValues } from "lit";
-import { property } from "lit/decorators.js";
+import { property, state } from "lit/decorators.js";
 import { resolveTone } from "../_internal/tone/tone-resolver";
 import { progressStyles } from "./tulpar-progress.styles";
+
+/** Monotonic counter → a stable, unique id for each instance's label wrapper. */
+let progressLabelIdSeq = 0;
 
 export type ProgressVariant = "linear" | "circular";
 export type ProgressTone = "neutral" | "info" | "success" | "warning" | "danger" | "custom";
@@ -33,14 +36,22 @@ export type ProgressValueFormatter = (value: number, min: number, max: number) =
  * reads green). Failures are NOT auto-detected — a consumer signals an error by
  * setting `tone="danger"` (or a `data-error` attribute), which always wins.
  *
- * ## Value label
- * `valueLabel` is a PROPERTY (not an attribute): `true` shows `${pct}%`; a
- * formatter function shows its return (and seeds `aria-valuetext`, e.g.
- * "Step 3 of 5").
+ * ## Value label vs descriptive label
+ * Two DISTINCT label concepts:
+ * - `valueLabel` (numeric %) — a PROPERTY (not an attribute): `true` shows
+ *   `${pct}%`; a formatter shows its return (and seeds `aria-valuetext`, e.g.
+ *   "Step 3 of 5").
+ * - `slot="label"` (descriptive) — visible descriptive text beside/above the
+ *   bar (e.g. "Uploading…"). When the label slot has content the progressbar's
+ *   accessible name is wired via `aria-labelledby` → the label wrapper's id.
+ *   The <slot name="label"> element is ALWAYS present in the shadow tree; its
+ *   visibility is driven by a host data-attr + CSS, never by swapping the slot
+ *   element in/out (see CLAUDE.md slotchange→requestUpdate gotcha).
  *
  * ## Accessibility
  * The host is `role="progressbar"` with `aria-valuemin`/`-valuemax` and, when
- * determinate, `aria-valuenow`. `aria-label` / `aria-labelledby` pass through.
+ * determinate, `aria-valuenow`. A `slot="label"` wires `aria-labelledby`;
+ * otherwise a passed-through `aria-label` / `aria-labelledby` is left intact.
  */
 export class TulparProgress extends LitElement {
   static override styles = [progressStyles];
@@ -83,6 +94,12 @@ export class TulparProgress extends LitElement {
    * aria-valuetext). PROPERTY only — set via JS, not an attribute.
    */
   @property({ attribute: false }) valueLabel: boolean | ProgressValueFormatter = false;
+
+  /** True while the `label` slot has assigned non-whitespace content. */
+  @state() private _hasSlotLabel = false;
+
+  /** Stable id for the descriptive-label wrapper, for `aria-labelledby`. */
+  private readonly _labelId = `tulpar-progress-label-${progressLabelIdSeq++}`;
 
   override connectedCallback(): void {
     super.connectedCallback();
@@ -174,6 +191,16 @@ export class TulparProgress extends LitElement {
     this.setAttribute("aria-valuemin", String(this.min));
     this.setAttribute("aria-valuemax", String(this.max));
 
+    // A descriptive `slot="label"` becomes the accessible name via
+    // aria-labelledby → the label wrapper's id. We only own aria-labelledby
+    // while the slot has content: set it when present, and clear ONLY the value
+    // we set (never stomp a consumer-supplied aria-labelledby).
+    if (this._hasSlotLabel) {
+      this.setAttribute("aria-labelledby", this._labelId);
+    } else if (this.getAttribute("aria-labelledby") === this._labelId) {
+      this.removeAttribute("aria-labelledby");
+    }
+
     if (this.indeterminate || this._value === null) {
       // Unknown value → drop aria-valuenow entirely.
       this.removeAttribute("aria-valuenow");
@@ -193,7 +220,24 @@ export class TulparProgress extends LitElement {
   private _syncDataAttrs(): void {
     this.toggleAttribute("data-buffer", this._bufferFrac !== null && this.variant === "linear");
     this.toggleAttribute("data-value-label", this._hasValueLabel);
+    this.toggleAttribute("data-label", this._hasSlotLabel);
   }
+
+  // ─── Descriptive label slot ────────────────────────────────────────────────
+  /**
+   * Track `slot="label"` content. Sets `_hasSlotLabel` from the slot's assigned
+   * nodes (whitespace-only text ignored). Only toggles a @state flag — the
+   * <slot> element stays rendered unconditionally, so slotchange keeps firing
+   * with no requestUpdate→re-render loop.
+   */
+  private _onLabelSlotChange = (e: Event): void => {
+    const slot = e.target as HTMLSlotElement;
+    const nodes = slot.assignedNodes({ flatten: true });
+    this._hasSlotLabel = nodes.some((n) => {
+      if (n.nodeType === Node.TEXT_NODE) return (n.textContent ?? "").trim().length > 0;
+      return true;
+    });
+  };
 
   // ─── Tone color ──────────────────────────────────────────────────────────
   private static _customVarNames = ["--tulpar-progress-accent-l", "--tulpar-progress-accent-d"];
@@ -242,6 +286,7 @@ export class TulparProgress extends LitElement {
     const label = this._labelText;
 
     return html`
+      ${this._renderLabel()}
       <div class="row">
         <div class="track" part="track">
           <div class="buffer" part="buffer" style=${bufStyle || nothing}></div>
@@ -250,6 +295,17 @@ export class TulparProgress extends LitElement {
         <span class="value" part="value">${label ?? nothing}</span>
       </div>
     `;
+  }
+
+  /**
+   * The descriptive label wrapper. The <slot name="label"> is ALWAYS rendered
+   * (so slotchange keeps firing); CSS hides the wrapper via [data-label] on the
+   * host when the slot is empty. The id is the aria-labelledby target.
+   */
+  private _renderLabel() {
+    return html`<span id=${this._labelId} class="label" part="label">
+      <slot name="label" @slotchange=${this._onLabelSlotChange}></slot>
+    </span>`;
   }
 
   private _renderCircular() {
@@ -263,6 +319,7 @@ export class TulparProgress extends LitElement {
     const label = this._labelText;
 
     return html`
+      ${this._renderLabel()}
       <span class="circular" part="circular">
         <svg viewBox="0 0 ${box} ${box}" fill="none" stroke-width="4">
           <circle
