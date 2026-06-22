@@ -306,19 +306,25 @@ function _doRemove(id: string, reason: DismissReason): void {
     return;
   }
 
-  // ── Non-swipe: start exit animation, then remove DOM node after exit duration ─
-  //
-  // [data-exit] triggers the CSS transition (opacity fade + slight translateY).
-  // Loop-safe: no requestUpdate(), pure attribute mutation on a detached-from-
-  // logical-state element (it's no longer in _entries).
-  el.setAttribute("data-exit", "");
-
-  // Get the exit duration from the CSS custom property (fallback 0ms in tests).
+  // ── Non-swipe: animate the exit then remove, OR remove synchronously when
+  // there is no exit budget. Logical state is already cleaned up above; only the
+  // DOM node remains.
   const exitMs = _getExitDuration();
 
-  // Use transitionend as the primary signal; fall back to a timeout for the
-  // case where the CSS transition doesn't fire (element not visible, test env
-  // with no layout, or reduced-motion cuts to 80ms).
+  // No animation budget (test env / token CSS not loaded / reduced-motion
+  // collapses to ~0) → remove the node SYNCHRONOUSLY so the DOM and the logical
+  // state stay in lockstep. This keeps dismiss assertions deterministic; there
+  // is nothing to animate anyway.
+  if (exitMs <= 0) {
+    _removeDomNode(el);
+    return;
+  }
+
+  // [data-exit] triggers the CSS transition (opacity fade + slight translateY).
+  // Loop-safe: no requestUpdate(), pure attribute mutation on an element already
+  // removed from _entries.
+  el.setAttribute("data-exit", "");
+
   let domRemoved = false;
 
   const removeNode = () => {
