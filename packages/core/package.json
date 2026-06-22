@@ -44,6 +44,10 @@
       "types": "./dist/popover/index.d.ts",
       "import": "./dist/popover/index.js"
     },
+    "./progress": {
+      "types": "./dist/progress/index.d.ts",
+      "import": "./dist/progress/index.js"
+    },
     "./radio": {
       "types": "./dist/radio/index.d.ts",
       "import": "./dist/radio/index.js"
