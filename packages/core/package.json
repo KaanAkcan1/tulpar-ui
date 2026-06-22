@@ -56,6 +56,10 @@
       "types": "./dist/skeleton/index.d.ts",
       "import": "./dist/skeleton/index.js"
     },
+    "./spinner": {
+      "types": "./dist/spinner/index.d.ts",
+      "import": "./dist/spinner/index.js"
+    },
     "./switch": {
       "types": "./dist/switch/index.d.ts",
       "import": "./dist/switch/index.js"
