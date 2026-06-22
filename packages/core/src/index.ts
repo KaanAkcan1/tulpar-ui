@@ -13,6 +13,7 @@ export * from "./toggletip";
 export * from "./popover";
 export * from "./toast";
 export * from "./tag";
+export * from "./chip";
 export * from "./badge";
 export * from "./avatar";
 export * from "./skeleton";
