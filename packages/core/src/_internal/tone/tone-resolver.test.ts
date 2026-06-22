@@ -78,13 +78,17 @@ describe("resolveTone — custom tone with brand family name", () => {
 
     // light-mode vars
     expect(r.vars["--tulpar-toast-surface-l"]).to.equal("var(--tulpar-primitive-color-ilay-50)");
-    expect(r.vars["--tulpar-toast-on-surface-l"]).to.equal("var(--tulpar-primitive-color-ilay-900)");
+    expect(r.vars["--tulpar-toast-on-surface-l"]).to.equal(
+      "var(--tulpar-primitive-color-ilay-900)",
+    );
     expect(r.vars["--tulpar-toast-border-l"]).to.equal("var(--tulpar-primitive-color-ilay-500)");
     expect(r.vars["--tulpar-toast-accent-l"]).to.equal("var(--tulpar-primitive-color-ilay-600)");
 
     // dark-mode vars
     expect(r.vars["--tulpar-toast-surface-d"]).to.equal("var(--tulpar-primitive-color-ilay-900)");
-    expect(r.vars["--tulpar-toast-on-surface-d"]).to.equal("var(--tulpar-primitive-color-ilay-100)");
+    expect(r.vars["--tulpar-toast-on-surface-d"]).to.equal(
+      "var(--tulpar-primitive-color-ilay-100)",
+    );
     expect(r.vars["--tulpar-toast-border-d"]).to.equal("var(--tulpar-primitive-color-ilay-500)");
     expect(r.vars["--tulpar-toast-accent-d"]).to.equal("var(--tulpar-primitive-color-ilay-400)");
   });
@@ -107,7 +111,9 @@ describe("resolveTone — custom tone with brand family name", () => {
   it("erlik family emits erlik primitive refs", () => {
     const r = resolveTone({ tone: "custom", color: "erlik" }, { prefix: "toast" });
     expect(r.vars["--tulpar-toast-surface-l"]).to.equal("var(--tulpar-primitive-color-erlik-50)");
-    expect(r.vars["--tulpar-toast-on-surface-l"]).to.equal("var(--tulpar-primitive-color-erlik-900)");
+    expect(r.vars["--tulpar-toast-on-surface-l"]).to.equal(
+      "var(--tulpar-primitive-color-erlik-900)",
+    );
   });
 
   it("ulgen family emits ulgen primitive refs", () => {
@@ -122,7 +128,10 @@ describe("resolveTone — custom tone with brand family name", () => {
   });
 
   it("highContrast is false for custom tones (no-op)", () => {
-    const r = resolveTone({ tone: "custom", color: "ilay", highContrast: true }, { prefix: "toast" });
+    const r = resolveTone(
+      { tone: "custom", color: "ilay", highContrast: true },
+      { prefix: "toast" },
+    );
     expect(r.highContrast).to.equal(false);
   });
 
@@ -196,7 +205,10 @@ describe("resolveTone — part overrides", () => {
   });
 
   it("accent override replaces both accent-l and accent-d", () => {
-    const r = resolveTone({ tone: "custom", color: "ilay", accent: "#00ff00" }, { prefix: "toast" });
+    const r = resolveTone(
+      { tone: "custom", color: "ilay", accent: "#00ff00" },
+      { prefix: "toast" },
+    );
     expect(r.vars["--tulpar-toast-accent-l"]).to.equal("#00ff00");
     expect(r.vars["--tulpar-toast-accent-d"]).to.equal("#00ff00");
   });
@@ -240,7 +252,10 @@ describe("resolveTone — part overrides", () => {
   });
 
   it("total vars count stays 8 even with overrides", () => {
-    const r = resolveTone({ tone: "custom", color: "ilay", bg: "#ff0000", accent: "blue" }, { prefix: "toast" });
+    const r = resolveTone(
+      { tone: "custom", color: "ilay", bg: "#ff0000", accent: "blue" },
+      { prefix: "toast" },
+    );
     expect(Object.keys(r.vars).length).to.equal(8);
   });
 });
@@ -333,8 +348,10 @@ describe("resolveTone (parameterized prefix)", () => {
     expect(r.vars).to.have.property("--tulpar-toast-surface-l");
   });
   it("high-contrast honored only for danger", () => {
-    expect(resolveTone({ tone: "danger", highContrast: true }, { prefix: "toast" }).highContrast).to.be.true;
-    expect(resolveTone({ tone: "info", highContrast: true }, { prefix: "toast" }).highContrast).to.be.false;
+    expect(resolveTone({ tone: "danger", highContrast: true }, { prefix: "toast" }).highContrast).to
+      .be.true;
+    expect(resolveTone({ tone: "info", highContrast: true }, { prefix: "toast" }).highContrast).to
+      .be.false;
   });
   it("BRAND_FAMILIES is exported and contains known families", () => {
     expect(BRAND_FAMILIES.has("ilay")).to.be.true;

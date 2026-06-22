@@ -51,7 +51,9 @@ describe("<tulpar-spinner>", () => {
 
     it("a slot=label overrides the label prop", async () => {
       const el = await fixture<TulparSpinner>(
-        html`<tulpar-spinner label="Loading"><span slot="label">Uploading file</span></tulpar-spinner>`,
+        html`<tulpar-spinner label="Loading"
+          ><span slot="label">Uploading file</span></tulpar-spinner
+        >`,
       );
       await el.updateComplete;
       await nextFrame();
@@ -70,17 +72,13 @@ describe("<tulpar-spinner>", () => {
 
   describe("delay", () => {
     it("renders nothing synchronously when delay > 0", async () => {
-      const el = await fixture<TulparSpinner>(
-        html`<tulpar-spinner delay="80"></tulpar-spinner>`,
-      );
+      const el = await fixture<TulparSpinner>(html`<tulpar-spinner delay="80"></tulpar-spinner>`);
       // Immediately after connect, the glyph must NOT be present.
       expect(svg(el)).to.equal(null);
     });
 
     it("renders after the delay elapses", async () => {
-      const el = await fixture<TulparSpinner>(
-        html`<tulpar-spinner delay="60"></tulpar-spinner>`,
-      );
+      const el = await fixture<TulparSpinner>(html`<tulpar-spinner delay="60"></tulpar-spinner>`);
       expect(svg(el)).to.equal(null);
       await aTimeout(110);
       await el.updateComplete;
@@ -128,9 +126,7 @@ describe("<tulpar-spinner>", () => {
     });
 
     it("built-in tone sets an inline color on the host", async () => {
-      const el = await fixture<TulparSpinner>(
-        html`<tulpar-spinner tone="info"></tulpar-spinner>`,
-      );
+      const el = await fixture<TulparSpinner>(html`<tulpar-spinner tone="info"></tulpar-spinner>`);
       await el.updateComplete;
       expect(el.style.color).to.contain("--tulpar-atom-tone-info-solid-bg");
     });
@@ -187,7 +183,10 @@ describe("<tulpar-spinner>", () => {
       expect((el as unknown as { _hasSlotLabel: boolean })._hasSlotLabel).to.be.true;
       // The slotted content is projected; the prop fallback is suppressed.
       const slot = el.shadowRoot!.querySelector('slot[name="label"]') as HTMLSlotElement;
-      const assigned = slot.assignedNodes().map((n) => n.textContent).join("");
+      const assigned = slot
+        .assignedNodes()
+        .map((n) => n.textContent)
+        .join("");
       expect(assigned).to.contain("Uploading file");
       expect(assigned).to.not.contain("Loading");
     });

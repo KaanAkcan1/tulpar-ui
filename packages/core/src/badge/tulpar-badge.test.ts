@@ -97,9 +97,13 @@ describe("<tulpar-badge>", () => {
     it("count height md=18px, sm=16px, lg=20px", async () => {
       const md = await fixture<TulparBadge>(html`<tulpar-badge count="3"></tulpar-badge>`);
       expect(getComputedStyle(badge(md)).height).to.equal("18px");
-      const sm = await fixture<TulparBadge>(html`<tulpar-badge size="sm" count="3"></tulpar-badge>`);
+      const sm = await fixture<TulparBadge>(
+        html`<tulpar-badge size="sm" count="3"></tulpar-badge>`,
+      );
       expect(getComputedStyle(badge(sm)).height).to.equal("16px");
-      const lg = await fixture<TulparBadge>(html`<tulpar-badge size="lg" count="3"></tulpar-badge>`);
+      const lg = await fixture<TulparBadge>(
+        html`<tulpar-badge size="lg" count="3"></tulpar-badge>`,
+      );
       expect(getComputedStyle(badge(lg)).height).to.equal("20px");
     });
 
@@ -126,9 +130,7 @@ describe("<tulpar-badge>", () => {
     });
 
     it("derives the noun from slotted text when no label", async () => {
-      const el = await fixture<TulparBadge>(
-        html`<tulpar-badge count="5">unread</tulpar-badge>`,
-      );
+      const el = await fixture<TulparBadge>(html`<tulpar-badge count="5">unread</tulpar-badge>`);
       await el.updateComplete;
       expect(el.getAttribute("aria-label")).to.equal("5 unread");
     });
@@ -181,14 +183,15 @@ describe("<tulpar-badge>", () => {
     });
 
     it("real slotted content wins (flag true, prop fallback suppressed)", async () => {
-      const el = await fixture<TulparBadge>(
-        html`<tulpar-badge label="New">Beta</tulpar-badge>`,
-      );
+      const el = await fixture<TulparBadge>(html`<tulpar-badge label="New">Beta</tulpar-badge>`);
       await el.updateComplete;
       expect((el as unknown as { _hasSlotLabel: boolean })._hasSlotLabel).to.be.true;
       // The default slot renders the slotted child; the prop fallback is suppressed.
       const slot = el.shadowRoot!.querySelector(".label slot") as HTMLSlotElement;
-      const assigned = slot.assignedNodes().map((n) => n.textContent).join("");
+      const assigned = slot
+        .assignedNodes()
+        .map((n) => n.textContent)
+        .join("");
       expect(assigned).to.contain("Beta");
       expect(assigned).to.not.contain("New");
     });

@@ -362,14 +362,15 @@ describe("<tulpar-chip>", () => {
     });
 
     it("real slotted content wins (flag true, prop fallback suppressed)", async () => {
-      const el = await fixture<TulparChip>(
-        html`<tulpar-chip label="All">Slotted</tulpar-chip>`,
-      );
+      const el = await fixture<TulparChip>(html`<tulpar-chip label="All">Slotted</tulpar-chip>`);
       await el.updateComplete;
       expect((el as unknown as { _hasSlotLabel: boolean })._hasSlotLabel).to.be.true;
       // The default slot renders the slotted child; the prop fallback is suppressed.
       const slot = el.shadowRoot!.querySelector(".label slot") as HTMLSlotElement;
-      const assigned = slot.assignedNodes().map((n) => n.textContent).join("");
+      const assigned = slot
+        .assignedNodes()
+        .map((n) => n.textContent)
+        .join("");
       expect(assigned).to.contain("Slotted");
       expect(assigned).to.not.contain("All");
     });

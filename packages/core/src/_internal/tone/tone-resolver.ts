@@ -192,15 +192,15 @@ export function resolveTone(input: ToneInput, opts: ToneOptions): ToneResult {
   // pipeline (not the attribute-selector CSS) controls the surface.
   if (!color) {
     const vars: Record<string, string> = {
-      [`--tulpar-${prefix}-surface-l`]:    "var(--tulpar-color-bg-surface,    #ffffff)",
+      [`--tulpar-${prefix}-surface-l`]: "var(--tulpar-color-bg-surface,    #ffffff)",
       [`--tulpar-${prefix}-on-surface-l`]: "var(--tulpar-color-text-primary,  #15110b)",
-      [`--tulpar-${prefix}-border-l`]:     "var(--tulpar-color-border-default, #e2e8f0)",
-      [`--tulpar-${prefix}-accent-l`]:     "var(--tulpar-color-brand-default,  #2563eb)",
+      [`--tulpar-${prefix}-border-l`]: "var(--tulpar-color-border-default, #e2e8f0)",
+      [`--tulpar-${prefix}-accent-l`]: "var(--tulpar-color-brand-default,  #2563eb)",
 
-      [`--tulpar-${prefix}-surface-d`]:    "var(--tulpar-color-bg-surface,    #1e293b)",
+      [`--tulpar-${prefix}-surface-d`]: "var(--tulpar-color-bg-surface,    #1e293b)",
       [`--tulpar-${prefix}-on-surface-d`]: "var(--tulpar-color-text-primary,  #f1f5f9)",
-      [`--tulpar-${prefix}-border-d`]:     "var(--tulpar-color-border-default, #334155)",
-      [`--tulpar-${prefix}-accent-d`]:     "var(--tulpar-color-brand-default,  #60a5fa)",
+      [`--tulpar-${prefix}-border-d`]: "var(--tulpar-color-border-default, #334155)",
+      [`--tulpar-${prefix}-accent-d`]: "var(--tulpar-color-brand-default,  #60a5fa)",
     };
     applyOverrides(vars, prefix, { bg, accent, text });
     return { builtin: false, vars, highContrast: false };

@@ -391,10 +391,20 @@ export const tulparDark: SemanticTokens = {
       // border raised to clear WCAG 3:1 against the [900] surface (enforced by feedback.contrast.test.ts).
       // [800] is near-invisible on [900]; the same fix was applied to overlay dark bindings (see comment there).
       //   info [500]=3.04, success [400]=3.42, warning [600]=3.35, danger [400]=3.78.
-      info:    { surface: c.gok[900],    onSurface: c.gok[100],    border: c.gok[500],    accent: c.gok[400]    },
-      success: { surface: c.otuken[900], onSurface: c.otuken[100], border: c.otuken[400], accent: c.otuken[400] },
-      warning: { surface: c.ulgen[900],  onSurface: c.ulgen[100],  border: c.ulgen[600],  accent: c.ulgen[400]  },
-      danger:  { surface: c.al[900],     onSurface: c.al[100],     border: c.al[400],     accent: c.al[400]     },
+      info: { surface: c.gok[900], onSurface: c.gok[100], border: c.gok[500], accent: c.gok[400] },
+      success: {
+        surface: c.otuken[900],
+        onSurface: c.otuken[100],
+        border: c.otuken[400],
+        accent: c.otuken[400],
+      },
+      warning: {
+        surface: c.ulgen[900],
+        onSurface: c.ulgen[100],
+        border: c.ulgen[600],
+        accent: c.ulgen[400],
+      },
+      danger: { surface: c.al[900], onSurface: c.al[100], border: c.al[400], accent: c.al[400] },
     },
     // High-contrast danger: al[500] surface (slightly lighter than [600] so it's still readable
     // against dark surroundings) + white text.
@@ -422,11 +432,31 @@ export const tulparDark: SemanticTokens = {
     //   soft border [600|700]→[400|500]; success/danger outline border [500]→[400] +
     //   solid bg [500]→[400].
     tone: {
-      neutral: { soft: { surface: c.kara[800],   text: c.kara[100],   border: c.kara[400]   }, outline: { text: c.kara[300],   border: c.kara[500]   }, solid: { bg: c.colpan[100], text: c.yagiz[950] } },
-      info:    { soft: { surface: c.gok[900],    text: c.gok[100],    border: c.gok[500]    }, outline: { text: c.gok[300],    border: c.gok[500]    }, solid: { bg: c.gok[500],    text: c.yagiz[950] } },
-      success: { soft: { surface: c.otuken[900], text: c.otuken[100], border: c.otuken[400] }, outline: { text: c.otuken[300], border: c.otuken[400] }, solid: { bg: c.otuken[400], text: c.yagiz[950] } },
-      warning: { soft: { surface: c.ulgen[900],  text: c.ulgen[100],  border: c.ulgen[600]  }, outline: { text: c.ulgen[300],  border: c.ulgen[500]  }, solid: { bg: c.ulgen[500],  text: c.yagiz[950] } },
-      danger:  { soft: { surface: c.al[900],     text: c.al[100],     border: c.al[400]     }, outline: { text: c.al[300],     border: c.al[400]     }, solid: { bg: c.al[400],     text: c.yagiz[950] } },
+      neutral: {
+        soft: { surface: c.kara[800], text: c.kara[100], border: c.kara[400] },
+        outline: { text: c.kara[300], border: c.kara[500] },
+        solid: { bg: c.colpan[100], text: c.yagiz[950] },
+      },
+      info: {
+        soft: { surface: c.gok[900], text: c.gok[100], border: c.gok[500] },
+        outline: { text: c.gok[300], border: c.gok[500] },
+        solid: { bg: c.gok[500], text: c.yagiz[950] },
+      },
+      success: {
+        soft: { surface: c.otuken[900], text: c.otuken[100], border: c.otuken[400] },
+        outline: { text: c.otuken[300], border: c.otuken[400] },
+        solid: { bg: c.otuken[400], text: c.yagiz[950] },
+      },
+      warning: {
+        soft: { surface: c.ulgen[900], text: c.ulgen[100], border: c.ulgen[600] },
+        outline: { text: c.ulgen[300], border: c.ulgen[500] },
+        solid: { bg: c.ulgen[500], text: c.yagiz[950] },
+      },
+      danger: {
+        soft: { surface: c.al[900], text: c.al[100], border: c.al[400] },
+        outline: { text: c.al[300], border: c.al[400] },
+        solid: { bg: c.al[400], text: c.yagiz[950] },
+      },
     },
   },
 

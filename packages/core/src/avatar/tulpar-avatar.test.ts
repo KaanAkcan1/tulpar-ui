@@ -231,7 +231,7 @@ describe("<tulpar-avatar>", () => {
 
     it("whitespace-only slot content does NOT count (cascade still runs)", async () => {
       const el = await fixture<TulparAvatar>(
-        html`<tulpar-avatar name="Jane Doe">   </tulpar-avatar>`,
+        html`<tulpar-avatar name="Jane Doe"> </tulpar-avatar>`,
       );
       await el.updateComplete;
       expect(el.hasAttribute("data-slot-content")).to.equal(false);

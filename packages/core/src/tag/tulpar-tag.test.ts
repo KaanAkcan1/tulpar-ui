@@ -42,9 +42,12 @@ describe("<tulpar-tag>", () => {
 
     const fromSlot = await fixture<TulparTag>(html`<tulpar-tag>Slotted</tulpar-tag>`);
     const slot = fromSlot.shadowRoot!.querySelector(".label slot") as HTMLSlotElement;
-    expect(slot.assignedNodes({ flatten: true }).map((n) => n.textContent).join("")).to.contain(
-      "Slotted",
-    );
+    expect(
+      slot
+        .assignedNodes({ flatten: true })
+        .map((n) => n.textContent)
+        .join(""),
+    ).to.contain("Slotted");
   });
 
   describe("variant → tone tokens (computed style)", () => {
@@ -259,14 +262,15 @@ describe("<tulpar-tag>", () => {
     });
 
     it("real slotted content wins (flag true, prop fallback suppressed)", async () => {
-      const el = await fixture<TulparTag>(
-        html`<tulpar-tag label="Active">Slotted</tulpar-tag>`,
-      );
+      const el = await fixture<TulparTag>(html`<tulpar-tag label="Active">Slotted</tulpar-tag>`);
       await el.updateComplete;
       expect((el as unknown as { _hasSlotLabel: boolean })._hasSlotLabel).to.be.true;
       // The default slot renders the slotted child; the prop fallback is suppressed.
       const slot = el.shadowRoot!.querySelector(".label slot") as HTMLSlotElement;
-      const assigned = slot.assignedNodes().map((n) => n.textContent).join("");
+      const assigned = slot
+        .assignedNodes()
+        .map((n) => n.textContent)
+        .join("");
       expect(assigned).to.contain("Slotted");
       expect(assigned).to.not.contain("Active");
     });

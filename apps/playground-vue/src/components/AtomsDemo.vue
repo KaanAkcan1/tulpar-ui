@@ -370,9 +370,9 @@ const formatStep = (value: number, _min: number, max: number): string => `${valu
       <h2 class="section-title">2. Badge</h2>
       <p class="section-desc">
         Count / status indicator (pill by default). Counts cap at
-        <code class="inline-code">max</code> (e.g. <code class="inline-code">128 → 99+</code>) and use
-        tabular figures so the width never jitters. <code class="inline-code">dot</code> mode shows
-        bare status; <code class="inline-code">showZero</code> renders a
+        <code class="inline-code">max</code> (e.g. <code class="inline-code">128 → 99+</code>) and
+        use tabular figures so the width never jitters. <code class="inline-code">dot</code> mode
+        shows bare status; <code class="inline-code">showZero</code> renders a
         <code class="inline-code">0</code> (hidden by default). Solid is the default variant.
       </p>
       <div class="preview preview--col">
@@ -477,12 +477,13 @@ const formatStep = (value: number, _min: number, max: number): string => `${valu
       <h2 class="section-title">3. Chip</h2>
       <p class="section-desc">
         The interactive display atom. The body is operable (click / Enter / Space →
-        <code class="inline-code">clicked</code>) and can carry an independent remove control
-        (<code class="inline-code">removed</code>). <code class="inline-code">ghost</code> variant is
-        transparent at rest and hovers into the soft tint (toolbar filters).
-        <code class="inline-code">disabled</code> fires nothing and is not focusable. Interact below
-        — the event log records every <code class="inline-code">clicked</code> /
-        <code class="inline-code">removed</code>.
+        <code class="inline-code">clicked</code>) and can carry an independent remove control (<code
+          class="inline-code"
+          >removed</code
+        >). <code class="inline-code">ghost</code> variant is transparent at rest and hovers into
+        the soft tint (toolbar filters). <code class="inline-code">disabled</code> fires nothing and
+        is not focusable. Interact below — the event log records every
+        <code class="inline-code">clicked</code> / <code class="inline-code">removed</code>.
       </p>
       <div class="preview preview--col">
         <div class="demo-row">
@@ -496,11 +497,7 @@ const formatStep = (value: number, _min: number, max: number): string => `${valu
         <div class="demo-row">
           <span class="row-label">removable</span>
           <div class="row-items">
-            <TulparChip
-              label="kaan@x.com"
-              removable
-              @removed="logChip('removed: kaan@x.com')"
-            />
+            <TulparChip label="kaan@x.com" removable @removed="logChip('removed: kaan@x.com')" />
             <TulparChip
               label="Jane Doe"
               avatar="JD"
@@ -833,8 +830,8 @@ const formatStep = (value: number, _min: number, max: number): string => `${valu
       <p class="section-desc">
         Linear and circular progress, determinate or indeterminate. Determinate transitions are
         eased; indeterminate is one traveling bar / rotating arc.
-        <code class="inline-code">valueLabel</code> can be <code class="inline-code">true</code>
-        (→ <code class="inline-code">N%</code>) or a formatter function.
+        <code class="inline-code">valueLabel</code> can be <code class="inline-code">true</code> (→
+        <code class="inline-code">N%</code>) or a formatter function.
         <code class="inline-code">buffer</code> shows a secondary buffered value (linear). Use the
         slider below to drive a live value.
       </p>

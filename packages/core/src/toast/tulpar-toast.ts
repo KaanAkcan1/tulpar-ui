@@ -37,10 +37,7 @@ const BUILTIN_ICONS: Record<string, string> = {
 
 // ─── Icon content types ───────────────────────────────────────────────────────
 
-type IconContent =
-  | null
-  | { kind: "svg"; markup: string }
-  | { kind: "text"; value: string };
+type IconContent = null | { kind: "svg"; markup: string } | { kind: "text"; value: string };
 
 // ─── ID generator ────────────────────────────────────────────────────────────
 
@@ -557,8 +554,7 @@ export class TulparToast extends LitElement {
         aria-labelledby=${ariaLabelledBy}
         aria-describedby=${ariaDescribedBy}
       >
-        ${this._renderRing()}
-        ${showIcon ? this._renderIcon() : nothing}
+        ${this._renderRing()} ${showIcon ? this._renderIcon() : nothing}
 
         <div class="toast-body" part="body">
           <!-- Title: slot wins over prop.
@@ -567,7 +563,9 @@ export class TulparToast extends LitElement {
           <div class="toast-title" id=${this._headingId} part="title">
             <slot name="title">${this.heading ?? ""}</slot>
             ${this.count > 1
-              ? html`<span class="toast-count" aria-label="×${this.count} notifications">×${this.count}</span>`
+              ? html`<span class="toast-count" aria-label="×${this.count} notifications"
+                  >×${this.count}</span
+                >`
               : nothing}
           </div>
 
@@ -577,7 +575,9 @@ export class TulparToast extends LitElement {
                infinite loop that results from replacing the <slot> element itself.
                id is always present so aria-describedby can reference it. -->
           <div class="toast-description" id=${this._descId} part="description">
-            <slot name="description" @slotchange=${this._onDescSlotChange}>${this.description ?? ""}</slot>
+            <slot name="description" @slotchange=${this._onDescSlotChange}
+              >${this.description ?? ""}</slot
+            >
           </div>
 
           <!-- Actions -->
@@ -899,12 +899,7 @@ export class TulparToast extends LitElement {
     const isTrack = this.timerStyle === "track";
     return html`
       <div class="toast-ring" aria-hidden="true">
-        <svg
-          width="100%"
-          height="100%"
-          preserveAspectRatio="none"
-          overflow="visible"
-        >
+        <svg width="100%" height="100%" preserveAspectRatio="none" overflow="visible">
           ${isTrack
             ? html`<rect
                 class="ring-track"

@@ -11,11 +11,7 @@ export type BadgeSize = "sm" | "md" | "lg";
  * Reserved for Wave 2: attached / anchored placement around a host element.
  * Type-only — there is NO attached rendering in this element yet.
  */
-export type BadgePlacement =
-  | "top-end"
-  | "top-start"
-  | "bottom-end"
-  | "bottom-start"; // reserved — attached mode is Wave 2
+export type BadgePlacement = "top-end" | "top-start" | "bottom-end" | "bottom-start"; // reserved — attached mode is Wave 2
 
 /**
  * `<tulpar-badge>` — count / status indicator.
@@ -177,7 +173,10 @@ export class TulparBadge extends LitElement {
       if (n.nodeType === Node.TEXT_NODE) return (n.textContent ?? "").trim().length > 0;
       return true;
     });
-    this._slotText = nodes.map((n) => n.textContent ?? "").join("").trim();
+    this._slotText = nodes
+      .map((n) => n.textContent ?? "")
+      .join("")
+      .trim();
   };
 
   override render() {

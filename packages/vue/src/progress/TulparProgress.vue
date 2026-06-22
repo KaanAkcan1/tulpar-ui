@@ -66,16 +66,15 @@ const props = withDefaults(defineProps<Props>(), {
 // `undefined`, which collapses the value→percent math to NaN/0 (the bar reads
 // empty and the % label shows "0%"). Setting them via a template ref +
 // watchEffect lets us leave the core defaults intact when a prop is omitted.
-const progressRef =
-  ref<
-    HTMLElement & {
-      value?: number;
-      min?: number;
-      max?: number;
-      buffer?: number;
-      valueLabel?: boolean | ProgressValueFormatter;
-    }
-  >();
+const progressRef = ref<
+  HTMLElement & {
+    value?: number;
+    min?: number;
+    max?: number;
+    buffer?: number;
+    valueLabel?: boolean | ProgressValueFormatter;
+  }
+>();
 
 watchEffect(() => {
   const el = progressRef.value;

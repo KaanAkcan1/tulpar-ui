@@ -101,10 +101,7 @@ export { TulparAvatarComponent } from "./avatar/tulpar-avatar.component";
 export type { AvatarShape, AvatarSize } from "./avatar/tulpar-avatar.component";
 
 export { TulparSkeletonComponent } from "./skeleton/tulpar-skeleton.component";
-export type {
-  SkeletonVariant,
-  SkeletonAnimation,
-} from "./skeleton/tulpar-skeleton.component";
+export type { SkeletonVariant, SkeletonAnimation } from "./skeleton/tulpar-skeleton.component";
 
 export { TulparSpinnerComponent } from "./spinner/tulpar-spinner.component";
 export type { SpinnerSize, SpinnerTone } from "./spinner/tulpar-spinner.component";

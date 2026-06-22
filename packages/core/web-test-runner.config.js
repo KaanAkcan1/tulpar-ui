@@ -15,6 +15,11 @@ export default {
   coverageConfig: {
     report: true,
     reportDir: "coverage",
+    // Measure the threshold against our own source only — never against
+    // bundled third-party deps (lit, chai, open-wc helpers) or test files,
+    // whose internal functions would otherwise drag the aggregate below 80%.
+    include: ["src/**/*.ts"],
+    exclude: ["**/node_modules/**", "**/*.test.ts"],
     threshold: {
       statements: 80,
       branches: 80,
