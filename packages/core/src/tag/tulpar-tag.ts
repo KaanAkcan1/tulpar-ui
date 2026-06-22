@@ -88,6 +88,14 @@ export class TulparTag extends LitElement {
     if (!this.hasAttribute("role")) this.setAttribute("role", "status");
   }
 
+  protected override firstUpdated(changed: PropertyValues): void {
+    super.firstUpdated(changed);
+    // scrollWidth/clientWidth may be 0 during the first updated() callback (the
+    // browser hasn't laid the label out yet). Re-check after a layout frame so
+    // the overflow title is reliable.
+    requestAnimationFrame(() => this._syncOverflowTitle());
+  }
+
   protected override updated(changed: PropertyValues): void {
     super.updated(changed);
 

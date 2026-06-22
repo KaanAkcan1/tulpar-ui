@@ -152,10 +152,9 @@ describe("<tulpar-tag>", () => {
         html`<tulpar-tag style="--tulpar-tag-max-width:60px" label=${long}></tulpar-tag>`,
       );
       await el.updateComplete;
-      // allow layout to settle for scrollWidth
-      await new Promise((r) => requestAnimationFrame(r));
-      el.requestUpdate();
-      await el.updateComplete;
+      // firstUpdated schedules an overflow re-check on the next frame; wait for
+      // two frames so scrollWidth is laid out and the title is synced.
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
       expect(el.getAttribute("title")).to.equal(long);
     });
 
