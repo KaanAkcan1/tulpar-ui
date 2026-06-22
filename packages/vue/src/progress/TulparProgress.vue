@@ -56,16 +56,35 @@ const props = withDefaults(defineProps<Props>(), {
   valueLabel: false,
 });
 
-// ── DOM property binding for `valueLabel` ─────────────────────────────────────
+// ── DOM property binding for numeric props + `valueLabel` ─────────────────────
 // `valueLabel` may be a function (formatter), which cannot be serialised to an
-// HTML attribute. The core declares it `attribute: false`, so we set it as a JS
-// property on the element directly via a template ref + watchEffect.
-const progressRef = ref<HTMLElement & { valueLabel?: boolean | ProgressValueFormatter }>();
+// HTML attribute. The core declares it `attribute: false`.
+//
+// The numeric props (`value` / `min` / `max` / `buffer`) are ALSO set as JS
+// properties — and crucially only when provided. Binding `:max="undefined"` in
+// the template overwrites the core's reactive default (min=0, max=100) with
+// `undefined`, which collapses the value→percent math to NaN/0 (the bar reads
+// empty and the % label shows "0%"). Setting them via a template ref +
+// watchEffect lets us leave the core defaults intact when a prop is omitted.
+const progressRef =
+  ref<
+    HTMLElement & {
+      value?: number;
+      min?: number;
+      max?: number;
+      buffer?: number;
+      valueLabel?: boolean | ProgressValueFormatter;
+    }
+  >();
 
 watchEffect(() => {
-  if (progressRef.value) {
-    progressRef.value.valueLabel = props.valueLabel;
-  }
+  const el = progressRef.value;
+  if (!el) return;
+  el.valueLabel = props.valueLabel;
+  if (props.value !== undefined) el.value = props.value;
+  if (props.min !== undefined) el.min = props.min;
+  if (props.max !== undefined) el.max = props.max;
+  if (props.buffer !== undefined) el.buffer = props.buffer;
 });
 </script>
 
@@ -73,11 +92,7 @@ watchEffect(() => {
   <tulpar-progress
     ref="progressRef"
     :variant="props.variant ?? undefined"
-    :value="props.value ?? undefined"
-    :min="props.min ?? undefined"
-    :max="props.max ?? undefined"
     :indeterminate="props.indeterminate || undefined"
-    :buffer="props.buffer ?? undefined"
     :tone="props.tone ?? undefined"
     :color="props.color ?? undefined"
     :state-tone="props.stateTone || undefined"

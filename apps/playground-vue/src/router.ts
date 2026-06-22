@@ -15,6 +15,7 @@ import ToggletipDemo from "./components/ToggletipDemo.vue";
 import PopoverDemo from "./components/PopoverDemo.vue";
 import ToastDemo from "./components/ToastDemo.vue";
 import MessageDemo from "./components/MessageDemo.vue";
+import AtomsDemo from "./components/AtomsDemo.vue";
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -45,6 +46,11 @@ export const router = createRouter({
     { path: "/popover", component: PopoverDemo, meta: { title: "Popover — Tulpar UI" } },
     { path: "/toast", component: ToastDemo, meta: { title: "Toast — Tulpar UI" } },
     { path: "/message", component: MessageDemo, meta: { title: "Message — Tulpar UI" } },
+    {
+      path: "/atoms",
+      component: AtomsDemo,
+      meta: { title: "Display & Status atoms — Tulpar UI" },
+    },
     { path: "/colors", component: ColorsDemo, meta: { title: "Colors — Tulpar UI" } },
     { path: "/guide", component: GuideDemo, meta: { title: "Sidebar & Theme — Tulpar UI" } },
     { path: "/:pathMatch(.*)*", redirect: "/button" },

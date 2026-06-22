@@ -5,6 +5,7 @@
  * Renders a `<tulpar-badge>` web component. Forwards every scalar prop as an
  * attribute. Only the default slot is supported by the core (no named slots).
  */
+import { ref, watchEffect } from "vue";
 import "@tulpar-ui/core/badge";
 import type { BadgeTone, BadgeVariant, BadgeShape, BadgeSize } from "@tulpar-ui/core/badge";
 
@@ -29,30 +30,37 @@ interface Props {
   label?: string;
 }
 
-const {
-  tone,
-  variant,
-  count,
-  max,
-  showZero = false,
-  dot = false,
-  shape,
-  size,
-  label,
-} = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  showZero: false,
+  dot: false,
+});
+
+// ── DOM property binding for numeric props ────────────────────────────────────
+// `count` / `max` are set as JS properties — and only when provided. Binding
+// `:max="undefined"` in the template overwrites the core's reactive default
+// (max=99) with `undefined`, which coerces to 0 and makes every count render as
+// "0+". Setting them via a template ref + watchEffect leaves the core defaults
+// intact when a prop is omitted.
+const badgeRef = ref<HTMLElement & { count?: number; max?: number }>();
+
+watchEffect(() => {
+  const el = badgeRef.value;
+  if (!el) return;
+  if (props.count !== undefined) el.count = props.count;
+  if (props.max !== undefined) el.max = props.max;
+});
 </script>
 
 <template>
   <tulpar-badge
-    :tone="tone ?? undefined"
-    :variant="variant ?? undefined"
-    :count="count ?? undefined"
-    :max="max ?? undefined"
-    :show-zero="showZero || undefined"
-    :dot="dot || undefined"
-    :shape="shape ?? undefined"
-    :size="size ?? undefined"
-    :label="label ?? undefined"
+    ref="badgeRef"
+    :tone="props.tone ?? undefined"
+    :variant="props.variant ?? undefined"
+    :show-zero="props.showZero || undefined"
+    :dot="props.dot || undefined"
+    :shape="props.shape ?? undefined"
+    :size="props.size ?? undefined"
+    :label="props.label ?? undefined"
   >
     <slot />
   </tulpar-badge>

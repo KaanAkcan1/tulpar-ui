@@ -21,9 +21,27 @@ describe("TulparProgress (Vue)", () => {
     expect(wrapper.find("tulpar-progress").exists()).toBe(true);
   });
 
-  it("forwards value prop", () => {
+  it("forwards value as a DOM property", async () => {
     const wrapper = mount(TulparProgress, { props: { value: 42 } });
-    expect(wrapper.find("tulpar-progress").attributes("value")).toBe("42");
+    await wrapper.vm.$nextTick();
+    const el = wrapper.find("tulpar-progress").element as HTMLElement & { value?: number };
+    expect(el.value).toBe(42);
+  });
+
+  it("omitting min/max leaves the core defaults intact (no clobber)", async () => {
+    // Binding :max="undefined" in the template would overwrite the core default
+    // (max=100) with undefined and collapse value→percent math. The wrapper sets
+    // numeric props only when provided, so the defaults survive.
+    const wrapper = mount(TulparProgress, { props: { value: 60 } });
+    await wrapper.vm.$nextTick();
+    const el = wrapper.find("tulpar-progress").element as HTMLElement & {
+      value?: number;
+      min?: number;
+      max?: number;
+    };
+    expect(el.value).toBe(60);
+    expect(el.min).toBe(0);
+    expect(el.max).toBe(100);
   });
 
   it("forwards variant prop", () => {

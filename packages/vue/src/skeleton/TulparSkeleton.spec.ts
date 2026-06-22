@@ -26,9 +26,21 @@ describe("TulparSkeleton (Vue)", () => {
     expect(wrapper.find("tulpar-skeleton").attributes("variant")).toBe("circle");
   });
 
-  it("forwards lines prop", () => {
+  it("forwards lines as a DOM property", async () => {
     const wrapper = mount(TulparSkeleton, { props: { lines: 3 } });
-    expect(wrapper.find("tulpar-skeleton").attributes("lines")).toBe("3");
+    await wrapper.vm.$nextTick();
+    const el = wrapper.find("tulpar-skeleton").element as HTMLElement & { lines?: number };
+    expect(el.lines).toBe(3);
+  });
+
+  it("omitting lines leaves the core default intact (no clobber)", async () => {
+    // Binding :lines="undefined" would overwrite the core default (lines=1) and
+    // collapse the text variant to zero bars. The wrapper sets lines only when
+    // provided, so the default survives.
+    const wrapper = mount(TulparSkeleton, { props: { variant: "text" } });
+    await wrapper.vm.$nextTick();
+    const el = wrapper.find("tulpar-skeleton").element as HTMLElement & { lines?: number };
+    expect(el.lines).toBe(1);
   });
 
   it("forwards width + height + animation props", () => {

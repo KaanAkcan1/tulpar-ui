@@ -14,6 +14,7 @@ import {
   MessageSquare,
   MessageSquareText,
   Palette,
+  Shapes,
   SquareMousePointer,
   TextCursorInput,
   ToggleLeft,
@@ -108,6 +109,12 @@ const menu: TulparNavItemVueData[] = [
       { label: "Toast", href: "/toast", icon: Bell },
       { label: "Message", href: "/message", icon: MessageCircle },
     ],
+  },
+  // Display & Status atoms — Tag/Badge/Chip/Avatar/Skeleton/Spinner/Progress (v0.13).
+  {
+    type: "section",
+    label: "Display & Status atoms",
+    items: [{ label: "Atoms", href: "/atoms", icon: Shapes }],
   },
   {
     type: "section",

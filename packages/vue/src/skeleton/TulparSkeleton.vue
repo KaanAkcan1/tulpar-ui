@@ -5,6 +5,7 @@
  * Renders a `<tulpar-skeleton>` web component. Forwards every scalar prop as an
  * attribute. The core is purely decorative (aria-hidden) and has no slots.
  */
+import { ref, watchEffect } from "vue";
 import "@tulpar-ui/core/skeleton";
 import type { SkeletonVariant, SkeletonAnimation } from "@tulpar-ui/core/skeleton";
 
@@ -23,16 +24,30 @@ interface Props {
   animation?: SkeletonAnimation;
 }
 
-const { variant, lines, width, height, radius, animation } = defineProps<Props>();
+const props = defineProps<Props>();
+
+// ── DOM property binding for `lines` ──────────────────────────────────────────
+// `lines` is set as a JS property — and only when provided. Binding
+// `:lines="undefined"` in the template overwrites the core's reactive default
+// (lines=1) with `undefined`, collapsing the text variant to zero bars. Setting
+// it via a template ref + watchEffect leaves the core default intact when the
+// prop is omitted.
+const skeletonRef = ref<HTMLElement & { lines?: number }>();
+
+watchEffect(() => {
+  const el = skeletonRef.value;
+  if (!el) return;
+  if (props.lines !== undefined) el.lines = props.lines;
+});
 </script>
 
 <template>
   <tulpar-skeleton
-    :variant="variant ?? undefined"
-    :lines="lines ?? undefined"
-    :width="width ?? undefined"
-    :height="height ?? undefined"
-    :radius="radius ?? undefined"
-    :animation="animation ?? undefined"
+    ref="skeletonRef"
+    :variant="props.variant ?? undefined"
+    :width="props.width ?? undefined"
+    :height="props.height ?? undefined"
+    :radius="props.radius ?? undefined"
+    :animation="props.animation ?? undefined"
   />
 </template>
