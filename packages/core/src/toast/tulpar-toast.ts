@@ -1,7 +1,7 @@
 import { LitElement, html, nothing, type PropertyValues, type TemplateResult } from "lit";
 import { property, query } from "lit/decorators.js";
 import { toastStyles } from "./tulpar-toast.styles";
-import { resolveTone, type ToneValue } from "./tone-resolver";
+import { resolveTone, type ToneValue } from "../_internal/tone/tone-resolver";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -354,14 +354,17 @@ export class TulparToast extends LitElement {
   // ─── Tone application ──────────────────────────────────────────────────────
 
   private _applyToneVars(): void {
-    const result = resolveTone({
-      tone: this.tone,
-      color: this.color,
-      bg: this.bg,
-      accent: this.accent,
-      text: this.text,
-      highContrast: this.highContrast,
-    });
+    const result = resolveTone(
+      {
+        tone: this.tone,
+        color: this.color,
+        bg: this.bg,
+        accent: this.accent,
+        text: this.text,
+        highContrast: this.highContrast,
+      },
+      { prefix: "toast" },
+    );
 
     // Clear previous custom vars (so switching back to builtin removes them).
     const customVarNames = [
