@@ -89,8 +89,14 @@ export class TulparToastService {
     return toast.danger(msg, opts);
   }
 
-  /** Show a custom-tone toast. `opts.color` accepts a brand family name or raw CSS color. */
-  custom(msg: string, opts: ToastOptions = {}): string {
+  /**
+   * Show a custom-tone toast.
+   *
+   * `opts.color` accepts a brand family name or raw CSS color.
+   * When `msg` is an `HTMLElement`, it is appended as a light-DOM child of the toast
+   * host and projects into the element's default slot for fully custom rich content.
+   */
+  custom(msg: string | HTMLElement, opts: ToastOptions = {}): string {
     return toast.custom(msg, opts);
   }
 

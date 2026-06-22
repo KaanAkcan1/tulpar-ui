@@ -318,12 +318,16 @@ toast.danger('Oturumunuz sona eriyor.', {
         The declarative <code class="inline-code">&lt;tulpar-toast-ng&gt;</code> element supports
         <code class="inline-code">slot="title"</code> and <code class="inline-code">slot="description"</code>
         for rich content. Slots win when both prop and slot are present.
+        The Fire buttons below launch live toasts via the imperative API using equivalent rich markup.
       </p>
       <div class="preview preview--col">
         <div class="slot-demo-label">slot="title" — rich markup in the heading</div>
         <tulpar-toast-ng tone="success" [timer]="false">
           <span slot="title"><strong>Başarı</strong> — tüm testler geçti ✓</span>
         </tulpar-toast-ng>
+        <div class="slot-fire-row">
+          <button class="trigger-btn" (click)="fireSlotTitle()">Fire (rich title)</button>
+        </div>
 
         <div class="slot-demo-label" style="margin-top:16px">slot="description" — body with em</div>
         <tulpar-toast-ng tone="warning" heading="Dikkat" [timer]="false">
@@ -331,6 +335,9 @@ toast.danger('Oturumunuz sona eriyor.', {
             Bu işlem <em>geri alınamaz</em>. Devam etmek istiyor musunuz?
           </span>
         </tulpar-toast-ng>
+        <div class="slot-fire-row">
+          <button class="trigger-btn" (click)="fireSlotDescription()">Fire (rich description)</button>
+        </div>
       </div>
       <pre class="code"><code>{{ contentSlotCode }}</code></pre>
     </section>
@@ -359,7 +366,8 @@ toast.danger('Oturumunuz sona eriyor.', {
         <code class="inline-code">slot="icon"</code> on the declarative element accepts any content:
         a Lucide SVG (inline), a custom <code class="inline-code">&lt;svg&gt;</code>, or an
         <code class="inline-code">&lt;img&gt;</code>. Tulpar ships only the four built-in tone icons;
-        consumers bring their own via this slot.
+        consumers bring their own via this slot. The Fire button below fires a live toast with a
+        custom icon via the raw-SVG icon prop.
       </p>
       <div class="preview preview--col">
         <div class="slot-demo-label">slot="icon" — inline SVG (custom shield)</div>
@@ -371,6 +379,9 @@ toast.danger('Oturumunuz sona eriyor.', {
             </svg>
           </span>
         </tulpar-toast-ng>
+        <div class="slot-fire-row">
+          <button class="trigger-btn" (click)="fireIconSlot()">Fire (custom icon)</button>
+        </div>
 
         <div class="slot-demo-label" style="margin-top:16px">slot="icon" — circle-check SVG</div>
         <tulpar-toast-ng tone="success" heading="Doğrulama tamamlandı" [timer]="false">
@@ -570,7 +581,9 @@ toast.danger('Oturumunuz sona eriyor.', {
       <p class="section-desc">
         The declarative element's default slot accepts arbitrary markup — avatars, progress bars,
         anything. This is the escape hatch when the imperative API's title/description/action model
-        is insufficient. Use sparingly; complex markup belongs in a Dialog.
+        is insufficient. The Fire button below fires a live toast via
+        <code class="inline-code">toast.custom(HTMLElement)</code> — the canonical imperative rich-content API.
+        Use sparingly; complex markup belongs in a Dialog.
       </p>
       <div class="preview preview--col">
         <div class="slot-demo-label">Default slot — avatar + inline progress bar</div>
@@ -589,6 +602,9 @@ toast.danger('Oturumunuz sona eriyor.', {
             </div>
           </span>
         </tulpar-toast-ng>
+        <div class="slot-fire-row">
+          <button class="trigger-btn trigger-btn--info" (click)="fireRichToast()">Fire rich toast</button>
+        </div>
       </div>
       <pre class="code"><code>{{ richContentCode }}</code></pre>
     </section>
@@ -709,6 +725,29 @@ toast.danger('Oturumunuz sona eriyor.', {
         line-height: 1.7;
       }
 
+      /* ── Dark mode — decision cols ───────────────────────────────────── */
+      :host-context(.dark) .decision-col--yes {
+        background: #11302a;
+        border-color: #1e4a38;
+      }
+      :host-context(.dark) .decision-col--yes .decision-list {
+        color: #5fcfae;
+      }
+      :host-context(.dark) .decision-col--yes .decision-head {
+        color: #5fcfae;
+      }
+
+      :host-context(.dark) .decision-col--no {
+        background: #371714;
+        border-color: #552421;
+      }
+      :host-context(.dark) .decision-col--no .decision-list {
+        color: #f08b84;
+      }
+      :host-context(.dark) .decision-col--no .decision-head {
+        color: #f08b84;
+      }
+
       /* ── Doc sections ────────────────────────────────────────────────── */
       .doc-section {
         padding-bottom: 48px;
@@ -827,6 +866,37 @@ toast.danger('Oturumunuz sona eriyor.', {
         text-align: center;
       }
 
+      /* ── Dark mode — tinted trigger buttons ──────────────────────────── */
+      :host-context(.dark) .trigger-btn--info {
+        background: #15233f;
+        border-color: #1e3460;
+        color: #7ea6ff;
+      }
+
+      :host-context(.dark) .trigger-btn--success {
+        background: #11302a;
+        border-color: #1e4a38;
+        color: #5fcfae;
+      }
+
+      :host-context(.dark) .trigger-btn--warning {
+        background: #332810;
+        border-color: #4d3c18;
+        color: #e6b450;
+      }
+
+      :host-context(.dark) .trigger-btn--danger {
+        background: #371714;
+        border-color: #552421;
+        color: #f08b84;
+      }
+
+      :host-context(.dark) .trigger-btn--custom {
+        background: #2d1f4a;
+        border-color: #3e2c6b;
+        color: #c4a0ff;
+      }
+
       /* ── Location grid ───────────────────────────────────────────────── */
       .location-grid {
         display: grid;
@@ -835,6 +905,12 @@ toast.danger('Oturumunuz sona eriyor.', {
         gap: 8px;
         width: 100%;
         max-width: 380px;
+      }
+
+      /* ── Slot fire row ───────────────────────────────────────────────── */
+      .slot-fire-row {
+        margin-top: 10px;
+        margin-bottom: 6px;
       }
 
       /* ── Stacking live controls ─────────────────────────────────────── */
@@ -1021,6 +1097,25 @@ toast.danger('Oturumunuz sona eriyor.', {
         background: #fdeceb;
         border-color: #f4c2bf;
         color: #c0322b;
+      }
+
+      /* ── Dark mode — promise flow badges ─────────────────────────────── */
+      :host-context(.dark) .step--loading {
+        background: #15233f;
+        border-color: #1e3460;
+        color: #7ea6ff;
+      }
+
+      :host-context(.dark) .step--success {
+        background: #11302a;
+        border-color: #1e4a38;
+        color: #5fcfae;
+      }
+
+      :host-context(.dark) .step--error {
+        background: #371714;
+        border-color: #552421;
+        color: #f08b84;
       }
 
       .arrow {
@@ -1245,6 +1340,29 @@ export class ToastDemoComponent {
     this.toast.info('Kalıcı — manuel kapatma gerekli.', { timer: false });
   }
 
+  // ── 3. Content forms — slot form — live fire buttons ─────────────────────
+  /**
+   * Fire (rich title): builds an HTMLElement with bold markup and passes it to
+   * toast.custom(HTMLElement) so it projects into the toast's default slot.
+   */
+  fireSlotTitle() {
+    const node = document.createElement('span');
+    node.setAttribute('slot', 'title');
+    node.innerHTML = '<strong>Başarı</strong> — tüm testler geçti ✓';
+    this.toast.custom(node, { timer: false });
+  }
+
+  /**
+   * Fire (rich description): fires a warning toast with the heading prop +
+   * an HTMLElement carrying <em> markup for the description slot.
+   */
+  fireSlotDescription() {
+    const descSpan = document.createElement('span');
+    descSpan.setAttribute('slot', 'description');
+    descSpan.innerHTML = 'Bu işlem <em>geri alınamaz</em>. Devam etmek istiyor musunuz?';
+    this.toast.custom(descSpan, { title: 'Dikkat', timer: false });
+  }
+
   // ── 4. Icons — prop form ──────────────────────────────────────────────────
   showIconDefault() { this.toast.success('İkon: tone varsayılanı'); }
   showIconName() { this.toast.info('İkon: name prop', { icon: 'info' }); }
@@ -1255,6 +1373,15 @@ export class ToastDemoComponent {
   }
   showIconEmoji() { this.toast.info('Emoji ikonu 🚀', { icon: '🚀' }); }
   showIconFalse() { this.toast.success('İkon yok', { icon: false }); }
+
+  // ── 5. Icons — slot form — live fire button ───────────────────────────────
+  /** Fire (custom icon): live toast with shield SVG via raw-SVG icon prop */
+  fireIconSlot() {
+    this.toast.info('Güvenlik uyarısı', {
+      icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+      timer: false,
+    });
+  }
 
   // ── 6. Custom tone ────────────────────────────────────────────────────────
   showCustomIlay() { this.toast.custom('İlay tonu (brand family, mode-aware)', { color: 'ilay' }); }
@@ -1350,6 +1477,40 @@ export class ToastDemoComponent {
     this.toast.info('Kapat veya bekle — sebebi aşağıda görün.', {
       duration: 4000,
       onDismiss: (reason) => this.lastDismissReason.set(reason),
+    });
+  }
+
+  // ── 11. Rich content — live fire ─────────────────────────────────────────
+  /**
+   * Fires a live toast via toast.custom(HTMLElement) — the canonical imperative
+   * rich-content API. Builds the same avatar + progress-bar markup as the
+   * declarative preview and appends it as a light-DOM child of the toast element.
+   */
+  fireRichToast() {
+    const node = document.createElement('div');
+    node.style.cssText = 'display:flex;gap:10px;align-items:center;margin-top:6px;';
+    node.innerHTML = `
+      <div style="font-size:22px;flex-shrink:0;">📄</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12px;font-weight:600;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">rapor_q4_final.xlsx</div>
+        <div style="height:4px;border-radius:2px;background:var(--tulpar-color-border-default,#d9e0df);overflow:hidden;">
+          <div style="width:62%;height:100%;border-radius:2px;background:var(--tulpar-color-brand-default,#00c57a);"></div>
+        </div>
+        <div style="margin-top:4px;font-size:11px;color:var(--tulpar-color-text-muted,#74777a);">62% — kalan süre ~5s</div>
+      </div>
+    `;
+
+    // Wrap in a span with slot="description" so it projects into the right slot
+    const descSpan = document.createElement('span');
+    descSpan.setAttribute('slot', 'description');
+    descSpan.appendChild(node);
+
+    // toast.custom(HTMLElement) appends the element as a light-DOM child of the
+    // toast host, projecting into the named slot via the slot="description" attr.
+    // Title comes via the `title` option (heading prop).
+    this.toast.custom(descSpan, {
+      title: 'Dosya işleniyor',
+      timer: false,
     });
   }
 

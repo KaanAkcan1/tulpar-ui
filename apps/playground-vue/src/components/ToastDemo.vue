@@ -419,6 +419,64 @@ function showOnDismiss() {
   });
 }
 
+// ─── 3. Content forms — slot form — live fire buttons ───────────────────────
+
+/**
+ * Fire (rich title): builds an HTMLElement with bold markup and passes it to
+ * toast.custom(HTMLElement) so it projects into the toast's default slot.
+ */
+function fireSlotTitle() {
+  const node = document.createElement("span");
+  node.setAttribute("slot", "title");
+  node.innerHTML = "<strong>Başarı</strong> — tüm testler geçti ✓";
+  toast.custom(node, { timer: false });
+}
+
+/**
+ * Fire (rich description): fires a toast with the heading prop +
+ * an HTMLElement carrying <em> markup for the description slot.
+ */
+function fireSlotDescription() {
+  const descSpan = document.createElement("span");
+  descSpan.setAttribute("slot", "description");
+  descSpan.innerHTML = "Bu işlem <em>geri alınamaz</em>. Devam etmek istiyor musunuz?";
+  toast.custom(descSpan, { title: "Dikkat", timer: false });
+}
+
+// ─── 5. Icons — slot form — live fire button ─────────────────────────────────
+/** Fire (custom icon): live toast with shield SVG via raw-SVG icon prop */
+function fireIconSlot() {
+  toast.info("Güvenlik uyarısı", {
+    icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+    timer: false,
+  });
+}
+
+// ─── 11. Rich content — live fire ────────────────────────────────────────────
+/**
+ * Fires a live toast via toast.custom(HTMLElement) — the canonical imperative
+ * rich-content API. Builds the same avatar + progress-bar markup as the
+ * declarative preview and appends it as a light-DOM child of the toast element.
+ */
+function fireRichToast() {
+  const node = document.createElement("div");
+  node.style.cssText = "display:flex;gap:10px;align-items:center;margin-top:6px;";
+  node.innerHTML = `
+    <div style="font-size:22px;flex-shrink:0;">📄</div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:12px;font-weight:600;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">rapor_q4_final.xlsx</div>
+      <div style="height:4px;border-radius:2px;background:var(--tulpar-color-border-default,#d9e0df);overflow:hidden;">
+        <div style="width:62%;height:100%;border-radius:2px;background:var(--tulpar-color-brand-default,#00c57a);"></div>
+      </div>
+      <div style="margin-top:4px;font-size:11px;color:var(--tulpar-color-text-muted,#74777a);">62% — kalan süre ~5s</div>
+    </div>
+  `;
+  const descSpan = document.createElement("span");
+  descSpan.setAttribute("slot", "description");
+  descSpan.appendChild(node);
+  toast.custom(descSpan, { title: "Dosya işleniyor", timer: false });
+}
+
 // ─── 12. A11y ────────────────────────────────────────────────────────────────
 function showA11ySwipe() {
   toast.info("Yatay kaydırarak kapat (swipe-to-dismiss). Eşiğin altında yayaya döner.", {
@@ -550,12 +608,16 @@ function dismissAll() {
         The declarative <code class="inline-code">&lt;TulparToast&gt;</code> SFC supports the
         <code class="inline-code">#title</code> and <code class="inline-code">#description</code>
         slots for rich content. Slots win when both prop and slot are present.
+        The Fire buttons below launch live toasts via the imperative API using equivalent rich markup.
       </p>
       <div class="preview preview--col">
         <div class="slot-demo-label">#title — rich markup in the heading</div>
         <TulparToast tone="success" :timer="false">
           <template #title><strong>Başarı</strong> — tüm testler geçti ✓</template>
         </TulparToast>
+        <div class="slot-fire-row">
+          <button class="trigger-btn" @click="fireSlotTitle">Fire (rich title)</button>
+        </div>
 
         <div class="slot-demo-label" style="margin-top: 16px">#description — body with em</div>
         <TulparToast tone="warning" heading="Dikkat" :timer="false">
@@ -563,6 +625,9 @@ function dismissAll() {
             Bu işlem <em>geri alınamaz</em>. Devam etmek istiyor musunuz?
           </template>
         </TulparToast>
+        <div class="slot-fire-row">
+          <button class="trigger-btn" @click="fireSlotDescription">Fire (rich description)</button>
+        </div>
       </div>
       <pre class="code"><code>{{ contentSlotCode }}</code></pre>
     </section>
@@ -592,7 +657,8 @@ function dismissAll() {
         <code class="inline-code">#icon</code> on the declarative SFC accepts any content: a Lucide
         SVG (inline), a custom <code class="inline-code">&lt;svg&gt;</code>, or an
         <code class="inline-code">&lt;img&gt;</code>. Tulpar ships only the four built-in tone icons;
-        consumers bring their own via this slot.
+        consumers bring their own via this slot. The Fire button below fires a live toast with a
+        custom icon via the raw-SVG icon prop.
       </p>
       <div class="preview preview--col">
         <div class="slot-demo-label">#icon — inline SVG (custom shield)</div>
@@ -612,6 +678,9 @@ function dismissAll() {
             </svg>
           </template>
         </TulparToast>
+        <div class="slot-fire-row">
+          <button class="trigger-btn" @click="fireIconSlot">Fire (custom icon)</button>
+        </div>
 
         <div class="slot-demo-label" style="margin-top: 16px">#icon — circle-check SVG</div>
         <TulparToast tone="success" heading="Doğrulama tamamlandı" :timer="false">
@@ -846,7 +915,9 @@ function dismissAll() {
       <p class="section-desc">
         The declarative SFC's default slot accepts arbitrary markup — avatars, progress bars,
         anything. This is the escape hatch when the imperative API's title/description/action model
-        is insufficient. Use sparingly; complex markup belongs in a Dialog.
+        is insufficient. The Fire button below fires a live toast via
+        <code class="inline-code">toast.custom(HTMLElement)</code> — the canonical imperative rich-content API.
+        Use sparingly; complex markup belongs in a Dialog.
       </p>
       <div class="preview preview--col">
         <div class="slot-demo-label">Default slot — avatar + inline progress bar</div>
@@ -865,6 +936,9 @@ function dismissAll() {
             </div>
           </template>
         </TulparToast>
+        <div class="slot-fire-row">
+          <button class="trigger-btn trigger-btn--info" @click="fireRichToast">Fire rich toast</button>
+        </div>
       </div>
       <pre class="code"><code>{{ richContentCode }}</code></pre>
     </section>
@@ -993,6 +1067,29 @@ function dismissAll() {
   line-height: 1.7;
 }
 
+/* ── Dark mode — decision cols ───────────────────────────────────── */
+:global(.dark) .decision-col--yes {
+  background: #11302a;
+  border-color: #1e4a38;
+}
+:global(.dark) .decision-col--yes .decision-list {
+  color: #5fcfae;
+}
+:global(.dark) .decision-col--yes .decision-head {
+  color: #5fcfae;
+}
+
+:global(.dark) .decision-col--no {
+  background: #371714;
+  border-color: #552421;
+}
+:global(.dark) .decision-col--no .decision-list {
+  color: #f08b84;
+}
+:global(.dark) .decision-col--no .decision-head {
+  color: #f08b84;
+}
+
 /* ── Doc sections ────────────────────────────────────────────────── */
 .doc-section {
   padding-bottom: 48px;
@@ -1111,6 +1208,37 @@ function dismissAll() {
   font-size: 11px;
   padding: 6px 10px;
   text-align: center;
+}
+
+/* ── Dark mode — tinted trigger buttons ──────────────────────────── */
+:global(.dark) .trigger-btn--info {
+  background: #15233f;
+  border-color: #1e3460;
+  color: #7ea6ff;
+}
+
+:global(.dark) .trigger-btn--success {
+  background: #11302a;
+  border-color: #1e4a38;
+  color: #5fcfae;
+}
+
+:global(.dark) .trigger-btn--warning {
+  background: #332810;
+  border-color: #4d3c18;
+  color: #e6b450;
+}
+
+:global(.dark) .trigger-btn--danger {
+  background: #371714;
+  border-color: #552421;
+  color: #f08b84;
+}
+
+:global(.dark) .trigger-btn--custom {
+  background: #2d1f4a;
+  border-color: #3e2c6b;
+  color: #c4a0ff;
 }
 
 /* ── Location grid ───────────────────────────────────────────────── */
@@ -1311,6 +1439,25 @@ function dismissAll() {
   color: #c0322b;
 }
 
+/* ── Dark mode — promise flow badges ─────────────────────────────── */
+:global(.dark) .step--loading {
+  background: #15233f;
+  border-color: #1e3460;
+  color: #7ea6ff;
+}
+
+:global(.dark) .step--success {
+  background: #11302a;
+  border-color: #1e4a38;
+  color: #5fcfae;
+}
+
+:global(.dark) .step--error {
+  background: #371714;
+  border-color: #552421;
+  color: #f08b84;
+}
+
 .arrow {
   color: var(--tulpar-color-text-muted, #74777a);
   font-size: 14px;
@@ -1337,6 +1484,12 @@ function dismissAll() {
   background: var(--tulpar-color-bg-surface, #fff);
   color: var(--tulpar-color-text-secondary, #57534e);
   border: 1px solid var(--tulpar-color-border-default, #d9e0df);
+}
+
+/* ── Slot fire row ───────────────────────────────────────────────── */
+.slot-fire-row {
+  margin-top: 10px;
+  margin-bottom: 6px;
 }
 
 /* ── Slot demo labels ────────────────────────────────────────────── */

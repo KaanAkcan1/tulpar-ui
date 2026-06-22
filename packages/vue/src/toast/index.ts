@@ -90,8 +90,12 @@ export function useTulparToast() {
     danger(message: string, opts?: Parameters<typeof toast.danger>[1]) {
       return toast.danger(message, opts);
     },
-    /** Show a custom-tone toast. Returns the toast id. */
-    custom(message: string, opts?: Parameters<typeof toast.custom>[1]) {
+    /**
+     * Show a custom-tone toast. Returns the toast id.
+     * When `message` is an `HTMLElement`, it is appended as a light-DOM child of
+     * the toast host and projects into the element's default slot for rich content.
+     */
+    custom(message: string | HTMLElement, opts?: Parameters<typeof toast.custom>[1]) {
       return toast.custom(message, opts);
     },
     /**

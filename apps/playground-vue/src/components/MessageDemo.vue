@@ -309,6 +309,30 @@ function show1s() {
   line-height: 1.7;
 }
 
+/* ── Dark mode — decision cols ───────────────────────────────────── */
+:global(.dark) .decision-col--yes {
+  background: #11302a;
+  border-color: #1e4a38;
+}
+:global(.dark) .decision-col--yes .decision-list {
+  color: #5fcfae;
+}
+:global(.dark) .decision-col--yes .decision-head {
+  color: #5fcfae;
+}
+
+/* Message "when not": warning family (amber) */
+:global(.dark) .decision-col--no {
+  background: #332810;
+  border-color: #4d3c18;
+}
+:global(.dark) .decision-col--no .decision-list {
+  color: #e6b450;
+}
+:global(.dark) .decision-col--no .decision-head {
+  color: #e6b450;
+}
+
 /* ── Doc sections ────────────────────────────────────────────────── */
 .doc-section {
   padding-bottom: 48px;
@@ -403,6 +427,31 @@ function show1s() {
   border-color: #f4c2bf;
   background: #fdeceb;
   color: #c0322b;
+}
+
+/* ── Dark mode — tinted trigger buttons ──────────────────────────── */
+:global(.dark) .trigger-btn--info {
+  background: #15233f;
+  border-color: #1e3460;
+  color: #7ea6ff;
+}
+
+:global(.dark) .trigger-btn--success {
+  background: #11302a;
+  border-color: #1e4a38;
+  color: #5fcfae;
+}
+
+:global(.dark) .trigger-btn--warning {
+  background: #332810;
+  border-color: #4d3c18;
+  color: #e6b450;
+}
+
+:global(.dark) .trigger-btn--danger {
+  background: #371714;
+  border-color: #552421;
+  color: #f08b84;
 }
 
 /* ── Stacking / grouping demo cols ───────────────────────────────── */
