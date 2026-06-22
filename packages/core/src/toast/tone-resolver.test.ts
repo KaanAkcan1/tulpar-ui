@@ -245,10 +245,49 @@ describe("resolveTone — part overrides", () => {
 // ─── custom tone: no color provided ──────────────────────────────────────────
 
 describe("resolveTone — custom tone without color", () => {
-  it("tone=custom with no color: builtin=false, vars={} (nothing to derive)", () => {
+  it("tone=custom with no color: builtin=false, emits 8 neutral-surface vars (no transparent fallback)", () => {
     const r = resolveTone({ tone: "custom" });
     expect(r.builtin).to.equal(false);
-    expect(Object.keys(r.vars).length).to.equal(0);
+    // Must emit all 8 light/dark pairs — not an empty object (which would render transparent)
+    expect(Object.keys(r.vars).length).to.equal(8);
+    expect("--tulpar-toast-surface-l" in r.vars).to.equal(true);
+    expect("--tulpar-toast-surface-d" in r.vars).to.equal(true);
+    expect("--tulpar-toast-on-surface-l" in r.vars).to.equal(true);
+    expect("--tulpar-toast-on-surface-d" in r.vars).to.equal(true);
+    expect("--tulpar-toast-border-l" in r.vars).to.equal(true);
+    expect("--tulpar-toast-border-d" in r.vars).to.equal(true);
+    expect("--tulpar-toast-accent-l" in r.vars).to.equal(true);
+    expect("--tulpar-toast-accent-d" in r.vars).to.equal(true);
+  });
+
+  it("tone=custom with no color: surface-l uses bg-surface semantic token with white fallback", () => {
+    const r = resolveTone({ tone: "custom" });
+    expect(r.vars["--tulpar-toast-surface-l"]).to.include("--tulpar-color-bg-surface");
+    expect(r.vars["--tulpar-toast-surface-l"]).to.include("#ffffff");
+  });
+
+  it("tone=custom with no color: surface-d uses bg-surface semantic token with dark fallback", () => {
+    const r = resolveTone({ tone: "custom" });
+    expect(r.vars["--tulpar-toast-surface-d"]).to.include("--tulpar-color-bg-surface");
+    expect(r.vars["--tulpar-toast-surface-d"]).to.include("#1e293b");
+  });
+
+  it("tone=custom with no color but with bg override: override takes effect over neutral base", () => {
+    const r = resolveTone({ tone: "custom", bg: "#fdf4ff" });
+    expect(r.vars["--tulpar-toast-surface-l"]).to.equal("#fdf4ff");
+    expect(r.vars["--tulpar-toast-surface-d"]).to.equal("#fdf4ff");
+  });
+
+  it("tone=custom with no color but with accent override: override takes effect", () => {
+    const r = resolveTone({ tone: "custom", accent: "#9333ea" });
+    expect(r.vars["--tulpar-toast-accent-l"]).to.equal("#9333ea");
+    expect(r.vars["--tulpar-toast-accent-d"]).to.equal("#9333ea");
+  });
+
+  it("tone=custom with no color but with text override: override takes effect", () => {
+    const r = resolveTone({ tone: "custom", text: "#3b0764" });
+    expect(r.vars["--tulpar-toast-on-surface-l"]).to.equal("#3b0764");
+    expect(r.vars["--tulpar-toast-on-surface-d"]).to.equal("#3b0764");
   });
 });
 

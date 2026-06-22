@@ -161,8 +161,33 @@ export function resolveTone(input: ToneInput): ToneResult {
   }
 
   // ── Custom tone — no color provided ────────────────────────────────────────
+  //
+  // When tone:'custom' is used with no color (e.g. toast.custom(HTMLElement, {}))
+  // we emit a neutral surface so the card is never transparent.  Uses the
+  // existing surface/border/text semantic tokens with literal fallbacks:
+  //   - surface-l/-d: --tulpar-color-bg-surface (light white / dark deep slate)
+  //   - on-surface: --tulpar-color-text-primary (near-black / near-white)
+  //   - border: --tulpar-color-border-default (soft grey for both modes)
+  //   - accent: --tulpar-color-brand-default (brand blue for icon / title color)
+  //
+  // Part overrides (bg/accent/text) still apply on top via applyOverrides, so
+  // toast.custom(el, { bg: '#fdf4ff', accent: '#9333ea' }) still works without
+  // needing a `color` base.  The `builtin` flag stays false so the inline-var
+  // pipeline (not the attribute-selector CSS) controls the surface.
   if (!color) {
-    return { builtin: false, vars: {}, highContrast: false };
+    const vars: Record<string, string> = {
+      "--tulpar-toast-surface-l":    "var(--tulpar-color-bg-surface,    #ffffff)",
+      "--tulpar-toast-on-surface-l": "var(--tulpar-color-text-primary,  #15110b)",
+      "--tulpar-toast-border-l":     "var(--tulpar-color-border-default, #e2e8f0)",
+      "--tulpar-toast-accent-l":     "var(--tulpar-color-brand-default,  #2563eb)",
+
+      "--tulpar-toast-surface-d":    "var(--tulpar-color-bg-surface,    #1e293b)",
+      "--tulpar-toast-on-surface-d": "var(--tulpar-color-text-primary,  #f1f5f9)",
+      "--tulpar-toast-border-d":     "var(--tulpar-color-border-default, #334155)",
+      "--tulpar-toast-accent-d":     "var(--tulpar-color-brand-default,  #60a5fa)",
+    };
+    applyOverrides(vars, { bg, accent, text });
+    return { builtin: false, vars, highContrast: false };
   }
 
   // ── Custom tone — brand family ─────────────────────────────────────────────
