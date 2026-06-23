@@ -2,6 +2,7 @@ import { LitElement, html, nothing, type PropertyValues } from "lit";
 import { property, state } from "lit/decorators.js";
 import { BRAND_FAMILIES } from "../_internal/tone/tone-resolver";
 import { hashToFamily } from "../_internal/tone/avatar-color";
+import { hasMeaningfulContent } from "../_internal/slot-content";
 import { avatarStyles } from "./tulpar-avatar.styles";
 
 export type AvatarShape = "rounded-square" | "circle";
@@ -249,11 +250,11 @@ export class TulparAvatar extends LitElement {
    */
   private _onSlotChange = (e: Event): void => {
     const slot = e.target as HTMLSlotElement;
-    const nodes = slot.assignedNodes({ flatten: true });
-    this._hasSlotContent = nodes.some((n) => {
-      if (n.nodeType === Node.TEXT_NODE) return (n.textContent ?? "").trim().length > 0;
-      return true;
-    });
+    // Count ONLY meaningful content (elements / non-whitespace text). A bare
+    // comment node (Vue's empty-`<slot/>` `<!---->` placeholder) must NOT count,
+    // else it suppresses the image / initials / icon cascade and the avatar
+    // renders empty. See slot-content.
+    this._hasSlotContent = hasMeaningfulContent(slot.assignedNodes({ flatten: true }));
   };
 
   override render() {

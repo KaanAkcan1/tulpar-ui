@@ -154,6 +154,20 @@ describe("<tulpar-progress>", () => {
       expect(el.shadowRoot!.querySelector("slot[name='label']")).to.exist;
     });
 
+    // Vue leaves a `<!---->` comment in the light DOM for an empty slot outlet.
+    // The shared slot-content detector (used here and by tag/chip/badge/spinner/
+    // avatar) must IGNORE comment nodes — counting one would flip _hasSlotLabel
+    // and point aria-labelledby at an empty label wrapper.
+    it("comment-only assigned nodes do NOT count as label content (Vue empty-slot)", async () => {
+      const { hasMeaningfulContent } = await import("../_internal/slot-content");
+      // A bare comment node is the exact node Vue leaves for an empty `<slot/>`.
+      expect(hasMeaningfulContent([document.createComment("")])).to.equal(false);
+      // Whitespace-only text is likewise ignored; real content still counts.
+      expect(hasMeaningfulContent([document.createTextNode("   ")])).to.equal(false);
+      expect(hasMeaningfulContent([document.createElement("span")])).to.equal(true);
+      expect(hasMeaningfulContent([document.createTextNode("Uploading…")])).to.equal(true);
+    });
+
     it("an element carrier with content registers (any element node counts)", async () => {
       // The slotchange detector treats any assigned ELEMENT node as content
       // (mirrors spinner/tag); only loose whitespace-only TEXT nodes are

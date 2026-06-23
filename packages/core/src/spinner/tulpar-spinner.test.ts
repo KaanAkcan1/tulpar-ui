@@ -203,5 +203,24 @@ describe("<tulpar-spinner>", () => {
       // A subsequent update still resolves (the element is not wedged).
       await el.updateComplete;
     });
+
+    // Vue leaves a `<!---->` comment in the light DOM for an empty slot outlet.
+    // A comment must NOT count as slot content, else the `label` prop is
+    // suppressed and the accessible name disappears (Vue-only). The prop renders
+    // in a sibling `.label-prop` span (NOT slot fallback) so it survives.
+    it("comment node in light DOM does NOT suppress the label prop (Vue empty-slot)", async () => {
+      const el = await fixture<TulparSpinner>(
+        html`<tulpar-spinner label="Loading"></tulpar-spinner>`,
+      );
+      await el.updateComplete;
+      el.appendChild(document.createComment(""));
+      await nextFrame();
+      await el.updateComplete;
+      expect((el as unknown as { _hasSlotLabel: boolean })._hasSlotLabel).to.be.false;
+      const labelProp = el.shadowRoot!.querySelector(".label-prop");
+      expect(labelProp, ".label-prop sibling should render the prop").to.exist;
+      // The prop feeds the visually-hidden accessible name.
+      expect(srText(el)).to.contain("Loading");
+    });
   });
 });

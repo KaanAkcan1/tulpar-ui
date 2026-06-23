@@ -285,5 +285,29 @@ describe("<tulpar-tag>", () => {
       // A subsequent update still resolves (the element is not wedged).
       await el.updateComplete;
     });
+
+    // Vue leaves a `<!---->` comment + whitespace text nodes in the light DOM
+    // for an empty `<slot/>` outlet. Neither may count as slot content, else the
+    // `label` prop is suppressed and the tag renders empty (Vue-only symptom).
+    // The prop is rendered as a sibling `.label-prop` span (NOT slot fallback),
+    // so it survives even when whitespace nodes are assigned to the slot — slot
+    // fallback content is NOT shown by the browser once any node is assigned.
+    it("comment + whitespace light DOM does NOT suppress the label prop (Vue empty-slot)", async () => {
+      const el = await fixture<TulparTag>(html`<tulpar-tag label="Active"></tulpar-tag>`);
+      await el.updateComplete;
+      // Reproduce Vue's exact empty-slot light DOM: a comment placeholder plus
+      // surrounding indentation whitespace text nodes.
+      el.appendChild(document.createTextNode("\n  "));
+      el.appendChild(document.createComment(""));
+      el.appendChild(document.createTextNode("\n  "));
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+      await el.updateComplete;
+      expect((el as unknown as { _hasSlotLabel: boolean })._hasSlotLabel).to.be.false;
+      // The prop renders in a visible sibling span (not as suppressed fallback).
+      const labelProp = el.shadowRoot!.querySelector(".label-prop");
+      expect(labelProp, ".label-prop sibling should render the prop").to.exist;
+      expect(labelProp!.textContent).to.contain("Active");
+      expect(tagEl(el).textContent).to.contain("Active");
+    });
   });
 });

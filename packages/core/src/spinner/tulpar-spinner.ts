@@ -1,6 +1,7 @@
 import { LitElement, html, nothing, type PropertyValues } from "lit";
 import { property, state } from "lit/decorators.js";
 import { resolveTone } from "../_internal/tone/tone-resolver";
+import { hasMeaningfulContent } from "../_internal/slot-content";
 import { spinnerStyles } from "./tulpar-spinner.styles";
 
 export type SpinnerSize = "xs" | "sm" | "md" | "lg" | "xl";
@@ -166,10 +167,10 @@ export class TulparSpinner extends LitElement {
     // (slotchange→requestUpdate loop, see CLAUDE.md). Real slotted content still
     // wins because assignedNodes() only returns true light-DOM children.
     const nodes = slot.assignedNodes();
-    this._hasSlotLabel = nodes.some((n) => {
-      if (n.nodeType === Node.TEXT_NODE) return (n.textContent ?? "").trim().length > 0;
-      return true;
-    });
+    // Count ONLY meaningful content (elements / non-whitespace text). A bare
+    // comment node (Vue's empty-`<slot/>` `<!---->` placeholder) must NOT count,
+    // else it suppresses the `label` prop and nothing renders. See slot-content.
+    this._hasSlotLabel = hasMeaningfulContent(nodes);
   };
 
   override render() {
@@ -189,9 +190,10 @@ export class TulparSpinner extends LitElement {
         <span></span><span></span><span></span>
       </span>
       <span class="sr-only">
-        <slot name="label" @slotchange=${this._onLabelSlotChange}
-          >${!this._hasSlotLabel ? this.label : nothing}</slot
-        >
+        ${!this._hasSlotLabel && this.label
+          ? html`<span class="label-prop">${this.label}</span>`
+          : nothing}
+        <slot name="label" @slotchange=${this._onLabelSlotChange}></slot>
       </span>
     `;
   }

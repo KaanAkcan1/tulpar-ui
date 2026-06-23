@@ -1,6 +1,7 @@
 import { LitElement, html, nothing, type PropertyValues } from "lit";
 import { property, state } from "lit/decorators.js";
 import { resolveTone } from "../_internal/tone/tone-resolver";
+import { hasMeaningfulContent } from "../_internal/slot-content";
 import { progressStyles } from "./tulpar-progress.styles";
 
 /** Monotonic counter → a stable, unique id for each instance's label wrapper. */
@@ -232,11 +233,11 @@ export class TulparProgress extends LitElement {
    */
   private _onLabelSlotChange = (e: Event): void => {
     const slot = e.target as HTMLSlotElement;
-    const nodes = slot.assignedNodes({ flatten: true });
-    this._hasSlotLabel = nodes.some((n) => {
-      if (n.nodeType === Node.TEXT_NODE) return (n.textContent ?? "").trim().length > 0;
-      return true;
-    });
+    // Count ONLY meaningful content (elements / non-whitespace text). A bare
+    // comment node (Vue's empty-`<slot/>` `<!---->` placeholder) must NOT count,
+    // else it spuriously flips `_hasSlotLabel` and points aria-labelledby at an
+    // empty label wrapper. See slot-content.
+    this._hasSlotLabel = hasMeaningfulContent(slot.assignedNodes({ flatten: true }));
   };
 
   // ─── Tone color ──────────────────────────────────────────────────────────

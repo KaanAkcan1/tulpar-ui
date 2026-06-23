@@ -1,5 +1,6 @@
 import { LitElement, html, nothing, type PropertyValues } from "lit";
 import { property, state } from "lit/decorators.js";
+import { hasMeaningfulContent } from "../_internal/slot-content";
 import { badgeStyles } from "./tulpar-badge.styles";
 
 export type BadgeTone = "neutral" | "info" | "success" | "warning" | "danger";
@@ -169,10 +170,10 @@ export class TulparBadge extends LitElement {
     // (slotchange→requestUpdate loop, see CLAUDE.md). Real slotted content still
     // wins because assignedNodes() only returns true light-DOM children.
     const nodes = slot.assignedNodes();
-    this._hasSlotLabel = nodes.some((n) => {
-      if (n.nodeType === Node.TEXT_NODE) return (n.textContent ?? "").trim().length > 0;
-      return true;
-    });
+    // Count ONLY meaningful content (elements / non-whitespace text). A bare
+    // comment node (Vue's empty-`<slot/>` `<!---->` placeholder) must NOT count,
+    // else it suppresses the `label` prop and nothing renders. See slot-content.
+    this._hasSlotLabel = hasMeaningfulContent(nodes);
     this._slotText = nodes
       .map((n) => n.textContent ?? "")
       .join("")
@@ -192,10 +193,10 @@ export class TulparBadge extends LitElement {
           >${display !== null ? display : nothing}</span
         >
         <span class="label" part="label"
-          ><slot @slotchange=${this._onSlotChange}
-            >${!this._hasSlotLabel && this.label ? this.label : nothing}</slot
-          ></span
-        >
+          >${!this._hasSlotLabel && this.label
+            ? html`<span class="label-prop">${this.label}</span>`
+            : nothing}<slot @slotchange=${this._onSlotChange}></slot
+        ></span>
       </span>
     `;
   }

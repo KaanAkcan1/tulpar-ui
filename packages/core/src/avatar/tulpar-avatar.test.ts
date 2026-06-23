@@ -240,6 +240,23 @@ describe("<tulpar-avatar>", () => {
       expect(initials(el)!.textContent!.trim()).to.equal("JD");
     });
 
+    // Vue leaves a `<!---->` comment in the light DOM for an empty `<slot/>`
+    // outlet. A comment node must NOT count as slot content, else the whole
+    // image/initials/icon cascade is suppressed and the avatar renders empty
+    // (Vue-only symptom — Angular's empty <ng-content> leaves nothing behind).
+    it("comment node in light DOM does NOT count (cascade still runs — Vue empty-slot)", async () => {
+      const el = await fixture<TulparAvatar>(html`<tulpar-avatar name="Jane Doe"></tulpar-avatar>`);
+      await el.updateComplete;
+      el.appendChild(document.createComment(""));
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+      await el.updateComplete;
+      expect((el as unknown as { _hasSlotContent: boolean })._hasSlotContent).to.equal(false);
+      expect(el.hasAttribute("data-slot-content")).to.equal(false);
+      // the initials cascade still renders
+      expect(initials(el)).to.exist;
+      expect(initials(el)!.textContent!.trim()).to.equal("JD");
+    });
+
     it("clears role + aria-label when custom slot content is shown", async () => {
       const el = await fixture<TulparAvatar>(
         html`<tulpar-avatar name="Jane Doe"><span>icon</span></tulpar-avatar>`,

@@ -1,6 +1,7 @@
 import { LitElement, html, nothing, type PropertyValues } from "lit";
 import { property, query, state } from "lit/decorators.js";
 import { resolveTone, type ToneValue } from "../_internal/tone/tone-resolver";
+import { hasMeaningfulContent, isMeaningfulNode } from "../_internal/slot-content";
 import { tagStyles } from "./tulpar-tag.styles";
 
 export type TagVariant = "soft-tonal" | "outline" | "solid";
@@ -211,10 +212,10 @@ export class TulparTag extends LitElement {
     // assignedNodes() returns only real light-DOM content, so the prop fallback
     // is correctly ignored and "slot wins over prop" still holds.
     const nodes = slot.assignedNodes();
-    this._hasSlotLabel = nodes.some((n) => {
-      if (n.nodeType === Node.TEXT_NODE) return (n.textContent ?? "").trim().length > 0;
-      return true;
-    });
+    // Count ONLY meaningful content (elements / non-whitespace text). A bare
+    // comment node (Vue's empty-`<slot/>` `<!---->` placeholder) must NOT count,
+    // else it suppresses the `label` prop and nothing renders. See slot-content.
+    this._hasSlotLabel = hasMeaningfulContent(nodes);
     this._slotText = nodes
       .map((n) => n.textContent ?? "")
       .join("")
@@ -224,7 +225,9 @@ export class TulparTag extends LitElement {
 
   private _onIconSlotChange = (e: Event): void => {
     const slot = e.target as HTMLSlotElement;
-    this._hasSlotIcon = slot.assignedNodes({ flatten: true }).length > 0;
+    // Only meaningful nodes count — a stray comment node (e.g. Vue's empty-slot
+    // `<!---->` placeholder) must not flip the slot-wins-over-prop flag.
+    this._hasSlotIcon = slot.assignedNodes({ flatten: true }).some(isMeaningfulNode);
     // Slot wins over the prop: hide the imperative prop target when slotted.
     this.toggleAttribute("data-slot-icon", this._hasSlotIcon);
   };
@@ -243,9 +246,10 @@ export class TulparTag extends LitElement {
           <slot name="icon" @slotchange=${this._onIconSlotChange}></slot>
         </span>
         <span class="label" part="label">
-          <slot @slotchange=${this._onSlotChange}
-            >${!this._hasSlotLabel && this.label ? this.label : nothing}</slot
-          >
+          ${!this._hasSlotLabel && this.label
+            ? html`<span class="label-prop">${this.label}</span>`
+            : nothing}
+          <slot @slotchange=${this._onSlotChange}></slot>
         </span>
       </span>
     `;

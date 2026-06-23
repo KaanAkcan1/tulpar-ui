@@ -206,5 +206,23 @@ describe("<tulpar-badge>", () => {
       // A subsequent update still resolves (the element is not wedged).
       await el.updateComplete;
     });
+
+    // Vue leaves a `<!---->` comment + whitespace text nodes in the light DOM
+    // for an empty `<slot/>` outlet. Neither may count as slot content, else the
+    // `label` prop is suppressed and the badge renders empty (Vue-only symptom).
+    // The prop is rendered as a sibling `.label-prop` span (NOT slot fallback).
+    it("comment + whitespace light DOM does NOT suppress the label prop (Vue empty-slot)", async () => {
+      const el = await fixture<TulparBadge>(html`<tulpar-badge label="New"></tulpar-badge>`);
+      await el.updateComplete;
+      el.appendChild(document.createTextNode("\n  "));
+      el.appendChild(document.createComment(""));
+      el.appendChild(document.createTextNode("\n  "));
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+      await el.updateComplete;
+      expect((el as unknown as { _hasSlotLabel: boolean })._hasSlotLabel).to.be.false;
+      const labelProp = el.shadowRoot!.querySelector(".label-prop");
+      expect(labelProp, ".label-prop sibling should render the prop").to.exist;
+      expect(labelProp!.textContent).to.contain("New");
+    });
   });
 });
