@@ -129,8 +129,8 @@ function show1s() {
       <p class="section-desc">
         Four tones: <code class="inline-code">info</code> ·
         <code class="inline-code">success</code> · <code class="inline-code">warning</code> ·
-        <code class="inline-code">danger</code>. Each shows as a top-center pill with its status icon
-        and auto-dismisses in 3 s. Messages use
+        <code class="inline-code">danger</code>. Each shows as a top-center pill with its status
+        icon and auto-dismisses in 3 s. Messages use
         <code class="inline-code">role="status"</code> /
         <code class="inline-code">aria-live="polite"</code> and never steal focus.
       </p>
@@ -149,8 +149,8 @@ function show1s() {
       <p class="section-desc">
         <strong>Default (<code class="inline-code">group:true</code>):</strong> Calls with the same
         tone + text merge into a single pill with a ×N counter — ideal for repeated triggers (copy
-        button, auto-save). <code class="inline-code">group:false</code> creates a separate pill each
-        time. Press the "Copy" button rapidly to see the counter increment.
+        button, auto-save). <code class="inline-code">group:false</code> creates a separate pill
+        each time. Press the "Copy" button rapidly to see the counter increment.
       </p>
       <div class="preview">
         <div class="stack-demo-cols">
@@ -179,8 +179,8 @@ function show1s() {
       <h2 class="section-title">3. Duration</h2>
       <p class="section-desc">
         Default auto-dismiss is 3 s. Pass <code class="inline-code">duration</code> to override
-        per-call. Unlike Toast, there is no <code class="inline-code">timer:false</code> on Message —
-        if you need a persistent notification with a close button, use Toast instead.
+        per-call. Unlike Toast, there is no <code class="inline-code">timer:false</code> on Message
+        — if you need a persistent notification with a close button, use Toast instead.
       </p>
       <div class="preview preview--trigger-grid">
         <button class="trigger-btn" @click="showDefault">Default (3s)</button>

@@ -13,23 +13,21 @@ import { createApp } from "vue";
 // vi.mock hoisting means the factory runs before any import, so mocking here is safe.
 vi.mock("@tulpar-ui/core/toast", () => {
   const toastFn = vi.fn(() => "toast-id-1");
-  toastFn.success  = vi.fn(() => "toast-id-2");
-  toastFn.info     = vi.fn(() => "toast-id-3");
-  toastFn.warning  = vi.fn(() => "toast-id-4");
-  toastFn.danger   = vi.fn(() => "toast-id-5");
-  toastFn.custom   = vi.fn(() => "toast-id-6");
-  toastFn.update   = vi.fn();
-  toastFn.dismiss  = vi.fn();
+  toastFn.success = vi.fn(() => "toast-id-2");
+  toastFn.info = vi.fn(() => "toast-id-3");
+  toastFn.warning = vi.fn(() => "toast-id-4");
+  toastFn.danger = vi.fn(() => "toast-id-5");
+  toastFn.custom = vi.fn(() => "toast-id-6");
+  toastFn.update = vi.fn();
+  toastFn.dismiss = vi.fn();
   toastFn.setDefaults = vi.fn();
-  toastFn.promise  = vi.fn(
-    <T>(p: Promise<T>) => p,
-  );
+  toastFn.promise = vi.fn(<T>(p: Promise<T>) => p);
 
   const messageFn = vi.fn(() => "msg-id-1");
   messageFn.success = vi.fn(() => "msg-id-2");
-  messageFn.info    = vi.fn(() => "msg-id-3");
+  messageFn.info = vi.fn(() => "msg-id-3");
   messageFn.warning = vi.fn(() => "msg-id-4");
-  messageFn.danger  = vi.fn(() => "msg-id-5");
+  messageFn.danger = vi.fn(() => "msg-id-5");
   messageFn.dismiss = vi.fn();
 
   return {
@@ -39,11 +37,7 @@ vi.mock("@tulpar-ui/core/toast", () => {
 });
 
 import * as coreMock from "@tulpar-ui/core/toast";
-import {
-  useTulparToast,
-  useTulparMessage,
-  TulparToastPlugin,
-} from "./index";
+import { useTulparToast, useTulparMessage, TulparToastPlugin } from "./index";
 import type {
   ToastOptions,
   MessageOptions,
@@ -53,7 +47,7 @@ import type {
   ToastPromiseMsgs,
 } from "./index";
 
-const coreToast   = coreMock.toast   as ReturnType<typeof vi.fn> & typeof coreMock.toast;
+const coreToast = coreMock.toast as ReturnType<typeof vi.fn> & typeof coreMock.toast;
 const coreMessage = coreMock.message as ReturnType<typeof vi.fn> & typeof coreMock.message;
 
 afterEach(() => {

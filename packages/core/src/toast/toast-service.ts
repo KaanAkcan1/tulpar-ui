@@ -25,7 +25,11 @@
 
 import { ToasterQueue } from "../_internal/toaster/queue";
 import type { Location } from "../_internal/toaster/queue";
-import { getLocationContainer, restorePreviousFocus, __resetToasterRootForTest } from "../_internal/toaster/toaster-root";
+import {
+  getLocationContainer,
+  restorePreviousFocus,
+  __resetToasterRootForTest,
+} from "../_internal/toaster/toaster-root";
 import { ToastTimer } from "../_internal/toaster/timer-controller";
 import { collapsedLayout, expandedLayout } from "../_internal/toaster/stacking";
 import { TulparToast } from "./tulpar-toast";
@@ -438,27 +442,17 @@ function _promoteQueued(location: Location): void {
  * add it to the queue, start its timer, and wire event listeners.
  * Returns the toast id.
  */
-function _mountToast(
-  title: string,
-  opts: ToastOptions,
-  variant: "toast" | "message",
-): string {
+function _mountToast(title: string, opts: ToastOptions, variant: "toast" | "message"): string {
   const location: Location =
-    variant === "message"
-      ? (opts.location ?? "top-center")
-      : (opts.location ?? _defaults.location);
+    variant === "message" ? (opts.location ?? "top-center") : (opts.location ?? _defaults.location);
 
   const duration =
-    opts.duration !== undefined
-      ? opts.duration
-      : variant === "message"
-        ? 3000
-        : _defaults.duration;
+    opts.duration !== undefined ? opts.duration : variant === "message" ? 3000 : _defaults.duration;
 
   const timerStyle = opts.timerStyle ?? _defaults.timerStyle;
   const tone = opts.tone ?? "info";
   const closable = variant === "message" ? false : (opts.closable ?? true);
-  const timer = opts.timer ?? (duration > 0);
+  const timer = opts.timer ?? duration > 0;
 
   // ── Grouping (message only) ─────────────────────────────────────────────────
   const group = variant === "message" ? (opts as MessageOptions).group !== false : false;
@@ -782,21 +776,23 @@ _toast.promise = <T>(
   msgs: ToastPromiseMsgs<T>,
   opts: Omit<ToastOptions, "tone" | "icon" | "closable" | "timer"> = {},
 ): Promise<T> => {
-  const id = _mountToast(msgs.loading, {
-    ...opts,
-    tone: "info",
-    icon: ICON_SPINNER,
-    closable: false,
-    timer: false,
-  }, "toast");
+  const id = _mountToast(
+    msgs.loading,
+    {
+      ...opts,
+      tone: "info",
+      icon: ICON_SPINNER,
+      closable: false,
+      timer: false,
+    },
+    "toast",
+  );
 
   // Attach side-effects on the returned promise WITHOUT altering the original settle chain.
   // We use p.then(onFulfilled, onRejected) to catch both paths in one microtask queue tick.
   p.then(
     (value) => {
-      const successMsg = typeof msgs.success === "function"
-        ? msgs.success(value)
-        : msgs.success;
+      const successMsg = typeof msgs.success === "function" ? msgs.success(value) : msgs.success;
       _toast.update(id, {
         tone: "success",
         title: successMsg,
@@ -807,9 +803,7 @@ _toast.promise = <T>(
       });
     },
     (err) => {
-      const errorMsg = typeof msgs.error === "function"
-        ? msgs.error(err)
-        : msgs.error;
+      const errorMsg = typeof msgs.error === "function" ? msgs.error(err) : msgs.error;
       _toast.update(id, {
         tone: "danger",
         title: errorMsg,

@@ -2,19 +2,25 @@
 import { onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import {
+  BadgeCheck,
   Bell,
   BookOpen,
   CheckSquare,
   CircleDot,
+  CircleUserRound,
   FormInput,
+  Gauge,
   Hash,
   Layers,
   ListChecks,
+  LoaderCircle,
   MessageCircle,
   MessageSquare,
   MessageSquareText,
   Palette,
+  RectangleHorizontal,
   SquareMousePointer,
+  Tag,
   TextCursorInput,
   ToggleLeft,
   WrapText,
@@ -107,6 +113,20 @@ const menu: TulparNavItemVueData[] = [
     items: [
       { label: "Toast", href: "/toast", icon: Bell },
       { label: "Message", href: "/message", icon: MessageCircle },
+    ],
+  },
+  // Display & Status atoms — Tag/Badge/Chip/Avatar/Skeleton/Spinner/Progress (v0.13).
+  {
+    type: "section",
+    label: "Display & Status atoms",
+    items: [
+      { label: "Tag", href: "/tag", icon: Tag },
+      { label: "Badge", href: "/badge", icon: BadgeCheck },
+      { label: "Chip", href: "/chip", icon: CircleDot },
+      { label: "Avatar", href: "/avatar", icon: CircleUserRound },
+      { label: "Skeleton", href: "/skeleton", icon: RectangleHorizontal },
+      { label: "Spinner", href: "/spinner", icon: LoaderCircle },
+      { label: "Progress", href: "/progress", icon: Gauge },
     ],
   },
   {

@@ -232,24 +232,28 @@ const THEME_SNIPPET = `<!-- show-mode-selection is ON by default. The sidenav re
     <section class="doc-section">
       <h2 class="section-title">Feedback family — Toast &amp; Message</h2>
       <p class="section-desc">
-        Transient, code-triggered notifications powered by a single imperative service.
-        Two channels split by weight:
+        Transient, code-triggered notifications powered by a single imperative service. Two channels
+        split by weight:
       </p>
       <dl class="def">
         <div class="def-row">
           <dt><code>Toast</code></dt>
           <dd>
-            Corner card — icon · title · description · action(s) · close. Stacks, timers out (5 s default),
-            supports <code>toast.promise</code> for async flows. Use for background events, confirmations
-            with an Undo action, and non-critical errors.
-            <br /><a class="feedback-link" routerLink="/toast">Toast demo →</a>
+            Corner card — icon · title · description · action(s) · close. Stacks, timers out (5 s
+            default), supports <code>toast.promise</code> for async flows. Use for background
+            events, confirmations with an Undo action, and non-critical errors. <br /><a
+              class="feedback-link"
+              routerLink="/toast"
+              >Toast demo →</a
+            >
           </dd>
         </div>
         <div class="def-row">
           <dt><code>Message</code></dt>
           <dd>
             Top-center pill — single line, auto-dismiss (3 s), deduplicates repeated calls into a ×N
-            counter. No actions, no close button. Use for redundant confirmations: "Copied", "Saved".
+            counter. No actions, no close button. Use for redundant confirmations: "Copied",
+            "Saved".
             <br /><a class="feedback-link" routerLink="/message">Message demo →</a>
           </dd>
         </div>

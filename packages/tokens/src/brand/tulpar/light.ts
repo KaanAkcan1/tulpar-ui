@@ -433,10 +433,20 @@ export const tulparLight: SemanticTokens = {
       // border raised to clear WCAG 3:1 against the [50] surface (enforced by feedback.contrast.test.ts):
       //   info [500]=3.69, success [400]=3.60, warning [700]=4.72 ([600] only 2.97), danger [400]=3.11.
       // warning accent also raised to [700] — [600]=2.97 narrowly fails 3:1.
-      info:    { surface: c.gok[50],    onSurface: c.gok[900],    border: c.gok[500],    accent: c.gok[600]    },
-      success: { surface: c.otuken[50], onSurface: c.otuken[900], border: c.otuken[400], accent: c.otuken[500] },
-      warning: { surface: c.ulgen[50],  onSurface: c.ulgen[900],  border: c.ulgen[700],  accent: c.ulgen[700]  },
-      danger:  { surface: c.al[50],     onSurface: c.al[900],     border: c.al[400],     accent: c.al[600]     },
+      info: { surface: c.gok[50], onSurface: c.gok[900], border: c.gok[500], accent: c.gok[600] },
+      success: {
+        surface: c.otuken[50],
+        onSurface: c.otuken[900],
+        border: c.otuken[400],
+        accent: c.otuken[500],
+      },
+      warning: {
+        surface: c.ulgen[50],
+        onSurface: c.ulgen[900],
+        border: c.ulgen[700],
+        accent: c.ulgen[700],
+      },
+      danger: { surface: c.al[50], onSurface: c.al[900], border: c.al[400], accent: c.al[600] },
     },
     // High-contrast danger: saturated al[600] surface + white text (Carbon HC notification model).
     dangerHc: { surface: c.al[600], on: "#ffffff" },
@@ -448,20 +458,65 @@ export const tulparLight: SemanticTokens = {
     // Must sit above overlay (1000) + shell/sidenav (200/300).
     zIndex: "9000",
     motion: {
-      durationEnter:      "220ms",
-      durationExit:       "160ms",
+      durationEnter: "220ms",
+      durationExit: "160ms",
       durationReposition: "300ms",
-      easing:             "cubic-bezier(.22,1,.36,1)",
-      defaultDuration:    "5000ms",
-      messageDuration:    "3000ms",
+      easing: "cubic-bezier(.22,1,.36,1)",
+      defaultDuration: "5000ms",
+      messageDuration: "3000ms",
     },
     size: {
-      toastMaxWidth:  "360px",
-      toastRadius:    "12px",
-      toastPadding:   "12px 16px",
+      toastMaxWidth: "360px",
+      toastRadius: "12px",
+      toastPadding: "12px 16px",
       messagePadding: "8px 14px",
-      ringStroke:     "1.5px",
+      ringStroke: "1.5px",
     },
+  },
+
+  atom: {
+    // Display-atom tone palette (light). Family→tone mapping:
+    //   neutral → kara (slate), info → gok (blue), success → otuken (green),
+    //   warning → ulgen (amber), danger → al (red).
+    // soft    = tinted [100] surface + [800] text + tone border (contrast-tuned).
+    // outline = tone text + tone border drawn on the page surface (white).
+    // solid   = saturated fill + on-color text (white, or yagiz ink on amber).
+    // Border steps raised above the spec starting points to clear WCAG 3:1 on the
+    // [100] fill / white page (enforced by atom.contrast.test.ts):
+    //   soft border [200|300]→[400|500|700]; info outline border [400]→[500].
+    tone: {
+      neutral: {
+        soft: { surface: c.kara[100], text: c.kara[800], border: c.kara[500] },
+        outline: { text: c.kara[700], border: c.kara[400] },
+        solid: { bg: c.kara[800], text: c.colpan[50] },
+      },
+      info: {
+        soft: { surface: c.gok[100], text: c.gok[800], border: c.gok[500] },
+        outline: { text: c.gok[700], border: c.gok[500] },
+        solid: { bg: c.gok[600], text: "#ffffff" },
+      },
+      success: {
+        soft: { surface: c.otuken[100], text: c.otuken[800], border: c.otuken[400] },
+        outline: { text: c.otuken[700], border: c.otuken[400] },
+        solid: { bg: c.otuken[600], text: "#ffffff" },
+      },
+      warning: {
+        soft: { surface: c.ulgen[100], text: c.ulgen[800], border: c.ulgen[700] },
+        outline: { text: c.ulgen[800], border: c.ulgen[600] },
+        solid: { bg: c.ulgen[500], text: c.yagiz[900] },
+      },
+      danger: {
+        soft: { surface: c.al[100], text: c.al[800], border: c.al[500] },
+        outline: { text: c.al[700], border: c.al[400] },
+        solid: { bg: c.al[600], text: "#ffffff" },
+      },
+    },
+    // Flow-gradient anchors (light): solid-bg-weight steps that read on a light
+    // track. low=al red, mid=ulgen amber, high=otuken green. These auto-flip to
+    // the dark anchors under `.dark` via the generated sheet — so a fill that
+    // references them re-resolves on a runtime dark toggle even across a shadow
+    // boundary (custom-property inheritance crosses it; :host-context does not).
+    flow: { low: c.al[500], mid: c.ulgen[500], high: c.otuken[600] },
   },
 
   easing: { decelerate: primitiveTransition.easing.decelerate },

@@ -1,35 +1,35 @@
 import { expect } from "@open-wc/testing";
-import { resolveTone } from "./tone-resolver";
+import { resolveTone, BRAND_FAMILIES } from "./tone-resolver";
 
 // ─── Built-in tones ──────────────────────────────────────────────────────────
 
 describe("resolveTone — built-in tones", () => {
   it("info: builtin=true, vars={}", () => {
-    const r = resolveTone({ tone: "info" });
+    const r = resolveTone({ tone: "info" }, { prefix: "toast" });
     expect(r.builtin).to.equal(true);
     expect(Object.keys(r.vars).length).to.equal(0);
   });
 
   it("success: builtin=true, vars={}", () => {
-    const r = resolveTone({ tone: "success" });
+    const r = resolveTone({ tone: "success" }, { prefix: "toast" });
     expect(r.builtin).to.equal(true);
     expect(Object.keys(r.vars).length).to.equal(0);
   });
 
   it("warning: builtin=true, vars={}", () => {
-    const r = resolveTone({ tone: "warning" });
+    const r = resolveTone({ tone: "warning" }, { prefix: "toast" });
     expect(r.builtin).to.equal(true);
     expect(Object.keys(r.vars).length).to.equal(0);
   });
 
   it("danger: builtin=true, vars={}", () => {
-    const r = resolveTone({ tone: "danger" });
+    const r = resolveTone({ tone: "danger" }, { prefix: "toast" });
     expect(r.builtin).to.equal(true);
     expect(Object.keys(r.vars).length).to.equal(0);
   });
 
   it("undefined tone defaults to info (builtin=true)", () => {
-    const r = resolveTone({});
+    const r = resolveTone({}, { prefix: "toast" });
     expect(r.builtin).to.equal(true);
     expect(Object.keys(r.vars).length).to.equal(0);
   });
@@ -39,32 +39,32 @@ describe("resolveTone — built-in tones", () => {
 
 describe("resolveTone — highContrast", () => {
   it("danger + highContrast=true → highContrast:true", () => {
-    const r = resolveTone({ tone: "danger", highContrast: true });
+    const r = resolveTone({ tone: "danger", highContrast: true }, { prefix: "toast" });
     expect(r.highContrast).to.equal(true);
   });
 
   it("danger + highContrast=false → highContrast:false", () => {
-    const r = resolveTone({ tone: "danger", highContrast: false });
+    const r = resolveTone({ tone: "danger", highContrast: false }, { prefix: "toast" });
     expect(r.highContrast).to.equal(false);
   });
 
   it("info + highContrast=true → highContrast:false (no-op for non-danger)", () => {
-    const r = resolveTone({ tone: "info", highContrast: true });
+    const r = resolveTone({ tone: "info", highContrast: true }, { prefix: "toast" });
     expect(r.highContrast).to.equal(false);
   });
 
   it("success + highContrast=true → highContrast:false", () => {
-    const r = resolveTone({ tone: "success", highContrast: true });
+    const r = resolveTone({ tone: "success", highContrast: true }, { prefix: "toast" });
     expect(r.highContrast).to.equal(false);
   });
 
   it("warning + highContrast=true → highContrast:false", () => {
-    const r = resolveTone({ tone: "warning", highContrast: true });
+    const r = resolveTone({ tone: "warning", highContrast: true }, { prefix: "toast" });
     expect(r.highContrast).to.equal(false);
   });
 
   it("highContrast false by default for built-in non-danger", () => {
-    const r = resolveTone({ tone: "success" });
+    const r = resolveTone({ tone: "success" }, { prefix: "toast" });
     expect(r.highContrast).to.equal(false);
   });
 });
@@ -73,24 +73,28 @@ describe("resolveTone — highContrast", () => {
 
 describe("resolveTone — custom tone with brand family name", () => {
   it("ilay family: builtin=false, vars contain -l/-d surface/on-surface/border/accent props", () => {
-    const r = resolveTone({ tone: "custom", color: "ilay" });
+    const r = resolveTone({ tone: "custom", color: "ilay" }, { prefix: "toast" });
     expect(r.builtin).to.equal(false);
 
     // light-mode vars
     expect(r.vars["--tulpar-toast-surface-l"]).to.equal("var(--tulpar-primitive-color-ilay-50)");
-    expect(r.vars["--tulpar-toast-on-surface-l"]).to.equal("var(--tulpar-primitive-color-ilay-900)");
+    expect(r.vars["--tulpar-toast-on-surface-l"]).to.equal(
+      "var(--tulpar-primitive-color-ilay-900)",
+    );
     expect(r.vars["--tulpar-toast-border-l"]).to.equal("var(--tulpar-primitive-color-ilay-500)");
     expect(r.vars["--tulpar-toast-accent-l"]).to.equal("var(--tulpar-primitive-color-ilay-600)");
 
     // dark-mode vars
     expect(r.vars["--tulpar-toast-surface-d"]).to.equal("var(--tulpar-primitive-color-ilay-900)");
-    expect(r.vars["--tulpar-toast-on-surface-d"]).to.equal("var(--tulpar-primitive-color-ilay-100)");
+    expect(r.vars["--tulpar-toast-on-surface-d"]).to.equal(
+      "var(--tulpar-primitive-color-ilay-100)",
+    );
     expect(r.vars["--tulpar-toast-border-d"]).to.equal("var(--tulpar-primitive-color-ilay-500)");
     expect(r.vars["--tulpar-toast-accent-d"]).to.equal("var(--tulpar-primitive-color-ilay-400)");
   });
 
   it("gok family emits gok primitive refs", () => {
-    const r = resolveTone({ tone: "custom", color: "gok" });
+    const r = resolveTone({ tone: "custom", color: "gok" }, { prefix: "toast" });
     expect(r.builtin).to.equal(false);
     expect(r.vars["--tulpar-toast-surface-l"]).to.equal("var(--tulpar-primitive-color-gok-50)");
     expect(r.vars["--tulpar-toast-surface-d"]).to.equal("var(--tulpar-primitive-color-gok-900)");
@@ -99,35 +103,40 @@ describe("resolveTone — custom tone with brand family name", () => {
   });
 
   it("umay family emits umay primitive refs", () => {
-    const r = resolveTone({ tone: "custom", color: "umay" });
+    const r = resolveTone({ tone: "custom", color: "umay" }, { prefix: "toast" });
     expect(r.vars["--tulpar-toast-surface-l"]).to.equal("var(--tulpar-primitive-color-umay-50)");
     expect(r.vars["--tulpar-toast-surface-d"]).to.equal("var(--tulpar-primitive-color-umay-900)");
   });
 
   it("erlik family emits erlik primitive refs", () => {
-    const r = resolveTone({ tone: "custom", color: "erlik" });
+    const r = resolveTone({ tone: "custom", color: "erlik" }, { prefix: "toast" });
     expect(r.vars["--tulpar-toast-surface-l"]).to.equal("var(--tulpar-primitive-color-erlik-50)");
-    expect(r.vars["--tulpar-toast-on-surface-l"]).to.equal("var(--tulpar-primitive-color-erlik-900)");
+    expect(r.vars["--tulpar-toast-on-surface-l"]).to.equal(
+      "var(--tulpar-primitive-color-erlik-900)",
+    );
   });
 
   it("ulgen family emits ulgen primitive refs", () => {
-    const r = resolveTone({ tone: "custom", color: "ulgen" });
+    const r = resolveTone({ tone: "custom", color: "ulgen" }, { prefix: "toast" });
     expect(r.vars["--tulpar-toast-surface-l"]).to.equal("var(--tulpar-primitive-color-ulgen-50)");
     expect(r.vars["--tulpar-toast-border-l"]).to.equal("var(--tulpar-primitive-color-ulgen-500)");
   });
 
   it("kizagan family emits kizagan primitive refs", () => {
-    const r = resolveTone({ tone: "custom", color: "kizagan" });
+    const r = resolveTone({ tone: "custom", color: "kizagan" }, { prefix: "toast" });
     expect(r.vars["--tulpar-toast-surface-l"]).to.equal("var(--tulpar-primitive-color-kizagan-50)");
   });
 
   it("highContrast is false for custom tones (no-op)", () => {
-    const r = resolveTone({ tone: "custom", color: "ilay", highContrast: true });
+    const r = resolveTone(
+      { tone: "custom", color: "ilay", highContrast: true },
+      { prefix: "toast" },
+    );
     expect(r.highContrast).to.equal(false);
   });
 
   it("returns exactly 8 vars for a plain custom family (4 light + 4 dark)", () => {
-    const r = resolveTone({ tone: "custom", color: "ilay" });
+    const r = resolveTone({ tone: "custom", color: "ilay" }, { prefix: "toast" });
     expect(Object.keys(r.vars).length).to.equal(8);
   });
 });
@@ -136,7 +145,7 @@ describe("resolveTone — custom tone with brand family name", () => {
 
 describe("resolveTone — custom tone with raw CSS color", () => {
   it("hex color: builtin=false, vars contain -l/-d pairs (derived values)", () => {
-    const r = resolveTone({ tone: "custom", color: "#0d9488" });
+    const r = resolveTone({ tone: "custom", color: "#0d9488" }, { prefix: "toast" });
     expect(r.builtin).to.equal(false);
     // Should emit -l and -d variants for all 4 slots
     expect("--tulpar-toast-surface-l" in r.vars).to.equal(true);
@@ -150,38 +159,38 @@ describe("resolveTone — custom tone with raw CSS color", () => {
   });
 
   it("hex color: light surface is a tinted (very light) color-mix", () => {
-    const r = resolveTone({ tone: "custom", color: "#0d9488" });
+    const r = resolveTone({ tone: "custom", color: "#0d9488" }, { prefix: "toast" });
     // Light surface should mix toward white for a tinted background
     expect(r.vars["--tulpar-toast-surface-l"]).to.include("color-mix");
     expect(r.vars["--tulpar-toast-surface-l"]).to.include("#0d9488");
   });
 
   it("hex color: dark surface is a tinted dark color-mix", () => {
-    const r = resolveTone({ tone: "custom", color: "#0d9488" });
+    const r = resolveTone({ tone: "custom", color: "#0d9488" }, { prefix: "toast" });
     expect(r.vars["--tulpar-toast-surface-d"]).to.include("color-mix");
     expect(r.vars["--tulpar-toast-surface-d"]).to.include("#0d9488");
   });
 
   it("hex color: accent-l is the raw color itself", () => {
-    const r = resolveTone({ tone: "custom", color: "#0d9488" });
+    const r = resolveTone({ tone: "custom", color: "#0d9488" }, { prefix: "toast" });
     expect(r.vars["--tulpar-toast-accent-l"]).to.equal("#0d9488");
   });
 
   it("rgb() color is treated as raw color (not a family name)", () => {
-    const r = resolveTone({ tone: "custom", color: "rgb(13, 148, 136)" });
+    const r = resolveTone({ tone: "custom", color: "rgb(13, 148, 136)" }, { prefix: "toast" });
     expect(r.builtin).to.equal(false);
     expect("--tulpar-toast-surface-l" in r.vars).to.equal(true);
   });
 
   it("unknown non-family string treated as raw color", () => {
-    const r = resolveTone({ tone: "custom", color: "notafamily" });
+    const r = resolveTone({ tone: "custom", color: "notafamily" }, { prefix: "toast" });
     expect(r.builtin).to.equal(false);
     // Should still emit the vars (raw color path)
     expect("--tulpar-toast-surface-l" in r.vars).to.equal(true);
   });
 
   it("returns exactly 8 vars for a raw hex (4 light + 4 dark)", () => {
-    const r = resolveTone({ tone: "custom", color: "#abc123" });
+    const r = resolveTone({ tone: "custom", color: "#abc123" }, { prefix: "toast" });
     expect(Object.keys(r.vars).length).to.equal(8);
   });
 });
@@ -190,31 +199,37 @@ describe("resolveTone — custom tone with raw CSS color", () => {
 
 describe("resolveTone — part overrides", () => {
   it("bg override replaces both surface-l and surface-d with the literal value", () => {
-    const r = resolveTone({ tone: "custom", color: "ilay", bg: "#ff0000" });
+    const r = resolveTone({ tone: "custom", color: "ilay", bg: "#ff0000" }, { prefix: "toast" });
     expect(r.vars["--tulpar-toast-surface-l"]).to.equal("#ff0000");
     expect(r.vars["--tulpar-toast-surface-d"]).to.equal("#ff0000");
   });
 
   it("accent override replaces both accent-l and accent-d", () => {
-    const r = resolveTone({ tone: "custom", color: "ilay", accent: "#00ff00" });
+    const r = resolveTone(
+      { tone: "custom", color: "ilay", accent: "#00ff00" },
+      { prefix: "toast" },
+    );
     expect(r.vars["--tulpar-toast-accent-l"]).to.equal("#00ff00");
     expect(r.vars["--tulpar-toast-accent-d"]).to.equal("#00ff00");
   });
 
   it("text override replaces both on-surface-l and on-surface-d", () => {
-    const r = resolveTone({ tone: "custom", color: "ilay", text: "white" });
+    const r = resolveTone({ tone: "custom", color: "ilay", text: "white" }, { prefix: "toast" });
     expect(r.vars["--tulpar-toast-on-surface-l"]).to.equal("white");
     expect(r.vars["--tulpar-toast-on-surface-d"]).to.equal("white");
   });
 
   it("multiple overrides all apply simultaneously", () => {
-    const r = resolveTone({
-      tone: "custom",
-      color: "gok",
-      bg: "#111",
-      accent: "#222",
-      text: "#333",
-    });
+    const r = resolveTone(
+      {
+        tone: "custom",
+        color: "gok",
+        bg: "#111",
+        accent: "#222",
+        text: "#333",
+      },
+      { prefix: "toast" },
+    );
     expect(r.vars["--tulpar-toast-surface-l"]).to.equal("#111");
     expect(r.vars["--tulpar-toast-surface-d"]).to.equal("#111");
     expect(r.vars["--tulpar-toast-accent-l"]).to.equal("#222");
@@ -224,20 +239,23 @@ describe("resolveTone — part overrides", () => {
   });
 
   it("overrides also apply when color is a raw hex", () => {
-    const r = resolveTone({ tone: "custom", color: "#0d9488", bg: "teal" });
+    const r = resolveTone({ tone: "custom", color: "#0d9488", bg: "teal" }, { prefix: "toast" });
     expect(r.vars["--tulpar-toast-surface-l"]).to.equal("teal");
     expect(r.vars["--tulpar-toast-surface-d"]).to.equal("teal");
   });
 
   it("override still leaves border vars unchanged (only bg/accent/text override their slots)", () => {
-    const r = resolveTone({ tone: "custom", color: "ilay", bg: "#111" });
+    const r = resolveTone({ tone: "custom", color: "ilay", bg: "#111" }, { prefix: "toast" });
     // border should still be the derived family ref
     expect(r.vars["--tulpar-toast-border-l"]).to.equal("var(--tulpar-primitive-color-ilay-500)");
     expect(r.vars["--tulpar-toast-border-d"]).to.equal("var(--tulpar-primitive-color-ilay-500)");
   });
 
   it("total vars count stays 8 even with overrides", () => {
-    const r = resolveTone({ tone: "custom", color: "ilay", bg: "#ff0000", accent: "blue" });
+    const r = resolveTone(
+      { tone: "custom", color: "ilay", bg: "#ff0000", accent: "blue" },
+      { prefix: "toast" },
+    );
     expect(Object.keys(r.vars).length).to.equal(8);
   });
 });
@@ -246,7 +264,7 @@ describe("resolveTone — part overrides", () => {
 
 describe("resolveTone — custom tone without color", () => {
   it("tone=custom with no color: builtin=false, emits 8 neutral-surface vars (no transparent fallback)", () => {
-    const r = resolveTone({ tone: "custom" });
+    const r = resolveTone({ tone: "custom" }, { prefix: "toast" });
     expect(r.builtin).to.equal(false);
     // Must emit all 8 light/dark pairs — not an empty object (which would render transparent)
     expect(Object.keys(r.vars).length).to.equal(8);
@@ -261,31 +279,31 @@ describe("resolveTone — custom tone without color", () => {
   });
 
   it("tone=custom with no color: surface-l uses bg-surface semantic token with white fallback", () => {
-    const r = resolveTone({ tone: "custom" });
+    const r = resolveTone({ tone: "custom" }, { prefix: "toast" });
     expect(r.vars["--tulpar-toast-surface-l"]).to.include("--tulpar-color-bg-surface");
     expect(r.vars["--tulpar-toast-surface-l"]).to.include("#ffffff");
   });
 
   it("tone=custom with no color: surface-d uses bg-surface semantic token with dark fallback", () => {
-    const r = resolveTone({ tone: "custom" });
+    const r = resolveTone({ tone: "custom" }, { prefix: "toast" });
     expect(r.vars["--tulpar-toast-surface-d"]).to.include("--tulpar-color-bg-surface");
     expect(r.vars["--tulpar-toast-surface-d"]).to.include("#1e293b");
   });
 
   it("tone=custom with no color but with bg override: override takes effect over neutral base", () => {
-    const r = resolveTone({ tone: "custom", bg: "#fdf4ff" });
+    const r = resolveTone({ tone: "custom", bg: "#fdf4ff" }, { prefix: "toast" });
     expect(r.vars["--tulpar-toast-surface-l"]).to.equal("#fdf4ff");
     expect(r.vars["--tulpar-toast-surface-d"]).to.equal("#fdf4ff");
   });
 
   it("tone=custom with no color but with accent override: override takes effect", () => {
-    const r = resolveTone({ tone: "custom", accent: "#9333ea" });
+    const r = resolveTone({ tone: "custom", accent: "#9333ea" }, { prefix: "toast" });
     expect(r.vars["--tulpar-toast-accent-l"]).to.equal("#9333ea");
     expect(r.vars["--tulpar-toast-accent-d"]).to.equal("#9333ea");
   });
 
   it("tone=custom with no color but with text override: override takes effect", () => {
-    const r = resolveTone({ tone: "custom", text: "#3b0764" });
+    const r = resolveTone({ tone: "custom", text: "#3b0764" }, { prefix: "toast" });
     expect(r.vars["--tulpar-toast-on-surface-l"]).to.equal("#3b0764");
     expect(r.vars["--tulpar-toast-on-surface-d"]).to.equal("#3b0764");
   });
@@ -295,10 +313,48 @@ describe("resolveTone — custom tone without color", () => {
 
 describe("resolveTone — result shape", () => {
   it("always returns { builtin, vars, highContrast }", () => {
-    const r = resolveTone({ tone: "info" });
+    const r = resolveTone({ tone: "info" }, { prefix: "toast" });
     expect(typeof r.builtin).to.equal("boolean");
     expect(typeof r.vars).to.equal("object");
     expect(typeof r.highContrast).to.equal("boolean");
     expect(r.vars).to.not.equal(null);
+  });
+});
+
+// ─── parameterized prefix (Task 1.1) ─────────────────────────────────────────
+
+describe("resolveTone (parameterized prefix)", () => {
+  it("omitted tone → built-in (attribute-only); resolver default unchanged", () => {
+    const r = resolveTone({}, { prefix: "tag" });
+    expect(r.builtin).to.be.true;
+    expect(Object.keys(r.vars)).to.have.length(0);
+  });
+  it("built-in tone returns attribute-only result (no inline vars)", () => {
+    const r = resolveTone({ tone: "success" }, { prefix: "tag" });
+    expect(r.builtin).to.be.true;
+    expect(Object.keys(r.vars)).to.have.length(0);
+  });
+  it("adds neutral as a built-in tone", () => {
+    expect(resolveTone({ tone: "neutral" }, { prefix: "tag" }).builtin).to.be.true;
+  });
+  it("custom brand family emits prefix-scoped vars", () => {
+    const r = resolveTone({ tone: "custom", color: "ilay" }, { prefix: "tag" });
+    expect(r.builtin).to.be.false;
+    expect(r.vars["--tulpar-tag-surface-l"]).to.contain("--tulpar-primitive-color-ilay-50");
+    expect(r.vars["--tulpar-tag-surface-d"]).to.contain("--tulpar-primitive-color-ilay-900");
+  });
+  it("toast prefix preserves legacy keys", () => {
+    const r = resolveTone({ tone: "custom", color: "gok" }, { prefix: "toast" });
+    expect(r.vars).to.have.property("--tulpar-toast-surface-l");
+  });
+  it("high-contrast honored only for danger", () => {
+    expect(resolveTone({ tone: "danger", highContrast: true }, { prefix: "toast" }).highContrast).to
+      .be.true;
+    expect(resolveTone({ tone: "info", highContrast: true }, { prefix: "toast" }).highContrast).to
+      .be.false;
+  });
+  it("BRAND_FAMILIES is exported and contains known families", () => {
+    expect(BRAND_FAMILIES.has("ilay")).to.be.true;
+    expect(BRAND_FAMILIES.has("gok")).to.be.true;
   });
 });

@@ -5,11 +5,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import {
-  TulparToastComponent,
-  TulparToastService,
-  type ToastLocation,
-} from '@tulpar-ui/angular';
+import { TulparToastComponent, TulparToastService, type ToastLocation } from '@tulpar-ui/angular';
 
 // ─── Code snippet strings (outside @Component to avoid backtick nesting) ──────
 
@@ -240,9 +236,9 @@ toast.danger('Oturumunuz sona eriyor.', {
       <span class="page-tag">Feedback</span>
       <h1 class="page-title">Toast</h1>
       <p class="page-lede">
-        Toasts are code-triggered, transient, non-blocking feedback shown in a corner of the
-        screen. They stack, timer out, and carry optional actions. Use them for background
-        events, confirmations with an action (Undo), and errors that need user attention.
+        Toasts are code-triggered, transient, non-blocking feedback shown in a corner of the screen.
+        They stack, timer out, and carry optional actions. Use them for background events,
+        confirmations with an action (Undo), and errors that need user attention.
         <strong>Do not use</strong> for critical or irreversible information — that needs a Dialog.
       </p>
     </header>
@@ -256,7 +252,11 @@ toast.danger('Oturumunuz sona eriyor.', {
             <li>A background operation finishes (save, upload, sync)</li>
             <li>An action can be undone (delete → Undo)</li>
             <li>A non-critical error needs reporting</li>
-            <li>You need to show loading → result in one place (<code class="inline-code">toast.promise</code>)</li>
+            <li>
+              You need to show loading → result in one place (<code class="inline-code"
+                >toast.promise</code
+              >)
+            </li>
           </ul>
         </div>
         <div class="decision-col decision-col--no">
@@ -275,17 +275,21 @@ toast.danger('Oturumunuz sona eriyor.', {
     <section class="doc-section">
       <h2 class="section-title">1. Tones</h2>
       <p class="section-desc">
-        Five tones: <code class="inline-code">info</code> · <code class="inline-code">success</code> ·
-        <code class="inline-code">warning</code> · <code class="inline-code">danger</code> ·
+        Five tones: <code class="inline-code">info</code> ·
+        <code class="inline-code">success</code> · <code class="inline-code">warning</code> ·
+        <code class="inline-code">danger</code> ·
         <code class="inline-code">danger high-contrast</code>. Each carries its status icon.
-        High-contrast danger escalates to a saturated surface with white text for genuinely urgent failures.
+        High-contrast danger escalates to a saturated surface with white text for genuinely urgent
+        failures.
       </p>
       <div class="preview">
-        <button class="trigger-btn trigger-btn--info"    (click)="showInfo()">Info</button>
+        <button class="trigger-btn trigger-btn--info" (click)="showInfo()">Info</button>
         <button class="trigger-btn trigger-btn--success" (click)="showSuccess()">Success</button>
         <button class="trigger-btn trigger-btn--warning" (click)="showWarning()">Warning</button>
-        <button class="trigger-btn trigger-btn--danger"  (click)="showDanger()">Danger</button>
-        <button class="trigger-btn trigger-btn--danger-hc" (click)="showDangerHC()">Danger high-contrast</button>
+        <button class="trigger-btn trigger-btn--danger" (click)="showDanger()">Danger</button>
+        <button class="trigger-btn trigger-btn--danger-hc" (click)="showDangerHC()">
+          Danger high-contrast
+        </button>
       </div>
       <pre class="code"><code>{{ tonesCode }}</code></pre>
     </section>
@@ -294,10 +298,11 @@ toast.danger('Oturumunuz sona eriyor.', {
     <section class="doc-section">
       <h2 class="section-title">2. Content forms — prop form</h2>
       <p class="section-desc">
-        Every content capability is available as imperative options: title-only, title + description,
-        single action, two actions, long-text wrap, and <code class="inline-code">closable:false</code>.
-        The <code class="inline-code">description</code> prop is free-form text; actions accept a
-        label + onClick. Both slot forms are shown in the next section.
+        Every content capability is available as imperative options: title-only, title +
+        description, single action, two actions, long-text wrap, and
+        <code class="inline-code">closable:false</code>. The
+        <code class="inline-code">description</code> prop is free-form text; actions accept a label
+        + onClick. Both slot forms are shown in the next section.
       </p>
       <div class="preview preview--trigger-grid">
         <button class="trigger-btn" (click)="showTitleOnly()">Title only</button>
@@ -316,9 +321,10 @@ toast.danger('Oturumunuz sona eriyor.', {
       <h2 class="section-title">3. Content forms — slot form</h2>
       <p class="section-desc">
         The declarative <code class="inline-code">&lt;tulpar-toast-ng&gt;</code> element supports
-        <code class="inline-code">slot="title"</code> and <code class="inline-code">slot="description"</code>
-        for rich content. Slots win when both prop and slot are present.
-        The Fire buttons below launch live toasts via the imperative API using equivalent rich markup.
+        <code class="inline-code">slot="title"</code> and
+        <code class="inline-code">slot="description"</code>
+        for rich content. Slots win when both prop and slot are present. The Fire buttons below
+        launch live toasts via the imperative API using equivalent rich markup.
       </p>
       <div class="preview preview--col">
         <div class="slot-demo-label">slot="title" — rich markup in the heading</div>
@@ -336,7 +342,9 @@ toast.danger('Oturumunuz sona eriyor.', {
           </span>
         </tulpar-toast-ng>
         <div class="slot-fire-row">
-          <button class="trigger-btn" (click)="fireSlotDescription()">Fire (rich description)</button>
+          <button class="trigger-btn" (click)="fireSlotDescription()">
+            Fire (rich description)
+          </button>
         </div>
       </div>
       <pre class="code"><code>{{ contentSlotCode }}</code></pre>
@@ -346,8 +354,9 @@ toast.danger('Oturumunuz sona eriyor.', {
     <section class="doc-section">
       <h2 class="section-title">4. Icons — prop form</h2>
       <p class="section-desc">
-        Icons via the <code class="inline-code">icon</code> option: default per-tone (nothing needed),
-        built-in name, raw SVG string, or emoji. Pass <code class="inline-code">icon: false</code> to remove.
+        Icons via the <code class="inline-code">icon</code> option: default per-tone (nothing
+        needed), built-in name, raw SVG string, or emoji. Pass
+        <code class="inline-code">icon: false</code> to remove.
       </p>
       <div class="preview preview--trigger-grid">
         <button class="trigger-btn" (click)="showIconDefault()">Default per-tone</button>
@@ -365,17 +374,25 @@ toast.danger('Oturumunuz sona eriyor.', {
       <p class="section-desc">
         <code class="inline-code">slot="icon"</code> on the declarative element accepts any content:
         a Lucide SVG (inline), a custom <code class="inline-code">&lt;svg&gt;</code>, or an
-        <code class="inline-code">&lt;img&gt;</code>. Tulpar ships only the four built-in tone icons;
-        consumers bring their own via this slot. The Fire button below fires a live toast with a
-        custom icon via the raw-SVG icon prop.
+        <code class="inline-code">&lt;img&gt;</code>. Tulpar ships only the four built-in tone
+        icons; consumers bring their own via this slot. The Fire button below fires a live toast
+        with a custom icon via the raw-SVG icon prop.
       </p>
       <div class="preview preview--col">
         <div class="slot-demo-label">slot="icon" — inline SVG (custom shield)</div>
         <tulpar-toast-ng tone="info" heading="Güvenlik uyarısı" [timer]="false">
           <span slot="icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
           </span>
         </tulpar-toast-ng>
@@ -386,10 +403,18 @@ toast.danger('Oturumunuz sona eriyor.', {
         <div class="slot-demo-label" style="margin-top:16px">slot="icon" — circle-check SVG</div>
         <tulpar-toast-ng tone="success" heading="Doğrulama tamamlandı" [timer]="false">
           <span slot="icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="m9 12 2 2 4-4"/>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="m9 12 2 2 4-4" />
             </svg>
           </span>
         </tulpar-toast-ng>
@@ -401,18 +426,30 @@ toast.danger('Oturumunuz sona eriyor.', {
     <section class="doc-section">
       <h2 class="section-title">6. Custom tone</h2>
       <p class="section-desc">
-        <code class="inline-code">color</code> accepts a brand family name
-        (<code class="inline-code">ilay · umay · gok · ulgen · kizagan · erlik</code>, mode-aware) or a
-        raw CSS color (contrast is author's responsibility). Part overrides
+        <code class="inline-code">color</code> accepts a brand family name (<code
+          class="inline-code"
+          >ilay · umay · gok · ulgen · kizagan · erlik</code
+        >, mode-aware) or a raw CSS color (contrast is author's responsibility). Part overrides
         (<code class="inline-code">bg · accent · text</code>) layer on top.
-        <code class="inline-code">custom</code> tone is visual-only — semantics remain <code class="inline-code">status</code>.
+        <code class="inline-code">custom</code> tone is visual-only — semantics remain
+        <code class="inline-code">status</code>.
       </p>
       <div class="preview preview--trigger-grid">
-        <button class="trigger-btn trigger-btn--custom" (click)="showCustomIlay()">color: 'ilay'</button>
-        <button class="trigger-btn trigger-btn--custom" (click)="showCustomUmay()">color: 'umay'</button>
-        <button class="trigger-btn trigger-btn--custom" (click)="showCustomGok()">color: 'gok'</button>
-        <button class="trigger-btn trigger-btn--custom" (click)="showCustomHex()">color: '#0d9488'</button>
-        <button class="trigger-btn trigger-btn--custom" (click)="showCustomPartOverride()">Part override (bg/accent/text)</button>
+        <button class="trigger-btn trigger-btn--custom" (click)="showCustomIlay()">
+          color: 'ilay'
+        </button>
+        <button class="trigger-btn trigger-btn--custom" (click)="showCustomUmay()">
+          color: 'umay'
+        </button>
+        <button class="trigger-btn trigger-btn--custom" (click)="showCustomGok()">
+          color: 'gok'
+        </button>
+        <button class="trigger-btn trigger-btn--custom" (click)="showCustomHex()">
+          color: '#0d9488'
+        </button>
+        <button class="trigger-btn trigger-btn--custom" (click)="showCustomPartOverride()">
+          Part override (bg/accent/text)
+        </button>
       </div>
       <pre class="code"><code>{{ customToneCode }}</code></pre>
     </section>
@@ -425,15 +462,19 @@ toast.danger('Oturumunuz sona eriyor.', {
         <code class="inline-code">timerStyle:'track'</code> (default) adds a faint static track;
         <code class="inline-code">'soft'</code> shows only the depleting fill.
         <code class="inline-code">timer:false</code> disables the ring and auto-dismiss entirely.
-        Hover or focus any toast to <strong>pause the timer</strong> — resume on leave/blur.
-        Under <code class="inline-code">prefers-reduced-motion</code>, the ring becomes a static border.
+        Hover or focus any toast to <strong>pause the timer</strong> — resume on leave/blur. Under
+        <code class="inline-code">prefers-reduced-motion</code>, the ring becomes a static border.
       </p>
       <div class="preview preview--trigger-grid">
         <button class="trigger-btn" (click)="showTimerTrack()">Track style (default)</button>
         <button class="trigger-btn" (click)="showTimerSoft()">Soft style</button>
-        <button class="trigger-btn" (click)="showTimerCustomDuration()">Custom duration (10s)</button>
+        <button class="trigger-btn" (click)="showTimerCustomDuration()">
+          Custom duration (10s)
+        </button>
         <button class="trigger-btn" (click)="showTimerFalse()">Persistent (timer:false)</button>
-        <button class="trigger-btn trigger-btn--info" (click)="showTimerPauseDemo()">Hover pause proof</button>
+        <button class="trigger-btn trigger-btn--info" (click)="showTimerPauseDemo()">
+          Hover pause proof
+        </button>
       </div>
       <pre class="code"><code>{{ timerCode }}</code></pre>
     </section>
@@ -442,34 +483,36 @@ toast.danger('Oturumunuz sona eriyor.', {
     <section class="doc-section">
       <h2 class="section-title">8. Stacking</h2>
       <p class="section-desc">
-        Default: collapsed stack of up to <strong>3</strong> visible toasts — hover or focus the stack to expand it
-        (and pause all timers). Beyond <code class="inline-code">maxVisible</code>, toasts <strong>queue</strong> and
-        promote as visible ones dismiss (Sonner-style). Use <code class="inline-code">expand:true</code> to show an
-        always-expanded list instead of the collapsed fan.
+        Default: collapsed stack of up to <strong>3</strong> visible toasts — hover or focus the
+        stack to expand it (and pause all timers). Beyond
+        <code class="inline-code">maxVisible</code>, toasts <strong>queue</strong> and promote as
+        visible ones dismiss (Sonner-style). Use <code class="inline-code">expand:true</code> to
+        show an always-expanded list instead of the collapsed fan.
       </p>
 
       <!-- Live control panel -->
       <div class="preview preview--col stack-controls-preview">
-
         <!-- maxVisible row -->
         <div class="stack-control-row">
-          <label class="stack-control-label" for="stack-max-visible">
-            Max visible
-          </label>
+          <label class="stack-control-label" for="stack-max-visible"> Max visible </label>
           <div class="stack-stepper">
             <button
               class="stepper-btn"
               [disabled]="stackMaxVisible() <= 1"
               (click)="decrementMaxVisible()"
               aria-label="Decrease max visible"
-            >−</button>
+            >
+              −
+            </button>
             <span class="stepper-value" id="stack-max-visible">{{ stackMaxVisible() }}</span>
             <button
               class="stepper-btn"
               [disabled]="stackMaxVisible() >= 8"
               (click)="incrementMaxVisible()"
               aria-label="Increase max visible"
-            >+</button>
+            >
+              +
+            </button>
           </div>
           <span class="stack-control-hint">
             Beyond this, toasts <strong>queue</strong> and promote as visible ones dismiss
@@ -478,9 +521,7 @@ toast.danger('Oturumunuz sona eriyor.', {
 
         <!-- expand row -->
         <div class="stack-control-row">
-          <label class="stack-control-label" for="stack-expand-toggle">
-            Expand mode
-          </label>
+          <label class="stack-control-label" for="stack-expand-toggle"> Expand mode </label>
           <button
             id="stack-expand-toggle"
             class="stack-toggle"
@@ -497,7 +538,10 @@ toast.danger('Oturumunuz sona eriyor.', {
 
         <!-- live state badge -->
         <div class="stack-state-badge">
-          <code>setDefaults&#40;&#123; maxVisible: {{ stackMaxVisible() }}, expand: {{ stackExpand() }} &#125;&#41;</code>
+          <code
+            >setDefaults&#40;&#123; maxVisible: {{ stackMaxVisible() }}, expand:
+            {{ stackExpand() }} &#125;&#41;</code
+          >
         </div>
 
         <!-- fire button -->
@@ -506,10 +550,10 @@ toast.danger('Oturumunuz sona eriyor.', {
             Fire {{ stackMaxVisible() + 3 }} toasts
           </button>
           <span class="stack-fire-hint">
-            Fires maxVisible + 3 = <strong>{{ stackMaxVisible() + 3 }}</strong> toasts so you can see the cap, queue &amp; drain
+            Fires maxVisible + 3 = <strong>{{ stackMaxVisible() + 3 }}</strong> toasts so you can
+            see the cap, queue &amp; drain
           </span>
         </div>
-
       </div>
       <pre class="code"><code>{{ stackingCode }}</code></pre>
     </section>
@@ -520,16 +564,29 @@ toast.danger('Oturumunuz sona eriyor.', {
       <p class="section-desc">
         Six positions via per-call <code class="inline-code">location</code> override. The toaster
         global default is <code class="inline-code">bottom-right</code>; Message is always
-        <code class="inline-code">top-center</code>. Each location maintains its own independent stack.
+        <code class="inline-code">top-center</code>. Each location maintains its own independent
+        stack.
       </p>
       <div class="preview">
         <div class="location-grid">
-          <button class="trigger-btn trigger-btn--loc" (click)="showLocation('top-left')">top-left</button>
-          <button class="trigger-btn trigger-btn--loc" (click)="showLocation('top-center')">top-center</button>
-          <button class="trigger-btn trigger-btn--loc" (click)="showLocation('top-right')">top-right</button>
-          <button class="trigger-btn trigger-btn--loc" (click)="showLocation('bottom-left')">bottom-left</button>
-          <button class="trigger-btn trigger-btn--loc" (click)="showLocation('bottom-center')">bottom-center</button>
-          <button class="trigger-btn trigger-btn--loc" (click)="showLocation('bottom-right')">bottom-right</button>
+          <button class="trigger-btn trigger-btn--loc" (click)="showLocation('top-left')">
+            top-left
+          </button>
+          <button class="trigger-btn trigger-btn--loc" (click)="showLocation('top-center')">
+            top-center
+          </button>
+          <button class="trigger-btn trigger-btn--loc" (click)="showLocation('top-right')">
+            top-right
+          </button>
+          <button class="trigger-btn trigger-btn--loc" (click)="showLocation('bottom-left')">
+            bottom-left
+          </button>
+          <button class="trigger-btn trigger-btn--loc" (click)="showLocation('bottom-center')">
+            bottom-center
+          </button>
+          <button class="trigger-btn trigger-btn--loc" (click)="showLocation('bottom-right')">
+            bottom-right
+          </button>
         </div>
       </div>
       <pre class="code"><code>{{ locationCode }}</code></pre>
@@ -540,10 +597,11 @@ toast.danger('Oturumunuz sona eriyor.', {
       <h2 class="section-title">10. Async / lifecycle</h2>
       <p class="section-desc">
         <code class="inline-code">toast.promise</code> shows a loading toast and automatically
-        updates it on settle — success receives the resolved value. <code class="inline-code">toast.update</code>
-        mutates a live toast. <code class="inline-code">toast.dismiss(id)</code> dismisses one;
-        <code class="inline-code">toast.dismiss()</code> dismisses all.
-        The <code class="inline-code">onDismiss</code> callback fires with a reason on every dismissal.
+        updates it on settle — success receives the resolved value.
+        <code class="inline-code">toast.update</code> mutates a live toast.
+        <code class="inline-code">toast.dismiss(id)</code> dismisses one;
+        <code class="inline-code">toast.dismiss()</code> dismisses all. The
+        <code class="inline-code">onDismiss</code> callback fires with a reason on every dismissal.
       </p>
 
       <!-- Promise flow diagram -->
@@ -556,11 +614,17 @@ toast.danger('Oturumunuz sona eriyor.', {
       </div>
 
       <div class="preview preview--trigger-grid">
-        <button class="trigger-btn trigger-btn--info" (click)="showPromiseSuccess()">promise → success</button>
-        <button class="trigger-btn trigger-btn--danger" (click)="showPromiseError()">promise → error</button>
+        <button class="trigger-btn trigger-btn--info" (click)="showPromiseSuccess()">
+          promise → success
+        </button>
+        <button class="trigger-btn trigger-btn--danger" (click)="showPromiseError()">
+          promise → error
+        </button>
         <button class="trigger-btn" (click)="showUpdate()">update (2s delay)</button>
         <button class="trigger-btn" (click)="showDismissId()">dismiss(id) after 2s</button>
-        <button class="trigger-btn trigger-btn--danger" (click)="toast.dismiss()">dismiss() — all</button>
+        <button class="trigger-btn trigger-btn--danger" (click)="toast.dismiss()">
+          dismiss() — all
+        </button>
         <button class="trigger-btn" (click)="showOnDismiss()">onDismiss callback</button>
       </div>
 
@@ -582,8 +646,8 @@ toast.danger('Oturumunuz sona eriyor.', {
         The declarative element's default slot accepts arbitrary markup — avatars, progress bars,
         anything. This is the escape hatch when the imperative API's title/description/action model
         is insufficient. The Fire button below fires a live toast via
-        <code class="inline-code">toast.custom(HTMLElement)</code> — the canonical imperative rich-content API.
-        Use sparingly; complex markup belongs in a Dialog.
+        <code class="inline-code">toast.custom(HTMLElement)</code> — the canonical imperative
+        rich-content API. Use sparingly; complex markup belongs in a Dialog.
       </p>
       <div class="preview preview--col">
         <div class="slot-demo-label">Default slot — avatar + inline progress bar</div>
@@ -603,7 +667,9 @@ toast.danger('Oturumunuz sona eriyor.', {
           </span>
         </tulpar-toast-ng>
         <div class="slot-fire-row">
-          <button class="trigger-btn trigger-btn--info" (click)="fireRichToast()">Fire rich toast</button>
+          <button class="trigger-btn trigger-btn--info" (click)="fireRichToast()">
+            Fire rich toast
+          </button>
         </div>
       </div>
       <pre class="code"><code>{{ richContentCode }}</code></pre>
@@ -613,32 +679,41 @@ toast.danger('Oturumunuz sona eriyor.', {
     <section class="doc-section">
       <h2 class="section-title">12. Accessibility</h2>
       <p class="section-desc">
-        Toasts announce without stealing focus. Actionable toasts (with <code class="inline-code">action</code>)
-        escalate to <code class="inline-code">alertdialog</code> inside a labelled region.
-        Keyboard access: <kbd>F6</kbd> jumps focus to the toast region; <kbd>Esc</kbd> dismisses
-        the focused toast. Swipe-to-dismiss with spring-back below threshold.
-        The perimeter ring freezes under <code class="inline-code">prefers-reduced-motion</code>.
+        Toasts announce without stealing focus. Actionable toasts (with
+        <code class="inline-code">action</code>) escalate to
+        <code class="inline-code">alertdialog</code> inside a labelled region. Keyboard access:
+        <kbd>F6</kbd> jumps focus to the toast region; <kbd>Esc</kbd> dismisses the focused toast.
+        Swipe-to-dismiss with spring-back below threshold. The perimeter ring freezes under
+        <code class="inline-code">prefers-reduced-motion</code>.
       </p>
       <div class="preview preview--trigger-grid">
         <button class="trigger-btn" (click)="showA11ySwipe()">Swipe-to-dismiss demo</button>
         <button class="trigger-btn" (click)="showA11yEsc()">Esc on focused toast</button>
         <button class="trigger-btn" (click)="showA11yF6()">F6 jump to region</button>
-        <button class="trigger-btn trigger-btn--danger" (click)="showA11yActionable()">Actionable → alertdialog</button>
+        <button class="trigger-btn trigger-btn--danger" (click)="showA11yActionable()">
+          Actionable → alertdialog
+        </button>
         <button class="trigger-btn" (click)="showA11yDark()">Dark mode note</button>
         <button class="trigger-btn" (click)="showA11yReducedMotion()">Reduced-motion note</button>
       </div>
       <div class="a11y-notes">
         <div class="a11y-note">
-          <strong>Swipe:</strong> Horizontal swipe past threshold → <code class="inline-code">reason:'swipe'</code>; below threshold springs back. Disabled under <code class="inline-code">prefers-reduced-motion</code>.
+          <strong>Swipe:</strong> Horizontal swipe past threshold →
+          <code class="inline-code">reason:'swipe'</code>; below threshold springs back. Disabled
+          under <code class="inline-code">prefers-reduced-motion</code>.
         </div>
         <div class="a11y-note">
-          <strong>F6 / Shift+F6:</strong> Jumps focus to the toast notification region from anywhere. Esc dismisses the focused toast; focus restores when the region empties.
+          <strong>F6 / Shift+F6:</strong> Jumps focus to the toast notification region from
+          anywhere. Esc dismisses the focused toast; focus restores when the region empties.
         </div>
         <div class="a11y-note">
-          <strong>Dark mode:</strong> Add <code class="inline-code">.dark</code> to <code class="inline-code">&lt;body&gt;</code>. All tone surfaces flip automatically — deep tinted background, lightened text, 1px border.
+          <strong>Dark mode:</strong> Add <code class="inline-code">.dark</code> to
+          <code class="inline-code">&lt;body&gt;</code>. All tone surfaces flip automatically — deep
+          tinted background, lightened text, 1px border.
         </div>
         <div class="a11y-note">
-          <strong>prefers-reduced-motion:</strong> The timer ring animation is replaced by a static border. Enter/exit transitions reduce to a ≤100ms opacity fade only.
+          <strong>prefers-reduced-motion:</strong> The timer ring animation is replaced by a static
+          border. Enter/exit transitions reduce to a ≤100ms opacity fade only.
         </div>
       </div>
       <pre class="code"><code>{{ a11yCode }}</code></pre>
@@ -691,7 +766,9 @@ toast.danger('Oturumunuz sona eriyor.', {
         gap: 16px;
       }
       @media (max-width: 640px) {
-        .decision-grid { grid-template-columns: 1fr; }
+        .decision-grid {
+          grid-template-columns: 1fr;
+        }
       }
 
       .decision-col {
@@ -810,7 +887,9 @@ toast.danger('Oturumunuz sona eriyor.', {
         background: var(--tulpar-color-bg-elevated, #ffffff);
         color: var(--tulpar-color-text-primary, #15110b);
         cursor: pointer;
-        transition: transform 120ms ease, box-shadow 120ms ease;
+        transition:
+          transform 120ms ease,
+          box-shadow 120ms ease;
         white-space: nowrap;
       }
 
@@ -1004,7 +1083,9 @@ toast.danger('Oturumunuz sona eriyor.', {
         border: 2px solid var(--tulpar-color-border-default, #d9e0df);
         background: var(--tulpar-color-bg-subtle, #e9f1ef);
         cursor: pointer;
-        transition: background 150ms ease, border-color 150ms ease;
+        transition:
+          background 150ms ease,
+          border-color 150ms ease;
         flex-shrink: 0;
         padding: 0;
       }
@@ -1276,7 +1357,7 @@ export class ToastDemoComponent {
 
   // ── 8. Stacking — live control signals ───────────────────────────────────
   readonly stackMaxVisible = signal<number>(3);
-  readonly stackExpand     = signal<boolean>(false);
+  readonly stackExpand = signal<boolean>(false);
 
   // ── Code snippets ────────────────────────────────────────────────────────
   readonly tonesCode = TONES_CODE;
@@ -1293,16 +1374,26 @@ export class ToastDemoComponent {
   readonly a11yCode = A11Y_CODE;
 
   // ── 1. Tones ──────────────────────────────────────────────────────────────
-  showInfo() { this.toast.info('Dosya buluta yüklendi.'); }
-  showSuccess() { this.toast.success('Değişiklikler kaydedildi.'); }
-  showWarning() { this.toast.warning('Depolama alanı %90 dolu.'); }
-  showDanger() { this.toast.danger('Bağlantı kesildi.', { timer: false }); }
+  showInfo() {
+    this.toast.info('Dosya buluta yüklendi.');
+  }
+  showSuccess() {
+    this.toast.success('Değişiklikler kaydedildi.');
+  }
+  showWarning() {
+    this.toast.warning('Depolama alanı %90 dolu.');
+  }
+  showDanger() {
+    this.toast.danger('Bağlantı kesildi.', { timer: false });
+  }
   showDangerHC() {
     this.toast.danger('Kritik hata — işlem başarısız.', { highContrast: true, timer: false });
   }
 
   // ── 2. Content forms — prop form ──────────────────────────────────────────
-  showTitleOnly() { this.toast.info('Dosya kopyalandı.'); }
+  showTitleOnly() {
+    this.toast.info('Dosya kopyalandı.');
+  }
   showTitleDesc() {
     this.toast.success('Değişiklikler kaydedildi.', {
       description: 'Tüm alanlar doğrulandı ve veritabanına yazıldı.',
@@ -1364,15 +1455,23 @@ export class ToastDemoComponent {
   }
 
   // ── 4. Icons — prop form ──────────────────────────────────────────────────
-  showIconDefault() { this.toast.success('İkon: tone varsayılanı'); }
-  showIconName() { this.toast.info('İkon: name prop', { icon: 'info' }); }
+  showIconDefault() {
+    this.toast.success('İkon: tone varsayılanı');
+  }
+  showIconName() {
+    this.toast.info('İkon: name prop', { icon: 'info' });
+  }
   showIconSvg() {
     this.toast.warning('İkon: özel SVG string', {
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>',
     });
   }
-  showIconEmoji() { this.toast.info('Emoji ikonu 🚀', { icon: '🚀' }); }
-  showIconFalse() { this.toast.success('İkon yok', { icon: false }); }
+  showIconEmoji() {
+    this.toast.info('Emoji ikonu 🚀', { icon: '🚀' });
+  }
+  showIconFalse() {
+    this.toast.success('İkon yok', { icon: false });
+  }
 
   // ── 5. Icons — slot form — live fire button ───────────────────────────────
   /** Fire (custom icon): live toast with shield SVG via raw-SVG icon prop */
@@ -1384,24 +1483,44 @@ export class ToastDemoComponent {
   }
 
   // ── 6. Custom tone ────────────────────────────────────────────────────────
-  showCustomIlay() { this.toast.custom('İlay tonu (brand family, mode-aware)', { color: 'ilay' }); }
-  showCustomUmay() { this.toast.custom('Umay tonu (brand family, mode-aware)', { color: 'umay' }); }
-  showCustomGok()  { this.toast.custom('Gök tonu (brand family, mode-aware)',  { color: 'gok'  }); }
-  showCustomHex()  { this.toast.custom('Raw hex rengi — kontrast sizin sorumluluğunuzda.', { color: '#0d9488' }); }
+  showCustomIlay() {
+    this.toast.custom('İlay tonu (brand family, mode-aware)', { color: 'ilay' });
+  }
+  showCustomUmay() {
+    this.toast.custom('Umay tonu (brand family, mode-aware)', { color: 'umay' });
+  }
+  showCustomGok() {
+    this.toast.custom('Gök tonu (brand family, mode-aware)', { color: 'gok' });
+  }
+  showCustomHex() {
+    this.toast.custom('Raw hex rengi — kontrast sizin sorumluluğunuzda.', { color: '#0d9488' });
+  }
   showCustomPartOverride() {
     this.toast.custom('Part override örneği', {
-      bg:     '#fdf4ff',
+      bg: '#fdf4ff',
       accent: '#9333ea',
-      text:   '#3b0764',
+      text: '#3b0764',
     });
   }
 
   // ── 7. Timer ──────────────────────────────────────────────────────────────
-  showTimerTrack()         { this.toast.info('Timer: track stili (varsayılan)', { timerStyle: 'track' }); }
-  showTimerSoft()          { this.toast.info('Timer: soft stili', { timerStyle: 'soft' }); }
-  showTimerCustomDuration() { this.toast.info('10 saniye süre', { duration: 10_000, timerStyle: 'track' }); }
-  showTimerFalse()         { this.toast.warning('Kalıcı — timer:false, otomatik kapanmaz.', { timer: false }); }
-  showTimerPauseDemo()     { this.toast.info('Üzerinde bekle — timer duraklar. Fareyi çek — devam eder.', { duration: 8_000 }); }
+  showTimerTrack() {
+    this.toast.info('Timer: track stili (varsayılan)', { timerStyle: 'track' });
+  }
+  showTimerSoft() {
+    this.toast.info('Timer: soft stili', { timerStyle: 'soft' });
+  }
+  showTimerCustomDuration() {
+    this.toast.info('10 saniye süre', { duration: 10_000, timerStyle: 'track' });
+  }
+  showTimerFalse() {
+    this.toast.warning('Kalıcı — timer:false, otomatik kapanmaz.', { timer: false });
+  }
+  showTimerPauseDemo() {
+    this.toast.info('Üzerinde bekle — timer duraklar. Fareyi çek — devam eder.', {
+      duration: 8_000,
+    });
+  }
 
   // ── 8. Stacking — live control methods ───────────────────────────────────
   decrementMaxVisible() {
@@ -1424,7 +1543,7 @@ export class ToastDemoComponent {
 
   fireStackToasts() {
     const maxVisible = this.stackMaxVisible();
-    const expand     = this.stackExpand();
+    const expand = this.stackExpand();
     // Apply current settings BEFORE firing so the queue rebuilds with them.
     this.toast.setDefaults({ maxVisible, expand });
     const count = maxVisible + 3;
@@ -1436,12 +1555,12 @@ export class ToastDemoComponent {
   // ── 9. Location ───────────────────────────────────────────────────────────
   showLocation(location: string) {
     const labels: Record<string, string> = {
-      'top-left':      'Sol üst',
-      'top-center':    'Üst orta',
-      'top-right':     'Sağ üst',
-      'bottom-left':   'Sol alt',
+      'top-left': 'Sol üst',
+      'top-center': 'Üst orta',
+      'top-right': 'Sağ üst',
+      'bottom-left': 'Sol alt',
       'bottom-center': 'Alt orta',
-      'bottom-right':  'Sağ alt (varsayılan)',
+      'bottom-right': 'Sağ alt (varsayılan)',
     };
     this.toast.info(labels[location] ?? location, { location: location as ToastLocation });
   }
@@ -1453,21 +1572,28 @@ export class ToastDemoComponent {
     this.toast.promise(fakeApi(), {
       loading: 'Kaydediliyor…',
       success: (data) => `${data.count} kayıt başarıyla güncellendi.`,
-      error:   (err)  => `Hata: ${(err as Error).message}`,
+      error: (err) => `Hata: ${(err as Error).message}`,
     });
   }
   showPromiseError() {
     const fakeFailApi = (): Promise<never> =>
       new Promise((_res, rej) => setTimeout(() => rej(new Error('sunucu hatası')), 2000));
-    this.toast.promise(fakeFailApi(), {
-      loading: 'Yükleniyor…',
-      success: 'Tamamlandı.',
-      error:   (err) => `Hata: ${(err as Error).message}`,
-    }).catch(() => { /* handled by the toast */ });
+    this.toast
+      .promise(fakeFailApi(), {
+        loading: 'Yükleniyor…',
+        success: 'Tamamlandı.',
+        error: (err) => `Hata: ${(err as Error).message}`,
+      })
+      .catch(() => {
+        /* handled by the toast */
+      });
   }
   showUpdate() {
     const id = this.toast.info('Güncelleme bekleniyor… (2s)', { timer: false });
-    setTimeout(() => this.toast.update(id, { tone: 'success', title: 'Güncelleme tamamlandı!' }), 2000);
+    setTimeout(
+      () => this.toast.update(id, { tone: 'success', title: 'Güncelleme tamamlandı!' }),
+      2000,
+    );
   }
   showDismissId() {
     const id = this.toast.warning('Bu toast 2s içinde programatik kapatılacak.', { timer: false });
@@ -1516,13 +1642,17 @@ export class ToastDemoComponent {
 
   // ── 12. A11y ─────────────────────────────────────────────────────────────
   showA11ySwipe() {
-    this.toast.info('Yatay kaydırarak kapat (swipe-to-dismiss). Eşiğin altında yayaya döner.', { duration: 8_000 });
+    this.toast.info('Yatay kaydırarak kapat (swipe-to-dismiss). Eşiğin altında yayaya döner.', {
+      duration: 8_000,
+    });
   }
   showA11yEsc() {
     this.toast.info('Bu tosta tıkla (focus), sonra Esc bas — kapanır.', { duration: 8_000 });
   }
   showA11yF6() {
-    this.toast.info('F6 tuşu ile toast bölgesine atla (sayfanın herhangi bir yerinden).', { duration: 8_000 });
+    this.toast.info('F6 tuşu ile toast bölgesine atla (sayfanın herhangi bir yerinden).', {
+      duration: 8_000,
+    });
   }
   showA11yActionable() {
     this.toast.danger('Oturumunuz sona eriyor.', {
@@ -1532,9 +1662,14 @@ export class ToastDemoComponent {
     });
   }
   showA11yDark() {
-    this.toast.info('Dark mod notu: <body> üzerindeki .dark sınıfı tüm ton yüzeylerini çevirir.', { duration: 6_000 });
+    this.toast.info('Dark mod notu: <body> üzerindeki .dark sınıfı tüm ton yüzeylerini çevirir.', {
+      duration: 6_000,
+    });
   }
   showA11yReducedMotion() {
-    this.toast.info('prefers-reduced-motion: Animasyon → statik kenarlık ve ≤100ms opacity geçişi.', { duration: 6_000 });
+    this.toast.info(
+      'prefers-reduced-motion: Animasyon → statik kenarlık ve ≤100ms opacity geçişi.',
+      { duration: 6_000 },
+    );
   }
 }

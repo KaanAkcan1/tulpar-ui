@@ -2,19 +2,26 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { Router, RouterOutlet } from '@angular/router';
 import { LucideAngularModule, type LucideIconData } from 'lucide-angular';
 import {
+  BadgeCheck,
   Bell,
   BookOpen,
   CheckSquare,
   Circle,
+  CircleDot,
+  CircleUserRound,
   FormInput,
+  Gauge,
   Hash,
   Layers,
+  LoaderCircle,
   MessageCircle,
   MessageSquare,
   MessageSquareText,
   Palette,
   PanelTop,
+  RectangleHorizontal,
   SquareMousePointer,
+  Tag,
   TextCursorInput,
   ToggleLeft,
   WrapText,
@@ -189,6 +196,69 @@ class IconToast {
 })
 class IconMessage {
   readonly icon: LucideIconData = MessageCircle;
+}
+@Component({
+  selector: 'app-icon-tag',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconTag {
+  readonly icon: LucideIconData = Tag;
+}
+@Component({
+  selector: 'app-icon-badge',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconBadge {
+  readonly icon: LucideIconData = BadgeCheck;
+}
+@Component({
+  selector: 'app-icon-chip',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconChip {
+  readonly icon: LucideIconData = CircleDot;
+}
+@Component({
+  selector: 'app-icon-avatar',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconAvatar {
+  readonly icon: LucideIconData = CircleUserRound;
+}
+@Component({
+  selector: 'app-icon-skeleton',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconSkeleton {
+  readonly icon: LucideIconData = RectangleHorizontal;
+}
+@Component({
+  selector: 'app-icon-spinner',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconSpinner {
+  readonly icon: LucideIconData = LoaderCircle;
+}
+@Component({
+  selector: 'app-icon-progress',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconProgress {
+  readonly icon: LucideIconData = Gauge;
 }
 
 @Component({
@@ -554,6 +624,20 @@ export class App {
       items: [
         { label: 'Toast', href: '/toast', icon: IconToast },
         { label: 'Message', href: '/message', icon: IconMessage },
+      ],
+    },
+    // Display & Status atoms — one dedicated page per atom (v0.13).
+    {
+      type: 'section',
+      label: 'Display & Status atoms',
+      items: [
+        { label: 'Tag', href: '/tag', icon: IconTag },
+        { label: 'Badge', href: '/badge', icon: IconBadge },
+        { label: 'Chip', href: '/chip', icon: IconChip },
+        { label: 'Avatar', href: '/avatar', icon: IconAvatar },
+        { label: 'Skeleton', href: '/skeleton', icon: IconSkeleton },
+        { label: 'Spinner', href: '/spinner', icon: IconSpinner },
+        { label: 'Progress', href: '/progress', icon: IconProgress },
       ],
     },
     {

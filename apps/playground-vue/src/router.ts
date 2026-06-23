@@ -15,6 +15,13 @@ import ToggletipDemo from "./components/ToggletipDemo.vue";
 import PopoverDemo from "./components/PopoverDemo.vue";
 import ToastDemo from "./components/ToastDemo.vue";
 import MessageDemo from "./components/MessageDemo.vue";
+import TagDemo from "./components/TagDemo.vue";
+import BadgeDemo from "./components/BadgeDemo.vue";
+import ChipDemo from "./components/ChipDemo.vue";
+import AvatarDemo from "./components/AvatarDemo.vue";
+import SkeletonDemo from "./components/SkeletonDemo.vue";
+import SpinnerDemo from "./components/SpinnerDemo.vue";
+import ProgressDemo from "./components/ProgressDemo.vue";
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -45,6 +52,13 @@ export const router = createRouter({
     { path: "/popover", component: PopoverDemo, meta: { title: "Popover — Tulpar UI" } },
     { path: "/toast", component: ToastDemo, meta: { title: "Toast — Tulpar UI" } },
     { path: "/message", component: MessageDemo, meta: { title: "Message — Tulpar UI" } },
+    { path: "/tag", component: TagDemo, meta: { title: "Tag — Tulpar UI" } },
+    { path: "/badge", component: BadgeDemo, meta: { title: "Badge — Tulpar UI" } },
+    { path: "/chip", component: ChipDemo, meta: { title: "Chip — Tulpar UI" } },
+    { path: "/avatar", component: AvatarDemo, meta: { title: "Avatar — Tulpar UI" } },
+    { path: "/skeleton", component: SkeletonDemo, meta: { title: "Skeleton — Tulpar UI" } },
+    { path: "/spinner", component: SpinnerDemo, meta: { title: "Spinner — Tulpar UI" } },
+    { path: "/progress", component: ProgressDemo, meta: { title: "Progress — Tulpar UI" } },
     { path: "/colors", component: ColorsDemo, meta: { title: "Colors — Tulpar UI" } },
     { path: "/guide", component: GuideDemo, meta: { title: "Sidebar & Theme — Tulpar UI" } },
     { path: "/:pathMatch(.*)*", redirect: "/button" },

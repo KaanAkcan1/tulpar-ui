@@ -15,6 +15,13 @@ import { ToggletipDemoComponent } from './demos/toggletip-demo.component';
 import { PopoverDemoComponent } from './demos/popover-demo.component';
 import { ToastDemoComponent } from './demos/toast-demo.component';
 import { MessageDemoComponent } from './demos/message-demo.component';
+import { TagDemoComponent } from './demos/tag-demo.component';
+import { BadgeDemoComponent } from './demos/badge-demo.component';
+import { ChipDemoComponent } from './demos/chip-demo.component';
+import { AvatarDemoComponent } from './demos/avatar-demo.component';
+import { SkeletonDemoComponent } from './demos/skeleton-demo.component';
+import { SpinnerDemoComponent } from './demos/spinner-demo.component';
+import { ProgressDemoComponent } from './demos/progress-demo.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'button' },
@@ -37,5 +44,12 @@ export const routes: Routes = [
   { path: 'popover', component: PopoverDemoComponent, title: 'Popover — Tulpar UI' },
   { path: 'toast', component: ToastDemoComponent, title: 'Toast — Tulpar UI' },
   { path: 'message', component: MessageDemoComponent, title: 'Message — Tulpar UI' },
+  { path: 'tag', component: TagDemoComponent, title: 'Tag — Tulpar UI' },
+  { path: 'badge', component: BadgeDemoComponent, title: 'Badge — Tulpar UI' },
+  { path: 'chip', component: ChipDemoComponent, title: 'Chip — Tulpar UI' },
+  { path: 'avatar', component: AvatarDemoComponent, title: 'Avatar — Tulpar UI' },
+  { path: 'skeleton', component: SkeletonDemoComponent, title: 'Skeleton — Tulpar UI' },
+  { path: 'spinner', component: SpinnerDemoComponent, title: 'Spinner — Tulpar UI' },
+  { path: 'progress', component: ProgressDemoComponent, title: 'Progress — Tulpar UI' },
   { path: '**', redirectTo: 'button' },
 ];

@@ -1,21 +1,23 @@
 /**
  * Tone resolver — pure logic (no DOM, no Lit, no element rendering).
  *
- * Given tone options, returns the data the `<tulpar-toast>` element (Task 3.2)
- * needs to render its tonal surface.
+ * Given tone options + a CSS-var prefix, returns the data a tonal element
+ * (e.g. `<tulpar-toast>`, and the v0.13 Display & Status atoms) needs to render
+ * its tonal surface. The `prefix` parameterizes the emitted custom-property
+ * names so each family owns its own `--tulpar-<prefix>-*` namespace.
  *
- * ## Mode-flip contract (for Task 3.2)
+ * ## Mode-flip contract
  *
  * Custom tones emit BOTH light and dark values as separate CSS custom properties
  * so the element's `.styles.ts` can pick between them via `:host-context(.dark)`:
  *
- *   --tulpar-toast-surface-l   ← light-mode surface
- *   --tulpar-toast-surface-d   ← dark-mode surface
- *   --tulpar-toast-on-surface-l / -d
- *   --tulpar-toast-border-l   / -d
- *   --tulpar-toast-accent-l   / -d
+ *   --tulpar-<prefix>-surface-l   ← light-mode surface
+ *   --tulpar-<prefix>-surface-d   ← dark-mode surface
+ *   --tulpar-<prefix>-on-surface-l / -d
+ *   --tulpar-<prefix>-border-l   / -d
+ *   --tulpar-<prefix>-accent-l   / -d
  *
- * Task 3.2 (.styles.ts) MUST implement:
+ * The consuming `.styles.ts` MUST implement (example for prefix "toast"):
  *
  *   :host {
  *     --_toast-surface:    var(--tulpar-toast-surface-l);
@@ -40,13 +42,15 @@
  * When `builtin:true`, `vars` is empty. The element sets a `tone` attribute;
  * its `.styles.ts` maps it to `--tulpar-feedback-tone-<tone>-*` semantic
  * tokens (e.g. `--tulpar-feedback-tone-info-surface`), which already flip
- * between light/dark automatically via the generated CSS token sheets.
+ * between light/dark automatically via the generated CSS token sheets. This
+ * keeps built-in tones attribute-only (zero inline styles) so dense atom grids
+ * stay cheap; `custom` is the inline-var escape hatch.
  */
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type BuiltinTone = "info" | "success" | "warning" | "danger";
-export type ToneValue = BuiltinTone | "custom";
+export type BuiltinTone = "neutral" | "info" | "success" | "warning" | "danger";
+export type ToneValue = "neutral" | "info" | "success" | "warning" | "danger" | "custom";
 
 export type ToneInput = {
   /** Tone variant. Defaults to 'info' when omitted. */
@@ -77,8 +81,8 @@ export type ToneInput = {
 
 export type ToneResult = {
   /**
-   * True for info/success/warning/danger. The element uses a `[tone]` attr
-   * and its `.styles.ts` maps it to semantic feedback tokens that auto-flip
+   * True for neutral/info/success/warning/danger. The element uses a `[tone]`
+   * attr and its `.styles.ts` maps it to semantic feedback tokens that auto-flip
    * for `.dark` via the CSS token sheet — no inline vars needed.
    */
   builtin: boolean;
@@ -86,8 +90,8 @@ export type ToneResult = {
    * Inline CSS custom properties to set on the host element (custom tones +
    * overrides). Empty for built-in tones.
    *
-   * For custom tones these follow the -l/-d naming convention — Task 3.2
-   * picks the right pair via `:host-context(.dark)`.
+   * For custom tones these follow the -l/-d naming convention — the consuming
+   * `.styles.ts` picks the right pair via `:host-context(.dark)`.
    */
   vars: Record<string, string>;
   /**
@@ -98,6 +102,16 @@ export type ToneResult = {
   highContrast: boolean;
 };
 
+/** Options for {@link resolveTone}. */
+export type ToneOptions = {
+  /**
+   * CSS custom-property prefix. Emitted vars are named
+   * `--tulpar-<prefix>-surface-l`, etc. e.g. `"toast"` → `--tulpar-toast-…`,
+   * `"tag"` → `--tulpar-tag-…`.
+   */
+  prefix: string;
+};
+
 // ─── Known brand families ─────────────────────────────────────────────────────
 //
 // Derived from packages/tokens/src/primitive/color.ts.
@@ -106,7 +120,7 @@ export type ToneResult = {
 // subset (gok, ulgen, kizagan, erlik, ilay, umay) but the resolver accepts
 // any key in this full list.
 
-const BRAND_FAMILIES = new Set<string>([
+export const BRAND_FAMILIES = new Set<string>([
   "al",
   "kizagan",
   "umay",
@@ -144,14 +158,16 @@ function primitiveVar(family: string, step: number): string {
 // ─── Core resolution ──────────────────────────────────────────────────────────
 
 /**
- * Resolve tone options into a ToneResult that the `<tulpar-toast>` element
- * (Task 3.2) uses to render its tonal surface.
+ * Resolve tone options into a ToneResult that a tonal element uses to render its
+ * tonal surface. `opts.prefix` scopes the emitted CSS custom-property names.
  */
-export function resolveTone(input: ToneInput): ToneResult {
+export function resolveTone(input: ToneInput, opts: ToneOptions): ToneResult {
   const tone = input.tone ?? "info";
   const { color, bg, accent, text, highContrast } = input;
+  const { prefix } = opts;
 
   // ── Built-in tones ─────────────────────────────────────────────────────────
+  // neutral/info/success/warning/danger fall through here automatically.
   if (tone !== "custom") {
     return {
       builtin: true,
@@ -176,17 +192,17 @@ export function resolveTone(input: ToneInput): ToneResult {
   // pipeline (not the attribute-selector CSS) controls the surface.
   if (!color) {
     const vars: Record<string, string> = {
-      "--tulpar-toast-surface-l":    "var(--tulpar-color-bg-surface,    #ffffff)",
-      "--tulpar-toast-on-surface-l": "var(--tulpar-color-text-primary,  #15110b)",
-      "--tulpar-toast-border-l":     "var(--tulpar-color-border-default, #e2e8f0)",
-      "--tulpar-toast-accent-l":     "var(--tulpar-color-brand-default,  #2563eb)",
+      [`--tulpar-${prefix}-surface-l`]: "var(--tulpar-color-bg-surface,    #ffffff)",
+      [`--tulpar-${prefix}-on-surface-l`]: "var(--tulpar-color-text-primary,  #15110b)",
+      [`--tulpar-${prefix}-border-l`]: "var(--tulpar-color-border-default, #e2e8f0)",
+      [`--tulpar-${prefix}-accent-l`]: "var(--tulpar-color-brand-default,  #2563eb)",
 
-      "--tulpar-toast-surface-d":    "var(--tulpar-color-bg-surface,    #1e293b)",
-      "--tulpar-toast-on-surface-d": "var(--tulpar-color-text-primary,  #f1f5f9)",
-      "--tulpar-toast-border-d":     "var(--tulpar-color-border-default, #334155)",
-      "--tulpar-toast-accent-d":     "var(--tulpar-color-brand-default,  #60a5fa)",
+      [`--tulpar-${prefix}-surface-d`]: "var(--tulpar-color-bg-surface,    #1e293b)",
+      [`--tulpar-${prefix}-on-surface-d`]: "var(--tulpar-color-text-primary,  #f1f5f9)",
+      [`--tulpar-${prefix}-border-d`]: "var(--tulpar-color-border-default, #334155)",
+      [`--tulpar-${prefix}-accent-d`]: "var(--tulpar-color-brand-default,  #60a5fa)",
     };
-    applyOverrides(vars, { bg, accent, text });
+    applyOverrides(vars, prefix, { bg, accent, text });
     return { builtin: false, vars, highContrast: false };
   }
 
@@ -194,23 +210,23 @@ export function resolveTone(input: ToneInput): ToneResult {
   if (BRAND_FAMILIES.has(color)) {
     const vars: Record<string, string> = {
       // Light model: surface=50, onSurface=900, border=500, accent=600
-      "--tulpar-toast-surface-l": primitiveVar(color, 50),
-      "--tulpar-toast-on-surface-l": primitiveVar(color, 900),
-      "--tulpar-toast-border-l": primitiveVar(color, 500),
-      "--tulpar-toast-accent-l": primitiveVar(color, 600),
+      [`--tulpar-${prefix}-surface-l`]: primitiveVar(color, 50),
+      [`--tulpar-${prefix}-on-surface-l`]: primitiveVar(color, 900),
+      [`--tulpar-${prefix}-border-l`]: primitiveVar(color, 500),
+      [`--tulpar-${prefix}-accent-l`]: primitiveVar(color, 600),
 
       // Dark model: surface=900, onSurface=100, border=500, accent=400.
       // NOTE: built-in dark tones use higher steps (700–800) for border to meet
       // WCAG 3:1 against their deep surfaces. The 500 step used here is a
       // generic best-effort for the custom escape hatch; callers can override via
       // `bg`/`accent`/`text` part overrides if contrast is critical.
-      "--tulpar-toast-surface-d": primitiveVar(color, 900),
-      "--tulpar-toast-on-surface-d": primitiveVar(color, 100),
-      "--tulpar-toast-border-d": primitiveVar(color, 500),
-      "--tulpar-toast-accent-d": primitiveVar(color, 400),
+      [`--tulpar-${prefix}-surface-d`]: primitiveVar(color, 900),
+      [`--tulpar-${prefix}-on-surface-d`]: primitiveVar(color, 100),
+      [`--tulpar-${prefix}-border-d`]: primitiveVar(color, 500),
+      [`--tulpar-${prefix}-accent-d`]: primitiveVar(color, 400),
     };
 
-    applyOverrides(vars, { bg, accent, text });
+    applyOverrides(vars, prefix, { bg, accent, text });
     return { builtin: false, vars, highContrast: false };
   }
 
@@ -227,25 +243,25 @@ export function resolveTone(input: ToneInput): ToneResult {
   // responsibility (per spec).
   const vars: Record<string, string> = {
     // Light surface: 90% white + 10% color → very tinted
-    "--tulpar-toast-surface-l": `color-mix(in srgb, ${color} 10%, white)`,
+    [`--tulpar-${prefix}-surface-l`]: `color-mix(in srgb, ${color} 10%, white)`,
     // Light on-surface: 10% white + 90% color-toward-black → dark readable text
-    "--tulpar-toast-on-surface-l": `color-mix(in srgb, ${color} 20%, black)`,
+    [`--tulpar-${prefix}-on-surface-l`]: `color-mix(in srgb, ${color} 20%, black)`,
     // Light border: 40% color + 60% white → visible but soft
-    "--tulpar-toast-border-l": `color-mix(in srgb, ${color} 40%, white)`,
+    [`--tulpar-${prefix}-border-l`]: `color-mix(in srgb, ${color} 40%, white)`,
     // Light accent: the raw color itself
-    "--tulpar-toast-accent-l": color,
+    [`--tulpar-${prefix}-accent-l`]: color,
 
     // Dark surface: 15% color + 85% toward #0a1628 (a dark navy base) → deep tint
-    "--tulpar-toast-surface-d": `color-mix(in srgb, ${color} 15%, #0a1628)`,
+    [`--tulpar-${prefix}-surface-d`]: `color-mix(in srgb, ${color} 15%, #0a1628)`,
     // Dark on-surface: 20% color + 80% white → near-white tinted text
-    "--tulpar-toast-on-surface-d": `color-mix(in srgb, ${color} 20%, white)`,
+    [`--tulpar-${prefix}-on-surface-d`]: `color-mix(in srgb, ${color} 20%, white)`,
     // Dark border: 50% color + 50% toward dark → visible mid step
-    "--tulpar-toast-border-d": `color-mix(in srgb, ${color} 50%, #0a1628)`,
+    [`--tulpar-${prefix}-border-d`]: `color-mix(in srgb, ${color} 50%, #0a1628)`,
     // Dark accent: 80% color + 20% white → slightly lightened
-    "--tulpar-toast-accent-d": `color-mix(in srgb, ${color} 80%, white)`,
+    [`--tulpar-${prefix}-accent-d`]: `color-mix(in srgb, ${color} 80%, white)`,
   };
 
-  applyOverrides(vars, { bg, accent, text });
+  applyOverrides(vars, prefix, { bg, accent, text });
   return { builtin: false, vars, highContrast: false };
 }
 
@@ -257,18 +273,19 @@ export function resolveTone(input: ToneInput): ToneResult {
  */
 function applyOverrides(
   vars: Record<string, string>,
+  prefix: string,
   overrides: { bg?: string; accent?: string; text?: string },
 ): void {
   if (overrides.bg) {
-    vars["--tulpar-toast-surface-l"] = overrides.bg;
-    vars["--tulpar-toast-surface-d"] = overrides.bg;
+    vars[`--tulpar-${prefix}-surface-l`] = overrides.bg;
+    vars[`--tulpar-${prefix}-surface-d`] = overrides.bg;
   }
   if (overrides.accent) {
-    vars["--tulpar-toast-accent-l"] = overrides.accent;
-    vars["--tulpar-toast-accent-d"] = overrides.accent;
+    vars[`--tulpar-${prefix}-accent-l`] = overrides.accent;
+    vars[`--tulpar-${prefix}-accent-d`] = overrides.accent;
   }
   if (overrides.text) {
-    vars["--tulpar-toast-on-surface-l"] = overrides.text;
-    vars["--tulpar-toast-on-surface-d"] = overrides.text;
+    vars[`--tulpar-${prefix}-on-surface-l`] = overrides.text;
+    vars[`--tulpar-${prefix}-on-surface-d`] = overrides.text;
   }
 }

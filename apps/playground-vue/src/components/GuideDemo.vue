@@ -293,9 +293,12 @@ const a11yLabels: PropRow[] = [
           <dt><code>Toast</code></dt>
           <dd>
             Corner card — icon · title · description · action(s) · close. Stacks, timers out (5 s
-            default), supports <code>toast.promise</code> for async flows. Use for background events,
-            confirmations with an Undo action, and non-critical errors.
-            <br /><router-link class="feedback-link" to="/toast">Toast demo →</router-link>
+            default), supports <code>toast.promise</code> for async flows. Use for background
+            events, confirmations with an Undo action, and non-critical errors. <br /><router-link
+              class="feedback-link"
+              to="/toast"
+              >Toast demo →</router-link
+            >
           </dd>
         </div>
         <div class="def-row">

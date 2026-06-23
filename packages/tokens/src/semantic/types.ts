@@ -13,6 +13,7 @@ import type { ChartTokens } from "./chart";
 import type { SelectionTokens, SwitchTokens } from "./selection";
 import type { OverlayTokens } from "./overlay";
 import type { FeedbackTokens } from "./feedback";
+import type { AtomTokens } from "./atom";
 
 export type { ColorTokens, VariantColorTokens } from "./color";
 export type { ButtonTokens, ButtonSizeTokens } from "./button";
@@ -29,6 +30,7 @@ export type {
   FeedbackMotionTokens,
   FeedbackSizeTokens,
 } from "./feedback";
+export type { AtomTokens, AtomToneTokens, AtomFlowTokens } from "./atom";
 
 export interface SemanticTokens {
   color: ColorTokens;
@@ -39,6 +41,7 @@ export interface SemanticTokens {
   switch: SwitchTokens;
   overlay: OverlayTokens;
   feedback: FeedbackTokens;
+  atom: AtomTokens;
   font: FontTokens;
   transition: TransitionTokens;
   shell: ShellTokens;

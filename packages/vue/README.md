@@ -53,7 +53,9 @@ import { vTulparTooltip, vTulparToggletip, TulparPopover } from "@tulpar-ui/vue"
 <template>
   <!-- inline: object value carries the config -->
   <button v-tulpar-tooltip="{ text: 'Kaydet', placement: 'top' }">Save</button>
-  <button v-tulpar-toggletip="{ text: 'Optional billing field', tone: 'info' }" aria-label="Info">ⓘ</button>
+  <button v-tulpar-toggletip="{ text: 'Optional billing field', tone: 'info' }" aria-label="Info">
+    ⓘ
+  </button>
 
   <!-- reference-by-id: declare a rich overlay once, reference it from triggers -->
   <TulparPopover id="acctMenu" placement="bottom-start" label="Account">

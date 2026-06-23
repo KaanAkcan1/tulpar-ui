@@ -77,3 +77,37 @@ export type {
 // Declarative / rich SFC (Task 6.2).
 export { default as TulparToast } from "./toast/TulparToast.vue";
 export type { ToastAction, ToneValue } from "@tulpar-ui/core/toast";
+
+// --- Display & status atoms (v0.13) -------------------------------------------
+export { default as TulparTag } from "./tag/TulparTag.vue";
+export type { TagVariant, TagShape, TagSize } from "@tulpar-ui/core/tag";
+
+export { default as TulparBadge } from "./badge/TulparBadge.vue";
+export type {
+  BadgeTone,
+  BadgeVariant,
+  BadgeShape,
+  BadgeSize,
+  BadgePlacement,
+} from "@tulpar-ui/core/badge";
+
+export { default as TulparChip } from "./chip/TulparChip.vue";
+export type { ChipVariant, ChipShape, ChipSize } from "@tulpar-ui/core/chip";
+
+export { default as TulparAvatar } from "./avatar/TulparAvatar.vue";
+export type { AvatarShape, AvatarSize } from "@tulpar-ui/core/avatar";
+
+export { default as TulparSkeleton } from "./skeleton/TulparSkeleton.vue";
+export type { SkeletonVariant, SkeletonAnimation } from "@tulpar-ui/core/skeleton";
+
+export { default as TulparSpinner } from "./spinner/TulparSpinner.vue";
+export type { SpinnerSize, SpinnerTone } from "@tulpar-ui/core/spinner";
+
+export { default as TulparProgress } from "./progress/TulparProgress.vue";
+export type {
+  ProgressVariant,
+  ProgressTone,
+  ProgressThickness,
+  ProgressSize,
+  ProgressValueFormatter,
+} from "@tulpar-ui/core/progress";
