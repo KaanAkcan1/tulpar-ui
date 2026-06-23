@@ -23,8 +23,9 @@ export function nextEnabled(items: readonly ActiveItem[], from: number): number 
   for (let i = from + 1; i < items.length; i++) if (!items[i].disabled) return i;
   // No enabled item after `from`: stay where we are if currently enabled, else
   // fall back to the first enabled (covers from = -1 with a leading disabled).
+  // When from >= 0 but the item there is disabled, return -1 (nowhere valid to stay).
   if (from >= 0 && from < items.length && !items[from].disabled) return from;
-  return from < 0 ? firstEnabled(items) : from;
+  return from < 0 ? firstEnabled(items) : -1;
 }
 
 export function prevEnabled(items: readonly ActiveItem[], from: number): number {
@@ -56,7 +57,7 @@ export function clampActive(items: readonly ActiveItem[], idx: number): number {
     const f = idx + d;
     if (f < items.length && !items[f].disabled) return f;
     const b = idx - d;
-    if (b >= 0 && !items[b].disabled) return b;
+    if (b >= 0 && b < items.length && !items[b].disabled) return b;
   }
   return firstEnabled(items);
 }

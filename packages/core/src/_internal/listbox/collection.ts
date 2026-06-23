@@ -11,8 +11,8 @@ export interface CollectionItem extends OptionLike {
 }
 
 export interface Collection {
-  items: CollectionItem[];
-  labels: string[];
+  items: readonly CollectionItem[];
+  labels: readonly string[];
   indexByValue(value: string): number;
 }
 

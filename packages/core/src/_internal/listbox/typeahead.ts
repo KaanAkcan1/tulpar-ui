@@ -25,9 +25,10 @@ export class Typeahead {
     if (now - this.last > this.windowMs) this.buffer = "";
     this.last = now;
     const c = char.toLocaleLowerCase();
-    const repeated = this.buffer === "" || (this.buffer.length === 1 && this.buffer === c);
+    const isSingleLetterCycle =
+      this.buffer === "" || (this.buffer.length === 1 && this.buffer === c);
 
-    if (repeated) {
+    if (isSingleLetterCycle) {
       // Same-letter cycling: start search just AFTER the current active.
       this.buffer = c;
       const n = labels.length;
