@@ -49,4 +49,11 @@ describe("tulpar-option-group", () => {
     `);
     expect(el.querySelectorAll("tulpar-option").length).to.equal(2);
   });
+
+  it("does not overwrite a consumer-supplied aria-labelledby", async () => {
+    const el = await fixture<TulparOptionGroup>(
+      html`<tulpar-option-group label="Fruit" aria-labelledby="my-label"></tulpar-option-group>`,
+    );
+    expect(el.getAttribute("aria-labelledby")).to.equal("my-label");
+  });
 });

@@ -1,6 +1,6 @@
 import { LitElement, html, nothing } from "lit";
 import { property } from "lit/decorators.js";
-import { isMeaningfulNode } from "../_internal/slot-content";
+import { hasMeaningfulContent, isMeaningfulNode } from "../_internal/slot-content";
 import { warnDev } from "../_internal/warn-dev";
 import { optionStyles } from "./tulpar-option.styles";
 
@@ -94,6 +94,16 @@ export class TulparOption extends LitElement {
     return !!this.querySelector('[slot="description"]');
   }
 
+  // ── Icon slot tracking ────────────────────────────────────────────────────
+  // Toggles [data-has-icon] on the host via a plain attribute (NOT @state) so
+  // Lit does NOT re-render when the slotchange fires — avoids the known
+  // slotchange→requestUpdate infinite-loop trap (see CLAUDE.md reference).
+  private _onIconSlotChange = (e: Event): void => {
+    const slot = e.target as HTMLSlotElement;
+    const hasIcon = hasMeaningfulContent(slot.assignedNodes({ flatten: true }));
+    this.toggleAttribute("data-has-icon", hasIcon);
+  };
+
   // ── Check SVG ─────────────────────────────────────────────────────────────
   // Inline SVG string (no unsafeSVG directive — avoids dual-instance crash,
   // see CLAUDE.md Lit directive gotcha). A 16×16 checkmark.
@@ -111,7 +121,9 @@ export class TulparOption extends LitElement {
 
   override render() {
     return html`
-      <span class="opt-icon" part="icon"><slot name="icon"></slot></span>
+      <span class="opt-icon" part="icon"
+        ><slot name="icon" @slotchange=${this._onIconSlotChange}></slot
+      ></span>
       <span class="opt-text">
         <span class="opt-label"><slot>${this.label}</slot></span>
         ${this.description || this._hasDescriptionSlot()

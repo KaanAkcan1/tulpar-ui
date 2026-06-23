@@ -34,7 +34,9 @@ export class TulparOptionGroup extends LitElement {
     if (!this.hasAttribute("role")) {
       this.setAttribute("role", "group");
     }
-    this.setAttribute("aria-labelledby", this._headerId);
+    if (!this.hasAttribute("aria-labelledby")) {
+      this.setAttribute("aria-labelledby", this._headerId);
+    }
   }
 
   override render() {

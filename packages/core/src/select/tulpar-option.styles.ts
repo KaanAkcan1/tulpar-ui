@@ -54,17 +54,19 @@ export const optionStyles = css`
   }
 
   /* ── Leading icon ────────────────────────────────────────────────────── */
+  /* Hidden by default; shown when the host's [data-has-icon] attribute is set
+     by the slotchange handler (attr-toggle pattern — avoids Lit re-render loop). */
   .opt-icon {
-    display: contents;
-    flex-shrink: 0;
+    display: none;
+    align-items: center;
+    flex: 0 0 auto;
     inline-size: 1rem;
     block-size: 1rem;
     color: var(--tulpar-color-text-muted, #737373);
   }
 
-  /* Hide icon zone when slot is empty */
-  .opt-icon:not(:has(> *)):not(:has(slot[name="icon"] > *)) {
-    display: none;
+  :host([data-has-icon]) .opt-icon {
+    display: inline-flex;
   }
 
   /* ── Trailing check ──────────────────────────────────────────────────── */

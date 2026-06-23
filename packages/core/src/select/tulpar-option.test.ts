@@ -1,4 +1,4 @@
-import { expect, fixture, html } from "@open-wc/testing";
+import { elementUpdated, expect, fixture, html } from "@open-wc/testing";
 import "./tulpar-option";
 import type { TulparOption } from "./tulpar-option";
 
@@ -54,5 +54,23 @@ describe("tulpar-option", () => {
         .map((n) => n.textContent)
         .join(""),
     ).to.contain("Sub");
+  });
+
+  // ── Icon zone (data-has-icon attribute) ───────────────────────────────────
+
+  it("does NOT set data-has-icon when no icon slot content", async () => {
+    const el = await fixture<TulparOption>(
+      html`<tulpar-option value="a" label="A"></tulpar-option>`,
+    );
+    await elementUpdated(el);
+    expect(el.hasAttribute("data-has-icon")).to.be.false;
+  });
+
+  it("sets data-has-icon when an icon slot child is present", async () => {
+    const el = await fixture<TulparOption>(
+      html`<tulpar-option value="a" label="A"><svg slot="icon"></svg></tulpar-option>`,
+    );
+    await elementUpdated(el);
+    expect(el.hasAttribute("data-has-icon")).to.be.true;
   });
 });
