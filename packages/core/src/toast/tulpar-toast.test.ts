@@ -92,7 +92,9 @@ describe("<tulpar-toast> constructor safety (no attribute mutations)", () => {
   it("declarative <tulpar-toast> in fixture does not throw", async () => {
     let threw = false;
     try {
-      await fixture<TulparToast>(html`<tulpar-toast tone="info" heading="No throw"></tulpar-toast>`);
+      await fixture<TulparToast>(
+        html`<tulpar-toast tone="info" heading="No throw"></tulpar-toast>`,
+      );
     } catch {
       threw = true;
     }
@@ -266,7 +268,8 @@ describe("<tulpar-toast> icon prop", () => {
   });
 
   it("icon='<svg>...</svg>' renders a raw SVG string", async () => {
-    const rawSvg = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/></svg>';
+    const rawSvg =
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/></svg>';
     const el = await fixture<TulparToast>(html`<tulpar-toast heading="Raw SVG"></tulpar-toast>`);
     el.icon = rawSvg;
     await el.updateComplete;
@@ -277,7 +280,9 @@ describe("<tulpar-toast> icon prop", () => {
   });
 
   it("icon='🎉' renders an emoji icon", async () => {
-    const el = await fixture<TulparToast>(html`<tulpar-toast heading="Emoji" icon="🎉"></tulpar-toast>`);
+    const el = await fixture<TulparToast>(
+      html`<tulpar-toast heading="Emoji" icon="🎉"></tulpar-toast>`,
+    );
     await el.updateComplete;
     const ic = iconEl(el);
     expect(ic).to.exist;
@@ -374,7 +379,14 @@ describe("<tulpar-toast> actions", () => {
   it("clicking an action button calls onClick", async () => {
     let called = false;
     const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
-    const actions: ToastAction[] = [{ label: "Undo", onClick: () => { called = true; } }];
+    const actions: ToastAction[] = [
+      {
+        label: "Undo",
+        onClick: () => {
+          called = true;
+        },
+      },
+    ];
     el.actions = actions;
     await el.updateComplete;
     const btn = actionBtns(el)[0];
@@ -588,7 +600,8 @@ describe("<tulpar-toast> timer ring — presence", () => {
     // Our implementation uses [data-no-timer] attribute + CSS display:none,
     // but the SVG should still not be visible / query should return null or hidden.
     // We check the data attribute which controls CSS visibility (safe against loop).
-    expect(el.hasAttribute("data-no-timer"), "[data-no-timer] must be set when timer=false").to.be.true;
+    expect(el.hasAttribute("data-no-timer"), "[data-no-timer] must be set when timer=false").to.be
+      .true;
   });
 
   it("ring is absent when duration=0", async () => {
@@ -596,7 +609,8 @@ describe("<tulpar-toast> timer ring — presence", () => {
       html`<tulpar-toast heading="T" .duration=${0}></tulpar-toast>`,
     );
     await el.updateComplete;
-    expect(el.hasAttribute("data-no-timer"), "[data-no-timer] must be set when duration=0").to.be.true;
+    expect(el.hasAttribute("data-no-timer"), "[data-no-timer] must be set when duration=0").to.be
+      .true;
   });
 
   it("ring SVG is inside .toast-ring when active", async () => {
@@ -777,7 +791,9 @@ describe("<tulpar-toast> group-count badge", () => {
   });
 
   it("count=2 renders a .toast-count badge with ×2 text", async () => {
-    const el = await fixture<TulparToast>(html`<tulpar-toast heading="T" .count=${2}></tulpar-toast>`);
+    const el = await fixture<TulparToast>(
+      html`<tulpar-toast heading="T" .count=${2}></tulpar-toast>`,
+    );
     await el.updateComplete;
     const badge = shadow(el).querySelector(".toast-count");
     expect(badge, ".toast-count must be present when count=2").to.exist;
@@ -1045,7 +1061,9 @@ describe("<tulpar-toast> swipe-to-dismiss", () => {
   });
 
   it("pointercancel springs back and does NOT dispatch tulpar-dismiss", async () => {
-    const el = await fixture<TulparToast>(html`<tulpar-toast heading="Cancel test"></tulpar-toast>`);
+    const el = await fixture<TulparToast>(
+      html`<tulpar-toast heading="Cancel test"></tulpar-toast>`,
+    );
     await el.updateComplete;
 
     const card = shadow(el).querySelector(".toast-card") as HTMLElement;
@@ -1056,25 +1074,34 @@ describe("<tulpar-toast> swipe-to-dismiss", () => {
 
     // Start a drag.
     const down = new PointerEvent("pointerdown", {
-      bubbles: true, cancelable: true,
-      clientX: 100, clientY: 200,
-      pointerId: 1, pointerType: "touch",
+      bubbles: true,
+      cancelable: true,
+      clientX: 100,
+      clientY: 200,
+      pointerId: 1,
+      pointerType: "touch",
     });
     card.dispatchEvent(down);
 
     // Move some distance.
     const move = new PointerEvent("pointermove", {
-      bubbles: true, cancelable: true,
-      clientX: 180, clientY: 200,
-      pointerId: 1, pointerType: "touch",
+      bubbles: true,
+      cancelable: true,
+      clientX: 180,
+      clientY: 200,
+      pointerId: 1,
+      pointerType: "touch",
     });
     card.dispatchEvent(move);
 
     // Cancel instead of ending normally.
     const cancel = new PointerEvent("pointercancel", {
-      bubbles: true, cancelable: false,
-      clientX: 180, clientY: 200,
-      pointerId: 1, pointerType: "touch",
+      bubbles: true,
+      cancelable: false,
+      clientX: 180,
+      clientY: 200,
+      pointerId: 1,
+      pointerType: "touch",
     });
     card.dispatchEvent(cancel);
 
@@ -1127,17 +1154,22 @@ describe("<tulpar-toast> swipe-to-dismiss", () => {
 
 describe("<tulpar-toast> alertdialog ARIA labelling (Task 4.3)", () => {
   it("actionable toast (alertdialog) card has aria-labelledby set", async () => {
-    const el = await fixture<TulparToast>(html`<tulpar-toast heading="Confirm action"></tulpar-toast>`);
+    const el = await fixture<TulparToast>(
+      html`<tulpar-toast heading="Confirm action"></tulpar-toast>`,
+    );
     el.actions = [{ label: "Undo", onClick: () => {} }];
     await el.updateComplete;
     const card = shadow(el).querySelector(".toast-card") as HTMLElement;
     expect(card.getAttribute("role")).to.equal("alertdialog");
     const labelledBy = card.getAttribute("aria-labelledby");
-    expect(labelledBy, "alertdialog card must have aria-labelledby").to.be.a("string").and.not.empty;
+    expect(labelledBy, "alertdialog card must have aria-labelledby").to.be.a("string").and.not
+      .empty;
   });
 
   it("actionable toast aria-labelledby points to an element with the heading text", async () => {
-    const el = await fixture<TulparToast>(html`<tulpar-toast heading="Delete file?"></tulpar-toast>`);
+    const el = await fixture<TulparToast>(
+      html`<tulpar-toast heading="Delete file?"></tulpar-toast>`,
+    );
     el.actions = [{ label: "Delete", onClick: () => {} }];
     await el.updateComplete;
     const card = shadow(el).querySelector(".toast-card") as HTMLElement;
@@ -1171,7 +1203,9 @@ describe("<tulpar-toast> alertdialog ARIA labelling (Task 4.3)", () => {
     const card = shadow(el).querySelector(".toast-card") as HTMLElement;
     expect(card.getAttribute("role")).to.equal("alertdialog");
     const describedById = card.getAttribute("aria-describedby");
-    expect(describedById, "alertdialog with description must have aria-describedby").to.be.a("string").and.not.empty;
+    expect(describedById, "alertdialog with description must have aria-describedby").to.be.a(
+      "string",
+    ).and.not.empty;
     const descEl2 = shadow(el).getElementById(describedById!);
     expect(descEl2, `element with id "${describedById}" must exist in shadow DOM`).to.exist;
     expect(descEl2!.textContent?.trim()).to.include("This cannot be undone.");
@@ -1207,10 +1241,7 @@ describe("<tulpar-toast> alertdialog ARIA labelling (Task 4.3)", () => {
 
     // The referenced element must exist in the shadow DOM.
     const descTarget = shadow(el).getElementById(describedById!);
-    expect(
-      descTarget,
-      `shadow element with id "${describedById}" must exist`,
-    ).to.exist;
+    expect(descTarget, `shadow element with id "${describedById}" must exist`).to.exist;
   });
 
   it("aria-labelledby id is stable across re-renders (same value after actions change)", async () => {
@@ -1241,7 +1272,14 @@ describe("<tulpar-toast> Esc key dismisses focused toast (Task 4.3)", () => {
 
     // Focus the element, then fire Esc.
     el.focus();
-    el.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, composed: true, cancelable: true }));
+    el.dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "Escape",
+        bubbles: true,
+        composed: true,
+        cancelable: true,
+      }),
+    );
 
     expect(detail, "tulpar-dismiss must fire on Esc when host has focus").to.not.be.null;
     expect((detail as Record<string, unknown>).reason).to.equal("user");
@@ -1257,7 +1295,14 @@ describe("<tulpar-toast> Esc key dismisses focused toast (Task 4.3)", () => {
     // Simulate Esc from the close button inside shadow DOM (composed: true → bubbles out).
     const btn = shadow(el).querySelector(".toast-close") as HTMLButtonElement;
     expect(btn).to.exist;
-    btn.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, composed: true, cancelable: true }));
+    btn.dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "Escape",
+        bubbles: true,
+        composed: true,
+        cancelable: true,
+      }),
+    );
 
     expect(detail, "tulpar-dismiss must fire when Esc comes from shadow descendant").to.not.be.null;
     expect((detail as Record<string, unknown>).reason).to.equal("user");
@@ -1270,7 +1315,14 @@ describe("<tulpar-toast> Esc key dismisses focused toast (Task 4.3)", () => {
     let evt: CustomEvent | null = null;
     el.addEventListener("tulpar-dismiss", (e) => (evt = e as CustomEvent));
 
-    el.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, composed: true, cancelable: true }));
+    el.dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "Escape",
+        bubbles: true,
+        composed: true,
+        cancelable: true,
+      }),
+    );
     expect(evt).to.not.be.null;
     expect((evt as unknown as CustomEvent).cancelable).to.be.true;
   });
@@ -1282,8 +1334,17 @@ describe("<tulpar-toast> Esc key dismisses focused toast (Task 4.3)", () => {
     let dismissed = false;
     el.addEventListener("tulpar-dismiss", () => (dismissed = true));
 
-    el.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true, composed: true, cancelable: true }));
-    el.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true, composed: true, cancelable: true }));
+    el.dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "Enter",
+        bubbles: true,
+        composed: true,
+        cancelable: true,
+      }),
+    );
+    el.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Tab", bubbles: true, composed: true, cancelable: true }),
+    );
 
     expect(dismissed).to.be.false;
   });

@@ -331,8 +331,8 @@ const PAGE_STYLES = `
       <h2 class="section-title">1. Live playground</h2>
       <p class="section-desc">
         Drive value, variant, tone, thickness/size, and the indeterminate / valueLabel toggles. Pick
-        <code class="inline-code">flow</code> and drag the value slider to watch the fill colour flow
-        red → amber → green. The snippet updates live.
+        <code class="inline-code">flow</code> and drag the value slider to watch the fill colour
+        flow red → amber → green. The snippet updates live.
       </p>
       <div class="preview preview--col">
         <div class="pg-controls">
@@ -638,9 +638,27 @@ const PAGE_STYLES = `
           <div class="row-items av-baseline progress-circ-row">
             <tulpar-progress-ng variant="circular" [value]="70" size="xs" tone="info" />
             <tulpar-progress-ng variant="circular" [value]="70" size="sm" tone="info" />
-            <tulpar-progress-ng variant="circular" [value]="70" size="md" tone="info" [valueLabel]="true" />
-            <tulpar-progress-ng variant="circular" [value]="70" size="lg" tone="info" [valueLabel]="true" />
-            <tulpar-progress-ng variant="circular" [value]="70" size="xl" tone="info" [valueLabel]="true" />
+            <tulpar-progress-ng
+              variant="circular"
+              [value]="70"
+              size="md"
+              tone="info"
+              [valueLabel]="true"
+            />
+            <tulpar-progress-ng
+              variant="circular"
+              [value]="70"
+              size="lg"
+              tone="info"
+              [valueLabel]="true"
+            />
+            <tulpar-progress-ng
+              variant="circular"
+              [value]="70"
+              size="xl"
+              tone="info"
+              [valueLabel]="true"
+            />
           </div>
         </div>
         <div class="demo-row">

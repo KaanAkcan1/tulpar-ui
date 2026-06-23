@@ -154,15 +154,15 @@ function onAction(e: Event) {
 
       See CLAUDE.md § "Vue wrapper slot forwarding (gotcha)".
     -->
-    <span v-if="$slots.title" style="display:contents" slot="title">
+    <span v-if="$slots.title" style="display: contents" slot="title">
       <slot name="title" />
     </span>
 
-    <span v-if="$slots.description" style="display:contents" slot="description">
+    <span v-if="$slots.description" style="display: contents" slot="description">
       <slot name="description" />
     </span>
 
-    <span v-if="$slots.icon" style="display:contents" slot="icon">
+    <span v-if="$slots.icon" style="display: contents" slot="icon">
       <slot name="icon" />
     </span>
 

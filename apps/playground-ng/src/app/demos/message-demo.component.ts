@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TulparMessageService } from '@tulpar-ui/angular';
 
@@ -61,10 +56,10 @@ const WHEN_TO_USE_CODE = `// Message: top-center, single line, 3s auto-dismiss, 
       <span class="page-tag">Feedback</span>
       <h1 class="page-title">Message</h1>
       <p class="page-lede">
-        Messages are lightweight, top-center pills for transient redundant confirmations
-        ("Copied", "Saved", "Synced"). They auto-dismiss in 3 s, deduplicate repeated
-        calls into a ×N counter, and carry no actions. A Message that needs an action
-        is a <a class="page-link" routerLink="/toast">Toast</a>.
+        Messages are lightweight, top-center pills for transient redundant confirmations ("Copied",
+        "Saved", "Synced"). They auto-dismiss in 3 s, deduplicate repeated calls into a ×N counter,
+        and carry no actions. A Message that needs an action is a
+        <a class="page-link" routerLink="/toast">Toast</a>.
       </p>
     </header>
 
@@ -97,17 +92,19 @@ const WHEN_TO_USE_CODE = `// Message: top-center, single line, 3s auto-dismiss, 
     <section class="doc-section">
       <h2 class="section-title">1. Tones</h2>
       <p class="section-desc">
-        Four tones: <code class="inline-code">info</code> · <code class="inline-code">success</code> ·
-        <code class="inline-code">warning</code> · <code class="inline-code">danger</code>.
-        Each shows as a top-center pill with its status icon and auto-dismisses in 3 s.
-        Messages use <code class="inline-code">role="status"</code> / <code class="inline-code">aria-live="polite"</code>
+        Four tones: <code class="inline-code">info</code> ·
+        <code class="inline-code">success</code> · <code class="inline-code">warning</code> ·
+        <code class="inline-code">danger</code>. Each shows as a top-center pill with its status
+        icon and auto-dismisses in 3 s. Messages use
+        <code class="inline-code">role="status"</code> /
+        <code class="inline-code">aria-live="polite"</code>
         and never steal focus.
       </p>
       <div class="preview preview--trigger-grid">
-        <button class="trigger-btn trigger-btn--info"    (click)="showInfo()">Info</button>
+        <button class="trigger-btn trigger-btn--info" (click)="showInfo()">Info</button>
         <button class="trigger-btn trigger-btn--success" (click)="showSuccess()">Success</button>
         <button class="trigger-btn trigger-btn--warning" (click)="showWarning()">Warning</button>
-        <button class="trigger-btn trigger-btn--danger"  (click)="showDanger()">Danger</button>
+        <button class="trigger-btn trigger-btn--danger" (click)="showDanger()">Danger</button>
       </div>
       <pre class="code"><code>{{ tonesCode }}</code></pre>
     </section>
@@ -117,9 +114,9 @@ const WHEN_TO_USE_CODE = `// Message: top-center, single line, 3s auto-dismiss, 
       <h2 class="section-title">2. Grouping</h2>
       <p class="section-desc">
         <strong>Default (<code class="inline-code">group:true</code>):</strong> Calls with the same
-        tone + text merge into a single pill with a ×N counter — ideal for repeated triggers
-        (copy button, auto-save). <code class="inline-code">group:false</code> creates a separate
-        pill each time. Press the "Copy" button rapidly to see the counter increment.
+        tone + text merge into a single pill with a ×N counter — ideal for repeated triggers (copy
+        button, auto-save). <code class="inline-code">group:false</code> creates a separate pill
+        each time. Press the "Copy" button rapidly to see the counter increment.
       </p>
       <div class="preview">
         <div class="stack-demo-cols">
@@ -130,9 +127,7 @@ const WHEN_TO_USE_CODE = `// Message: top-center, single line, 3s auto-dismiss, 
             </button>
             @if (groupCount() > 0) {
               <div class="reason-badge-wrap">
-                <span class="reason-badge">
-                  ×{{ groupCount() }} kez tetiklendi
-                </span>
+                <span class="reason-badge"> ×{{ groupCount() }} kez tetiklendi </span>
               </div>
             }
           </div>
@@ -152,8 +147,8 @@ const WHEN_TO_USE_CODE = `// Message: top-center, single line, 3s auto-dismiss, 
       <h2 class="section-title">3. Duration</h2>
       <p class="section-desc">
         Default auto-dismiss is 3 s. Pass <code class="inline-code">duration</code> to override
-        per-call. Unlike Toast, there is no <code class="inline-code">timer:false</code> on Message —
-        if you need a persistent notification with a close button, use Toast instead.
+        per-call. Unlike Toast, there is no <code class="inline-code">timer:false</code> on Message
+        — if you need a persistent notification with a close button, use Toast instead.
       </p>
       <div class="preview preview--trigger-grid">
         <button class="trigger-btn" (click)="showDefault()">Default (3s)</button>
@@ -167,20 +162,27 @@ const WHEN_TO_USE_CODE = `// Message: top-center, single line, 3s auto-dismiss, 
     <section class="doc-section">
       <h2 class="section-title">4. Dark mode</h2>
       <p class="section-desc">
-        Message pill surfaces flip automatically when the <code class="inline-code">.dark</code>
-        class is present on <code class="inline-code">&lt;body&gt;</code> — deep tinted background,
-        lightened text, 1px border for separation. Toggle dark mode via the sidenav theme switch
-        and fire a message to verify.
+        Message pill surfaces flip automatically when the
+        <code class="inline-code">.dark</code> class is present on
+        <code class="inline-code">&lt;body&gt;</code> — deep tinted background, lightened text, 1px
+        border for separation. Toggle dark mode via the sidenav theme switch and fire a message to
+        verify.
       </p>
       <div class="preview preview--trigger-grid">
-        <button class="trigger-btn trigger-btn--info"    (click)="showInfo()">Info (dark safe)</button>
-        <button class="trigger-btn trigger-btn--success" (click)="showSuccess()">Success (dark safe)</button>
-        <button class="trigger-btn trigger-btn--warning" (click)="showWarning()">Warning (dark safe)</button>
-        <button class="trigger-btn trigger-btn--danger"  (click)="showDanger()">Danger (dark safe)</button>
+        <button class="trigger-btn trigger-btn--info" (click)="showInfo()">Info (dark safe)</button>
+        <button class="trigger-btn trigger-btn--success" (click)="showSuccess()">
+          Success (dark safe)
+        </button>
+        <button class="trigger-btn trigger-btn--warning" (click)="showWarning()">
+          Warning (dark safe)
+        </button>
+        <button class="trigger-btn trigger-btn--danger" (click)="showDanger()">
+          Danger (dark safe)
+        </button>
       </div>
       <div class="dark-note">
-        Toggle the Dark/Light switch in the sidenav, then click a button above — tone surfaces
-        adapt automatically with the brand layer's semantic token bindings.
+        Toggle the Dark/Light switch in the sidenav, then click a button above — tone surfaces adapt
+        automatically with the brand layer's semantic token bindings.
       </div>
     </section>
   `,
@@ -242,7 +244,9 @@ const WHEN_TO_USE_CODE = `// Message: top-center, single line, 3s auto-dismiss, 
         margin-bottom: 20px;
       }
       @media (max-width: 640px) {
-        .decision-grid { grid-template-columns: 1fr; }
+        .decision-grid {
+          grid-template-columns: 1fr;
+        }
       }
 
       .decision-col {
@@ -356,7 +360,9 @@ const WHEN_TO_USE_CODE = `// Message: top-center, single line, 3s auto-dismiss, 
         background: var(--tulpar-color-bg-elevated, #ffffff);
         color: var(--tulpar-color-text-primary, #15110b);
         cursor: pointer;
-        transition: transform 120ms ease, box-shadow 120ms ease;
+        transition:
+          transform 120ms ease,
+          box-shadow 120ms ease;
         white-space: nowrap;
       }
 
@@ -512,10 +518,18 @@ export class MessageDemoComponent {
   readonly whenToUseCode = WHEN_TO_USE_CODE;
 
   // ── 1. Tones ──────────────────────────────────────────────────────────────
-  showInfo()    { this.msg.info('Senkronize edildi.'); }
-  showSuccess() { this.msg.success('Kopyalandı.'); }
-  showWarning() { this.msg.warning('Bağlantı yavaş.'); }
-  showDanger()  { this.msg.danger('Yükleme başarısız.'); }
+  showInfo() {
+    this.msg.info('Senkronize edildi.');
+  }
+  showSuccess() {
+    this.msg.success('Kopyalandı.');
+  }
+  showWarning() {
+    this.msg.warning('Bağlantı yavaş.');
+  }
+  showDanger() {
+    this.msg.danger('Yükleme başarısız.');
+  }
 
   // ── 2. Grouping ───────────────────────────────────────────────────────────
   showGrouped() {
@@ -527,7 +541,13 @@ export class MessageDemoComponent {
   }
 
   // ── 3. Duration ───────────────────────────────────────────────────────────
-  showDefault() { this.msg.info('3 saniye (varsayılan).'); }
-  show6s()      { this.msg.info('6 saniye süre.', { duration: 6000 }); }
-  show1s()      { this.msg.success('Hızlı onay.', { duration: 1000 }); }
+  showDefault() {
+    this.msg.info('3 saniye (varsayılan).');
+  }
+  show6s() {
+    this.msg.info('6 saniye süre.', { duration: 6000 });
+  }
+  show1s() {
+    this.msg.success('Hızlı onay.', { duration: 1000 });
+  }
 }

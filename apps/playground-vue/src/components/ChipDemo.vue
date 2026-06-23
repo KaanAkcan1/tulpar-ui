@@ -279,9 +279,24 @@ const pgSnippet = computed(() => {
         <div v-for="v in variants" :key="v" class="demo-row">
           <span class="row-label">{{ v }}</span>
           <div class="row-items">
-            <TulparChip tone="neutral" :variant="v" label="Status" @clicked="logChip('clicked: ' + v)" />
-            <TulparChip tone="info" :variant="v" label="Owner" @clicked="logChip('clicked: ' + v)" />
-            <TulparChip tone="success" :variant="v" label="Label" @clicked="logChip('clicked: ' + v)" />
+            <TulparChip
+              tone="neutral"
+              :variant="v"
+              label="Status"
+              @clicked="logChip('clicked: ' + v)"
+            />
+            <TulparChip
+              tone="info"
+              :variant="v"
+              label="Owner"
+              @clicked="logChip('clicked: ' + v)"
+            />
+            <TulparChip
+              tone="success"
+              :variant="v"
+              label="Label"
+              @clicked="logChip('clicked: ' + v)"
+            />
           </div>
         </div>
       </div>

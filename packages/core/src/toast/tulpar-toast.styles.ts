@@ -43,39 +43,39 @@ export const toastStyles = css`
 
   /* ── Built-in tone overrides (semantic tokens → internal vars) ── */
   :host([tone="info"]) {
-    --_toast-surface:    var(--tulpar-feedback-tone-info-surface,    #eff6ff);
+    --_toast-surface: var(--tulpar-feedback-tone-info-surface, #eff6ff);
     --_toast-on-surface: var(--tulpar-feedback-tone-info-on-surface, #1e3a5f);
-    --_toast-border:     var(--tulpar-feedback-tone-info-border,     #93c5fd);
-    --_toast-accent:     var(--tulpar-feedback-tone-info-accent,     #2563eb);
+    --_toast-border: var(--tulpar-feedback-tone-info-border, #93c5fd);
+    --_toast-accent: var(--tulpar-feedback-tone-info-accent, #2563eb);
   }
 
   :host([tone="success"]) {
-    --_toast-surface:    var(--tulpar-feedback-tone-success-surface,    #f0fdf4);
+    --_toast-surface: var(--tulpar-feedback-tone-success-surface, #f0fdf4);
     --_toast-on-surface: var(--tulpar-feedback-tone-success-on-surface, #14532d);
-    --_toast-border:     var(--tulpar-feedback-tone-success-border,     #86efac);
-    --_toast-accent:     var(--tulpar-feedback-tone-success-accent,     #16a34a);
+    --_toast-border: var(--tulpar-feedback-tone-success-border, #86efac);
+    --_toast-accent: var(--tulpar-feedback-tone-success-accent, #16a34a);
   }
 
   :host([tone="warning"]) {
-    --_toast-surface:    var(--tulpar-feedback-tone-warning-surface,    #fffbeb);
+    --_toast-surface: var(--tulpar-feedback-tone-warning-surface, #fffbeb);
     --_toast-on-surface: var(--tulpar-feedback-tone-warning-on-surface, #451a03);
-    --_toast-border:     var(--tulpar-feedback-tone-warning-border,     #fcd34d);
-    --_toast-accent:     var(--tulpar-feedback-tone-warning-accent,     #d97706);
+    --_toast-border: var(--tulpar-feedback-tone-warning-border, #fcd34d);
+    --_toast-accent: var(--tulpar-feedback-tone-warning-accent, #d97706);
   }
 
   :host([tone="danger"]) {
-    --_toast-surface:    var(--tulpar-feedback-tone-danger-surface,    #fef2f2);
+    --_toast-surface: var(--tulpar-feedback-tone-danger-surface, #fef2f2);
     --_toast-on-surface: var(--tulpar-feedback-tone-danger-on-surface, #450a0a);
-    --_toast-border:     var(--tulpar-feedback-tone-danger-border,     #fca5a5);
-    --_toast-accent:     var(--tulpar-feedback-tone-danger-accent,     #dc2626);
+    --_toast-border: var(--tulpar-feedback-tone-danger-border, #fca5a5);
+    --_toast-accent: var(--tulpar-feedback-tone-danger-accent, #dc2626);
   }
 
   /* ── High-contrast danger escalation ── */
   :host([data-hc]) {
-    --_toast-surface:    var(--tulpar-feedback-danger-hc-surface, #b91c1c);
-    --_toast-on-surface: var(--tulpar-feedback-danger-hc-on,      #ffffff);
-    --_toast-border:     transparent;
-    --_toast-accent:     #ffffff;
+    --_toast-surface: var(--tulpar-feedback-danger-hc-surface, #b91c1c);
+    --_toast-on-surface: var(--tulpar-feedback-danger-hc-on, #ffffff);
+    --_toast-border: transparent;
+    --_toast-accent: #ffffff;
   }
 
   /* ── Host layout ── */
@@ -100,7 +100,12 @@ export const toastStyles = css`
     background: var(--_toast-surface);
     border: 1px solid var(--_toast-border);
     color: var(--_toast-on-surface);
-    box-shadow: var(--tulpar-feedback-shadow, 0 4px 6px -2px rgba(10, 37, 64, 0.10), 0 12px 28px -6px rgba(10, 37, 64, 0.18), 0 0 0 1px rgba(0,0,0,0.04));
+    box-shadow: var(
+      --tulpar-feedback-shadow,
+      0 4px 6px -2px rgba(10, 37, 64, 0.1),
+      0 12px 28px -6px rgba(10, 37, 64, 0.18),
+      0 0 0 1px rgba(0, 0, 0, 0.04)
+    );
     /* pan-y: browser handles vertical scrolling; JS handles horizontal swipe */
     touch-action: pan-y;
     /* will-change hint for the swipe transform (avoids repaints during drag) */
@@ -222,7 +227,9 @@ export const toastStyles = css`
     border: 1px solid rgba(0, 0, 0, 0.12);
     background: rgba(255, 255, 255, 0.7);
     color: var(--_toast-on-surface);
-    transition: background-color 120ms ease, opacity 120ms ease;
+    transition:
+      background-color 120ms ease,
+      opacity 120ms ease;
   }
 
   .toast-actions button:hover {
@@ -387,8 +394,12 @@ export const toastStyles = css`
   }
 
   @keyframes tulpar-ring-deplete {
-    from { stroke-dashoffset: 0; }
-    to   { stroke-dashoffset: 100; }
+    from {
+      stroke-dashoffset: 0;
+    }
+    to {
+      stroke-dashoffset: 100;
+    }
   }
 
   /* Pause the ring animation on hover or when the card (or a child) has focus.
@@ -437,17 +448,19 @@ export const toastStyles = css`
   }
 
   @keyframes tulpar-toast-enter-host {
-    from { opacity: 0; }
-    to   { opacity: var(--_toast-enter-target-opacity, 1); }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: var(--_toast-enter-target-opacity, 1);
+    }
   }
 
   /* Card enter: geometric slide-in on the inner card element.
      Duration driven by the motion token (fallback 220ms). */
   :host([data-enter]) .toast-card {
-    animation: tulpar-toast-enter-card
-               var(--tulpar-feedback-motion-duration-enter, 220ms)
-               var(--tulpar-feedback-motion-easing, cubic-bezier(.22,1,.36,1))
-               both;
+    animation: tulpar-toast-enter-card var(--tulpar-feedback-motion-duration-enter, 220ms)
+      var(--tulpar-feedback-motion-easing, cubic-bezier(0.22, 1, 0.36, 1)) both;
   }
 
   /* ── Exit animation ───────────────────────────────────────────────────── */
@@ -483,7 +496,7 @@ export const toastStyles = css`
    */
   :host(:not([data-enter]):not([data-exit])) {
     transition: transform var(--tulpar-feedback-motion-duration-reposition, 300ms)
-                var(--tulpar-feedback-motion-easing, cubic-bezier(.22,1,.36,1));
+      var(--tulpar-feedback-motion-easing, cubic-bezier(0.22, 1, 0.36, 1));
   }
 
   /* ── Reduced motion ───────────────────────────────────────────────────── */

@@ -26,9 +26,7 @@ async function nextFrame(): Promise<void> {
  * Get all tulpar-toast elements currently in the document body's toaster region.
  */
 function allToasts(): TulparToast[] {
-  return Array.from(
-    document.querySelectorAll<TulparToast>("tulpar-toast")
-  );
+  return Array.from(document.querySelectorAll<TulparToast>("tulpar-toast"));
 }
 
 /**
@@ -309,14 +307,24 @@ describe("auto-dismiss", () => {
 
   it("fires onDismiss with reason='timeout' on auto-dismiss", async () => {
     let capturedReason: string | undefined;
-    toast("Quick", { duration: 60, onDismiss: (r) => { capturedReason = r; } });
+    toast("Quick", {
+      duration: 60,
+      onDismiss: (r) => {
+        capturedReason = r;
+      },
+    });
     await wait(120);
     expect(capturedReason).to.equal("timeout");
   });
 
   it("fires onAutoClose on auto-dismiss", async () => {
     let called = false;
-    toast("Quick", { duration: 60, onAutoClose: () => { called = true; } });
+    toast("Quick", {
+      duration: 60,
+      onAutoClose: () => {
+        called = true;
+      },
+    });
     await wait(120);
     expect(called).to.equal(true);
   });
@@ -400,7 +408,12 @@ describe("toast.dismiss()", () => {
 
   it("fires onDismiss with reason='programmatic' on toast.dismiss(id)", async () => {
     let capturedReason: string | undefined;
-    const id = toast("Bye", { duration: 0, onDismiss: (r) => { capturedReason = r; } });
+    const id = toast("Bye", {
+      duration: 0,
+      onDismiss: (r) => {
+        capturedReason = r;
+      },
+    });
     await nextFrame();
     toast.dismiss(id);
     await nextFrame();
@@ -417,7 +430,7 @@ describe("toast.dismiss()", () => {
 
     // Dismiss queued item, then dismiss all visible
     toast.dismiss(id4); // dismiss the queued one
-    toast.dismiss();    // dismiss all remaining visible
+    toast.dismiss(); // dismiss all remaining visible
     await nextFrame();
     expect(toastsInLocation("bottom-right").length).to.equal(0);
   });
@@ -437,7 +450,7 @@ describe("tulpar-dismiss event handling", () => {
         bubbles: true,
         composed: true,
         cancelable: true,
-      })
+      }),
     );
     await nextFrame();
     expect(toastsInLocation("bottom-right").length).to.equal(0);
@@ -447,7 +460,9 @@ describe("tulpar-dismiss event handling", () => {
     let capturedReason: string | undefined;
     toast("Close me", {
       duration: 0,
-      onDismiss: (r) => { capturedReason = r; },
+      onDismiss: (r) => {
+        capturedReason = r;
+      },
     });
     await nextFrame();
     const el = toastsInLocation("bottom-right")[0];
@@ -458,7 +473,7 @@ describe("tulpar-dismiss event handling", () => {
         bubbles: true,
         composed: true,
         cancelable: true,
-      })
+      }),
     );
     await nextFrame();
     expect(capturedReason).to.equal("user");
@@ -475,7 +490,7 @@ describe("tulpar-dismiss event handling", () => {
         bubbles: true,
         composed: true,
         cancelable: true,
-      })
+      }),
     );
     await nextFrame();
     expect(toastsInLocation("bottom-right").length).to.equal(0);
@@ -798,7 +813,9 @@ describe("toast action — dismiss with reason 'action'", () => {
     toast("File deleted", {
       duration: 0,
       actions: [{ label: "Undo", onClick: () => {} }],
-      onDismiss: (r) => { capturedReason = r; },
+      onDismiss: (r) => {
+        capturedReason = r;
+      },
     });
     await nextFrame();
     expect(toastsInLocation("bottom-right").length).to.equal(1);
@@ -811,7 +828,7 @@ describe("toast action — dismiss with reason 'action'", () => {
         bubbles: true,
         composed: true,
         cancelable: false,
-      })
+      }),
     );
     await nextFrame();
 
@@ -823,13 +840,18 @@ describe("toast action — dismiss with reason 'action'", () => {
     const log: string[] = [];
     const action = {
       label: "Undo",
-      onClick: () => { log.push("action"); },
+      onClick: () => {
+        log.push("action");
+      },
     };
     let dismissReason: string | undefined;
     toast("Deleted", {
       duration: 0,
       actions: [action],
-      onDismiss: (r) => { log.push("dismiss"); dismissReason = r; },
+      onDismiss: (r) => {
+        log.push("dismiss");
+        dismissReason = r;
+      },
     });
     await nextFrame();
 
@@ -842,7 +864,7 @@ describe("toast action — dismiss with reason 'action'", () => {
         bubbles: true,
         composed: true,
         cancelable: false,
-      })
+      }),
     );
     await nextFrame();
 
@@ -913,7 +935,9 @@ describe("toast.promise()", () => {
 
   it("on resolve → updates toast to success tone, closable, auto-dismiss", async () => {
     let resolveP!: (v: string) => void;
-    const p = new Promise<string>((res) => { resolveP = res; });
+    const p = new Promise<string>((res) => {
+      resolveP = res;
+    });
     toast.promise(p, { loading: "Saving…", success: "Saved!", error: "Failed" });
     await nextFrame();
 
@@ -931,7 +955,9 @@ describe("toast.promise()", () => {
 
   it("on reject → updates toast to danger tone, persistent (timer:false), closable", async () => {
     let rejectP!: (e: unknown) => void;
-    const p = new Promise<string>((_, rej) => { rejectP = rej; });
+    const p = new Promise<string>((_, rej) => {
+      rejectP = rej;
+    });
 
     // Attach a catch so the unhandled rejection doesn't pollute the test suite.
     const guarded = p.catch(() => {});
@@ -953,7 +979,9 @@ describe("toast.promise()", () => {
 
   it("success as a function receives the resolved value", async () => {
     let resolveP!: (v: number) => void;
-    const p = new Promise<number>((res) => { resolveP = res; });
+    const p = new Promise<number>((res) => {
+      resolveP = res;
+    });
     toast.promise(p, {
       loading: "Computing…",
       success: (v) => `Result: ${v}`,
@@ -972,7 +1000,9 @@ describe("toast.promise()", () => {
 
   it("error as a function receives the rejection reason", async () => {
     let rejectP!: (e: unknown) => void;
-    const p = new Promise<string>((_, rej) => { rejectP = rej; });
+    const p = new Promise<string>((_, rej) => {
+      rejectP = rej;
+    });
     const guarded = p.catch(() => {});
     toast.promise(p, {
       loading: "Working…",
@@ -1012,12 +1042,10 @@ describe("toast.promise()", () => {
 
   it("opts.duration controls the success auto-dismiss duration", async () => {
     let resolveP!: (v: string) => void;
-    const p = new Promise<string>((res) => { resolveP = res; });
-    toast.promise(
-      p,
-      { loading: "…", success: "Done!", error: "Fail" },
-      { duration: 80 },
-    );
+    const p = new Promise<string>((res) => {
+      resolveP = res;
+    });
+    toast.promise(p, { loading: "…", success: "Done!", error: "Fail" }, { duration: 80 });
     await nextFrame();
 
     resolveP("ok");
@@ -1032,7 +1060,9 @@ describe("toast.promise()", () => {
 
   it("opts.location places the loading + resolved toast in that location", async () => {
     let resolveP!: (v: string) => void;
-    const p = new Promise<string>((res) => { resolveP = res; });
+    const p = new Promise<string>((res) => {
+      resolveP = res;
+    });
     toast.promise(
       p,
       { loading: "…", success: "Done!", error: "Fail" },
@@ -1058,8 +1088,12 @@ describe("onAutoClose lifecycle callback", () => {
     const log: string[] = [];
     toast("Quick", {
       duration: 60,
-      onAutoClose: () => { log.push("autoClose"); },
-      onDismiss: () => { log.push("dismiss"); },
+      onAutoClose: () => {
+        log.push("autoClose");
+      },
+      onDismiss: () => {
+        log.push("dismiss");
+      },
     });
     await wait(120);
     expect(log).to.include("autoClose");
@@ -1071,7 +1105,9 @@ describe("onAutoClose lifecycle callback", () => {
     let autoCloseFired = false;
     toast("Manual", {
       duration: 5000,
-      onAutoClose: () => { autoCloseFired = true; },
+      onAutoClose: () => {
+        autoCloseFired = true;
+      },
     });
     await nextFrame();
     const el = toastsInLocation("bottom-right")[0];
@@ -1081,7 +1117,7 @@ describe("onAutoClose lifecycle callback", () => {
         bubbles: true,
         composed: true,
         cancelable: true,
-      })
+      }),
     );
     await nextFrame();
     expect(autoCloseFired).to.equal(false);
@@ -1091,7 +1127,9 @@ describe("onAutoClose lifecycle callback", () => {
     let autoCloseFired = false;
     const id = toast("Prog", {
       duration: 5000,
-      onAutoClose: () => { autoCloseFired = true; },
+      onAutoClose: () => {
+        autoCloseFired = true;
+      },
     });
     await nextFrame();
     toast.dismiss(id);
@@ -1105,34 +1143,68 @@ describe("onAutoClose lifecycle callback", () => {
 describe("onDismiss fires for every dismiss path", () => {
   it("fires with reason='timeout' on auto-dismiss", async () => {
     let reason: string | undefined;
-    toast("T", { duration: 60, onDismiss: (r) => { reason = r; } });
+    toast("T", {
+      duration: 60,
+      onDismiss: (r) => {
+        reason = r;
+      },
+    });
     await wait(120);
     expect(reason).to.equal("timeout");
   });
 
   it("fires with reason='user' on user close (tulpar-dismiss user)", async () => {
     let reason: string | undefined;
-    toast("T", { duration: 0, onDismiss: (r) => { reason = r; } });
+    toast("T", {
+      duration: 0,
+      onDismiss: (r) => {
+        reason = r;
+      },
+    });
     await nextFrame();
     const el = toastsInLocation("bottom-right")[0];
-    el.dispatchEvent(new CustomEvent("tulpar-dismiss", { detail: { reason: "user" }, bubbles: true, composed: true, cancelable: true }));
+    el.dispatchEvent(
+      new CustomEvent("tulpar-dismiss", {
+        detail: { reason: "user" },
+        bubbles: true,
+        composed: true,
+        cancelable: true,
+      }),
+    );
     await nextFrame();
     expect(reason).to.equal("user");
   });
 
   it("fires with reason='swipe' on swipe dismiss", async () => {
     let reason: string | undefined;
-    toast("T", { duration: 0, onDismiss: (r) => { reason = r; } });
+    toast("T", {
+      duration: 0,
+      onDismiss: (r) => {
+        reason = r;
+      },
+    });
     await nextFrame();
     const el = toastsInLocation("bottom-right")[0];
-    el.dispatchEvent(new CustomEvent("tulpar-dismiss", { detail: { reason: "swipe" }, bubbles: true, composed: true, cancelable: true }));
+    el.dispatchEvent(
+      new CustomEvent("tulpar-dismiss", {
+        detail: { reason: "swipe" },
+        bubbles: true,
+        composed: true,
+        cancelable: true,
+      }),
+    );
     await nextFrame();
     expect(reason).to.equal("swipe");
   });
 
   it("fires with reason='programmatic' on toast.dismiss(id)", async () => {
     let reason: string | undefined;
-    const id = toast("T", { duration: 0, onDismiss: (r) => { reason = r; } });
+    const id = toast("T", {
+      duration: 0,
+      onDismiss: (r) => {
+        reason = r;
+      },
+    });
     await nextFrame();
     toast.dismiss(id);
     await nextFrame();
@@ -1144,11 +1216,20 @@ describe("onDismiss fires for every dismiss path", () => {
     toast("T", {
       duration: 0,
       actions: [{ label: "Undo", onClick: () => {} }],
-      onDismiss: (r) => { reason = r; },
+      onDismiss: (r) => {
+        reason = r;
+      },
     });
     await nextFrame();
     const el = toastsInLocation("bottom-right")[0];
-    el.dispatchEvent(new CustomEvent("tulpar-action", { detail: { label: "Undo" }, bubbles: true, composed: true, cancelable: false }));
+    el.dispatchEvent(
+      new CustomEvent("tulpar-action", {
+        detail: { label: "Undo" },
+        bubbles: true,
+        composed: true,
+        cancelable: false,
+      }),
+    );
     await nextFrame();
     expect(reason).to.equal("action");
   });
@@ -1295,7 +1376,7 @@ describe("Task 4.3 — Esc dismiss integration via service", () => {
         bubbles: true,
         composed: true,
         cancelable: true,
-      })
+      }),
     );
     await nextFrame();
     expect(toastsInLocation("bottom-right").length).to.equal(0);
@@ -1305,7 +1386,9 @@ describe("Task 4.3 — Esc dismiss integration via service", () => {
     let capturedReason: string | undefined;
     toast("Esc reason test", {
       duration: 0,
-      onDismiss: (r) => { capturedReason = r; },
+      onDismiss: (r) => {
+        capturedReason = r;
+      },
     });
     await nextFrame();
     const el = toastsInLocation("bottom-right")[0];
@@ -1316,7 +1399,7 @@ describe("Task 4.3 — Esc dismiss integration via service", () => {
         bubbles: true,
         composed: true,
         cancelable: true,
-      })
+      }),
     );
     await nextFrame();
     expect(capturedReason).to.equal("user");

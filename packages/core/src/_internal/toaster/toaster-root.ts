@@ -177,8 +177,8 @@ function syncTheme(el: HTMLElement): void {
  */
 function firstFocusable(container: HTMLElement): HTMLElement | null {
   const candidates = container.querySelectorAll<HTMLElement>(
-    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), ' +
-      'textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    "a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), " +
+      'textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
   );
   return candidates.length > 0 ? candidates[0] : null;
 }

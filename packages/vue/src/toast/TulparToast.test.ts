@@ -115,7 +115,10 @@ describe("TulparToast (Vue)", () => {
 
   it("actions property updates reactively when prop changes", async () => {
     const actions1 = [{ label: "Retry", onClick: () => {} }];
-    const actions2 = [{ label: "Undo", onClick: () => {} }, { label: "Dismiss", onClick: () => {} }];
+    const actions2 = [
+      { label: "Undo", onClick: () => {} },
+      { label: "Dismiss", onClick: () => {} },
+    ];
 
     const wrapper = mount(TulparToast, { props: { actions: actions1 } });
     await wrapper.vm.$nextTick();

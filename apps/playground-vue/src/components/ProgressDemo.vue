@@ -142,8 +142,8 @@ const pgSnippet = computed(() => {
       <h2 class="section-title">1. Live playground</h2>
       <p class="section-desc">
         Drive value, variant, tone, thickness/size, and the indeterminate / valueLabel toggles. Pick
-        <code class="inline-code">flow</code> and drag the value slider to watch the fill colour flow
-        red → amber → green. The snippet updates live.
+        <code class="inline-code">flow</code> and drag the value slider to watch the fill colour
+        flow red → amber → green. The snippet updates live.
       </p>
       <div class="preview preview--col">
         <div class="pg-controls">

@@ -539,8 +539,9 @@ function dismissAll() {
             <li>An action can be undone (delete → Undo)</li>
             <li>A non-critical error needs reporting</li>
             <li>
-              You need to show loading → result in one place
-              (<code class="inline-code">toast.promise</code>)
+              You need to show loading → result in one place (<code class="inline-code"
+                >toast.promise</code
+              >)
             </li>
           </ul>
         </div>
@@ -586,8 +587,8 @@ function dismissAll() {
         Every content capability is available as imperative options: title-only, title +
         description, single action, two actions, long-text wrap, and
         <code class="inline-code">closable:false</code>. The
-        <code class="inline-code">description</code> prop is free-form text; actions accept a label +
-        onClick. Both slot forms are shown in the next section.
+        <code class="inline-code">description</code> prop is free-form text; actions accept a label
+        + onClick. Both slot forms are shown in the next section.
       </p>
       <div class="preview preview--trigger-grid">
         <button class="trigger-btn" @click="showTitleOnly">Title only</button>
@@ -607,8 +608,8 @@ function dismissAll() {
       <p class="section-desc">
         The declarative <code class="inline-code">&lt;TulparToast&gt;</code> SFC supports the
         <code class="inline-code">#title</code> and <code class="inline-code">#description</code>
-        slots for rich content. Slots win when both prop and slot are present.
-        The Fire buttons below launch live toasts via the imperative API using equivalent rich markup.
+        slots for rich content. Slots win when both prop and slot are present. The Fire buttons
+        below launch live toasts via the imperative API using equivalent rich markup.
       </p>
       <div class="preview preview--col">
         <div class="slot-demo-label">#title — rich markup in the heading</div>
@@ -656,9 +657,9 @@ function dismissAll() {
       <p class="section-desc">
         <code class="inline-code">#icon</code> on the declarative SFC accepts any content: a Lucide
         SVG (inline), a custom <code class="inline-code">&lt;svg&gt;</code>, or an
-        <code class="inline-code">&lt;img&gt;</code>. Tulpar ships only the four built-in tone icons;
-        consumers bring their own via this slot. The Fire button below fires a live toast with a
-        custom icon via the raw-SVG icon prop.
+        <code class="inline-code">&lt;img&gt;</code>. Tulpar ships only the four built-in tone
+        icons; consumers bring their own via this slot. The Fire button below fires a live toast
+        with a custom icon via the raw-SVG icon prop.
       </p>
       <div class="preview preview--col">
         <div class="slot-demo-label">#icon — inline SVG (custom shield)</div>
@@ -708,9 +709,10 @@ function dismissAll() {
     <section class="doc-section">
       <h2 class="section-title">6. Custom tone</h2>
       <p class="section-desc">
-        <code class="inline-code">color</code> accepts a brand family name
-        (<code class="inline-code">ilay · umay · gok · ulgen · kizagan · erlik</code>, mode-aware) or
-        a raw CSS color (contrast is author's responsibility). Part overrides
+        <code class="inline-code">color</code> accepts a brand family name (<code
+          class="inline-code"
+          >ilay · umay · gok · ulgen · kizagan · erlik</code
+        >, mode-aware) or a raw CSS color (contrast is author's responsibility). Part overrides
         (<code class="inline-code">bg · accent · text</code>) layer on top.
         <code class="inline-code">custom</code> tone is visual-only — semantics remain
         <code class="inline-code">status</code>.
@@ -763,8 +765,8 @@ function dismissAll() {
         Default: collapsed stack of up to <strong>3</strong> visible toasts — hover or focus the
         stack to expand it (and pause all timers). Beyond
         <code class="inline-code">maxVisible</code>, toasts <strong>queue</strong> and promote as
-        visible ones dismiss (Sonner-style). Use <code class="inline-code">expand:true</code> to show
-        an always-expanded list instead of the collapsed fan.
+        visible ones dismiss (Sonner-style). Use <code class="inline-code">expand:true</code> to
+        show an always-expanded list instead of the collapsed fan.
       </p>
 
       <!-- Live control panel -->
@@ -916,8 +918,8 @@ function dismissAll() {
         The declarative SFC's default slot accepts arbitrary markup — avatars, progress bars,
         anything. This is the escape hatch when the imperative API's title/description/action model
         is insufficient. The Fire button below fires a live toast via
-        <code class="inline-code">toast.custom(HTMLElement)</code> — the canonical imperative rich-content API.
-        Use sparingly; complex markup belongs in a Dialog.
+        <code class="inline-code">toast.custom(HTMLElement)</code> — the canonical imperative
+        rich-content API. Use sparingly; complex markup belongs in a Dialog.
       </p>
       <div class="preview preview--col">
         <div class="slot-demo-label">Default slot — avatar + inline progress bar</div>
@@ -937,7 +939,9 @@ function dismissAll() {
           </template>
         </TulparToast>
         <div class="slot-fire-row">
-          <button class="trigger-btn trigger-btn--info" @click="fireRichToast">Fire rich toast</button>
+          <button class="trigger-btn trigger-btn--info" @click="fireRichToast">
+            Fire rich toast
+          </button>
         </div>
       </div>
       <pre class="code"><code>{{ richContentCode }}</code></pre>

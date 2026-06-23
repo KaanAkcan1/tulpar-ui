@@ -336,7 +336,9 @@ const pgSnippet = computed(() => {
                   <TulparSkeleton v-if="loading" variant="text" :lines="2" />
                   <template v-else>
                     <strong style="font-size: 14px">Tulpar UI</strong>
-                    <span style="font-size: 13px; color: var(--tulpar-color-text-secondary, #57534e)">
+                    <span
+                      style="font-size: 13px; color: var(--tulpar-color-text-secondary, #57534e)"
+                    >
                       Web Components with idiomatic Angular &amp; Vue wrappers.
                     </span>
                   </template>

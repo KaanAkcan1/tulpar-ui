@@ -89,9 +89,9 @@ const pgSnippet = computed(() => {
         An indeterminate loader — a round-cap quarter-arc rotating at a steady cadence over a faint
         track ring. Omitting <code class="inline-code">tone</code> inherits
         <code class="inline-code">currentColor</code> (so it tints to wherever it sits); built-in
-        tones colorize it. <code class="inline-code">:track="false"</code> drops the track ring,
-        and <code class="inline-code">delay</code> defers the render to avoid flashing on fast
-        loads. The accessible label is visually hidden and has both a prop and a slot form.
+        tones colorize it. <code class="inline-code">:track="false"</code> drops the track ring, and
+        <code class="inline-code">delay</code> defers the render to avoid flashing on fast loads.
+        The accessible label is visually hidden and has both a prop and a slot form.
       </p>
     </header>
 

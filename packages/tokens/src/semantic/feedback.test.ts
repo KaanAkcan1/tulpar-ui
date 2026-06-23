@@ -18,27 +18,27 @@ const TONE_KEYS = ["info", "success", "warning", "danger"] as const;
 /** Minimal sample that satisfies the FeedbackTokens interface. */
 const sample: FeedbackTokens = {
   tone: {
-    info:    { surface: "#e0f2fe", onSurface: "#0c4a6e", border: "#7dd3fc", accent: "#0ea5e9" },
+    info: { surface: "#e0f2fe", onSurface: "#0c4a6e", border: "#7dd3fc", accent: "#0ea5e9" },
     success: { surface: "#dcfce7", onSurface: "#14532d", border: "#86efac", accent: "#22c55e" },
     warning: { surface: "#fef9c3", onSurface: "#713f12", border: "#fde047", accent: "#eab308" },
-    danger:  { surface: "#fee2e2", onSurface: "#7f1d1d", border: "#fca5a5", accent: "#ef4444" },
+    danger: { surface: "#fee2e2", onSurface: "#7f1d1d", border: "#fca5a5", accent: "#ef4444" },
   },
   dangerHc: { surface: "#991b1b", on: "#ffffff" },
   shadow: "0 4px 12px rgb(0 0 0 / 0.15)",
   zIndex: "9000",
   motion: {
-    durationEnter:      "220ms",
-    durationExit:       "160ms",
+    durationEnter: "220ms",
+    durationExit: "160ms",
     durationReposition: "300ms",
-    easing:             "cubic-bezier(.22,1,.36,1)",
-    defaultDuration:    "5000ms",
-    messageDuration:    "3000ms",
+    easing: "cubic-bezier(.22,1,.36,1)",
+    defaultDuration: "5000ms",
+    messageDuration: "3000ms",
   },
   size: {
-    toastMaxWidth:  "360px",
-    toastPadding:   "12px 16px",
+    toastMaxWidth: "360px",
+    toastPadding: "12px 16px",
     messagePadding: "8px 14px",
-    ringStroke:     "1.5px",
+    ringStroke: "1.5px",
   },
 };
 
@@ -56,10 +56,10 @@ describe("FeedbackTokens interface", () => {
   it("provides all four tone surfaces with surface/onSurface/border/accent", () => {
     for (const tone of TONE_KEYS) {
       const t = sample.tone[tone];
-      expect(t.surface,   `${tone}.surface`).toBeDefined();
+      expect(t.surface, `${tone}.surface`).toBeDefined();
       expect(t.onSurface, `${tone}.onSurface`).toBeDefined();
-      expect(t.border,    `${tone}.border`).toBeDefined();
-      expect(t.accent,    `${tone}.accent`).toBeDefined();
+      expect(t.border, `${tone}.border`).toBeDefined();
+      expect(t.accent, `${tone}.accent`).toBeDefined();
     }
   });
 
@@ -120,10 +120,10 @@ function assertFeedbackComplete(fb: FeedbackTokens, label: string) {
   it(`${label}: all four tones have surface/onSurface/border/accent (non-empty)`, () => {
     for (const tone of TONES) {
       const t = fb.tone[tone];
-      expect(t.surface,   `${tone}.surface`).toBeTruthy();
+      expect(t.surface, `${tone}.surface`).toBeTruthy();
       expect(t.onSurface, `${tone}.onSurface`).toBeTruthy();
-      expect(t.border,    `${tone}.border`).toBeTruthy();
-      expect(t.accent,    `${tone}.accent`).toBeTruthy();
+      expect(t.border, `${tone}.border`).toBeTruthy();
+      expect(t.accent, `${tone}.accent`).toBeTruthy();
     }
   });
 

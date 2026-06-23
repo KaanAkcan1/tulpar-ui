@@ -117,7 +117,9 @@ describe("toaster-root", () => {
     it("lazily creates the toaster root if not yet created", () => {
       // Root has not been explicitly created; getLocationContainer should create it.
       const container = getLocationContainer("top-center");
-      expect(container.parentElement).to.equal(document.body.querySelector("[data-tulpar-toaster-root]"));
+      expect(container.parentElement).to.equal(
+        document.body.querySelector("[data-tulpar-toaster-root]"),
+      );
     });
 
     it("supports all six locations without errors", () => {
@@ -151,7 +153,7 @@ describe("toaster-root", () => {
     it("Shift+F6 does not move focus into the region", () => {
       const root = getToasterRoot();
       document.dispatchEvent(
-        new KeyboardEvent("keydown", { key: "F6", shiftKey: true, bubbles: true })
+        new KeyboardEvent("keydown", { key: "F6", shiftKey: true, bubbles: true }),
       );
       expect(document.activeElement).to.not.equal(root);
     });
@@ -318,7 +320,7 @@ describe("toaster-root", () => {
       __resetToasterRootForTest();
       // After reset, no root exists. F6 must not throw.
       expect(() =>
-        document.dispatchEvent(new KeyboardEvent("keydown", { key: "F6", bubbles: true }))
+        document.dispatchEvent(new KeyboardEvent("keydown", { key: "F6", bubbles: true })),
       ).to.not.throw();
       // And nothing in the DOM should have been created.
       expect(document.querySelector("[data-tulpar-toaster-root]")).to.equal(null);

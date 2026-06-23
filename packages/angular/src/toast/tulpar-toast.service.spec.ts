@@ -116,15 +116,16 @@ describe("TulparToastService (smoke)", () => {
   it(".setDefaults() delegates to core toast.setDefaults()", () => {
     const svc = TestBed.inject(TulparToastService);
     svc.setDefaults({ location: "top-right", maxVisible: 5 });
-    expect(coreToast.toast.setDefaults).toHaveBeenCalledWith({ location: "top-right", maxVisible: 5 });
+    expect(coreToast.toast.setDefaults).toHaveBeenCalledWith({
+      location: "top-right",
+      maxVisible: 5,
+    });
   });
 
   it(".promise() returns the original Promise (no RxJS)", async () => {
     const svc = TestBed.inject(TulparToastService);
     // Restore promise spy to real (we want to test our wrapper's return value)
-    vi.spyOn(coreToast.toast, "promise" as never).mockImplementation(
-      (p: Promise<unknown>) => p,
-    );
+    vi.spyOn(coreToast.toast, "promise" as never).mockImplementation((p: Promise<unknown>) => p);
     const p = Promise.resolve("result");
     const returned = svc.promise(p, { loading: "…", success: "OK", error: "Err" });
     expect(returned).toBe(p);
@@ -134,9 +135,7 @@ describe("TulparToastService (smoke)", () => {
 
   it(".promise() propagates rejection", async () => {
     const svc = TestBed.inject(TulparToastService);
-    vi.spyOn(coreToast.toast, "promise" as never).mockImplementation(
-      (p: Promise<unknown>) => p,
-    );
+    vi.spyOn(coreToast.toast, "promise" as never).mockImplementation((p: Promise<unknown>) => p);
     const err = new Error("fail");
     const p = Promise.reject(err);
     const returned = svc.promise(p, { loading: "…", success: "OK", error: "Err" });

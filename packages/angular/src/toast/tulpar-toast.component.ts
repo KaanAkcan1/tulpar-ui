@@ -171,7 +171,8 @@ export class TulparToastComponent {
 
   // ── Private ─────────────────────────────────────────────────────────────
 
-  private readonly toastEl = viewChild<ElementRef<HTMLElement & { actions: ToastAction[] }>>("toastEl");
+  private readonly toastEl =
+    viewChild<ElementRef<HTMLElement & { actions: ToastAction[] }>>("toastEl");
 
   constructor() {
     // Set `actions` as a property — arrays with onClick functions cannot go through attrs.

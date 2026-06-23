@@ -11,7 +11,12 @@ describe("ToastTimer", () => {
 
   it("fires onExpire after the specified duration", async () => {
     let expired = false;
-    const t = new ToastTimer({ duration: 50, onExpire: () => { expired = true; } });
+    const t = new ToastTimer({
+      duration: 50,
+      onExpire: () => {
+        expired = true;
+      },
+    });
     await wait(30);
     expect(expired).to.equal(false);
     await wait(40);
@@ -23,8 +28,12 @@ describe("ToastTimer", () => {
     const order: string[] = [];
     const t = new ToastTimer({
       duration: 50,
-      onAutoClose: () => { order.push("autoClose"); },
-      onExpire: () => { order.push("expire"); },
+      onAutoClose: () => {
+        order.push("autoClose");
+      },
+      onExpire: () => {
+        order.push("expire");
+      },
     });
     await wait(80);
     expect(order).to.deep.equal(["autoClose", "expire"]);
@@ -33,7 +42,12 @@ describe("ToastTimer", () => {
 
   it("fires onExpire even when onAutoClose is omitted", async () => {
     let expired = false;
-    const t = new ToastTimer({ duration: 50, onExpire: () => { expired = true; } });
+    const t = new ToastTimer({
+      duration: 50,
+      onExpire: () => {
+        expired = true;
+      },
+    });
     await wait(80);
     expect(expired).to.equal(true);
     t.clear();
@@ -43,7 +57,12 @@ describe("ToastTimer", () => {
 
   it("does not fire while paused", async () => {
     let expired = false;
-    const t = new ToastTimer({ duration: 80, onExpire: () => { expired = true; } });
+    const t = new ToastTimer({
+      duration: 80,
+      onExpire: () => {
+        expired = true;
+      },
+    });
     await wait(30);
     t.pause();
     await wait(80); // would have expired without pause
@@ -54,7 +73,12 @@ describe("ToastTimer", () => {
   it("resumes from remaining time after pause", async () => {
     let expired = false;
     // duration 100ms; pause at ~40ms → remaining ≈ 60ms
-    const t = new ToastTimer({ duration: 100, onExpire: () => { expired = true; } });
+    const t = new ToastTimer({
+      duration: 100,
+      onExpire: () => {
+        expired = true;
+      },
+    });
     await wait(40);
     t.pause();
     await wait(20); // idle — still paused
@@ -75,7 +99,9 @@ describe("ToastTimer", () => {
     const pauseGapMs = 50;
     const t = new ToastTimer({
       duration,
-      onExpire: () => { expiredAt = Date.now() - start; },
+      onExpire: () => {
+        expiredAt = Date.now() - start;
+      },
     });
     await wait(40); // let 40ms of running time pass
     t.pause();
@@ -92,7 +118,12 @@ describe("ToastTimer", () => {
 
   it("double-pause is idempotent — resume fires only once after a single resume", async () => {
     let count = 0;
-    const t = new ToastTimer({ duration: 100, onExpire: () => { count++; } });
+    const t = new ToastTimer({
+      duration: 100,
+      onExpire: () => {
+        count++;
+      },
+    });
     await wait(20);
     t.pause();
     t.pause(); // second pause: no-op
@@ -104,7 +135,12 @@ describe("ToastTimer", () => {
 
   it("double-resume is idempotent — does not double-schedule", async () => {
     let count = 0;
-    const t = new ToastTimer({ duration: 100, onExpire: () => { count++; } });
+    const t = new ToastTimer({
+      duration: 100,
+      onExpire: () => {
+        count++;
+      },
+    });
     await wait(20);
     t.pause();
     t.resume();
@@ -118,7 +154,12 @@ describe("ToastTimer", () => {
 
   it("clear() cancels the timer — onExpire never fires", async () => {
     let expired = false;
-    const t = new ToastTimer({ duration: 50, onExpire: () => { expired = true; } });
+    const t = new ToastTimer({
+      duration: 50,
+      onExpire: () => {
+        expired = true;
+      },
+    });
     await wait(20);
     t.clear();
     await wait(60);
@@ -127,7 +168,12 @@ describe("ToastTimer", () => {
 
   it("clear() while paused does not fire on resume", async () => {
     let expired = false;
-    const t = new ToastTimer({ duration: 80, onExpire: () => { expired = true; } });
+    const t = new ToastTimer({
+      duration: 80,
+      onExpire: () => {
+        expired = true;
+      },
+    });
     await wait(20);
     t.pause();
     t.clear();
@@ -138,14 +184,22 @@ describe("ToastTimer", () => {
 
   it("clear() is idempotent — calling twice does not throw", () => {
     const t = new ToastTimer({ duration: 100, onExpire: () => {} });
-    expect(() => { t.clear(); t.clear(); }).to.not.throw();
+    expect(() => {
+      t.clear();
+      t.clear();
+    }).to.not.throw();
   });
 
   // ─── persistent (duration 0 / timer:false) ─────────────────────────────────
 
   it("duration 0 → never fires", async () => {
     let expired = false;
-    const t = new ToastTimer({ duration: 0, onExpire: () => { expired = true; } });
+    const t = new ToastTimer({
+      duration: 0,
+      onExpire: () => {
+        expired = true;
+      },
+    });
     await wait(50);
     expect(expired).to.equal(false);
     t.clear();
@@ -153,7 +207,13 @@ describe("ToastTimer", () => {
 
   it("persistent:true → never fires regardless of duration value", async () => {
     let expired = false;
-    const t = new ToastTimer({ duration: 50, persistent: true, onExpire: () => { expired = true; } });
+    const t = new ToastTimer({
+      duration: 50,
+      persistent: true,
+      onExpire: () => {
+        expired = true;
+      },
+    });
     await wait(100);
     expect(expired).to.equal(false);
     t.clear();
@@ -161,8 +221,17 @@ describe("ToastTimer", () => {
 
   it("pause/resume are safe no-ops when persistent", async () => {
     let expired = false;
-    const t = new ToastTimer({ duration: 50, persistent: true, onExpire: () => { expired = true; } });
-    expect(() => { t.pause(); t.resume(); }).to.not.throw();
+    const t = new ToastTimer({
+      duration: 50,
+      persistent: true,
+      onExpire: () => {
+        expired = true;
+      },
+    });
+    expect(() => {
+      t.pause();
+      t.resume();
+    }).to.not.throw();
     await wait(100);
     expect(expired).to.equal(false);
     t.clear();
@@ -170,7 +239,12 @@ describe("ToastTimer", () => {
 
   it("negative duration → treated as persistent, never fires", async () => {
     let expired = false;
-    const t = new ToastTimer({ duration: -1, onExpire: () => { expired = true; } });
+    const t = new ToastTimer({
+      duration: -1,
+      onExpire: () => {
+        expired = true;
+      },
+    });
     await wait(50);
     expect(expired).to.equal(false);
     t.clear();
