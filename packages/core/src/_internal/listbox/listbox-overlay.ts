@@ -110,6 +110,7 @@ export class ListboxOverlay {
     document.removeEventListener("pointerdown", this._onDocumentPointerDown, true);
     window.removeEventListener("scroll", this._onScrollOrResize, true);
     window.removeEventListener("resize", this._onScrollOrResize);
+    this._demote();
     this._teardownResizeObserver();
   }
 
