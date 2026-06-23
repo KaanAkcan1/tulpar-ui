@@ -155,3 +155,109 @@ describe("tulpar-select (clearable + icon mirror)", () => {
     expect(el.hasAttribute("data-has-leading-icon")).to.be.false;
   });
 });
+
+describe("tulpar-select (open/close)", () => {
+  it("opens on trigger click and sets aria-expanded=true + [open]", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select label="X"
+        ><tulpar-option value="a" label="A"></tulpar-option
+      ></tulpar-select>`,
+    );
+    await el.updateComplete;
+    (el.shadowRoot!.querySelector(".select-trigger") as HTMLElement).click();
+    await el.updateComplete;
+    expect(el.open).to.be.true;
+    expect(el.shadowRoot!.querySelector(".select-trigger")!.getAttribute("aria-expanded")).to.equal(
+      "true",
+    );
+  });
+  it("toggles closed on a second trigger click", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select label="X"
+        ><tulpar-option value="a" label="A"></tulpar-option
+      ></tulpar-select>`,
+    );
+    await el.updateComplete;
+    const t = el.shadowRoot!.querySelector(".select-trigger") as HTMLElement;
+    t.click();
+    await el.updateComplete;
+    t.click();
+    await el.updateComplete;
+    expect(el.open).to.be.false;
+  });
+  it("clicking an option commits its value, closes, fires change", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select label="X"
+        ><tulpar-option value="a" label="A"></tulpar-option
+        ><tulpar-option value="b" label="B"></tulpar-option
+      ></tulpar-select>`,
+    );
+    await el.updateComplete;
+    let changed: string | null = null;
+    el.addEventListener("change", (e) => {
+      changed = (e as CustomEvent).detail.value;
+    });
+    (el.shadowRoot!.querySelector(".select-trigger") as HTMLElement).click();
+    await el.updateComplete;
+    const second = el.querySelectorAll("tulpar-option")[1] as HTMLElement;
+    second.click();
+    await el.updateComplete;
+    expect(el.value).to.equal("b");
+    expect(changed).to.equal("b");
+    expect(el.open).to.be.false;
+  });
+  it("clicking a disabled option does nothing", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select label="X"
+        ><tulpar-option value="a" label="A" disabled></tulpar-option
+      ></tulpar-select>`,
+    );
+    await el.updateComplete;
+    (el.shadowRoot!.querySelector(".select-trigger") as HTMLElement).click();
+    await el.updateComplete;
+    (el.querySelector("tulpar-option") as HTMLElement).click();
+    await el.updateComplete;
+    expect(el.value).to.equal("");
+    expect(el.open).to.be.true; // stays open
+  });
+  it("outside pointerdown closes without changing value", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select label="X" value="a"
+        ><tulpar-option value="a" label="A"></tulpar-option
+      ></tulpar-select>`,
+    );
+    await el.updateComplete;
+    (el.shadowRoot!.querySelector(".select-trigger") as HTMLElement).click();
+    await el.updateComplete;
+    document.body.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, composed: true }));
+    await el.updateComplete;
+    expect(el.open).to.be.false;
+    expect(el.value).to.equal("a");
+  });
+  it("does NOT close on pointerdown inside the listbox", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select label="X"
+        ><tulpar-option value="a" label="A"></tulpar-option
+      ></tulpar-select>`,
+    );
+    await el.updateComplete;
+    (el.shadowRoot!.querySelector(".select-trigger") as HTMLElement).click();
+    await el.updateComplete;
+    el.shadowRoot!.querySelector(".select-listbox")!.dispatchEvent(
+      new PointerEvent("pointerdown", { bubbles: true, composed: true }),
+    );
+    await el.updateComplete;
+    expect(el.open).to.be.true;
+  });
+  it("disabled select does not open", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select label="X" disabled
+        ><tulpar-option value="a" label="A"></tulpar-option
+      ></tulpar-select>`,
+    );
+    await el.updateComplete;
+    (el.shadowRoot!.querySelector(".select-trigger") as HTMLElement).click();
+    await el.updateComplete;
+    expect(el.open).to.be.false;
+  });
+});

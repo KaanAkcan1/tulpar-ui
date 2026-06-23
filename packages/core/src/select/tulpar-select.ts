@@ -2,6 +2,8 @@ import { html, nothing, type TemplateResult } from "lit";
 import { property, query, state } from "lit/decorators.js";
 import { FormFieldBase } from "../_internal/form-field-base";
 import { buildCollection, type Collection, type OptionLike } from "../_internal/listbox/collection";
+import { firstEnabled } from "../_internal/listbox/active-index";
+import { ListboxOverlay } from "../_internal/listbox/listbox-overlay";
 import type { TulparOption } from "./tulpar-option";
 import { selectStyles } from "./tulpar-select.styles";
 // Register <tulpar-spinner> so the loading state renders (side-effect import).
@@ -72,6 +74,27 @@ export class TulparSelect extends FormFieldBase {
   /** Stable per-instance listbox id — used on the listbox + trigger aria-controls. */
   private _listboxId = `tulpar-select-listbox-${++seq}`;
 
+  /**
+   * Value snapshot taken on open, so a later Escape (Task 5.1) can revert an
+   * arrow-key preview back to what was selected before the listbox opened.
+   */
+  protected _valueBeforeOpen = "";
+
+  /**
+   * Generic overlay lifecycle (top-layer promotion, positioning, light dismiss,
+   * Escape stack, scroll/resize dismissal). The Select keeps the
+   * Select-specific bits (active-index seeding, commit, trigger focus) and
+   * delegates the overlay mechanics here.
+   */
+  private _overlay = new ListboxOverlay({
+    host: this,
+    getTrigger: () => this._triggerEl ?? null,
+    getListbox: () => this._listboxEl ?? null,
+    onDismiss: () => this._dismiss(),
+    onScrollOrResize: () => this._doClose(),
+    onOutsidePointerDown: () => this._doClose(),
+  });
+
   protected override _hasValue(): boolean {
     return this.value !== "";
   }
@@ -94,6 +117,14 @@ export class TulparSelect extends FormFieldBase {
     this._internals.setFormValue(this.value);
     // Stamp ids on any options already present in light DOM.
     this._ensureOptionIds();
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    // Full overlay teardown: pop the Escape stack, drop the document/window
+    // listeners, disconnect the ResizeObserver. Mirrors the popover so a removed
+    // element never wedges the page with a live outside-click listener.
+    this._overlay.destroy();
   }
 
   /**
@@ -177,10 +208,65 @@ export class TulparSelect extends FormFieldBase {
     }
   }
 
-  // ── Trigger interaction (STUBS) ───────────────────────────────────────────
-  // Open/close + keyboard navigation are wired in Task 4.1/5.1.
-  protected _onTriggerClick = (): void => {};
+  // ── Open / close ──────────────────────────────────────────────────────────
+
+  /**
+   * Open the listbox: refuse when non-interactive, snapshot the value (for a
+   * later Escape-revert), seed the active index to the selected option (or the
+   * first enabled one), then hand the overlay mechanics to the controller. The
+   * reflected `open` property drives the listbox visibility + `aria-expanded`
+   * via render; we await `updateComplete` inside the controller before
+   * positioning so the surface is measured after it is displayed.
+   */
+  protected _doOpen(): void {
+    if (this.disabled || this.readonly || this.loading) return;
+    if (this.open) return;
+    this.open = true;
+    this._valueBeforeOpen = this.value;
+    const items = this._options();
+    const selected = this._collection().indexByValue(this.value);
+    this._activeIndex = selected >= 0 ? selected : firstEnabled(items);
+    void this._overlay.open();
+  }
+
+  /** Close the listbox and return DOM focus to the trigger. */
+  protected _doClose(): void {
+    if (!this.open) return;
+    this.open = false;
+    this._overlay.close();
+    this._triggerEl?.focus();
+  }
+
+  /** Escape-stack callback — close (focus returns to the trigger in `_doClose`). */
+  protected _dismiss(): void {
+    this._doClose();
+  }
+
+  // ── Trigger interaction ───────────────────────────────────────────────────
+  // Keyboard navigation (arrow keys / typeahead / activedescendant) is Task 5.1.
+  protected _onTriggerClick = (): void => {
+    if (this.disabled || this.readonly || this.loading) return;
+    if (this.open) this._doClose();
+    else this._doOpen();
+  };
   protected _onTriggerKeydown = (): void => {};
+
+  /**
+   * Commit on option click (event-delegated on the listbox). Walk the composed
+   * path for the nearest `<tulpar-option>`; if found and NOT disabled, commit its
+   * value and close. A disabled-option click is a no-op (stays open).
+   */
+  protected _onListboxClick = (e: Event): void => {
+    const path = e.composedPath();
+    for (const node of path) {
+      if (node instanceof HTMLElement && node.tagName === "TULPAR-OPTION") {
+        if ((node as TulparOption).disabled) return;
+        this._commit((node as TulparOption).value);
+        this._doClose();
+        return;
+      }
+    }
+  };
 
   /**
    * Refresh the trigger label when the projected options change. SAFE because
@@ -250,7 +336,13 @@ export class TulparSelect extends FormFieldBase {
   }
 
   private _renderListbox(): TemplateResult {
-    return html`<div class="select-listbox" role="listbox" id=${this._listboxId} part="listbox">
+    return html`<div
+      class="select-listbox"
+      role="listbox"
+      id=${this._listboxId}
+      part="listbox"
+      @click=${this._onListboxClick}
+    >
       <slot @slotchange=${this._onOptionsSlotChange}></slot>
     </div>`;
   }

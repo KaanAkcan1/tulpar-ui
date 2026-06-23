@@ -86,12 +86,44 @@ export const selectStyles = css`
     background: var(--tulpar-input-bg-readonly, #f0f7f5);
   }
 
-  /* Closed listbox is removed from layout. Opening is wired in a later task. */
+  /* ============================================================
+   * Listbox surface. Closed = removed from layout. Open = a fixed-position,
+   * top-layer scroll container anchored under the trigger by JS (inline
+   * left/top). Functional only here — full surface polish (radius/shadow/option
+   * visuals) lands in Task 6.1.
+   * ============================================================ */
   .select-listbox {
     display: none;
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    z-index: var(--tulpar-overlay-z-index, 1000);
+    box-sizing: border-box;
+    margin: 0;
+    max-block-size: var(--tulpar-overlay-size-popover-max-h, min(28rem, 60vh));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--tulpar-overlay-surface-bg, #ffffff);
+    color: var(--tulpar-color-text-primary, #15110b);
+    border: 1px solid var(--tulpar-overlay-surface-border, #d9e0df);
+    border-radius: 10px;
+    box-shadow: var(
+      --tulpar-overlay-shadow,
+      0 18px 48px -16px rgba(2, 8, 23, 0.34),
+      0 6px 16px -8px rgba(2, 8, 23, 0.18)
+    );
   }
 
-  :host([open]) .select-listbox {
+  /* Native-popover path: neutralize the UA popover box so our coordinates win. */
+  .select-listbox[popover] {
+    margin: 0;
+    inset: auto;
+  }
+
+  /* Open is driven by [open] on the host AND, when promoted via the native
+     Popover API, by :popover-open — either keeps the surface visible. */
+  :host([open]) .select-listbox,
+  .select-listbox:popover-open {
     display: block;
   }
 `;
