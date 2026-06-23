@@ -1,0 +1,44 @@
+import { expect, fixture, html } from "@open-wc/testing";
+import "./tulpar-option";
+import type { TulparOption } from "./tulpar-option";
+
+describe("tulpar-option", () => {
+  it("renders the label prop and exposes value", async () => {
+    const el = await fixture<TulparOption>(
+      html`<tulpar-option value="a" label="Apple"></tulpar-option>`,
+    );
+    expect(el.value).to.equal("a");
+    expect(el.shadowRoot!.textContent).to.contain("Apple");
+    expect(el.getAttribute("role")).to.equal("option");
+  });
+
+  it("slot content wins over the label prop", async () => {
+    const el = await fixture<TulparOption>(
+      html`<tulpar-option value="a" label="Prop">Slot</tulpar-option>`,
+    );
+    expect(el.resolvedLabel).to.equal("Slot");
+  });
+
+  it("falls back to the label prop when no slot content", async () => {
+    const el = await fixture<TulparOption>(
+      html`<tulpar-option value="a" label="Apple"></tulpar-option>`,
+    );
+    expect(el.resolvedLabel).to.equal("Apple");
+  });
+
+  it("reflects disabled", async () => {
+    const el = await fixture<TulparOption>(
+      html`<tulpar-option value="a" label="A" disabled></tulpar-option>`,
+    );
+    expect(el.disabled).to.be.true;
+    expect(el.hasAttribute("disabled")).to.be.true;
+  });
+
+  it("ignores comment nodes when deriving the slotted label", async () => {
+    // Guards the empty-slot/comment-node trap (Vue empty slot renders a comment).
+    const el = await fixture<TulparOption>(
+      html`<tulpar-option value="a" label="Fallback"><!--c--></tulpar-option>`,
+    );
+    expect(el.resolvedLabel).to.equal("Fallback");
+  });
+});
