@@ -12,7 +12,10 @@ export interface SelectChangeDetail {
   value: string;
 }
 
+/** Counter for stable per-instance listbox ids. */
 let seq = 0;
+/** Separate counter for stamped `<tulpar-option>` ids (distinct id namespace). */
+let optSeq = 0;
 
 /**
  * `<tulpar-select>` — single-select dropdown built on {@link FormFieldBase}.
@@ -76,6 +79,7 @@ export class TulparSelect extends FormFieldBase {
   override updated(changed: Map<string, unknown>): void {
     super.updated(changed);
     if (changed.has("value")) {
+      // single form-value sync point (covers _commit + programmatic value set)
       this._internals.setFormValue(this.value);
     }
     // Mirror the selected option's leading icon into the trigger. Cheap to run
@@ -88,26 +92,38 @@ export class TulparSelect extends FormFieldBase {
     super.connectedCallback();
     // Seed the native form value so a server-rendered initial value is submitted.
     this._internals.setFormValue(this.value);
+    // Stamp ids on any options already present in light DOM.
+    this._ensureOptionIds();
   }
 
   /**
-   * Discover light-DOM options in document order. `querySelectorAll` returns
-   * `<tulpar-option>` descendants (including those nested in
+   * Stamp a stable `id` onto every `<tulpar-option>` that lacks one (needed for
+   * `aria-activedescendant`). This is the ONLY place that mutates option DOM —
+   * keeping {@link _options} a pure reader. Called from `connectedCallback` and
+   * `_onOptionsSlotChange`, so ids are guaranteed before options are read.
+   */
+  private _ensureOptionIds(): void {
+    const opts = this.querySelectorAll<TulparOption>("tulpar-option");
+    opts.forEach((opt) => {
+      opt.id ||= `tulpar-opt-${++optSeq}`;
+    });
+  }
+
+  /**
+   * Discover light-DOM options in document order — pure reader. `querySelectorAll`
+   * returns `<tulpar-option>` descendants (including those nested in
    * `<tulpar-option-group>`) in document order — the simplest correct approach.
-   * Comment/whitespace nodes are never matched. Each option is assigned a stable
-   * `id` if it lacks one (needed later for `aria-activedescendant`).
+   * Comment/whitespace nodes are never matched. Ids are already stamped by
+   * {@link _ensureOptionIds} (connectedCallback/slotchange), so no mutation here.
    */
   protected _options(): OptionLike[] {
     const opts = Array.from(this.querySelectorAll<TulparOption>("tulpar-option"));
-    return opts.map((opt) => {
-      if (!opt.id) opt.id = `tulpar-opt-${++seq}`;
-      return {
-        value: opt.value,
-        label: opt.resolvedLabel,
-        disabled: opt.disabled,
-        el: opt,
-      };
-    });
+    return opts.map((opt) => ({
+      value: opt.value,
+      label: opt.resolvedLabel,
+      disabled: opt.disabled,
+      el: opt,
+    }));
   }
 
   protected _collection(): Collection {
@@ -128,13 +144,13 @@ export class TulparSelect extends FormFieldBase {
   }
 
   /**
-   * Commit a new value: update the property, the native form value, and emit a
-   * bubbling `change` event. The single mutation path reused by clear (here) and
-   * by option selection in a later task.
+   * Commit a new value: update the property and emit a bubbling `change` event.
+   * The single mutation path reused by clear (here) and by option selection in a
+   * later task. Setting `this.value` triggers `updated()`, which is the single
+   * form-value sync point — so `_commit` does NOT call `setFormValue` itself.
    */
   protected _commit(value: string): void {
     this.value = value;
-    this._internals.setFormValue(value);
     this.dispatchEvent(
       new CustomEvent<SelectChangeDetail>("change", {
         detail: { value },
@@ -172,6 +188,8 @@ export class TulparSelect extends FormFieldBase {
    * class-level Lit-trap note).
    */
   protected _onOptionsSlotChange = (): void => {
+    // Newly projected options get their stable ids before the label refresh.
+    this._ensureOptionIds();
     this.requestUpdate();
   };
 

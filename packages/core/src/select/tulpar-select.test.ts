@@ -99,6 +99,24 @@ describe("tulpar-select (clearable + icon mirror)", () => {
     await el.updateComplete;
     expect(el.shadowRoot!.querySelector(".select-clear")).to.be.null;
   });
+  it("hides the clear button when disabled", async () => {
+    const el = await fixture<TulparSelect>(
+      html` <tulpar-select label="X" clearable disabled value="a">
+        <tulpar-option value="a" label="A"></tulpar-option>
+      </tulpar-select>`,
+    );
+    await el.updateComplete;
+    expect(el.shadowRoot!.querySelector(".select-clear")).to.be.null;
+  });
+  it("hides the clear button when readonly", async () => {
+    const el = await fixture<TulparSelect>(
+      html` <tulpar-select label="X" clearable readonly value="a">
+        <tulpar-option value="a" label="A"></tulpar-option>
+      </tulpar-select>`,
+    );
+    await el.updateComplete;
+    expect(el.shadowRoot!.querySelector(".select-clear")).to.be.null;
+  });
   it("clicking clear resets value, fires change, does not open", async () => {
     const el = await fixture<TulparSelect>(
       html` <tulpar-select label="X" clearable value="a">
