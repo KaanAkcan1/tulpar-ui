@@ -69,6 +69,18 @@ export class TulparSelect extends FormFieldBase {
   /** Shows a spinner in the trigger instead of the chevron. */
   @property({ type: Boolean, reflect: true }) loading = false;
 
+  /** Text to display inside the listbox loading status row. */
+  @property({ type: String, attribute: "loading-text" }) loadingText = "Loading…";
+
+  /**
+   * When truthy, renders an error status row inside the listbox (role=alert).
+   * The trigger stays neutral — this is a listbox-content state, NOT field validation.
+   */
+  @property({ type: String }) error?: string;
+
+  /** Text to display inside the listbox empty status row when there are no options. */
+  @property({ type: String, attribute: "empty-text" }) emptyText = "No options";
+
   /**
    * When set, offers a clear (✕) affordance once a value is selected — UNLESS
    * the field is `required` (a required field must never offer clear).
@@ -476,16 +488,42 @@ export class TulparSelect extends FormFieldBase {
     </button>`;
   }
 
+  private _renderStatusRow(): TemplateResult | typeof nothing {
+    if (this.loading) {
+      return html`<div class="select-status" data-kind="loading" role="status">
+        <tulpar-spinner size="sm"></tulpar-spinner>
+        <span class="select-status-text"><slot name="loading">${this.loadingText}</slot></span>
+      </div>`;
+    }
+    const hasErrorSlot = !!this.querySelector('[slot="error"]');
+    if (this.error || hasErrorSlot) {
+      return html`<div class="select-status" data-kind="error" role="alert">
+        <span class="select-status-text"><slot name="error">${this.error}</slot></span>
+      </div>`;
+    }
+    if (this._collection().items.length === 0) {
+      return html`<div class="select-status" data-kind="empty" role="status">
+        <span class="select-status-text"><slot name="empty">${this.emptyText}</slot></span>
+      </div>`;
+    }
+    return nothing;
+  }
+
   private _renderListbox(): TemplateResult {
+    const showOptions = !this.loading && !this.error && !this.querySelector('[slot="error"]');
     return html`<div
       class="select-listbox"
       role="listbox"
       id=${this._listboxId}
       part="listbox"
+      aria-busy=${this.loading ? "true" : nothing}
       @click=${this._onListboxClick}
       @pointerover=${this._onListboxPointerOver}
     >
-      <slot @slotchange=${this._onOptionsSlotChange}></slot>
+      <div class="select-options" ?hidden=${!showOptions}>
+        <slot @slotchange=${this._onOptionsSlotChange}></slot>
+      </div>
+      ${this._renderStatusRow()}
     </div>`;
   }
 

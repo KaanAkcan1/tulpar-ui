@@ -263,17 +263,15 @@ describe("tulpar-select (open/close)", () => {
 });
 
 const key = (el: TulparSelect, k: string, opts: KeyboardEventInit = {}) =>
-  el
-    .shadowRoot!.querySelector(".select-trigger")!
-    .dispatchEvent(
-      new KeyboardEvent("keydown", {
-        key: k,
-        bubbles: true,
-        composed: true,
-        cancelable: true,
-        ...opts,
-      }),
-    );
+  el.shadowRoot!.querySelector(".select-trigger")!.dispatchEvent(
+    new KeyboardEvent("keydown", {
+      key: k,
+      bubbles: true,
+      composed: true,
+      cancelable: true,
+      ...opts,
+    }),
+  );
 
 describe("tulpar-select (keyboard)", () => {
   const mk = () =>
@@ -403,5 +401,63 @@ describe("tulpar-select (keyboard)", () => {
     const opt = el.querySelector("tulpar-option")!;
     expect(opt.getAttribute("aria-selected")).to.equal("true");
     expect(opt.hasAttribute("data-selected")).to.be.true;
+  });
+});
+
+describe("tulpar-select (listbox states)", () => {
+  it("shows 'No options' when there are zero options", async () => {
+    const el = await fixture<TulparSelect>(html`<tulpar-select label="X"></tulpar-select>`);
+    await el.updateComplete;
+    const status = el.shadowRoot!.querySelector('.select-status[data-kind="empty"]')!;
+    expect(status).to.be.ok;
+    expect(status.textContent).to.contain("No options");
+  });
+  it("empty-text prop overrides the default empty message", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select label="X" empty-text="Nothing here"></tulpar-select>`,
+    );
+    await el.updateComplete;
+    expect(
+      el.shadowRoot!.querySelector('.select-status[data-kind="empty"]')!.textContent,
+    ).to.contain("Nothing here");
+  });
+  it("loading shows a spinner row + aria-busy and a trigger spinner", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select label="X" loading
+        ><tulpar-option value="a" label="A"></tulpar-option
+      ></tulpar-select>`,
+    );
+    await el.updateComplete;
+    expect(el.shadowRoot!.querySelector('.select-status[data-kind="loading"]')).to.be.ok;
+    expect(el.shadowRoot!.querySelector(".select-listbox")!.getAttribute("aria-busy")).to.equal(
+      "true",
+    );
+    expect(el.shadowRoot!.querySelector(".select-status[data-kind='loading'] tulpar-spinner")).to.be
+      .ok;
+  });
+  it("error prop shows a danger row (role=alert) and keeps the trigger neutral", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select label="X" error="Couldn't load"
+        ><tulpar-option value="a" label="A"></tulpar-option
+      ></tulpar-select>`,
+    );
+    await el.updateComplete;
+    const row = el.shadowRoot!.querySelector('.select-status[data-kind="error"]')!;
+    expect(row.getAttribute("role")).to.equal("alert");
+    expect(row.textContent).to.contain("Couldn't load");
+    // trigger not invalid/red:
+    expect(el.shadowRoot!.querySelector(".select-trigger")!.getAttribute("aria-invalid")).to.equal(
+      "false",
+    );
+  });
+  it("options render normally when present and not loading/error", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select label="X"
+        ><tulpar-option value="a" label="A"></tulpar-option
+      ></tulpar-select>`,
+    );
+    await el.updateComplete;
+    expect(el.shadowRoot!.querySelector(".select-status")).to.be.null;
+    expect(el.querySelectorAll("tulpar-option").length).to.equal(1);
   });
 });

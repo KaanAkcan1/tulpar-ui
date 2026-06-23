@@ -126,4 +126,22 @@ export const selectStyles = css`
   .select-listbox:popover-open {
     display: block;
   }
+
+  /* ============================================================
+   * Listbox status rows — empty / loading / error
+   * ============================================================ */
+  .select-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+    padding-block: 2rem;
+    padding-inline: 0.75rem;
+    color: var(--tulpar-color-text-muted, #737373);
+    font-size: 0.875rem;
+  }
+
+  .select-status[data-kind="error"] {
+    color: var(--tulpar-input-message-error, #b91c1c);
+  }
 `;
