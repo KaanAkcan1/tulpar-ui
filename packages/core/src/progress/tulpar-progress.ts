@@ -46,10 +46,12 @@ export type ProgressValueFormatter = (value: number, min: number, max: number) =
  *
  * ## Flow tone (value-driven gradient)
  * `tone="flow"` (determinate only) recolors the fill as a CONTINUOUS oklab
- * interpolation across the value range: red (al) at 0% → amber (ulgen) at ~50%
- * → green (otuken) at 100%. It is opt-in and purely visual (a11y is unchanged).
- * Indeterminate + flow has no value to map, so it falls back to the brand
- * accent. Light/dark swap the primitive steps for legibility per surface.
+ * interpolation across the value range: red at 0% → amber at ~50% → green at
+ * 100%. It is opt-in and purely visual (a11y is unchanged). Indeterminate +
+ * flow has no value to map, so it falls back to the brand accent. The mix
+ * references the auto-flipping `atom.flow` token anchors, so it flips light↔dark
+ * via custom-property inheritance — even across the shell's shadow boundary,
+ * where `:host-context(.dark)` does not reliably match.
  *
  * ## Value label vs descriptive label
  * Two DISTINCT label concepts:
@@ -279,24 +281,19 @@ export class TulparProgress extends LitElement {
 
     if (tone === "flow") {
       // Value-driven continuous tone. Determinate only: interpolate the fill
-      // across the value range via two-segment oklab color-mix between our
-      // palette anchors (al → ulgen → otuken). Indeterminate has no value, so
-      // there is nothing to interpolate — fall back to the default brand accent
-      // (return without setting anything, leaving the stylesheet's brand green).
+      // across the value range via a two-segment oklab color-mix between the
+      // auto-flipping atom.flow anchors (low/mid/high = red → amber → green).
+      // Indeterminate has no value to map, so there's nothing to interpolate —
+      // fall back to the default brand accent (return without setting anything,
+      // leaving the stylesheet's brand green).
       if (this.indeterminate || this._value === null) return;
-      // flow computes a LITERAL color-mix per mode (not an auto-flipping token),
-      // so we emit BOTH anchor sets as -accent-l/-d vars and let CSS pick per
-      // mode via :host-context(.dark) — exactly like the custom-tone plumbing.
-      // This auto-flips on a runtime `.dark` toggle (no inline `color`, no JS
-      // dark-detection that would go stale until the next value/prop change).
-      this.style.setProperty(
-        "--tulpar-progress-accent-l",
-        TulparProgress._flowMix(this._frac, false),
-      );
-      this.style.setProperty(
-        "--tulpar-progress-accent-d",
-        TulparProgress._flowMix(this._frac, true),
-      );
+      // A SINGLE, mode-independent inline `color`: the color-mix references the
+      // atom.flow token vars, which the generated sheet swaps light↔dark at
+      // document scope. Custom properties inherit ACROSS the shadow boundary, so
+      // the same expression re-resolves to the brighter dark anchors the instant
+      // a `.dark` ancestor toggles — no :host-context (which doesn't reliably
+      // cross the shell's shadow root), no -l/-d pair, no stale JS dark-check.
+      this.style.setProperty("color", TulparProgress._flowMix(this._frac));
       return;
     }
 
@@ -305,23 +302,24 @@ export class TulparProgress extends LitElement {
 
   /**
    * Continuous flow color for fraction `f` (0..1) as a two-segment perceptual
-   * (oklab) interpolation across our palette: red (al) → amber (ulgen) → green
-   * (otuken). Light vs dark swap the primitive steps so the sweep stays legible
-   * on each surface. f<=0.5 mixes al→ulgen; f>0.5 mixes ulgen→otuken.
+   * (oklab) interpolation across the auto-flipping atom.flow anchors:
+   * `--tulpar-atom-flow-low` (red) → `-mid` (amber) → `-high` (green), each with
+   * a literal light-mode fallback. The SAME string is correct in both modes —
+   * the token vars do the light↔dark flip (the generated sheet sets them under
+   * `.dark`), so the fill re-resolves live on a dark toggle even across a shadow
+   * boundary. f<=0.5 mixes low→mid; f>0.5 mixes mid→high.
    */
-  private static _flowMix(f: number, dark: boolean): string {
+  private static _flowMix(f: number): string {
     const c = Math.min(1, Math.max(0, f));
-    // Light: solid-bg anchors (match danger/warning/success tones).
-    // Dark: brighter steps for contrast on dark surfaces.
-    const red = dark ? "#f84648" : "#d2202c"; // al 400 / 500
-    const amber = dark ? "#ecb32a" : "#d7a40f"; // ulgen 400 / 500
-    const green = dark ? "#488e73" : "#245d48"; // otuken 400 / 600
+    const low = "var(--tulpar-atom-flow-low,#d2202c)";
+    const mid = "var(--tulpar-atom-flow-mid,#d7a40f)";
+    const high = "var(--tulpar-atom-flow-high,#245d48)";
     if (c <= 0.5) {
-      const t = c * 2; // 0..1 within the red→amber half
-      return `color-mix(in oklab, ${red} ${((1 - t) * 100).toFixed(2)}%, ${amber} ${(t * 100).toFixed(2)}%)`;
+      const t = c * 2; // 0..1 within the low→mid (red→amber) half
+      return `color-mix(in oklab, ${low} ${((1 - t) * 100).toFixed(2)}%, ${mid} ${(t * 100).toFixed(2)}%)`;
     }
-    const t = (c - 0.5) * 2; // 0..1 within the amber→green half
-    return `color-mix(in oklab, ${amber} ${((1 - t) * 100).toFixed(2)}%, ${green} ${(t * 100).toFixed(2)}%)`;
+    const t = (c - 0.5) * 2; // 0..1 within the mid→high (amber→green) half
+    return `color-mix(in oklab, ${mid} ${((1 - t) * 100).toFixed(2)}%, ${high} ${(t * 100).toFixed(2)}%)`;
   }
 
   private static _toneAccent(tone: Exclude<ProgressTone, "custom" | "flow">): string {

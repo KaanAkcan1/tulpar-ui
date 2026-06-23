@@ -69,3 +69,22 @@ describe("atom tone contrast matrix (WCAG AA)", () => {
     }
   }
 });
+
+describe("atom.flow anchors (auto-flipping flow-gradient endpoints)", () => {
+  // Fill colors, not text-on-surface — no contrast floor. Just assert all three
+  // anchors exist and that light↔dark are distinct steps (so the generated sheet
+  // actually flips them under `.dark`).
+  for (const { name: mode, tokens } of MODES) {
+    it(`${mode} provides low/mid/high hex anchors`, () => {
+      const f = tokens.atom.flow;
+      for (const k of ["low", "mid", "high"] as const) {
+        expect(f[k]).toMatch(/^#[0-9a-f]{6}$/i);
+      }
+    });
+  }
+  it("light and dark anchors differ (the swap is meaningful)", () => {
+    for (const k of ["low", "mid", "high"] as const) {
+      expect(tulparLight.atom.flow[k]).not.toBe(tulparDark.atom.flow[k]);
+    }
+  });
+});

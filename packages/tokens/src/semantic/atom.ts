@@ -40,6 +40,24 @@ export interface AtomToneTokens {
   solid: AtomToneVariantSolid;
 }
 
+/**
+ * Fixed flow-gradient anchors (low → mid → high = red → amber → green).
+ * Consumed by `<tulpar-progress tone="flow">` as the endpoints of a value-driven
+ * oklab `color-mix` sweep. Unlike the per-tone slots these are NOT a render
+ * variant — they are three raw fill colors that auto-flip light↔dark via the
+ * generated sheet, so a fill that references them re-resolves on a `.dark`
+ * toggle even across a shadow boundary (CSS custom properties inherit; a
+ * `:host-context(.dark)` selector does not reliably cross it).
+ */
+export interface AtomFlowTokens {
+  /** Low anchor (red). */
+  low: string;
+  /** Mid anchor (amber). */
+  mid: string;
+  /** High anchor (green). */
+  high: string;
+}
+
 export interface AtomTokens {
   /** Per-tone color slots (neutral · info · success · warning · danger). */
   tone: {
@@ -49,4 +67,6 @@ export interface AtomTokens {
     warning: AtomToneTokens;
     danger: AtomToneTokens;
   };
+  /** Auto-flipping flow-gradient anchors (red · amber · green). */
+  flow: AtomFlowTokens;
 }

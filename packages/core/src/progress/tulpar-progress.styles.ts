@@ -19,10 +19,14 @@ import { css } from "lit";
  *
  * ## Tone
  * The fill reads `currentColor`; the host `color` is set to the tone accent
- * (brand green by default). The track is a neutral surface token. Custom AND
- * flow tones emit -accent-l/-d inline vars; this file maps them to `color` per
- * mode via :host-context(.dark), so a runtime `.dark` toggle auto-flips with no
- * stale inline color.
+ * (brand green by default). The track is a neutral surface token. Custom tone
+ * emits -accent-l/-d inline vars; this file maps them to `color` per mode via
+ * :host-context(.dark), so a runtime `.dark` toggle auto-flips with no stale
+ * inline color. Flow tone sets a single inline `color` color-mix that references
+ * the auto-flipping `--tulpar-atom-flow-*` tokens — those inherit across the
+ * shadow boundary and the generated sheet swaps them under `.dark`, so flow
+ * flips with NO :host-context rule (which doesn't reliably cross the shell's
+ * shadow root).
  */
 export const progressStyles = css`
   /* ── Tone color (default brand green; built-in tones set color inline) ──── */
@@ -40,16 +44,13 @@ export const progressStyles = css`
   :host-context(.dark)[tone="custom"] {
     color: var(--tulpar-progress-accent-d, var(--tulpar-color-brand-default, #00c57a));
   }
-  /* flow tone: a value-driven oklab red->amber->green mix computed in JS. The
-     element emits BOTH -accent-l/-d (light + dark anchor mixes); CSS picks per
-     mode here, same plumbing as custom tone, so a runtime .dark toggle
-     auto-flips with no stale inline color. (fill + ring read currentColor.) */
-  :host([tone="flow"]) {
-    color: var(--tulpar-progress-accent-l, #d2202c);
-  }
-  :host-context(.dark)[tone="flow"] {
-    color: var(--tulpar-progress-accent-d, #f84648);
-  }
+  /* flow tone needs NO rule here: the element sets a single inline color
+     declaration (a color-mix) that references the auto-flipping
+     --tulpar-atom-flow-* tokens. Those custom properties inherit across the
+     shadow boundary and the generated sheet swaps them under document-level
+     .dark, so the fill flips live without a :host-context selector (which
+     doesn't reliably cross the shell's shadow root). The fill + ring read
+     currentColor as usual. */
 
   /* ── Host ─────────────────────────────────────────────────────────────── */
   :host {

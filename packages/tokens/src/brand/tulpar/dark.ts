@@ -458,6 +458,10 @@ export const tulparDark: SemanticTokens = {
         solid: { bg: c.al[400], text: c.yagiz[950] },
       },
     },
+    // Flow-gradient anchors (dark): brighter steps for legibility on a dark
+    // track — the dark half of the light↔dark swap. Same families as light
+    // (al red · ulgen amber · otuken green), lifted one step.
+    flow: { low: c.al[400], mid: c.ulgen[400], high: c.otuken[400] },
   },
 
   easing: { decelerate: primitiveTransition.easing.decelerate },

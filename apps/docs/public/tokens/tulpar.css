@@ -677,6 +677,9 @@
   --tulpar-atom-tone-danger-outline-border: #f84648;
   --tulpar-atom-tone-danger-solid-bg: #b22128;
   --tulpar-atom-tone-danger-solid-text: #ffffff;
+  --tulpar-atom-flow-low: #d2202c;
+  --tulpar-atom-flow-mid: #d7a40f;
+  --tulpar-atom-flow-high: #245d48;
   --tulpar-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
   --tulpar-shadow-sm: 0 1px 3px rgba(10, 37, 64, 0.06), 0 2px 6px rgba(10, 37, 64, 0.04);
   --tulpar-shadow-md: 0 1px 3px rgba(10, 37, 64, 0.08), 0 8px 24px rgba(10, 37, 64, 0.06);
@@ -1047,6 +1050,9 @@
   --tulpar-atom-tone-danger-outline-border: #f84648;
   --tulpar-atom-tone-danger-solid-bg: #b22128;
   --tulpar-atom-tone-danger-solid-text: #ffffff;
+  --tulpar-atom-flow-low: #d2202c;
+  --tulpar-atom-flow-mid: #d7a40f;
+  --tulpar-atom-flow-high: #245d48;
   --tulpar-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
   --tulpar-shadow-sm: 0 1px 3px rgba(10, 37, 64, 0.06), 0 2px 6px rgba(10, 37, 64, 0.04);
   --tulpar-shadow-md: 0 1px 3px rgba(10, 37, 64, 0.08), 0 8px 24px rgba(10, 37, 64, 0.06);
@@ -1417,6 +1423,9 @@
   --tulpar-atom-tone-danger-outline-border: #f84648;
   --tulpar-atom-tone-danger-solid-bg: #f84648;
   --tulpar-atom-tone-danger-solid-text: #0b0804;
+  --tulpar-atom-flow-low: #f84648;
+  --tulpar-atom-flow-mid: #ecb32a;
+  --tulpar-atom-flow-high: #488e73;
   --tulpar-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
   --tulpar-shadow-sm: 0 1px 3px rgba(10, 37, 64, 0.06), 0 2px 6px rgba(10, 37, 64, 0.04);
   --tulpar-shadow-md: 0 1px 3px rgba(10, 37, 64, 0.08), 0 8px 24px rgba(10, 37, 64, 0.06);
@@ -1787,6 +1796,9 @@
   --tulpar-atom-tone-danger-outline-border: #f84648;
   --tulpar-atom-tone-danger-solid-bg: #f84648;
   --tulpar-atom-tone-danger-solid-text: #0b0804;
+  --tulpar-atom-flow-low: #f84648;
+  --tulpar-atom-flow-mid: #ecb32a;
+  --tulpar-atom-flow-high: #488e73;
   --tulpar-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
   --tulpar-shadow-sm: 0 1px 3px rgba(10, 37, 64, 0.06), 0 2px 6px rgba(10, 37, 64, 0.04);
   --tulpar-shadow-md: 0 1px 3px rgba(10, 37, 64, 0.08), 0 8px 24px rgba(10, 37, 64, 0.06);
@@ -2157,6 +2169,9 @@
   --tulpar-atom-tone-danger-outline-border: #f84648;
   --tulpar-atom-tone-danger-solid-bg: #f84648;
   --tulpar-atom-tone-danger-solid-text: #0b0804;
+  --tulpar-atom-flow-low: #f84648;
+  --tulpar-atom-flow-mid: #ecb32a;
+  --tulpar-atom-flow-high: #488e73;
   --tulpar-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
   --tulpar-shadow-sm: 0 1px 3px rgba(10, 37, 64, 0.06), 0 2px 6px rgba(10, 37, 64, 0.04);
   --tulpar-shadow-md: 0 1px 3px rgba(10, 37, 64, 0.08), 0 8px 24px rgba(10, 37, 64, 0.06);

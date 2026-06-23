@@ -335,30 +335,31 @@ describe("<tulpar-progress>", () => {
   });
 
   describe("tone=flow (value-driven gradient)", () => {
+    const flowColor = (el: TulparProgress) => el.style.color;
     const accentL = (el: TulparProgress) => el.style.getPropertyValue("--tulpar-progress-accent-l");
     const accentD = (el: TulparProgress) => el.style.getPropertyValue("--tulpar-progress-accent-d");
 
-    it("emits oklab color-mix accent vars (light + dark) and NO inline color", async () => {
+    it("sets a single inline `color` color-mix that references the atom.flow tokens", async () => {
       const el = await fixture<TulparProgress>(
         html`<tulpar-progress value="50" tone="flow"></tulpar-progress>`,
       );
       await el.updateComplete;
-      // Custom properties keep the literal string (no normalization).
-      expect(accentL(el)).to.contain("color-mix(in oklab");
-      expect(accentD(el)).to.contain("color-mix(in oklab");
-      // flow no longer sets inline `color` — CSS maps the vars per mode via
-      // :host-context(.dark), so a runtime `.dark` toggle auto-flips (mirrors
-      // the custom-tone plumbing; an inline color would go stale on toggle).
-      expect(el.style.color).to.equal("");
+      const color = flowColor(el);
+      // A SINGLE inline color expression (no per-mode -accent-l/-d vars).
+      expect(color).to.contain("color-mix(in oklab");
+      expect(color).to.contain("var(--tulpar-atom-flow-mid");
+      // The old -l/-d accent plumbing must be gone.
+      expect(accentL(el)).to.equal("");
+      expect(accentD(el)).to.equal("");
     });
 
-    it("a runtime .dark toggle needs NO recompute — both anchors stay set, no inline color goes stale", async () => {
-      // REGRESSION: the previous flow path set an inline `color` resolved from a
-      // one-time JS dark-check; a runtime `.dark` toggle (the playgrounds have a
-      // live toggle) left that color STALE until the next value/prop change. The
-      // fix mirrors custom tone: emit BOTH -accent-l/-d vars and let CSS pick per
-      // mode via :host-context(.dark) — so a toggle re-resolves with NOTHING to
-      // recompute in JS and NO inline color to go stale.
+    it("the flow `color` is mode-INDEPENDENT — a runtime .dark toggle needs NO recompute (tokens flip it)", async () => {
+      // The fix: flip via token inheritance, not :host-context or a JS dark-check.
+      // The inline `color` is the SAME string in light and dark — the
+      // --tulpar-atom-flow-* tokens (set under .dark by the generated sheet, and
+      // inherited across the shadow boundary) re-resolve the color-mix live. So a
+      // runtime `.dark` toggle (the playgrounds have a live toggle) changes the
+      // rendered fill with NOTHING to recompute in JS and no stale value.
       const host = await fixture<HTMLElement>(html`<div></div>`);
       const el = document.createElement("tulpar-progress");
       el.setAttribute("tone", "flow");
@@ -366,39 +367,27 @@ describe("<tulpar-progress>", () => {
       host.appendChild(el);
       await el.updateComplete;
 
-      // Both anchor sets present; light uses ulgen 500 (#d7a40f), dark the
-      // brighter ulgen 400 (#ecb32a) — distinct, so the CSS swap is meaningful.
-      expect(accentL(el)).to.contain("#d7a40f");
-      expect(accentD(el)).to.contain("#ecb32a");
-      expect(accentL(el)).to.not.equal(accentD(el));
-      // The stale-inline-color regression: there must be NO inline `color`.
-      expect(el.style.color).to.equal("");
+      const colorLight = flowColor(el);
+      expect(colorLight).to.contain("color-mix(in oklab");
+      expect(colorLight).to.contain("var(--tulpar-atom-flow-mid");
+      // No -accent-l/-d plumbing at all.
+      expect(accentL(el)).to.equal("");
+      expect(accentD(el)).to.equal("");
 
       // Toggle .dark on the ancestor at runtime — NO value/prop change. The
-      // element does not (and must not) recompute: both anchors are already on
-      // the host and the live `.dark` ancestor swaps which one CSS reads.
+      // inline expression is unchanged; the tokens it references do the flipping.
       host.classList.add("dark");
-      expect(el.style.color).to.equal(""); // still no inline color → never stale
-      expect(accentL(el)).to.contain("#d7a40f");
-      expect(accentD(el)).to.contain("#ecb32a");
+      expect(flowColor(el)).to.equal(colorLight); // same string → never stale
 
       host.classList.remove("dark");
-      expect(el.style.color).to.equal("");
-      expect(accentL(el)).to.contain("#d7a40f");
-      expect(accentD(el)).to.contain("#ecb32a");
+      expect(flowColor(el)).to.equal(colorLight);
     });
 
-    it("CSS maps the flow accent vars per mode (light → -accent-l, .dark → -accent-d)", () => {
-      // The mechanism that auto-flips on a runtime toggle: a :host([tone="flow"])
-      // base rule reading -accent-l and a :host-context(.dark)[tone="flow"] rule
-      // reading -accent-d — same plumbing as custom tone. (Computed-color flips
-      // via :host-context are unreliable in headless Chromium + constructed
-      // stylesheets, so we assert the rules exist rather than the resolved color.)
+    it("the styles carry NO :host-context / -accent-l/-d flow plumbing", () => {
       const cssText = progressStyles.cssText.replace(/\s+/g, " ");
-      expect(cssText).to.include(':host([tone="flow"]) { color: var(--tulpar-progress-accent-l');
-      expect(cssText).to.include(
-        ':host-context(.dark)[tone="flow"] { color: var(--tulpar-progress-accent-d',
-      );
+      // The dead flow rules must be gone (flip is now via the inline token mix).
+      expect(cssText).to.not.include(':host([tone="flow"])');
+      expect(cssText).to.not.include(':host-context(.dark)[tone="flow"]');
     });
 
     it("low value leans red (al), high value leans green (otuken) — and they differ", async () => {
@@ -410,29 +399,33 @@ describe("<tulpar-progress>", () => {
       );
       await lo.updateComplete;
       await hi.updateComplete;
-      const loVar = accentL(lo);
-      const hiVar = accentL(hi);
-      expect(loVar).to.not.equal(hiVar);
-      // 5% sits in the red→amber half, weighted toward al red (#d2202c).
-      expect(loVar).to.contain("#d2202c");
-      // 95% sits in the amber→green half, weighted toward otuken green (#245d48).
-      expect(hiVar).to.contain("#245d48");
+      const loColor = flowColor(lo);
+      const hiColor = flowColor(hi);
+      // The inline expressions differ by percentage between low and high values.
+      expect(loColor).to.not.equal(hiColor);
+      // 5% sits in the low→mid half: references the low (red) anchor token.
+      expect(loColor).to.contain("var(--tulpar-atom-flow-low");
+      // 95% sits in the mid→high half: references the high (green) anchor token.
+      expect(hiColor).to.contain("var(--tulpar-atom-flow-high");
     });
 
-    it("midpoint (50%) is the amber anchor (ulgen)", async () => {
+    it("midpoint (50%) is the mid (amber) anchor", async () => {
       const el = await fixture<TulparProgress>(
         html`<tulpar-progress value="50" tone="flow"></tulpar-progress>`,
       );
       await el.updateComplete;
-      expect(accentL(el)).to.contain("#d7a40f"); // ulgen 500
+      // 100% mid weight at the boundary → references only the mid token.
+      expect(flowColor(el)).to.contain("var(--tulpar-atom-flow-mid");
     });
 
-    it("dark accent uses the brighter primitive steps", async () => {
+    it("the color-mix carries the light-mode literal fallbacks on the token vars", async () => {
       const el = await fixture<TulparProgress>(
         html`<tulpar-progress value="50" tone="flow"></tulpar-progress>`,
       );
       await el.updateComplete;
-      expect(accentD(el)).to.contain("#ecb32a"); // ulgen 400 (dark amber)
+      // Each token var supplies its light hex as a fallback (tokens CSS may be
+      // absent); dark flipping is the generated sheet's job, not a second value.
+      expect(flowColor(el)).to.contain("#d7a40f"); // ulgen 500 (mid, light)
     });
 
     it("recomputes the fill when value changes", async () => {
@@ -440,20 +433,20 @@ describe("<tulpar-progress>", () => {
         html`<tulpar-progress value="10" tone="flow"></tulpar-progress>`,
       );
       await el.updateComplete;
-      const before = accentL(el);
+      const before = flowColor(el);
       el.value = 90;
       await el.updateComplete;
-      const after = accentL(el);
+      const after = flowColor(el);
       expect(after).to.not.equal(before);
     });
 
-    it("indeterminate + flow falls back to the brand accent (no crash, no accent var)", async () => {
+    it("indeterminate + flow falls back to the brand accent (no crash, no inline color)", async () => {
       const el = await fixture<TulparProgress>(
         html`<tulpar-progress tone="flow" indeterminate></tulpar-progress>`,
       );
       await el.updateComplete;
+      expect(flowColor(el)).to.equal("");
       expect(accentL(el)).to.equal("");
-      expect(el.style.color).to.equal("");
     });
 
     it("flow is purely visual — a11y attrs unchanged", async () => {
@@ -472,7 +465,7 @@ describe("<tulpar-progress>", () => {
         html`<tulpar-progress variant="circular" value="20" tone="flow"></tulpar-progress>`,
       );
       await el.updateComplete;
-      expect(accentL(el)).to.contain("color-mix(in oklab");
+      expect(flowColor(el)).to.contain("color-mix(in oklab");
     });
   });
 

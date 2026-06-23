@@ -30,7 +30,7 @@ export type {
   FeedbackMotionTokens,
   FeedbackSizeTokens,
 } from "./feedback";
-export type { AtomTokens, AtomToneTokens } from "./atom";
+export type { AtomTokens, AtomToneTokens, AtomFlowTokens } from "./atom";
 
 export interface SemanticTokens {
   color: ColorTokens;

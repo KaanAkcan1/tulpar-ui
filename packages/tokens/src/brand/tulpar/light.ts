@@ -511,6 +511,12 @@ export const tulparLight: SemanticTokens = {
         solid: { bg: c.al[600], text: "#ffffff" },
       },
     },
+    // Flow-gradient anchors (light): solid-bg-weight steps that read on a light
+    // track. low=al red, mid=ulgen amber, high=otuken green. These auto-flip to
+    // the dark anchors under `.dark` via the generated sheet — so a fill that
+    // references them re-resolves on a runtime dark toggle even across a shadow
+    // boundary (custom-property inheritance crosses it; :host-context does not).
+    flow: { low: c.al[500], mid: c.ulgen[500], high: c.otuken[600] },
   },
 
   easing: { decelerate: primitiveTransition.easing.decelerate },
