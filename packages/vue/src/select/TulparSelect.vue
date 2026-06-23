@@ -59,6 +59,12 @@ interface Props {
   warn?: boolean;
   /** Puts the field in the validating visual state. */
   validating?: boolean;
+  /** Suppresses the reserved space below the field for helper/error/warn text. */
+  noMessageSpace?: boolean;
+  /** Makes the prefix icon/slot slot focusable/interactive. */
+  prefixInteractive?: boolean;
+  /** Makes the suffix icon/slot slot focusable/interactive. */
+  suffixInteractive?: boolean;
   /** Text shown in the empty listbox status row. */
   emptyText?: string;
   /** Text shown in the loading listbox status row. */
@@ -91,6 +97,9 @@ const {
   invalid = false,
   warn = false,
   validating = false,
+  noMessageSpace = false,
+  prefixInteractive = false,
+  suffixInteractive = false,
   emptyText,
   loadingText,
   error,
@@ -132,6 +141,9 @@ function onChange(e: Event) {
     :invalid="invalid || undefined"
     :warn="warn || undefined"
     :validating="validating || undefined"
+    :no-message-space="noMessageSpace || undefined"
+    :prefix-interactive="prefixInteractive || undefined"
+    :suffix-interactive="suffixInteractive || undefined"
     :empty-text="emptyText ?? undefined"
     :loading-text="loadingText ?? undefined"
     :error="error ?? undefined"

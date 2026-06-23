@@ -58,6 +58,11 @@ describe("TulparSelect (Vue)", () => {
     expect(wrapper.find("tulpar-select").attributes("invalid")).toBeTruthy();
   });
 
+  it("noMessageSpace=true sets no-message-space attribute", () => {
+    const wrapper = mount(TulparSelect, { props: { noMessageSpace: true } });
+    expect(wrapper.find("tulpar-select").attributes("no-message-space")).toBeTruthy();
+  });
+
   it("forwards errorText prop as error-text attribute", () => {
     const wrapper = mount(TulparSelect, { props: { errorText: "Required" } });
     expect(wrapper.find("tulpar-select").attributes("error-text")).toBe("Required");

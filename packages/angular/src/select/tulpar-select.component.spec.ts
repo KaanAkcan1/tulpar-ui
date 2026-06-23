@@ -80,6 +80,21 @@ describe("TulparSelectComponent (TestBed)", () => {
     expect(inner.hasAttribute("disabled")).toBe(true);
   });
 
+  it("noMessageSpace=true sets no-message-space attribute on core element", () => {
+    @Component({
+      standalone: true,
+      imports: [TulparSelectComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      template: `<tulpar-select-ng [noMessageSpace]="true"></tulpar-select-ng>`,
+    })
+    class NmsHost {}
+    TestBed.configureTestingModule({ imports: [NmsHost] });
+    const fixture = TestBed.createComponent(NmsHost);
+    fixture.detectChanges();
+    const inner = fixture.nativeElement.querySelector("tulpar-select") as HTMLElement;
+    expect(inner.hasAttribute("no-message-space")).toBe(true);
+  });
+
   it("forwards label attribute to core element", () => {
     const fixture = TestBed.createComponent(Host);
     fixture.componentInstance.label.set("Country");

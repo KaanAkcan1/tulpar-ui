@@ -61,6 +61,9 @@ export type { SelectChangeDetail, FieldSize, FieldVariant, LabelPosition, Necess
       [attr.invalid]="invalid() ? '' : null"
       [attr.warn]="warn() ? '' : null"
       [attr.validating]="validating() ? '' : null"
+      [attr.no-message-space]="noMessageSpace() ? '' : null"
+      [attr.prefix-interactive]="prefixInteractive() ? '' : null"
+      [attr.suffix-interactive]="suffixInteractive() ? '' : null"
       [attr.empty-text]="emptyText() ?? null"
       [attr.loading-text]="loadingText() ?? null"
       [attr.error]="error() ?? null"
@@ -133,6 +136,15 @@ export class TulparSelectComponent {
 
   /** Shows an in-progress validation indicator. */
   readonly validating = input<boolean>(false);
+
+  /** Suppresses the reserved space below the field for helper/error/warn text. */
+  readonly noMessageSpace = input<boolean>(false);
+
+  /** Makes the prefix icon/slot slot focusable/interactive. */
+  readonly prefixInteractive = input<boolean>(false);
+
+  /** Makes the suffix icon/slot slot focusable/interactive. */
+  readonly suffixInteractive = input<boolean>(false);
 
   /** Text shown inside the listbox when there are no options. */
   readonly emptyText = input<string | undefined>(undefined);
