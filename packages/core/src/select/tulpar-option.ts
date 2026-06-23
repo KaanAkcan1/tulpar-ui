@@ -85,6 +85,15 @@ export class TulparOption extends LitElement {
     return (this.label ?? "").trim();
   }
 
+  /**
+   * Returns true when the consumer placed a `slot="description"` child in the
+   * light DOM without setting the `description` prop. Queried at render time —
+   * no slotchange→requestUpdate wiring (avoids the Lit infinite-update loop).
+   */
+  private _hasDescriptionSlot(): boolean {
+    return !!this.querySelector('[slot="description"]');
+  }
+
   // ── Check SVG ─────────────────────────────────────────────────────────────
   // Inline SVG string (no unsafeSVG directive — avoids dual-instance crash,
   // see CLAUDE.md Lit directive gotcha). A 16×16 checkmark.
@@ -105,7 +114,7 @@ export class TulparOption extends LitElement {
       <span class="opt-icon" part="icon"><slot name="icon"></slot></span>
       <span class="opt-text">
         <span class="opt-label"><slot>${this.label}</slot></span>
-        ${this.description
+        ${this.description || this._hasDescriptionSlot()
           ? html`<span class="opt-desc"><slot name="description">${this.description}</slot></span>`
           : nothing}
       </span>

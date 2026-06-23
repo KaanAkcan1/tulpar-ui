@@ -23,11 +23,21 @@ describe("tulpar-option-group", () => {
     expect(el.getAttribute("aria-labelledby")).to.equal(header.id);
   });
 
-  it("label slot wins over the prop", async () => {
+  it("renders the label prop as fallback when no slot child", async () => {
+    const el = await fixture<TulparOptionGroup>(
+      html`<tulpar-option-group label="Fruit"></tulpar-option-group>`,
+    );
+    expect(el.shadowRoot!.textContent).to.contain("Fruit");
+  });
+
+  it("label slot wins over the prop (real named slot projection)", async () => {
     const el = await fixture<TulparOptionGroup>(html`
       <tulpar-option-group label="Prop"><span slot="label">SlotLabel</span></tulpar-option-group>
     `);
-    expect(el.shadowRoot!.textContent).to.contain("SlotLabel");
+    const slot = el.shadowRoot!.querySelector('slot[name="label"]') as HTMLSlotElement;
+    const assigned = slot.assignedNodes({ flatten: true });
+    const text = assigned.map((n) => n.textContent).join("");
+    expect(text).to.contain("SlotLabel");
   });
 
   it("projects option children", async () => {

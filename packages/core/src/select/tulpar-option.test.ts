@@ -41,4 +41,18 @@ describe("tulpar-option", () => {
     );
     expect(el.resolvedLabel).to.equal("Fallback");
   });
+
+  it("renders a slot-only description (no prop) via the description slot", async () => {
+    const el = await fixture<TulparOption>(html`
+      <tulpar-option value="a" label="A"><span slot="description">Sub</span></tulpar-option>
+    `);
+    const slot = el.shadowRoot!.querySelector('slot[name="description"]') as HTMLSlotElement;
+    expect(slot, "description slot should be rendered").to.be.ok;
+    expect(
+      slot
+        .assignedNodes({ flatten: true })
+        .map((n) => n.textContent)
+        .join(""),
+    ).to.contain("Sub");
+  });
 });
