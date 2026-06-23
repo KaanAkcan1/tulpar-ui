@@ -1,5 +1,5 @@
 import { html, nothing, type TemplateResult } from "lit";
-import { property, query, state } from "lit/decorators.js";
+import { property, query } from "lit/decorators.js";
 import { FormFieldBase } from "../_internal/form-field-base";
 import { buildCollection, type Collection, type OptionLike } from "../_internal/listbox/collection";
 import {
@@ -12,12 +12,13 @@ import {
 import { Typeahead } from "../_internal/listbox/typeahead";
 import { resolveKeyAction } from "../_internal/listbox/keymap";
 import { ListboxOverlay } from "../_internal/listbox/listbox-overlay";
+import { ActiveDescendantController } from "../_internal/listbox/active-descendant-controller";
 import type { TulparOption } from "./tulpar-option";
 import { selectStyles } from "./tulpar-select.styles";
 // Register <tulpar-spinner> so the loading state renders (side-effect import).
 import "../spinner";
 
-/** Detail payload of the `change` event (emitted in a later task). */
+/** Detail payload of the `change` event dispatched when the value commits. */
 export interface SelectChangeDetail {
   value: string;
 }
@@ -30,13 +31,18 @@ let optSeq = 0;
 /**
  * `<tulpar-select>` — single-select dropdown built on {@link FormFieldBase}.
  *
- * This file is the CLOSED-STATE scaffold: a form-associated trigger that shows
- * the selected option's label (or a placeholder), discovers light-DOM
- * `<tulpar-option>` children, and reflects its value as the native form value.
+ * A form-associated combobox trigger that shows the selected option's label (or
+ * a placeholder), discovers light-DOM `<tulpar-option>` children, reflects its
+ * value as the native form value, and opens a top-layer listbox with full
+ * keyboard navigation (arrows / Home / End / Page / typeahead), virtual focus
+ * (`aria-activedescendant`), light dismiss, and a bubbling `change` event.
  *
- * The listbox markup is rendered but kept hidden (`display:none` while closed);
- * open/close, positioning, keyboard navigation, and the `change` event are
- * wired in later tasks (Task 4.1/5.1).
+ * The element delegates two clusters to internal controllers:
+ * - {@link ListboxOverlay} — open/close, top-layer promotion, positioning,
+ *   light dismiss, Escape stack, scroll/resize dismissal.
+ * - {@link ActiveDescendantController} — the active index + the DOM reflection of
+ *   virtual focus (`data-active`/`aria-activedescendant`) and selection
+ *   (`aria-selected`/`data-selected`).
  *
  * ## Content discovery
  * `_options()` walks `<tulpar-option>` descendants in document order — both
@@ -69,11 +75,8 @@ export class TulparSelect extends FormFieldBase {
    */
   @property({ type: Boolean, reflect: true }) clearable = false;
 
-  /** Open state. Drives listbox visibility; open/close is wired in a later task. */
+  /** Open state. Drives listbox visibility + `aria-expanded` via render. */
   @property({ type: Boolean, reflect: true }) open = false;
-
-  /** Active (keyboard-highlighted) option index. Used by later nav tasks. */
-  @state() protected _activeIndex = -1;
 
   @query(".select-trigger") protected _triggerEl!: HTMLElement;
   @query(".select-listbox") protected _listboxEl!: HTMLElement;
@@ -106,6 +109,19 @@ export class TulparSelect extends FormFieldBase {
     onOutsidePointerDown: () => this._doClose(),
   });
 
+  /**
+   * Virtual-focus controller: owns the active index and the imperative DOM
+   * reflection of virtual focus (`data-active` + `aria-activedescendant`) and
+   * selection (`aria-selected` + `data-selected`). The keymap interpreter, open
+   * seeding, and hover handler drive it; `updated()` re-applies its attributes so
+   * they survive a re-render that rebuilt the option collection.
+   */
+  private _active = new ActiveDescendantController({
+    getTrigger: () => this._triggerEl ?? null,
+    getListbox: () => this._listboxEl ?? null,
+    getCollection: () => this._collection(),
+  });
+
   protected override _hasValue(): boolean {
     return this.value !== "";
   }
@@ -124,9 +140,10 @@ export class TulparSelect extends FormFieldBase {
     // selected (aria-selected + data-selected) attributes AFTER every render so
     // they survive a re-render that re-reads the option collection. These are
     // plain attribute writes (no reactive @property), so they cannot re-enter
-    // the update cycle.
-    this._applyActiveAttrs();
-    this._applySelectedAttrs();
+    // the update cycle. Build the collection ONCE and share it across both.
+    const collection = this._collection();
+    this._active.applyActiveAttrs(collection);
+    this._active.applySelectedAttrs(this.value, collection);
   }
 
   override connectedCallback(): void {
@@ -242,18 +259,25 @@ export class TulparSelect extends FormFieldBase {
     this.open = true;
     this._valueBeforeOpen = this.value;
     this._typeahead.reset();
-    const items = this._options();
-    const selected = this._collection().indexByValue(this.value);
-    this._activeIndex = selected >= 0 ? selected : firstEnabled(items);
+    const c = this._collection();
+    const selected = c.indexByValue(this.value);
+    // Seed the active index directly (not via setActive, which early-returns on a
+    // no-change) so the open below + applyActiveAttrs reflect it even when it
+    // equals the prior index.
+    this._active.activeIndex = selected >= 0 ? selected : firstEnabled(c.items);
     void this._overlay.open().then(() => {
       // After the surface is rendered + positioned, apply the active attributes
       // and bring the selected/active option into view immediately.
-      this._applyActiveAttrs();
-      this._scrollActiveIntoView();
+      this._active.applyActiveAttrs();
+      this._active.scrollActiveIntoView();
     });
   }
 
-  /** Close the listbox and return DOM focus to the trigger. */
+  /**
+   * Close the listbox and return DOM focus to the trigger. The active state is
+   * intentionally NOT reset — the listbox is hidden (display:none) and `_doOpen`
+   * re-seeds + `applyActiveAttrs` clears any stale flags on the next open.
+   */
   protected _doClose(): void {
     if (!this.open) return;
     this.open = false;
@@ -264,71 +288,6 @@ export class TulparSelect extends FormFieldBase {
   /** Escape-stack callback — close (focus returns to the trigger in `_doClose`). */
   protected _dismiss(): void {
     this._doClose();
-  }
-
-  // ── Virtual focus (aria-activedescendant) ─────────────────────────────────
-
-  /**
-   * Move the active (keyboard-highlighted) option to `i`. DOM focus NEVER leaves
-   * the trigger; the active option is communicated via `aria-activedescendant`
-   * on the trigger + a `data-active` attribute on the option (which both keyboard
-   * nav AND hover share — one highlight). Then scroll it into view.
-   */
-  protected _setActive(i: number): void {
-    if (i === this._activeIndex) return;
-    this._activeIndex = i;
-    this._applyActiveAttrs();
-    this._scrollActiveIntoView();
-  }
-
-  /**
-   * Write the `data-active` flag onto the matching option and the trigger's
-   * `aria-activedescendant`, reading the current `_activeIndex`. Idempotent and
-   * side-effect-free beyond plain attribute writes — safe to call from
-   * `updated()` so the attributes always match state after a re-render.
-   */
-  private _applyActiveAttrs(): void {
-    const items = this._collection().items;
-    const i = this._activeIndex;
-    items.forEach((item, idx) => item.el.toggleAttribute("data-active", idx === i));
-    const trigger = this._triggerEl;
-    if (!trigger) return;
-    const activeId = i >= 0 ? (items[i]?.el.id ?? "") : "";
-    if (activeId) trigger.setAttribute("aria-activedescendant", activeId);
-    else trigger.removeAttribute("aria-activedescendant");
-  }
-
-  /**
-   * Reflect the SELECTED state (distinct from active) onto the option whose value
-   * matches `this.value`: `aria-selected="true"` + `data-selected`, removed from
-   * the rest. Plain attribute writes — safe to call from `updated()`.
-   */
-  private _applySelectedAttrs(): void {
-    const items = this._collection().items;
-    items.forEach((item) => {
-      const selected = item.value !== "" && item.value === this.value;
-      item.el.toggleAttribute("data-selected", selected);
-      if (selected) item.el.setAttribute("aria-selected", "true");
-      else item.el.removeAttribute("aria-selected");
-    });
-  }
-
-  /** Scroll the active option into view (nearest), guarding the -1 sentinel. */
-  protected _scrollActiveIntoView(): void {
-    const item = this._collection().items[this._activeIndex];
-    item?.el.scrollIntoView({ block: "nearest" });
-  }
-
-  /**
-   * Estimate how many option rows fit in the visible listbox — used by PageUp/
-   * PageDown. Falls back to 10 when the listbox or first option isn't measurable.
-   */
-  protected _visibleRows(): number {
-    const lb = this._listboxEl;
-    const first = this._collection().items[0]?.el;
-    if (!lb || !first) return 10;
-    const rows = Math.floor(lb.clientHeight / (first.offsetHeight || 1));
-    return rows > 0 ? rows : 10;
   }
 
   // ── Trigger interaction ───────────────────────────────────────────────────
@@ -358,36 +317,42 @@ export class TulparSelect extends FormFieldBase {
 
     const c = this._collection();
     const items = c.items;
+    const active = this._active.activeIndex;
     switch (action.type) {
       case "open":
         this._doOpen();
         break;
       case "open-typeahead": {
         this._doOpen();
-        const t = this._typeahead.type(e.key, c.labels, performance.now(), this._activeIndex);
-        if (t >= 0) this._setActive(t);
+        const t = this._typeahead.type(
+          e.key,
+          c.labels,
+          performance.now(),
+          this._active.activeIndex,
+        );
+        if (t >= 0) this._active.setActive(t, this._collection());
         break;
       }
       case "move-next":
-        this._setActive(nextEnabled(items, this._activeIndex));
+        this._active.setActive(nextEnabled(items, active), c);
         break;
       case "move-prev":
-        this._setActive(prevEnabled(items, this._activeIndex));
+        this._active.setActive(prevEnabled(items, active), c);
         break;
       case "first":
-        this._setActive(firstEnabled(items));
+        this._active.setActive(firstEnabled(items), c);
         break;
       case "last":
-        this._setActive(lastEnabled(items));
+        this._active.setActive(lastEnabled(items), c);
         break;
       case "page-down":
-        this._setActive(pageMove(items, this._activeIndex, this._visibleRows()));
+        this._active.setActive(pageMove(items, active, this._active.visibleRows(c)), c);
         break;
       case "page-up":
-        this._setActive(pageMove(items, this._activeIndex, -this._visibleRows()));
+        this._active.setActive(pageMove(items, active, -this._active.visibleRows(c)), c);
         break;
       case "commit":
-        if (this._activeIndex >= 0) this._commit(items[this._activeIndex].value);
+        if (active >= 0) this._commit(items[active].value);
         this._doClose();
         break;
       case "close":
@@ -401,8 +366,8 @@ export class TulparSelect extends FormFieldBase {
         this._doClose();
         break;
       case "typeahead": {
-        const t = this._typeahead.type(e.key, c.labels, performance.now(), this._activeIndex);
-        if (t >= 0) this._setActive(t);
+        const t = this._typeahead.type(e.key, c.labels, performance.now(), active);
+        if (t >= 0) this._active.setActive(t, c);
         break;
       }
     }
@@ -411,15 +376,17 @@ export class TulparSelect extends FormFieldBase {
   /**
    * Hover unifies with keyboard: hovering an option makes it the active one so
    * mouse and keyboard share ONE highlight. Event-delegated on the listbox; only
-   * acts while open. `_setActive` early-returns when the index is unchanged.
+   * acts while open. The controller's `setActive` early-returns when the index is
+   * unchanged.
    */
   protected _onListboxPointerOver = (e: Event): void => {
     if (!this.open) return;
-    const items = this._collection().items;
+    const c = this._collection();
+    const items = c.items;
     for (const node of e.composedPath()) {
       if (node instanceof HTMLElement && node.tagName === "TULPAR-OPTION") {
         const idx = items.findIndex((it) => it.el === node);
-        if (idx >= 0 && !items[idx].disabled) this._setActive(idx);
+        if (idx >= 0 && !items[idx].disabled) this._active.setActive(idx, c);
         return;
       }
     }

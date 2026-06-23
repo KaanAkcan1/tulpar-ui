@@ -29,7 +29,11 @@ export class Typeahead {
       this.buffer === "" || (this.buffer.length === 1 && this.buffer === c);
 
     if (isSingleLetterCycle) {
-      // Same-letter cycling: start search just AFTER the current active.
+      // Same-letter cycling: start search just AFTER the current active, and WRAP
+      // (the `% n` below) past the end back to the start — intentional, matching
+      // native `<select>`. NOTE this differs from arrow navigation, which is
+      // NO-WRAP (stops at the first/last enabled item; see `active-index.ts`).
+      // Both behaviours are deliberate.
       this.buffer = c;
       const n = labels.length;
       for (let step = 1; step <= n; step++) {
