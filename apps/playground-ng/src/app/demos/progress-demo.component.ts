@@ -41,11 +41,20 @@ const TONES_CODE = `<!-- tones: default fill is brand green; built-in / custom r
 <!-- stateTone: auto-promote to success once value >= max -->
 <tulpar-progress-ng [value]="100" [stateTone]="true" [valueLabel]="true" />`;
 
-const CIRCULAR_CODE = `<!-- circular determinate + indeterminate; size: sm · md (default) · lg -->
-<tulpar-progress-ng variant="circular" [value]="70" [valueLabel]="true" />
-<tulpar-progress-ng variant="circular" indeterminate />
-<tulpar-progress-ng variant="circular" [value]="30" size="sm" tone="info" />
-<tulpar-progress-ng variant="circular" [value]="55" size="lg" tone="success" />`;
+const FLOW_CODE = `<!-- tone="flow": opt-in value-driven gradient (red → amber → green) -->
+<!-- determinate only; same value maps to the same hue on linear + circular -->
+<tulpar-progress-ng tone="flow" [value]="10" [valueLabel]="true" />
+<tulpar-progress-ng tone="flow" [value]="50" [valueLabel]="true" />
+<tulpar-progress-ng tone="flow" [value]="90" [valueLabel]="true" />
+
+<tulpar-progress-ng variant="circular" tone="flow" [value]="35" [valueLabel]="true" />
+<tulpar-progress-ng variant="circular" tone="flow" [value]="70" [valueLabel]="true" />`;
+
+const CIRCULAR_CODE = `<!-- circular determinate + indeterminate; size: xs · sm · md (default) · lg · xl -->
+<tulpar-progress-ng variant="circular" [value]="70" size="xs" tone="info" />
+<tulpar-progress-ng variant="circular" [value]="70" size="md" tone="info" [valueLabel]="true" />
+<tulpar-progress-ng variant="circular" [value]="70" size="xl" tone="info" [valueLabel]="true" />
+<tulpar-progress-ng variant="circular" indeterminate />`;
 
 const FORMATTER_CODE = `// custom formatter (function form of valueLabel) — also seeds aria-valuetext
 formatStep = (v: number, min: number, max: number) => \`\${v}/\${max} steps\`;
@@ -317,248 +326,13 @@ const PAGE_STYLES = `
       </p>
     </header>
 
-    <!-- ── 1. Live driver ─────────────────────────────────────────────────── -->
+    <!-- ── 1. Live playground ─────────────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">1. Live driver</h2>
+      <h2 class="section-title">1. Live playground</h2>
       <p class="section-desc">
-        Drag the slider to drive a single value into both a linear and a circular determinate bar —
-        the eased fill transition and the live <code class="inline-code">valueLabel</code> update in
-        lockstep.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">value</span>
-          <div class="row-items progress-live">
-            <input
-              class="progress-slider"
-              type="range"
-              min="0"
-              max="100"
-              [value]="liveValue()"
-              (input)="onLiveInput($event)"
-              aria-label="Progress value"
-            />
-            <span class="progress-value">{{ liveValue() }}%</span>
-          </div>
-        </div>
-        <div class="demo-row demo-row--top">
-          <span class="row-label">&nbsp;</span>
-          <div class="row-items progress-live-bars">
-            <div style="flex:1; min-width:220px; max-width:360px">
-              <tulpar-progress-ng [value]="liveValue()" [valueLabel]="true" />
-            </div>
-            <tulpar-progress-ng
-              variant="circular"
-              [value]="liveValue()"
-              [valueLabel]="true"
-              size="md"
-            />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ linearCode }}</code></pre>
-    </section>
-
-    <!-- ── 2. Linear determinate ──────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">2. Linear determinate</h2>
-      <p class="section-desc">
-        A horizontal bar fills from <code class="inline-code">min</code> to
-        <code class="inline-code">max</code>. <code class="inline-code">valueLabel="true"</code>
-        renders a trailing percentage.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row demo-row--top">
-          <span class="row-label">linear</span>
-          <div class="row-items progress-stack">
-            <tulpar-progress-ng [value]="42" [valueLabel]="true" />
-            <tulpar-progress-ng [value]="78" tone="success" [valueLabel]="true" />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ linearCode }}</code></pre>
-    </section>
-
-    <!-- ── 3. Buffer ──────────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">3. Buffer</h2>
-      <p class="section-desc">
-        <code class="inline-code">buffer</code> draws a fainter secondary fill ahead of the primary
-        <code class="inline-code">value</code> — for buffered media or chunked uploads.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row demo-row--top">
-          <span class="row-label">buffer</span>
-          <div class="row-items progress-stack">
-            <tulpar-progress-ng [value]="40" [buffer]="65" />
-            <tulpar-progress-ng [value]="20" [buffer]="90" tone="info" />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ bufferCode }}</code></pre>
-    </section>
-
-    <!-- ── 4. Indeterminate ───────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">4. Indeterminate</h2>
-      <p class="section-desc">
-        When the duration is unknown, omit <code class="inline-code">value</code> and set
-        <code class="inline-code">indeterminate</code> — a traveling bar (linear) or rotating arc
-        (circular).
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row demo-row--top">
-          <span class="row-label">linear</span>
-          <div class="row-items progress-stack">
-            <tulpar-progress-ng [indeterminate]="true" />
-          </div>
-        </div>
-        <div class="demo-row">
-          <span class="row-label">circular</span>
-          <div class="row-items">
-            <tulpar-progress-ng variant="circular" [indeterminate]="true" />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ indetCode }}</code></pre>
-    </section>
-
-    <!-- ── 5. Thickness ───────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">5. Thickness</h2>
-      <p class="section-desc">
-        Linear bars come in <code class="inline-code">thin</code> ·
-        <code class="inline-code">regular</code> (default) · <code class="inline-code">thick</code>.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row demo-row--top">
-          <span class="row-label">thickness</span>
-          <div class="row-items progress-stack">
-            <tulpar-progress-ng [value]="60" thickness="thin" />
-            <tulpar-progress-ng [value]="60" thickness="regular" />
-            <tulpar-progress-ng [value]="60" thickness="thick" />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ thicknessCode }}</code></pre>
-    </section>
-
-    <!-- ── 6. Tones & stateTone ───────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">6. Tones &amp; stateTone</h2>
-      <p class="section-desc">
-        The default fill is brand green; built-in and custom tones recolor it.
-        <code class="inline-code">stateTone</code> auto-promotes the fill to success once
-        <code class="inline-code">value &gt;= max</code> (an explicit danger tone always wins).
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row demo-row--top">
-          <span class="row-label">tones</span>
-          <div class="row-items progress-stack">
-            <tulpar-progress-ng [value]="60" tone="info" [valueLabel]="true" />
-            <tulpar-progress-ng [value]="60" tone="warning" [valueLabel]="true" />
-            <tulpar-progress-ng [value]="60" tone="danger" [valueLabel]="true" />
-            <tulpar-progress-ng [value]="60" tone="custom" color="ilay" [valueLabel]="true" />
-          </div>
-        </div>
-        <div class="demo-row demo-row--top">
-          <span class="row-label">stateTone</span>
-          <div class="row-items progress-stack">
-            <tulpar-progress-ng [value]="100" [stateTone]="true" [valueLabel]="true" />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ tonesCode }}</code></pre>
-    </section>
-
-    <!-- ── 7. Circular ────────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">7. Circular</h2>
-      <p class="section-desc">
-        The circular variant takes the same value model in three sizes:
-        <code class="inline-code">sm</code> · <code class="inline-code">md</code> (default) ·
-        <code class="inline-code">lg</code>. <code class="inline-code">valueLabel</code> renders
-        centered.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">circular</span>
-          <div class="row-items av-baseline progress-circ-row">
-            <tulpar-progress-ng variant="circular" [value]="70" [valueLabel]="true" />
-            <tulpar-progress-ng variant="circular" [indeterminate]="true" />
-            <tulpar-progress-ng variant="circular" [value]="30" size="sm" tone="info" />
-            <tulpar-progress-ng
-              variant="circular"
-              [value]="55"
-              size="lg"
-              tone="success"
-              [valueLabel]="true"
-            />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ circularCode }}</code></pre>
-    </section>
-
-    <!-- ── 8. Custom formatter ────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">8. Custom value formatter</h2>
-      <p class="section-desc">
-        Pass a function to <code class="inline-code">valueLabel</code> for non-percentage labels
-        (steps, bytes, ratios). The function form is property-only — the wrapper sets it as a DOM
-        property — and it also seeds <code class="inline-code">aria-valuetext</code>.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">formatter</span>
-          <div class="row-items av-baseline progress-circ-row">
-            <tulpar-progress-ng
-              variant="circular"
-              [value]="3"
-              [max]="5"
-              size="lg"
-              [valueLabel]="formatStep"
-            />
-            <span class="dual-note">{{ stepFormatterNote }}</span>
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ formatterCode }}</code></pre>
-    </section>
-
-    <!-- ── 9. Prop vs slot — label ────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">9. Content — label (prop &amp; slot)</h2>
-      <p class="section-desc">
-        The numeric label is the <code class="inline-code">valueLabel</code> prop; a descriptive
-        text label above / beside the bar is the <code class="inline-code">slot="label"</code>. Use
-        both together where it helps.
-      </p>
-      <div class="dual-grid">
-        <div class="dual-card">
-          <div class="dual-head">Prop form (valueLabel)</div>
-          <div class="dual-body">
-            <tulpar-progress-ng [value]="55" [valueLabel]="true" />
-          </div>
-        </div>
-        <div class="dual-card">
-          <div class="dual-head">Slot form (label)</div>
-          <div class="dual-body">
-            <tulpar-progress-ng [value]="55">
-              <span slot="label">Uploading…</span>
-            </tulpar-progress-ng>
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ dualCode }}</code></pre>
-    </section>
-
-    <!-- ── 10. Live playground ────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">10. Live playground</h2>
-      <p class="section-desc">
-        Drive value, variant, tone, thickness/size, and the indeterminate / valueLabel / buffer
-        toggles. The slider sets the value; the snippet updates live.
+        Drive value, variant, tone, thickness/size, and the indeterminate / valueLabel toggles. Pick
+        <code class="inline-code">flow</code> and drag the value slider to watch the fill colour flow
+        red → amber → green. The snippet updates live.
       </p>
       <div class="preview preview--col">
         <div class="pg-controls">
@@ -586,8 +360,8 @@ const PAGE_STYLES = `
           <label class="pg-field">
             <span class="pg-field-label">Tone</span>
             <select class="pg-select" [value]="pgTone()" (change)="setPgTone($event)">
-              @for (t of tones; track t) {
-                <option [value]="t">{{ t }}</option>
+              @for (t of pgTones; track t) {
+                <option [value]="t" [selected]="t === pgTone()">{{ t }}</option>
               }
             </select>
           </label>
@@ -657,9 +431,292 @@ const PAGE_STYLES = `
       <pre class="code"><code>{{ pgSnippet() }}</code></pre>
     </section>
 
-    <!-- ── 11. Accessibility ──────────────────────────────────────────────── -->
+    <!-- ── 2. Live driver ─────────────────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">11. Accessibility</h2>
+      <h2 class="section-title">2. Live driver</h2>
+      <p class="section-desc">
+        Drag the slider to drive a single value into both a linear and a circular determinate bar —
+        the eased fill transition and the live <code class="inline-code">valueLabel</code> update in
+        lockstep.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">value</span>
+          <div class="row-items progress-live">
+            <input
+              class="progress-slider"
+              type="range"
+              min="0"
+              max="100"
+              [value]="liveValue()"
+              (input)="onLiveInput($event)"
+              aria-label="Progress value"
+            />
+            <span class="progress-value">{{ liveValue() }}%</span>
+          </div>
+        </div>
+        <div class="demo-row demo-row--top">
+          <span class="row-label">&nbsp;</span>
+          <div class="row-items progress-live-bars">
+            <div style="flex:1; min-width:220px; max-width:360px">
+              <tulpar-progress-ng [value]="liveValue()" [valueLabel]="true" />
+            </div>
+            <tulpar-progress-ng
+              variant="circular"
+              [value]="liveValue()"
+              [valueLabel]="true"
+              size="md"
+            />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ linearCode }}</code></pre>
+    </section>
+
+    <!-- ── 3. Linear determinate ──────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">3. Linear determinate</h2>
+      <p class="section-desc">
+        A horizontal bar fills from <code class="inline-code">min</code> to
+        <code class="inline-code">max</code>. <code class="inline-code">valueLabel="true"</code>
+        renders a trailing percentage.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row demo-row--top">
+          <span class="row-label">linear</span>
+          <div class="row-items progress-stack">
+            <tulpar-progress-ng [value]="42" [valueLabel]="true" />
+            <tulpar-progress-ng [value]="78" tone="success" [valueLabel]="true" />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ linearCode }}</code></pre>
+    </section>
+
+    <!-- ── 4. Buffer ──────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">4. Buffer</h2>
+      <p class="section-desc">
+        <code class="inline-code">buffer</code> draws a fainter secondary fill ahead of the primary
+        <code class="inline-code">value</code> — for buffered media or chunked uploads.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row demo-row--top">
+          <span class="row-label">buffer</span>
+          <div class="row-items progress-stack">
+            <tulpar-progress-ng [value]="40" [buffer]="65" />
+            <tulpar-progress-ng [value]="20" [buffer]="90" tone="info" />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ bufferCode }}</code></pre>
+    </section>
+
+    <!-- ── 5. Indeterminate ───────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">5. Indeterminate</h2>
+      <p class="section-desc">
+        When the duration is unknown, omit <code class="inline-code">value</code> and set
+        <code class="inline-code">indeterminate</code> — a traveling bar (linear) or rotating arc
+        (circular).
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row demo-row--top">
+          <span class="row-label">linear</span>
+          <div class="row-items progress-stack">
+            <tulpar-progress-ng [indeterminate]="true" />
+          </div>
+        </div>
+        <div class="demo-row">
+          <span class="row-label">circular</span>
+          <div class="row-items">
+            <tulpar-progress-ng variant="circular" [indeterminate]="true" />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ indetCode }}</code></pre>
+    </section>
+
+    <!-- ── 6. Thickness ───────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">6. Thickness</h2>
+      <p class="section-desc">
+        Linear bars come in <code class="inline-code">thin</code> ·
+        <code class="inline-code">regular</code> (default) · <code class="inline-code">thick</code>.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row demo-row--top">
+          <span class="row-label">thickness</span>
+          <div class="row-items progress-stack">
+            <tulpar-progress-ng [value]="60" thickness="thin" />
+            <tulpar-progress-ng [value]="60" thickness="regular" />
+            <tulpar-progress-ng [value]="60" thickness="thick" />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ thicknessCode }}</code></pre>
+    </section>
+
+    <!-- ── 7. Tones & stateTone ───────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">7. Tones &amp; stateTone</h2>
+      <p class="section-desc">
+        The default fill is brand green; built-in and custom tones recolor it.
+        <code class="inline-code">stateTone</code> auto-promotes the fill to success once
+        <code class="inline-code">value &gt;= max</code> (an explicit danger tone always wins).
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row demo-row--top">
+          <span class="row-label">tones</span>
+          <div class="row-items progress-stack">
+            <tulpar-progress-ng [value]="60" tone="info" [valueLabel]="true" />
+            <tulpar-progress-ng [value]="60" tone="warning" [valueLabel]="true" />
+            <tulpar-progress-ng [value]="60" tone="danger" [valueLabel]="true" />
+            <tulpar-progress-ng [value]="60" tone="custom" color="ilay" [valueLabel]="true" />
+          </div>
+        </div>
+        <div class="demo-row demo-row--top">
+          <span class="row-label">stateTone</span>
+          <div class="row-items progress-stack">
+            <tulpar-progress-ng [value]="100" [stateTone]="true" [valueLabel]="true" />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ tonesCode }}</code></pre>
+    </section>
+
+    <!-- ── 8. Value-driven tone flow ──────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">8. Value-driven tone flow</h2>
+      <p class="section-desc">
+        <code class="inline-code">tone="flow"</code> is an opt-in, value-driven gradient: the fill
+        flows continuously from red at <code class="inline-code">0</code> through amber at
+        <code class="inline-code">~50</code> to green at <code class="inline-code">100</code> — a
+        perceptual oklab interpolation across our <em>al → ulgen → otuken</em> palette. It is
+        determinate-only (an indeterminate bar has no value to map, so it falls back to brand green)
+        and purely visual — accessibility is unchanged. The same value maps to the same hue on both
+        the linear bar and the circular ring.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row demo-row--top">
+          <span class="row-label">linear</span>
+          <div class="row-items progress-stack">
+            <tulpar-progress-ng tone="flow" [value]="10" [valueLabel]="true" />
+            <tulpar-progress-ng tone="flow" [value]="35" [valueLabel]="true" />
+            <tulpar-progress-ng tone="flow" [value]="50" [valueLabel]="true" />
+            <tulpar-progress-ng tone="flow" [value]="70" [valueLabel]="true" />
+            <tulpar-progress-ng tone="flow" [value]="90" [valueLabel]="true" />
+          </div>
+        </div>
+        <div class="demo-row">
+          <span class="row-label">circular</span>
+          <div class="row-items av-baseline progress-circ-row">
+            <tulpar-progress-ng variant="circular" tone="flow" [value]="10" [valueLabel]="true" />
+            <tulpar-progress-ng variant="circular" tone="flow" [value]="35" [valueLabel]="true" />
+            <tulpar-progress-ng variant="circular" tone="flow" [value]="50" [valueLabel]="true" />
+            <tulpar-progress-ng variant="circular" tone="flow" [value]="70" [valueLabel]="true" />
+            <tulpar-progress-ng variant="circular" tone="flow" [value]="90" [valueLabel]="true" />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ flowCode }}</code></pre>
+    </section>
+
+    <!-- ── 9. Circular ────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">9. Circular</h2>
+      <p class="section-desc">
+        The circular variant takes the same value model in five sizes:
+        <code class="inline-code">xs</code> · <code class="inline-code">sm</code> ·
+        <code class="inline-code">md</code> (default) · <code class="inline-code">lg</code> ·
+        <code class="inline-code">xl</code>. <code class="inline-code">valueLabel</code> renders
+        centered.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">sizes</span>
+          <div class="row-items av-baseline progress-circ-row">
+            <tulpar-progress-ng variant="circular" [value]="70" size="xs" tone="info" />
+            <tulpar-progress-ng variant="circular" [value]="70" size="sm" tone="info" />
+            <tulpar-progress-ng variant="circular" [value]="70" size="md" tone="info" [valueLabel]="true" />
+            <tulpar-progress-ng variant="circular" [value]="70" size="lg" tone="info" [valueLabel]="true" />
+            <tulpar-progress-ng variant="circular" [value]="70" size="xl" tone="info" [valueLabel]="true" />
+          </div>
+        </div>
+        <div class="demo-row">
+          <span class="row-label">states</span>
+          <div class="row-items av-baseline progress-circ-row">
+            <tulpar-progress-ng variant="circular" [value]="55" [valueLabel]="true" />
+            <tulpar-progress-ng variant="circular" [indeterminate]="true" />
+            <tulpar-progress-ng
+              variant="circular"
+              [value]="100"
+              size="lg"
+              tone="success"
+              [valueLabel]="true"
+            />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ circularCode }}</code></pre>
+    </section>
+
+    <!-- ── 10. Custom formatter ───────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">10. Custom value formatter</h2>
+      <p class="section-desc">
+        Pass a function to <code class="inline-code">valueLabel</code> for non-percentage labels
+        (steps, bytes, ratios). The function form is property-only — the wrapper sets it as a DOM
+        property — and it also seeds <code class="inline-code">aria-valuetext</code>.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">formatter</span>
+          <div class="row-items av-baseline progress-circ-row">
+            <tulpar-progress-ng
+              variant="circular"
+              [value]="3"
+              [max]="5"
+              size="lg"
+              [valueLabel]="formatStep"
+            />
+            <span class="dual-note">{{ stepFormatterNote }}</span>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ formatterCode }}</code></pre>
+    </section>
+
+    <!-- ── 11. Prop vs slot — label ───────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">11. Content — label (prop &amp; slot)</h2>
+      <p class="section-desc">
+        The numeric label is the <code class="inline-code">valueLabel</code> prop; a descriptive
+        text label above / beside the bar is the <code class="inline-code">slot="label"</code>. Use
+        both together where it helps.
+      </p>
+      <div class="dual-grid">
+        <div class="dual-card">
+          <div class="dual-head">Prop form (valueLabel)</div>
+          <div class="dual-body">
+            <tulpar-progress-ng [value]="55" [valueLabel]="true" />
+          </div>
+        </div>
+        <div class="dual-card">
+          <div class="dual-head">Slot form (label)</div>
+          <div class="dual-body">
+            <tulpar-progress-ng [value]="55">
+              <span slot="label">Uploading…</span>
+            </tulpar-progress-ng>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ dualCode }}</code></pre>
+    </section>
+
+    <!-- ── 12. Accessibility ──────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">12. Accessibility</h2>
       <div class="a11y-notes">
         <div class="a11y-note">
           <strong>progressbar role.</strong> Determinate bars expose
@@ -690,6 +747,7 @@ export class ProgressDemoComponent {
   readonly indetCode = INDET_CODE;
   readonly thicknessCode = THICKNESS_CODE;
   readonly tonesCode = TONES_CODE;
+  readonly flowCode = FLOW_CODE;
   readonly circularCode = CIRCULAR_CODE;
   readonly formatterCode = FORMATTER_CODE;
   readonly dualCode = DUAL_CODE;
@@ -698,24 +756,27 @@ export class ProgressDemoComponent {
   readonly stepFormatterNote = '(v, min, max) => `${v}/${max} steps`';
 
   readonly variants: ProgressVariant[] = ['linear', 'circular'];
-  readonly tones: ProgressTone[] = ['neutral', 'info', 'success', 'warning', 'danger'];
+  /** Tones for the live playground — includes the value-driven `flow` gradient. */
+  readonly pgTones: ProgressTone[] = ['neutral', 'info', 'success', 'warning', 'danger', 'flow'];
   readonly thicknesses: ProgressThickness[] = ['thin', 'regular', 'thick'];
-  readonly sizes: ProgressSize[] = ['sm', 'md', 'lg'];
+  readonly sizes: ProgressSize[] = ['xs', 'sm', 'md', 'lg', 'xl'];
 
   /** Formatter for the circular step example (function form of valueLabel). */
   readonly formatStep = (value: number, _min: number, max: number): string =>
     `${value}/${max} steps`;
 
-  // ── 1. Live driver ────────────────────────────────────────────────────────
+  // ── 2. Live driver ────────────────────────────────────────────────────────
   readonly liveValue = signal<number>(60);
   onLiveInput(e: Event): void {
     this.liveValue.set(Number((e.target as HTMLInputElement).value));
   }
 
-  // ── 10. Live playground state ──────────────────────────────────────────────
+  // ── 1. Live playground state ───────────────────────────────────────────────
   readonly pgValue = signal<number>(45);
   readonly pgVariant = signal<ProgressVariant>('linear');
-  readonly pgTone = signal<ProgressTone>('neutral');
+  readonly pgTone = signal<ProgressTone>('flow');
+  // NOTE: default is `flow` so the page opens demonstrating the value-driven sweep;
+  // the <select> below is kept in sync via an explicit [selected] per-option binding.
   readonly pgThickness = signal<ProgressThickness>('regular');
   readonly pgSize = signal<ProgressSize>('md');
   readonly pgIndeterminate = signal<boolean>(false);

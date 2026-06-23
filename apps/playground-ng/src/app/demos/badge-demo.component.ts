@@ -359,215 +359,9 @@ const PAGE_STYLES = `
       </p>
     </header>
 
-    <!-- ── 1. Count & overflow ────────────────────────────────────────────── -->
+    <!-- ── 1. Live playground ─────────────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">1. Count &amp; overflow</h2>
-      <p class="section-desc">
-        Set a numeric <code class="inline-code">count</code>. Cap large values with
-        <code class="inline-code">max</code> — anything above renders as
-        <code class="inline-code">{{ '{max}+' }}</code
-        >. Tabular figures keep the pill width stable.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">count</span>
-          <div class="row-items">
-            <tulpar-badge-ng tone="neutral" [count]="3" />
-            <tulpar-badge-ng tone="info" [count]="8" />
-            <tulpar-badge-ng tone="success" [count]="24" />
-            <tulpar-badge-ng tone="warning" [count]="42" />
-            <tulpar-badge-ng tone="danger" [count]="128" [max]="99" />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ countCode }}</code></pre>
-    </section>
-
-    <!-- ── 2. Zero handling ───────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">2. Zero handling</h2>
-      <p class="section-desc">
-        A <code class="inline-code">count</code> of <code class="inline-code">0</code> hides the
-        badge by default (no "0 unread" noise). Opt back in with
-        <code class="inline-code">showZero</code>.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">zero</span>
-          <div class="row-items">
-            <span class="zero-cell">
-              <tulpar-badge-ng tone="neutral" [count]="0" />
-              <span class="zero-note">[count]="0" → hidden</span>
-            </span>
-            <span class="zero-cell">
-              <tulpar-badge-ng tone="neutral" [count]="0" [showZero]="true" />
-              <span class="zero-note">showZero → "0"</span>
-            </span>
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ zeroCode }}</code></pre>
-    </section>
-
-    <!-- ── 3. Dot mode ────────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">3. Dot mode</h2>
-      <p class="section-desc">
-        <code class="inline-code">dot</code> renders a bare status dot and ignores any count — for
-        "there's something here" affordances on icons and avatars.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">dot</span>
-          <div class="row-items">
-            <tulpar-badge-ng tone="success" [dot]="true" />
-            <tulpar-badge-ng tone="warning" [dot]="true" />
-            <tulpar-badge-ng tone="danger" [dot]="true" />
-            <tulpar-badge-ng tone="info" [dot]="true" />
-            <tulpar-badge-ng tone="neutral" [dot]="true" />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ dotCode }}</code></pre>
-    </section>
-
-    <!-- ── 4. Variants ────────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">4. Variants</h2>
-      <p class="section-desc">
-        <code class="inline-code">solid</code> (default) is the high-emphasis pill;
-        <code class="inline-code">soft-tonal</code> and <code class="inline-code">outline</code> are
-        quieter for dense UIs.
-      </p>
-      <div class="preview preview--col">
-        @for (v of variants; track v) {
-          <div class="demo-row">
-            <span class="row-label">{{ v }}</span>
-            <div class="row-items">
-              <tulpar-badge-ng tone="neutral" [variant]="v" [count]="5" />
-              <tulpar-badge-ng tone="info" [variant]="v" [count]="5" />
-              <tulpar-badge-ng tone="success" [variant]="v" [count]="5" />
-              <tulpar-badge-ng tone="warning" [variant]="v" [count]="5" />
-              <tulpar-badge-ng tone="danger" [variant]="v" [count]="5" />
-            </div>
-          </div>
-        }
-      </div>
-      <pre class="code"><code>{{ variantsCode }}</code></pre>
-    </section>
-
-    <!-- ── 5. Shapes ──────────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">5. Shapes</h2>
-      <p class="section-desc">
-        <code class="inline-code">pill</code> (default) ·
-        <code class="inline-code">square</code> for a chip-like silhouette.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">shapes</span>
-          <div class="row-items">
-            <tulpar-badge-ng tone="danger" shape="pill" [count]="9" />
-            <tulpar-badge-ng tone="danger" shape="square" [count]="9" />
-            <tulpar-badge-ng tone="info" shape="pill" [count]="128" [max]="99" />
-            <tulpar-badge-ng tone="info" shape="square" [count]="128" [max]="99" />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ shapesCode }}</code></pre>
-    </section>
-
-    <!-- ── 6. Sizes ───────────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">6. Sizes</h2>
-      <p class="section-desc">
-        Three tiers: <code class="inline-code">sm</code> ·
-        <code class="inline-code">md</code> (default) · <code class="inline-code">lg</code>.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">sizes</span>
-          <div class="row-items av-baseline">
-            <tulpar-badge-ng tone="success" size="sm" [count]="7" />
-            <tulpar-badge-ng tone="success" size="md" [count]="7" />
-            <tulpar-badge-ng tone="success" size="lg" [count]="7" />
-          </div>
-        </div>
-        <div class="demo-row">
-          <span class="row-label">dot sizes</span>
-          <div class="row-items av-baseline">
-            <tulpar-badge-ng tone="danger" size="sm" [dot]="true" />
-            <tulpar-badge-ng tone="danger" size="md" [dot]="true" />
-            <tulpar-badge-ng tone="danger" size="lg" [dot]="true" />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ sizesCode }}</code></pre>
-    </section>
-
-    <!-- ── 7. Pinned to a host ────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">7. Pinned to a host</h2>
-      <p class="section-desc">
-        Badges have no built-in anchoring — pin one to any host with a
-        <code class="inline-code">position:relative</code> wrapper and an absolutely-positioned
-        container. This keeps the badge layout-agnostic and reusable.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">on host</span>
-          <div class="row-items">
-            <span class="badge-host">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-                <path d="M13.7 21a2 2 0 01-3.4 0" />
-              </svg>
-              <span class="badge-host-pin"><tulpar-badge-ng tone="danger" [count]="5" /></span>
-            </span>
-            <span class="badge-host">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                <path d="M4 4h16v16H4z" />
-              </svg>
-              <span class="badge-host-pin badge-host-pin--dot">
-                <tulpar-badge-ng tone="success" [dot]="true" />
-              </span>
-            </span>
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ hostCode }}</code></pre>
-    </section>
-
-    <!-- ── 8. Prop vs slot — label ────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">8. Content — label (prop &amp; slot)</h2>
-      <p class="section-desc">
-        Beyond counts a badge can carry a short text label ("NEW", "BETA"). Use the
-        <code class="inline-code">label</code> prop or the default slot — the slot wins for rendered
-        content, while the prop still seeds the numeric accessible-name noun.
-      </p>
-      <div class="dual-grid">
-        <div class="dual-card">
-          <div class="dual-head">Prop form</div>
-          <div class="dual-body">
-            <tulpar-badge-ng tone="success" label="NEW" />
-            <tulpar-badge-ng tone="info" label="BETA" />
-          </div>
-        </div>
-        <div class="dual-card">
-          <div class="dual-head">Slot form</div>
-          <div class="dual-body">
-            <tulpar-badge-ng tone="success">NEW</tulpar-badge-ng>
-            <tulpar-badge-ng tone="info">BETA</tulpar-badge-ng>
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ dualLabelCode }}</code></pre>
-    </section>
-
-    <!-- ── 9. Live playground ─────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">9. Live playground</h2>
+      <h2 class="section-title">1. Live playground</h2>
       <p class="section-desc">
         Step the count to watch the overflow cap kick in, then flip tone, variant, shape, size, and
         the dot / showZero toggles. The snippet updates live.
@@ -665,6 +459,212 @@ const PAGE_STYLES = `
         </div>
       </div>
       <pre class="code"><code>{{ pgSnippet() }}</code></pre>
+    </section>
+
+    <!-- ── 2. Count & overflow ────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">2. Count &amp; overflow</h2>
+      <p class="section-desc">
+        Set a numeric <code class="inline-code">count</code>. Cap large values with
+        <code class="inline-code">max</code> — anything above renders as
+        <code class="inline-code">{{ '{max}+' }}</code
+        >. Tabular figures keep the pill width stable.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">count</span>
+          <div class="row-items">
+            <tulpar-badge-ng tone="neutral" [count]="3" />
+            <tulpar-badge-ng tone="info" [count]="8" />
+            <tulpar-badge-ng tone="success" [count]="24" />
+            <tulpar-badge-ng tone="warning" [count]="42" />
+            <tulpar-badge-ng tone="danger" [count]="128" [max]="99" />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ countCode }}</code></pre>
+    </section>
+
+    <!-- ── 3. Zero handling ───────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">3. Zero handling</h2>
+      <p class="section-desc">
+        A <code class="inline-code">count</code> of <code class="inline-code">0</code> hides the
+        badge by default (no "0 unread" noise). Opt back in with
+        <code class="inline-code">showZero</code>.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">zero</span>
+          <div class="row-items">
+            <span class="zero-cell">
+              <tulpar-badge-ng tone="neutral" [count]="0" />
+              <span class="zero-note">[count]="0" → hidden</span>
+            </span>
+            <span class="zero-cell">
+              <tulpar-badge-ng tone="neutral" [count]="0" [showZero]="true" />
+              <span class="zero-note">showZero → "0"</span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ zeroCode }}</code></pre>
+    </section>
+
+    <!-- ── 4. Dot mode ────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">4. Dot mode</h2>
+      <p class="section-desc">
+        <code class="inline-code">dot</code> renders a bare status dot and ignores any count — for
+        "there's something here" affordances on icons and avatars.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">dot</span>
+          <div class="row-items">
+            <tulpar-badge-ng tone="success" [dot]="true" />
+            <tulpar-badge-ng tone="warning" [dot]="true" />
+            <tulpar-badge-ng tone="danger" [dot]="true" />
+            <tulpar-badge-ng tone="info" [dot]="true" />
+            <tulpar-badge-ng tone="neutral" [dot]="true" />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ dotCode }}</code></pre>
+    </section>
+
+    <!-- ── 5. Variants ────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">5. Variants</h2>
+      <p class="section-desc">
+        <code class="inline-code">solid</code> (default) is the high-emphasis pill;
+        <code class="inline-code">soft-tonal</code> and <code class="inline-code">outline</code> are
+        quieter for dense UIs.
+      </p>
+      <div class="preview preview--col">
+        @for (v of variants; track v) {
+          <div class="demo-row">
+            <span class="row-label">{{ v }}</span>
+            <div class="row-items">
+              <tulpar-badge-ng tone="neutral" [variant]="v" [count]="5" />
+              <tulpar-badge-ng tone="info" [variant]="v" [count]="5" />
+              <tulpar-badge-ng tone="success" [variant]="v" [count]="5" />
+              <tulpar-badge-ng tone="warning" [variant]="v" [count]="5" />
+              <tulpar-badge-ng tone="danger" [variant]="v" [count]="5" />
+            </div>
+          </div>
+        }
+      </div>
+      <pre class="code"><code>{{ variantsCode }}</code></pre>
+    </section>
+
+    <!-- ── 6. Shapes ──────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">6. Shapes</h2>
+      <p class="section-desc">
+        <code class="inline-code">pill</code> (default) ·
+        <code class="inline-code">square</code> for a chip-like silhouette.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">shapes</span>
+          <div class="row-items">
+            <tulpar-badge-ng tone="danger" shape="pill" [count]="9" />
+            <tulpar-badge-ng tone="danger" shape="square" [count]="9" />
+            <tulpar-badge-ng tone="info" shape="pill" [count]="128" [max]="99" />
+            <tulpar-badge-ng tone="info" shape="square" [count]="128" [max]="99" />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ shapesCode }}</code></pre>
+    </section>
+
+    <!-- ── 7. Sizes ───────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">7. Sizes</h2>
+      <p class="section-desc">
+        Three tiers: <code class="inline-code">sm</code> ·
+        <code class="inline-code">md</code> (default) · <code class="inline-code">lg</code>.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">sizes</span>
+          <div class="row-items av-baseline">
+            <tulpar-badge-ng tone="success" size="sm" [count]="7" />
+            <tulpar-badge-ng tone="success" size="md" [count]="7" />
+            <tulpar-badge-ng tone="success" size="lg" [count]="7" />
+          </div>
+        </div>
+        <div class="demo-row">
+          <span class="row-label">dot sizes</span>
+          <div class="row-items av-baseline">
+            <tulpar-badge-ng tone="danger" size="sm" [dot]="true" />
+            <tulpar-badge-ng tone="danger" size="md" [dot]="true" />
+            <tulpar-badge-ng tone="danger" size="lg" [dot]="true" />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ sizesCode }}</code></pre>
+    </section>
+
+    <!-- ── 8. Pinned to a host ────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">8. Pinned to a host</h2>
+      <p class="section-desc">
+        Badges have no built-in anchoring — pin one to any host with a
+        <code class="inline-code">position:relative</code> wrapper and an absolutely-positioned
+        container. This keeps the badge layout-agnostic and reusable.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">on host</span>
+          <div class="row-items">
+            <span class="badge-host">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.7 21a2 2 0 01-3.4 0" />
+              </svg>
+              <span class="badge-host-pin"><tulpar-badge-ng tone="danger" [count]="5" /></span>
+            </span>
+            <span class="badge-host">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M4 4h16v16H4z" />
+              </svg>
+              <span class="badge-host-pin badge-host-pin--dot">
+                <tulpar-badge-ng tone="success" [dot]="true" />
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ hostCode }}</code></pre>
+    </section>
+
+    <!-- ── 9. Prop vs slot — label ────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">9. Content — label (prop &amp; slot)</h2>
+      <p class="section-desc">
+        Beyond counts a badge can carry a short text label ("NEW", "BETA"). Use the
+        <code class="inline-code">label</code> prop or the default slot — the slot wins for rendered
+        content, while the prop still seeds the numeric accessible-name noun.
+      </p>
+      <div class="dual-grid">
+        <div class="dual-card">
+          <div class="dual-head">Prop form</div>
+          <div class="dual-body">
+            <tulpar-badge-ng tone="success" label="NEW" />
+            <tulpar-badge-ng tone="info" label="BETA" />
+          </div>
+        </div>
+        <div class="dual-card">
+          <div class="dual-head">Slot form</div>
+          <div class="dual-body">
+            <tulpar-badge-ng tone="success">NEW</tulpar-badge-ng>
+            <tulpar-badge-ng tone="info">BETA</tulpar-badge-ng>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ dualLabelCode }}</code></pre>
     </section>
 
     <!-- ── 10. Accessibility ──────────────────────────────────────────────── -->

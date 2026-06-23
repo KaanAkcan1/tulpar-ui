@@ -313,171 +313,9 @@ const PAGE_STYLES = `
       </p>
     </header>
 
-    <!-- ── 1. Sizes ───────────────────────────────────────────────────────── -->
+    <!-- ── 1. Live playground ─────────────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">1. Sizes</h2>
-      <p class="section-desc">
-        Five tiers from <code class="inline-code">xs</code> to <code class="inline-code">xl</code>.
-        The stroke width scales proportionally with the diameter.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">sizes</span>
-          <div class="row-items av-baseline">
-            <tulpar-spinner-ng size="xs" label="Loading" />
-            <tulpar-spinner-ng size="sm" label="Loading" />
-            <tulpar-spinner-ng size="md" label="Loading" />
-            <tulpar-spinner-ng size="lg" label="Loading" />
-            <tulpar-spinner-ng size="xl" label="Loading" />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ sizesCode }}</code></pre>
-    </section>
-
-    <!-- ── 2. Tones ───────────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">2. Tones</h2>
-      <p class="section-desc">
-        Built-in tones colorize the arc; <code class="inline-code">custom</code> +
-        <code class="inline-code">color</code> takes a brand family or any CSS color.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">tones</span>
-          <div class="row-items">
-            <tulpar-spinner-ng tone="neutral" label="Loading" />
-            <tulpar-spinner-ng tone="info" label="Loading" />
-            <tulpar-spinner-ng tone="success" label="Loading" />
-            <tulpar-spinner-ng tone="warning" label="Loading" />
-            <tulpar-spinner-ng tone="danger" label="Loading" />
-            <tulpar-spinner-ng tone="custom" color="ilay" label="Loading" />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ tonesCode }}</code></pre>
-    </section>
-
-    <!-- ── 3. Inherit currentColor ────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">3. Inherit currentColor</h2>
-      <p class="section-desc">
-        With no <code class="inline-code">tone</code>, the arc inherits the surrounding text colour
-        — so a spinner inside coloured text or a coloured button just works, no prop needed.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">inherit</span>
-          <div class="row-items">
-            <span class="inherit-swatch"><tulpar-spinner-ng label="Loading" /></span>
-            <span style="color:#16876a; display:inline-flex"
-              ><tulpar-spinner-ng label="Loading"
-            /></span>
-            <span style="color:#c0322b; display:inline-flex"
-              ><tulpar-spinner-ng label="Loading"
-            /></span>
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ inheritCode }}</code></pre>
-    </section>
-
-    <!-- ── 4. Track ring ──────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">4. Track ring</h2>
-      <p class="section-desc">
-        The faint full-circle track behind the arc is on by default. Drop it with
-        <code class="inline-code">[track]="false"</code> for a bare arc.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">track</span>
-          <div class="row-items av-baseline">
-            <tulpar-spinner-ng tone="info" size="lg" [track]="true" label="Loading" />
-            <tulpar-spinner-ng tone="info" size="lg" [track]="false" label="Loading" />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ trackCode }}</code></pre>
-    </section>
-
-    <!-- ── 5. Delay ───────────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">5. Delay</h2>
-      <p class="section-desc">
-        <code class="inline-code">delay</code> (ms) defers the spinner's render so quick loads never
-        flash a spinner. Toggle below: the spinner only appears after 500 ms.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">delay</span>
-          <div class="row-items av-baseline">
-            <button class="trigger-btn" type="button" (click)="toggleDelayed()">
-              {{ showDelayed() ? 'Hide' : 'Show' }} (delay 500ms)
-            </button>
-            @if (showDelayed()) {
-              <tulpar-spinner-ng tone="info" size="lg" [delay]="500" label="Loading" />
-            }
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ delayCode }}</code></pre>
-    </section>
-
-    <!-- ── 6. Inline in a button ──────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">6. Inline in a button</h2>
-      <p class="section-desc">
-        A tiny <code class="inline-code">xs</code> spinner with no tone inherits the button's text
-        colour — the canonical "saving…" affordance.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">inline</span>
-          <div class="row-items">
-            <button class="inline-btn" disabled>
-              <tulpar-spinner-ng size="xs" label="Saving" />
-              Saving…
-            </button>
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ inlineCode }}</code></pre>
-    </section>
-
-    <!-- ── 7. Prop vs slot — label ────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">7. Content — label (prop &amp; slot)</h2>
-      <p class="section-desc">
-        The accessible label is visually hidden but read by assistive tech. Provide it via the
-        <code class="inline-code">label</code> prop or the
-        <code class="inline-code">slot="label"</code>
-        (slot wins).
-      </p>
-      <div class="dual-grid">
-        <div class="dual-card">
-          <div class="dual-head">Prop form (label)</div>
-          <div class="dual-body av-baseline">
-            <tulpar-spinner-ng tone="info" size="lg" label="Loading…" />
-            <span class="dual-note">label="Loading…" (visually hidden)</span>
-          </div>
-        </div>
-        <div class="dual-card">
-          <div class="dual-head">Slot form (label)</div>
-          <div class="dual-body av-baseline">
-            <tulpar-spinner-ng tone="info" size="lg">
-              <span slot="label">Saving changes…</span>
-            </tulpar-spinner-ng>
-            <span class="dual-note">slot="label" (visually hidden)</span>
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ dualCode }}</code></pre>
-    </section>
-
-    <!-- ── 8. Live playground ─────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">8. Live playground</h2>
+      <h2 class="section-title">1. Live playground</h2>
       <p class="section-desc">
         Drive size, tone, the custom colour, and the track toggle. The snippet updates live.
       </p>
@@ -530,6 +368,168 @@ const PAGE_STYLES = `
         </div>
       </div>
       <pre class="code"><code>{{ pgSnippet() }}</code></pre>
+    </section>
+
+    <!-- ── 2. Sizes ───────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">2. Sizes</h2>
+      <p class="section-desc">
+        Five tiers from <code class="inline-code">xs</code> to <code class="inline-code">xl</code>.
+        The stroke width scales proportionally with the diameter.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">sizes</span>
+          <div class="row-items av-baseline">
+            <tulpar-spinner-ng size="xs" label="Loading" />
+            <tulpar-spinner-ng size="sm" label="Loading" />
+            <tulpar-spinner-ng size="md" label="Loading" />
+            <tulpar-spinner-ng size="lg" label="Loading" />
+            <tulpar-spinner-ng size="xl" label="Loading" />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ sizesCode }}</code></pre>
+    </section>
+
+    <!-- ── 3. Tones ───────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">3. Tones</h2>
+      <p class="section-desc">
+        Built-in tones colorize the arc; <code class="inline-code">custom</code> +
+        <code class="inline-code">color</code> takes a brand family or any CSS color.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">tones</span>
+          <div class="row-items">
+            <tulpar-spinner-ng tone="neutral" label="Loading" />
+            <tulpar-spinner-ng tone="info" label="Loading" />
+            <tulpar-spinner-ng tone="success" label="Loading" />
+            <tulpar-spinner-ng tone="warning" label="Loading" />
+            <tulpar-spinner-ng tone="danger" label="Loading" />
+            <tulpar-spinner-ng tone="custom" color="ilay" label="Loading" />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ tonesCode }}</code></pre>
+    </section>
+
+    <!-- ── 4. Inherit currentColor ────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">4. Inherit currentColor</h2>
+      <p class="section-desc">
+        With no <code class="inline-code">tone</code>, the arc inherits the surrounding text colour
+        — so a spinner inside coloured text or a coloured button just works, no prop needed.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">inherit</span>
+          <div class="row-items">
+            <span class="inherit-swatch"><tulpar-spinner-ng label="Loading" /></span>
+            <span style="color:#16876a; display:inline-flex"
+              ><tulpar-spinner-ng label="Loading"
+            /></span>
+            <span style="color:#c0322b; display:inline-flex"
+              ><tulpar-spinner-ng label="Loading"
+            /></span>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ inheritCode }}</code></pre>
+    </section>
+
+    <!-- ── 5. Track ring ──────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">5. Track ring</h2>
+      <p class="section-desc">
+        The faint full-circle track behind the arc is on by default. Drop it with
+        <code class="inline-code">[track]="false"</code> for a bare arc.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">track</span>
+          <div class="row-items av-baseline">
+            <tulpar-spinner-ng tone="info" size="lg" [track]="true" label="Loading" />
+            <tulpar-spinner-ng tone="info" size="lg" [track]="false" label="Loading" />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ trackCode }}</code></pre>
+    </section>
+
+    <!-- ── 6. Delay ───────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">6. Delay</h2>
+      <p class="section-desc">
+        <code class="inline-code">delay</code> (ms) defers the spinner's render so quick loads never
+        flash a spinner. Toggle below: the spinner only appears after 500 ms.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">delay</span>
+          <div class="row-items av-baseline">
+            <button class="trigger-btn" type="button" (click)="toggleDelayed()">
+              {{ showDelayed() ? 'Hide' : 'Show' }} (delay 500ms)
+            </button>
+            @if (showDelayed()) {
+              <tulpar-spinner-ng tone="info" size="lg" [delay]="500" label="Loading" />
+            }
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ delayCode }}</code></pre>
+    </section>
+
+    <!-- ── 7. Inline in a button ──────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">7. Inline in a button</h2>
+      <p class="section-desc">
+        A tiny <code class="inline-code">xs</code> spinner with no tone inherits the button's text
+        colour — the canonical "saving…" affordance.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">inline</span>
+          <div class="row-items">
+            <button class="inline-btn" disabled>
+              <tulpar-spinner-ng size="xs" label="Saving" />
+              Saving…
+            </button>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ inlineCode }}</code></pre>
+    </section>
+
+    <!-- ── 8. Prop vs slot — label ────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">8. Content — label (prop &amp; slot)</h2>
+      <p class="section-desc">
+        The accessible label is visually hidden but read by assistive tech. Provide it via the
+        <code class="inline-code">label</code> prop or the
+        <code class="inline-code">slot="label"</code>
+        (slot wins).
+      </p>
+      <div class="dual-grid">
+        <div class="dual-card">
+          <div class="dual-head">Prop form (label)</div>
+          <div class="dual-body av-baseline">
+            <tulpar-spinner-ng tone="info" size="lg" label="Loading…" />
+            <span class="dual-note">label="Loading…" (visually hidden)</span>
+          </div>
+        </div>
+        <div class="dual-card">
+          <div class="dual-head">Slot form (label)</div>
+          <div class="dual-body av-baseline">
+            <tulpar-spinner-ng tone="info" size="lg">
+              <span slot="label">Saving changes…</span>
+            </tulpar-spinner-ng>
+            <span class="dual-note">slot="label" (visually hidden)</span>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ dualCode }}</code></pre>
     </section>
 
     <!-- ── 9. Accessibility ───────────────────────────────────────────────── -->
