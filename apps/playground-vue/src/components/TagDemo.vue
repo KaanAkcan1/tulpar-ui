@@ -107,236 +107,9 @@ const pgSnippet = computed(() => {
       </p>
     </header>
 
-    <!-- ── 1. Tones ───────────────────────────────────────────────────────── -->
+    <!-- ── 1. Live playground ─────────────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">1. Tones</h2>
-      <p class="section-desc">
-        Five built-in tones: <code class="inline-code">neutral</code> ·
-        <code class="inline-code">info</code> · <code class="inline-code">success</code> ·
-        <code class="inline-code">warning</code> · <code class="inline-code">danger</code>. Each
-        maps to a semantic token pair; a leading <code class="inline-code">dot</code> reinforces the
-        tone for colour-blind users.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">tones</span>
-          <div class="row-items">
-            <TulparTag tone="neutral" dot label="Neutral" />
-            <TulparTag tone="info" dot label="Info" />
-            <TulparTag tone="success" dot label="Success" />
-            <TulparTag tone="warning" dot label="Warning" />
-            <TulparTag tone="danger" dot label="Danger" />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ tonesCode }}</code></pre>
-    </section>
-
-    <!-- ── 2. Variants ────────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">2. Variants</h2>
-      <p class="section-desc">
-        Three visual weights. <code class="inline-code">soft-tonal</code> (default) is the quietest;
-        <code class="inline-code">outline</code> trades fill for a border;
-        <code class="inline-code">solid</code>
-        is the loudest, for the rare case a tag needs to dominate.
-      </p>
-      <div class="preview preview--col">
-        <div v-for="v in variants" :key="v" class="demo-row">
-          <span class="row-label">{{ v }}</span>
-          <div class="row-items">
-            <TulparTag tone="neutral" :variant="v" dot label="Neutral" />
-            <TulparTag tone="info" :variant="v" dot label="Info" />
-            <TulparTag tone="success" :variant="v" dot label="Success" />
-            <TulparTag tone="warning" :variant="v" dot label="Warning" />
-            <TulparTag tone="danger" :variant="v" dot label="Danger" />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ variantsCode }}</code></pre>
-    </section>
-
-    <!-- ── 3. Shapes ──────────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">3. Shapes</h2>
-      <p class="section-desc">
-        <code class="inline-code">square</code> (default, gently rounded) ·
-        <code class="inline-code">pill</code> (fully rounded) ·
-        <code class="inline-code">sharp</code> (no radius, for dense data tables).
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">shapes</span>
-          <div class="row-items">
-            <TulparTag tone="info" shape="square" dot label="square" />
-            <TulparTag tone="info" shape="pill" dot label="pill" />
-            <TulparTag tone="info" shape="sharp" dot label="sharp" />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ shapesCode }}</code></pre>
-    </section>
-
-    <!-- ── 4. Sizes ───────────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">4. Sizes</h2>
-      <p class="section-desc">
-        Five tiers from <code class="inline-code">xs</code> to <code class="inline-code">xl</code>.
-        <code class="inline-code">md</code> is the default; the dot, icon, and padding all scale
-        with the tier.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">sizes</span>
-          <div class="row-items av-baseline">
-            <TulparTag tone="success" size="xs" dot label="xs" />
-            <TulparTag tone="success" size="sm" dot label="sm" />
-            <TulparTag tone="success" size="md" dot label="md" />
-            <TulparTag tone="success" size="lg" dot label="lg" />
-            <TulparTag tone="success" size="xl" dot label="xl" />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ sizesCode }}</code></pre>
-    </section>
-
-    <!-- ── 5. Custom tone ─────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">5. Custom tone</h2>
-      <p class="section-desc">
-        <code class="inline-code">tone="custom"</code> unlocks
-        <code class="inline-code">color</code> — a brand family name (<code class="inline-code"
-          >ilay · umay · gok · ulgen · kizagan · erlik</code
-        >, mode-aware light/dark flip) or any raw CSS color (contrast is the author's
-        responsibility). Part overrides <code class="inline-code">bg</code> /
-        <code class="inline-code">accent</code> / <code class="inline-code">text</code> layer on
-        top.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">family</span>
-          <div class="row-items">
-            <TulparTag tone="custom" color="ilay" dot label="ilay" />
-            <TulparTag tone="custom" color="umay" dot label="umay" />
-            <TulparTag tone="custom" color="gok" dot label="gok" />
-            <TulparTag tone="custom" color="ulgen" dot label="ulgen" />
-            <TulparTag tone="custom" color="kizagan" dot label="kizagan" />
-            <TulparTag tone="custom" color="erlik" dot label="erlik" />
-          </div>
-        </div>
-        <div class="demo-row">
-          <span class="row-label">raw css</span>
-          <div class="row-items">
-            <TulparTag tone="custom" color="#0d9488" dot label="#0d9488" />
-            <TulparTag tone="custom" color="rebeccapurple" dot label="rebeccapurple" />
-          </div>
-        </div>
-        <div class="demo-row">
-          <span class="row-label">parts</span>
-          <div class="row-items">
-            <TulparTag
-              tone="custom"
-              bg="#fdf4ff"
-              accent="#9333ea"
-              text="#3b0764"
-              dot
-              label="bg / accent / text"
-            />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ customCode }}</code></pre>
-    </section>
-
-    <!-- ── 6. States & edge cases ─────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">6. States &amp; edge cases</h2>
-      <p class="section-desc">
-        <code class="inline-code">disabled</code> dims the tag and removes any cursor affordance.
-        Long labels truncate with an ellipsis and expose the full text via a native
-        <code class="inline-code">title</code> tooltip — width never blows out a table column.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">disabled</span>
-          <div class="row-items">
-            <TulparTag tone="info" dot label="Disabled" disabled />
-            <TulparTag tone="success" variant="solid" dot label="Disabled solid" disabled />
-          </div>
-        </div>
-        <div class="demo-row">
-          <span class="row-label">truncate</span>
-          <div class="row-items truncate-cell">
-            <TulparTag
-              tone="neutral"
-              label="truncates a very long label that overflows the available row width"
-            />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ stateCode }}</code></pre>
-    </section>
-
-    <!-- ── 7. Prop vs slot — label ────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">7. Content — label (prop &amp; slot)</h2>
-      <p class="section-desc">
-        The body text accepts both a convenience <code class="inline-code">label</code> prop and the
-        default slot. When both are set the slot wins — the prop is a shorthand, never a
-        replacement.
-      </p>
-      <div class="dual-grid">
-        <div class="dual-card">
-          <div class="dual-head">Prop form</div>
-          <div class="dual-body">
-            <TulparTag tone="info" dot label="Prop label" />
-          </div>
-        </div>
-        <div class="dual-card">
-          <div class="dual-head">Slot form</div>
-          <div class="dual-body">
-            <TulparTag tone="info" dot>Slot label</TulparTag>
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ dualLabelCode }}</code></pre>
-    </section>
-
-    <!-- ── 8. Prop vs slot — icon ─────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">8. Content — icon (prop &amp; slot)</h2>
-      <p class="section-desc">
-        A leading icon replaces the dot. The <code class="inline-code">icon</code> prop takes a raw
-        SVG string or an emoji; the <code class="inline-code">#icon</code> slot takes any node
-        (inline SVG, a Lucide component, an <code class="inline-code">&lt;img&gt;</code>). Slot
-        wins.
-      </p>
-      <div class="dual-grid">
-        <div class="dual-card">
-          <div class="dual-head">Prop form (icon)</div>
-          <div class="dual-body">
-            <TulparTag tone="success" icon="✓" label="Prop icon" />
-          </div>
-        </div>
-        <div class="dual-card">
-          <div class="dual-head">Slot form (icon)</div>
-          <div class="dual-body">
-            <TulparTag tone="success" label="Slot icon">
-              <template #icon>
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M3 8l3.5 3.5L13 4" />
-                </svg>
-              </template>
-            </TulparTag>
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ dualIconCode }}</code></pre>
-    </section>
-
-    <!-- ── 9. Live playground ─────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">9. Live playground</h2>
+      <h2 class="section-title">1. Live playground</h2>
       <p class="section-desc">
         Drive every prop from one control panel — tone, variant, shape, size, the custom color, and
         the dot / disabled toggles. The rendered tag and a matching snippet update live.
@@ -396,6 +169,233 @@ const pgSnippet = computed(() => {
         </div>
       </div>
       <pre class="code"><code>{{ pgSnippet }}</code></pre>
+    </section>
+
+    <!-- ── 2. Tones ───────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">2. Tones</h2>
+      <p class="section-desc">
+        Five built-in tones: <code class="inline-code">neutral</code> ·
+        <code class="inline-code">info</code> · <code class="inline-code">success</code> ·
+        <code class="inline-code">warning</code> · <code class="inline-code">danger</code>. Each
+        maps to a semantic token pair; a leading <code class="inline-code">dot</code> reinforces the
+        tone for colour-blind users.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">tones</span>
+          <div class="row-items">
+            <TulparTag tone="neutral" dot label="Neutral" />
+            <TulparTag tone="info" dot label="Info" />
+            <TulparTag tone="success" dot label="Success" />
+            <TulparTag tone="warning" dot label="Warning" />
+            <TulparTag tone="danger" dot label="Danger" />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ tonesCode }}</code></pre>
+    </section>
+
+    <!-- ── 3. Variants ────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">3. Variants</h2>
+      <p class="section-desc">
+        Three visual weights. <code class="inline-code">soft-tonal</code> (default) is the quietest;
+        <code class="inline-code">outline</code> trades fill for a border;
+        <code class="inline-code">solid</code>
+        is the loudest, for the rare case a tag needs to dominate.
+      </p>
+      <div class="preview preview--col">
+        <div v-for="v in variants" :key="v" class="demo-row">
+          <span class="row-label">{{ v }}</span>
+          <div class="row-items">
+            <TulparTag tone="neutral" :variant="v" dot label="Neutral" />
+            <TulparTag tone="info" :variant="v" dot label="Info" />
+            <TulparTag tone="success" :variant="v" dot label="Success" />
+            <TulparTag tone="warning" :variant="v" dot label="Warning" />
+            <TulparTag tone="danger" :variant="v" dot label="Danger" />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ variantsCode }}</code></pre>
+    </section>
+
+    <!-- ── 4. Shapes ──────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">4. Shapes</h2>
+      <p class="section-desc">
+        <code class="inline-code">square</code> (default, gently rounded) ·
+        <code class="inline-code">pill</code> (fully rounded) ·
+        <code class="inline-code">sharp</code> (no radius, for dense data tables).
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">shapes</span>
+          <div class="row-items">
+            <TulparTag tone="info" shape="square" dot label="square" />
+            <TulparTag tone="info" shape="pill" dot label="pill" />
+            <TulparTag tone="info" shape="sharp" dot label="sharp" />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ shapesCode }}</code></pre>
+    </section>
+
+    <!-- ── 5. Sizes ───────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">5. Sizes</h2>
+      <p class="section-desc">
+        Five tiers from <code class="inline-code">xs</code> to <code class="inline-code">xl</code>.
+        <code class="inline-code">md</code> is the default; the dot, icon, and padding all scale
+        with the tier.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">sizes</span>
+          <div class="row-items av-baseline">
+            <TulparTag tone="success" size="xs" dot label="xs" />
+            <TulparTag tone="success" size="sm" dot label="sm" />
+            <TulparTag tone="success" size="md" dot label="md" />
+            <TulparTag tone="success" size="lg" dot label="lg" />
+            <TulparTag tone="success" size="xl" dot label="xl" />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ sizesCode }}</code></pre>
+    </section>
+
+    <!-- ── 6. Custom tone ─────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">6. Custom tone</h2>
+      <p class="section-desc">
+        <code class="inline-code">tone="custom"</code> unlocks
+        <code class="inline-code">color</code> — a brand family name (<code class="inline-code"
+          >ilay · umay · gok · ulgen · kizagan · erlik</code
+        >, mode-aware light/dark flip) or any raw CSS color (contrast is the author's
+        responsibility). Part overrides <code class="inline-code">bg</code> /
+        <code class="inline-code">accent</code> / <code class="inline-code">text</code> layer on
+        top.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">family</span>
+          <div class="row-items">
+            <TulparTag tone="custom" color="ilay" dot label="ilay" />
+            <TulparTag tone="custom" color="umay" dot label="umay" />
+            <TulparTag tone="custom" color="gok" dot label="gok" />
+            <TulparTag tone="custom" color="ulgen" dot label="ulgen" />
+            <TulparTag tone="custom" color="kizagan" dot label="kizagan" />
+            <TulparTag tone="custom" color="erlik" dot label="erlik" />
+          </div>
+        </div>
+        <div class="demo-row">
+          <span class="row-label">raw css</span>
+          <div class="row-items">
+            <TulparTag tone="custom" color="#0d9488" dot label="#0d9488" />
+            <TulparTag tone="custom" color="rebeccapurple" dot label="rebeccapurple" />
+          </div>
+        </div>
+        <div class="demo-row">
+          <span class="row-label">parts</span>
+          <div class="row-items">
+            <TulparTag
+              tone="custom"
+              bg="#fdf4ff"
+              accent="#9333ea"
+              text="#3b0764"
+              dot
+              label="bg / accent / text"
+            />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ customCode }}</code></pre>
+    </section>
+
+    <!-- ── 7. States & edge cases ─────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">7. States &amp; edge cases</h2>
+      <p class="section-desc">
+        <code class="inline-code">disabled</code> dims the tag and removes any cursor affordance.
+        Long labels truncate with an ellipsis and expose the full text via a native
+        <code class="inline-code">title</code> tooltip — width never blows out a table column.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">disabled</span>
+          <div class="row-items">
+            <TulparTag tone="info" dot label="Disabled" disabled />
+            <TulparTag tone="success" variant="solid" dot label="Disabled solid" disabled />
+          </div>
+        </div>
+        <div class="demo-row">
+          <span class="row-label">truncate</span>
+          <div class="row-items truncate-cell">
+            <TulparTag
+              tone="neutral"
+              label="truncates a very long label that overflows the available row width"
+            />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ stateCode }}</code></pre>
+    </section>
+
+    <!-- ── 8. Prop vs slot — label ────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">8. Content — label (prop &amp; slot)</h2>
+      <p class="section-desc">
+        The body text accepts both a convenience <code class="inline-code">label</code> prop and the
+        default slot. When both are set the slot wins — the prop is a shorthand, never a
+        replacement.
+      </p>
+      <div class="dual-grid">
+        <div class="dual-card">
+          <div class="dual-head">Prop form</div>
+          <div class="dual-body">
+            <TulparTag tone="info" dot label="Prop label" />
+          </div>
+        </div>
+        <div class="dual-card">
+          <div class="dual-head">Slot form</div>
+          <div class="dual-body">
+            <TulparTag tone="info" dot>Slot label</TulparTag>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ dualLabelCode }}</code></pre>
+    </section>
+
+    <!-- ── 9. Prop vs slot — icon ─────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">9. Content — icon (prop &amp; slot)</h2>
+      <p class="section-desc">
+        A leading icon replaces the dot. The <code class="inline-code">icon</code> prop takes a raw
+        SVG string or an emoji; the <code class="inline-code">#icon</code> slot takes any node
+        (inline SVG, a Lucide component, an <code class="inline-code">&lt;img&gt;</code>). Slot
+        wins.
+      </p>
+      <div class="dual-grid">
+        <div class="dual-card">
+          <div class="dual-head">Prop form (icon)</div>
+          <div class="dual-body">
+            <TulparTag tone="success" icon="✓" label="Prop icon" />
+          </div>
+        </div>
+        <div class="dual-card">
+          <div class="dual-head">Slot form (icon)</div>
+          <div class="dual-body">
+            <TulparTag tone="success" label="Slot icon">
+              <template #icon>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 8l3.5 3.5L13 4" />
+                </svg>
+              </template>
+            </TulparTag>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ dualIconCode }}</code></pre>
     </section>
 
     <!-- ── 10. Accessibility ──────────────────────────────────────────────── -->

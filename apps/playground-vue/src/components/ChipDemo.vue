@@ -130,253 +130,9 @@ const pgSnippet = computed(() => {
       </p>
     </header>
 
-    <!-- ── 1. Clickable ───────────────────────────────────────────────────── -->
+    <!-- ── 1. Live playground ─────────────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">1. Clickable</h2>
-      <p class="section-desc">
-        The chip body is a button. Activating it (mouse or keyboard) emits
-        <code class="inline-code">clicked</code>. Watch the event log at the bottom of the section.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">clickable</span>
-          <div class="row-items">
-            <TulparChip tone="neutral" label="All" @clicked="logChip('clicked: All')" />
-            <TulparChip tone="info" icon="●" label="Open" @clicked="logChip('clicked: Open')" />
-            <TulparChip tone="success" label="Done" @clicked="logChip('clicked: Done')" />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ clickCode }}</code></pre>
-    </section>
-
-    <!-- ── 2. Removable ───────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">2. Removable</h2>
-      <p class="section-desc">
-        <code class="inline-code">removable</code> adds a trailing ✕ that is an
-        <strong>independent tab stop</strong> — activating it emits
-        <code class="inline-code">removed</code> without firing
-        <code class="inline-code">clicked</code>. Perfect for token / tag inputs.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">removable</span>
-          <div class="row-items">
-            <TulparChip label="kaan@x.com" removable @removed="logChip('removed: kaan@x.com')" />
-            <TulparChip
-              label="Jane Doe"
-              avatar="JD"
-              removable
-              @removed="logChip('removed: Jane Doe')"
-            />
-            <TulparChip
-              tone="info"
-              label="design"
-              removable
-              @clicked="logChip('clicked: design')"
-              @removed="logChip('removed: design')"
-            />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ removeCode }}</code></pre>
-    </section>
-
-    <!-- ── 3. Variants ────────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">3. Variants</h2>
-      <p class="section-desc">
-        <code class="inline-code">soft-tonal</code> (default) ·
-        <code class="inline-code">outline</code> · <code class="inline-code">solid</code> ·
-        <code class="inline-code">ghost</code>. Ghost is transparent at rest and reveals the soft
-        tint on hover — ideal for toolbar filter rows.
-      </p>
-      <div class="preview preview--col">
-        <div v-for="v in variants" :key="v" class="demo-row">
-          <span class="row-label">{{ v }}</span>
-          <div class="row-items">
-            <TulparChip tone="neutral" :variant="v" label="Status" @clicked="logChip('clicked: ' + v)" />
-            <TulparChip tone="info" :variant="v" label="Owner" @clicked="logChip('clicked: ' + v)" />
-            <TulparChip tone="success" :variant="v" label="Label" @clicked="logChip('clicked: ' + v)" />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ variantsCode }}</code></pre>
-    </section>
-
-    <!-- ── 4. States ──────────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">4. States</h2>
-      <p class="section-desc">
-        <code class="inline-code">disabled</code> dims the chip, removes it from the tab order, and
-        suppresses both <code class="inline-code">clicked</code> and
-        <code class="inline-code">removed</code> — clicking it logs nothing.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">disabled</span>
-          <div class="row-items">
-            <TulparChip label="Archived" disabled @clicked="logChip('SHOULD NOT FIRE')" />
-            <TulparChip
-              label="Read-only"
-              removable
-              disabled
-              @removed="logChip('SHOULD NOT FIRE')"
-            />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ stateCode }}</code></pre>
-    </section>
-
-    <!-- ── 5. Shapes & sizes ──────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">5. Shapes &amp; sizes</h2>
-      <p class="section-desc">
-        <code class="inline-code">square</code> (default) · <code class="inline-code">pill</code> ·
-        <code class="inline-code">sharp</code> — and five size tiers from
-        <code class="inline-code">xs</code> to <code class="inline-code">xl</code>.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">shapes</span>
-          <div class="row-items">
-            <TulparChip tone="info" shape="square" label="square" />
-            <TulparChip tone="info" shape="pill" label="pill" />
-            <TulparChip tone="info" shape="sharp" label="sharp" />
-          </div>
-        </div>
-        <div class="demo-row">
-          <span class="row-label">sizes</span>
-          <div class="row-items av-baseline">
-            <TulparChip tone="success" size="xs" label="xs" />
-            <TulparChip tone="success" size="sm" label="sm" />
-            <TulparChip tone="success" size="md" label="md" />
-            <TulparChip tone="success" size="lg" label="lg" />
-            <TulparChip tone="success" size="xl" label="xl" />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ shapesSizesCode }}</code></pre>
-    </section>
-
-    <!-- ── 6. Custom tone ─────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">6. Custom tone</h2>
-      <p class="section-desc">
-        <code class="inline-code">tone="custom"</code> + <code class="inline-code">color</code>: a
-        brand family name (mode-aware) or any raw CSS color. Part overrides (<code
-          class="inline-code"
-          >bg</code
-        >
-        / <code class="inline-code">accent</code> / <code class="inline-code">text</code>) layer on
-        top.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row">
-          <span class="row-label">family</span>
-          <div class="row-items">
-            <TulparChip tone="custom" color="ilay" label="ilay" />
-            <TulparChip tone="custom" color="umay" label="umay" />
-            <TulparChip tone="custom" color="gok" label="gok" />
-            <TulparChip tone="custom" color="ulgen" label="ulgen" />
-          </div>
-        </div>
-        <div class="demo-row">
-          <span class="row-label">raw css</span>
-          <div class="row-items">
-            <TulparChip tone="custom" color="#0d9488" label="#0d9488" />
-            <TulparChip tone="custom" bg="#fdf4ff" accent="#9333ea" text="#3b0764" label="parts" />
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ customCode }}</code></pre>
-    </section>
-
-    <!-- ── 7. Prop vs slot — label ────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">7. Content — label (prop &amp; slot)</h2>
-      <p class="section-desc">
-        Body text via the <code class="inline-code">label</code> prop or the default slot (slot
-        wins).
-      </p>
-      <div class="dual-grid">
-        <div class="dual-card">
-          <div class="dual-head">Prop form</div>
-          <div class="dual-body">
-            <TulparChip tone="info" label="Prop label" />
-          </div>
-        </div>
-        <div class="dual-card">
-          <div class="dual-head">Slot form</div>
-          <div class="dual-body">
-            <TulparChip tone="info">Slot label</TulparChip>
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ dualLabelCode }}</code></pre>
-    </section>
-
-    <!-- ── 8. Prop vs slot — icon ─────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">8. Content — icon (prop &amp; slot)</h2>
-      <p class="section-desc">
-        Leading icon via the <code class="inline-code">icon</code> prop (raw SVG / emoji) or
-        <code class="inline-code">#icon</code> slot (any node).
-      </p>
-      <div class="dual-grid">
-        <div class="dual-card">
-          <div class="dual-head">Prop form (icon)</div>
-          <div class="dual-body">
-            <TulparChip tone="success" icon="✓" label="Prop icon" />
-          </div>
-        </div>
-        <div class="dual-card">
-          <div class="dual-head">Slot form (icon)</div>
-          <div class="dual-body">
-            <TulparChip tone="success" label="Slot icon">
-              <template #icon>
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M3 8l3.5 3.5L13 4" />
-                </svg>
-              </template>
-            </TulparChip>
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ dualIconCode }}</code></pre>
-    </section>
-
-    <!-- ── 9. Prop vs slot — avatar ───────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">9. Content — avatar (prop &amp; slot)</h2>
-      <p class="section-desc">
-        Leading avatar via the <code class="inline-code">avatar</code> prop (initials / image URL)
-        or <code class="inline-code">#avatar</code> slot (any node).
-      </p>
-      <div class="dual-grid">
-        <div class="dual-card">
-          <div class="dual-head">Prop form (avatar)</div>
-          <div class="dual-body">
-            <TulparChip label="Prop avatar" avatar="KA" />
-          </div>
-        </div>
-        <div class="dual-card">
-          <div class="dual-head">Slot form (avatar)</div>
-          <div class="dual-body">
-            <TulparChip label="Slot avatar">
-              <template #avatar>🦄</template>
-            </TulparChip>
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ dualAvatarCode }}</code></pre>
-    </section>
-
-    <!-- ── 10. Live playground ────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">10. Live playground</h2>
+      <h2 class="section-title">1. Live playground</h2>
       <p class="section-desc">
         Configure a chip from the panel — tone, variant, shape, size, the custom color, and the
         removable / disabled toggles. Click the chip or its ✕ to append to the live event log.
@@ -455,6 +211,250 @@ const pgSnippet = computed(() => {
         </div>
       </div>
       <pre class="code"><code>{{ pgSnippet }}</code></pre>
+    </section>
+
+    <!-- ── 2. Clickable ───────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">2. Clickable</h2>
+      <p class="section-desc">
+        The chip body is a button. Activating it (mouse or keyboard) emits
+        <code class="inline-code">clicked</code>. Watch the event log at the bottom of the section.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">clickable</span>
+          <div class="row-items">
+            <TulparChip tone="neutral" label="All" @clicked="logChip('clicked: All')" />
+            <TulparChip tone="info" icon="●" label="Open" @clicked="logChip('clicked: Open')" />
+            <TulparChip tone="success" label="Done" @clicked="logChip('clicked: Done')" />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ clickCode }}</code></pre>
+    </section>
+
+    <!-- ── 3. Removable ───────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">3. Removable</h2>
+      <p class="section-desc">
+        <code class="inline-code">removable</code> adds a trailing ✕ that is an
+        <strong>independent tab stop</strong> — activating it emits
+        <code class="inline-code">removed</code> without firing
+        <code class="inline-code">clicked</code>. Perfect for token / tag inputs.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">removable</span>
+          <div class="row-items">
+            <TulparChip label="kaan@x.com" removable @removed="logChip('removed: kaan@x.com')" />
+            <TulparChip
+              label="Jane Doe"
+              avatar="JD"
+              removable
+              @removed="logChip('removed: Jane Doe')"
+            />
+            <TulparChip
+              tone="info"
+              label="design"
+              removable
+              @clicked="logChip('clicked: design')"
+              @removed="logChip('removed: design')"
+            />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ removeCode }}</code></pre>
+    </section>
+
+    <!-- ── 4. Variants ────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">4. Variants</h2>
+      <p class="section-desc">
+        <code class="inline-code">soft-tonal</code> (default) ·
+        <code class="inline-code">outline</code> · <code class="inline-code">solid</code> ·
+        <code class="inline-code">ghost</code>. Ghost is transparent at rest and reveals the soft
+        tint on hover — ideal for toolbar filter rows.
+      </p>
+      <div class="preview preview--col">
+        <div v-for="v in variants" :key="v" class="demo-row">
+          <span class="row-label">{{ v }}</span>
+          <div class="row-items">
+            <TulparChip tone="neutral" :variant="v" label="Status" @clicked="logChip('clicked: ' + v)" />
+            <TulparChip tone="info" :variant="v" label="Owner" @clicked="logChip('clicked: ' + v)" />
+            <TulparChip tone="success" :variant="v" label="Label" @clicked="logChip('clicked: ' + v)" />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ variantsCode }}</code></pre>
+    </section>
+
+    <!-- ── 5. States ──────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">5. States</h2>
+      <p class="section-desc">
+        <code class="inline-code">disabled</code> dims the chip, removes it from the tab order, and
+        suppresses both <code class="inline-code">clicked</code> and
+        <code class="inline-code">removed</code> — clicking it logs nothing.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">disabled</span>
+          <div class="row-items">
+            <TulparChip label="Archived" disabled @clicked="logChip('SHOULD NOT FIRE')" />
+            <TulparChip
+              label="Read-only"
+              removable
+              disabled
+              @removed="logChip('SHOULD NOT FIRE')"
+            />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ stateCode }}</code></pre>
+    </section>
+
+    <!-- ── 6. Shapes & sizes ──────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">6. Shapes &amp; sizes</h2>
+      <p class="section-desc">
+        <code class="inline-code">square</code> (default) · <code class="inline-code">pill</code> ·
+        <code class="inline-code">sharp</code> — and five size tiers from
+        <code class="inline-code">xs</code> to <code class="inline-code">xl</code>.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">shapes</span>
+          <div class="row-items">
+            <TulparChip tone="info" shape="square" label="square" />
+            <TulparChip tone="info" shape="pill" label="pill" />
+            <TulparChip tone="info" shape="sharp" label="sharp" />
+          </div>
+        </div>
+        <div class="demo-row">
+          <span class="row-label">sizes</span>
+          <div class="row-items av-baseline">
+            <TulparChip tone="success" size="xs" label="xs" />
+            <TulparChip tone="success" size="sm" label="sm" />
+            <TulparChip tone="success" size="md" label="md" />
+            <TulparChip tone="success" size="lg" label="lg" />
+            <TulparChip tone="success" size="xl" label="xl" />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ shapesSizesCode }}</code></pre>
+    </section>
+
+    <!-- ── 7. Custom tone ─────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">7. Custom tone</h2>
+      <p class="section-desc">
+        <code class="inline-code">tone="custom"</code> + <code class="inline-code">color</code>: a
+        brand family name (mode-aware) or any raw CSS color. Part overrides (<code
+          class="inline-code"
+          >bg</code
+        >
+        / <code class="inline-code">accent</code> / <code class="inline-code">text</code>) layer on
+        top.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">family</span>
+          <div class="row-items">
+            <TulparChip tone="custom" color="ilay" label="ilay" />
+            <TulparChip tone="custom" color="umay" label="umay" />
+            <TulparChip tone="custom" color="gok" label="gok" />
+            <TulparChip tone="custom" color="ulgen" label="ulgen" />
+          </div>
+        </div>
+        <div class="demo-row">
+          <span class="row-label">raw css</span>
+          <div class="row-items">
+            <TulparChip tone="custom" color="#0d9488" label="#0d9488" />
+            <TulparChip tone="custom" bg="#fdf4ff" accent="#9333ea" text="#3b0764" label="parts" />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ customCode }}</code></pre>
+    </section>
+
+    <!-- ── 8. Prop vs slot — label ────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">8. Content — label (prop &amp; slot)</h2>
+      <p class="section-desc">
+        Body text via the <code class="inline-code">label</code> prop or the default slot (slot
+        wins).
+      </p>
+      <div class="dual-grid">
+        <div class="dual-card">
+          <div class="dual-head">Prop form</div>
+          <div class="dual-body">
+            <TulparChip tone="info" label="Prop label" />
+          </div>
+        </div>
+        <div class="dual-card">
+          <div class="dual-head">Slot form</div>
+          <div class="dual-body">
+            <TulparChip tone="info">Slot label</TulparChip>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ dualLabelCode }}</code></pre>
+    </section>
+
+    <!-- ── 9. Prop vs slot — icon ─────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">9. Content — icon (prop &amp; slot)</h2>
+      <p class="section-desc">
+        Leading icon via the <code class="inline-code">icon</code> prop (raw SVG / emoji) or
+        <code class="inline-code">#icon</code> slot (any node).
+      </p>
+      <div class="dual-grid">
+        <div class="dual-card">
+          <div class="dual-head">Prop form (icon)</div>
+          <div class="dual-body">
+            <TulparChip tone="success" icon="✓" label="Prop icon" />
+          </div>
+        </div>
+        <div class="dual-card">
+          <div class="dual-head">Slot form (icon)</div>
+          <div class="dual-body">
+            <TulparChip tone="success" label="Slot icon">
+              <template #icon>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 8l3.5 3.5L13 4" />
+                </svg>
+              </template>
+            </TulparChip>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ dualIconCode }}</code></pre>
+    </section>
+
+    <!-- ── 10. Prop vs slot — avatar ──────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">10. Content — avatar (prop &amp; slot)</h2>
+      <p class="section-desc">
+        Leading avatar via the <code class="inline-code">avatar</code> prop (initials / image URL)
+        or <code class="inline-code">#avatar</code> slot (any node).
+      </p>
+      <div class="dual-grid">
+        <div class="dual-card">
+          <div class="dual-head">Prop form (avatar)</div>
+          <div class="dual-body">
+            <TulparChip label="Prop avatar" avatar="KA" />
+          </div>
+        </div>
+        <div class="dual-card">
+          <div class="dual-head">Slot form (avatar)</div>
+          <div class="dual-body">
+            <TulparChip label="Slot avatar">
+              <template #avatar>🦄</template>
+            </TulparChip>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ dualAvatarCode }}</code></pre>
     </section>
 
     <!-- ── 11. Accessibility ──────────────────────────────────────────────── -->

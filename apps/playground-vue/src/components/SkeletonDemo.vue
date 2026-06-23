@@ -111,192 +111,9 @@ const pgSnippet = computed(() => {
       </p>
     </header>
 
-    <!-- ── 1. Variants ────────────────────────────────────────────────────── -->
+    <!-- ── 1. Live playground ─────────────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">1. Variants</h2>
-      <p class="section-desc">
-        <code class="inline-code">text</code> for paragraphs (multi-line bars),
-        <code class="inline-code">rect</code> for blocks (images, cards),
-        <code class="inline-code">circle</code> for avatars.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row demo-row--top">
-          <span class="row-label">variants</span>
-          <div class="row-items skel-variants">
-            <div class="skel-block">
-              <TulparSkeleton variant="text" :lines="4" />
-              <span class="skel-caption">text · 4 lines</span>
-            </div>
-            <div class="skel-block">
-              <TulparSkeleton variant="rect" height="72px" />
-              <span class="skel-caption">rect</span>
-            </div>
-            <div class="skel-block skel-block--circle">
-              <TulparSkeleton variant="circle" width="56px" height="56px" />
-              <span class="skel-caption">circle</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ variantsCode }}</code></pre>
-    </section>
-
-    <!-- ── 2. Lines ───────────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">2. Text lines</h2>
-      <p class="section-desc">
-        The <code class="inline-code">lines</code> prop sets how many bars the text variant renders;
-        the last bar is shortened so it reads like a real paragraph.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row demo-row--top">
-          <span class="row-label">lines</span>
-          <div class="row-items skel-variants">
-            <div class="skel-block">
-              <TulparSkeleton variant="text" :lines="1" />
-              <span class="skel-caption">1</span>
-            </div>
-            <div class="skel-block">
-              <TulparSkeleton variant="text" :lines="3" />
-              <span class="skel-caption">3</span>
-            </div>
-            <div class="skel-block">
-              <TulparSkeleton variant="text" :lines="5" />
-              <span class="skel-caption">5</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ linesCode }}</code></pre>
-    </section>
-
-    <!-- ── 3. Size overrides ──────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">3. Width / height / radius</h2>
-      <p class="section-desc">
-        Any CSS length works — fixed px, percentages, or a fully-rounded
-        <code class="inline-code">radius</code> for pill-shaped placeholders.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row demo-row--top">
-          <span class="row-label">overrides</span>
-          <div class="row-items skel-variants">
-            <div class="skel-block">
-              <TulparSkeleton variant="rect" width="120px" height="32px" />
-              <span class="skel-caption">120×32</span>
-            </div>
-            <div class="skel-block">
-              <TulparSkeleton variant="rect" width="160px" height="32px" radius="999px" />
-              <span class="skel-caption">pill radius</span>
-            </div>
-          </div>
-        </div>
-        <div class="demo-row demo-row--top">
-          <span class="row-label">&nbsp;</span>
-          <div class="row-items">
-            <div class="skel-fill">
-              <TulparSkeleton variant="rect" width="100%" height="120px" radius="12px" />
-            </div>
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ sizeCode }}</code></pre>
-    </section>
-
-    <!-- ── 4. Animations ──────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">4. Animations</h2>
-      <p class="section-desc">
-        <code class="inline-code">shimmer</code> (default) sweeps a highlight across the bar;
-        <code class="inline-code">pulse</code> fades opacity; <code class="inline-code">none</code>
-        is static. Every mode is suppressed under
-        <code class="inline-code">prefers-reduced-motion</code>.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row demo-row--top">
-          <span class="row-label">animations</span>
-          <div class="row-items skel-variants">
-            <div class="skel-block">
-              <TulparSkeleton variant="text" :lines="3" animation="shimmer" />
-              <span class="skel-caption">shimmer</span>
-            </div>
-            <div class="skel-block">
-              <TulparSkeleton variant="text" :lines="3" animation="pulse" />
-              <span class="skel-caption">pulse</span>
-            </div>
-            <div class="skel-block">
-              <TulparSkeleton variant="text" :lines="3" animation="none" />
-              <span class="skel-caption">none</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ animCode }}</code></pre>
-    </section>
-
-    <!-- ── 5. Composed ────────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">5. Composed placeholder</h2>
-      <p class="section-desc">
-        Combine variants to mirror a real component's layout — here an avatar + two text lines for a
-        list-item or comment-card placeholder.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row demo-row--top">
-          <span class="row-label">composed</span>
-          <div class="row-items">
-            <div class="skel-card">
-              <TulparSkeleton variant="circle" width="40px" height="40px" />
-              <div class="skel-card-body">
-                <TulparSkeleton variant="text" :lines="1" width="60%" />
-                <TulparSkeleton variant="text" :lines="1" width="40%" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ composedCode }}</code></pre>
-    </section>
-
-    <!-- ── 6. Live swap ───────────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">6. Live loading swap</h2>
-      <p class="section-desc">
-        The real-world pattern: render the skeleton while loading, then swap to content. Press the
-        button to simulate a 1.6 s fetch — the skeleton's reserved space means the content drops in
-        with zero layout shift.
-      </p>
-      <div class="preview preview--col">
-        <div class="demo-row demo-row--top">
-          <span class="row-label">demo</span>
-          <div class="row-items" style="flex-direction: column; align-items: flex-start; gap: 12px">
-            <div class="swap-card">
-              <div class="swap-row">
-                <TulparSkeleton v-if="loading" variant="circle" width="40px" height="40px" />
-                <span v-else style="font-size: 28px">🦄</span>
-                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px">
-                  <TulparSkeleton v-if="loading" variant="text" :lines="2" />
-                  <template v-else>
-                    <strong style="font-size: 14px">Tulpar UI</strong>
-                    <span style="font-size: 13px; color: var(--tulpar-color-text-secondary, #57534e)">
-                      Web Components with idiomatic Angular &amp; Vue wrappers.
-                    </span>
-                  </template>
-                </div>
-              </div>
-            </div>
-            <button class="trigger-btn" @click="reload" :disabled="loading">
-              {{ loading ? "Loading…" : "Reload (simulate fetch)" }}
-            </button>
-          </div>
-        </div>
-      </div>
-      <pre class="code"><code>{{ swapCode }}</code></pre>
-    </section>
-
-    <!-- ── 7. Live playground ─────────────────────────────────────────────── -->
-    <section class="doc-section">
-      <h2 class="section-title">7. Live playground</h2>
+      <h2 class="section-title">1. Live playground</h2>
       <p class="section-desc">
         Pick a variant, animation, line count, and width — the rendered skeleton and snippet update
         live. (<code class="inline-code">lines</code> applies to the text variant only.)
@@ -350,6 +167,189 @@ const pgSnippet = computed(() => {
         </div>
       </div>
       <pre class="code"><code>{{ pgSnippet }}</code></pre>
+    </section>
+
+    <!-- ── 2. Variants ────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">2. Variants</h2>
+      <p class="section-desc">
+        <code class="inline-code">text</code> for paragraphs (multi-line bars),
+        <code class="inline-code">rect</code> for blocks (images, cards),
+        <code class="inline-code">circle</code> for avatars.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row demo-row--top">
+          <span class="row-label">variants</span>
+          <div class="row-items skel-variants">
+            <div class="skel-block">
+              <TulparSkeleton variant="text" :lines="4" />
+              <span class="skel-caption">text · 4 lines</span>
+            </div>
+            <div class="skel-block">
+              <TulparSkeleton variant="rect" height="72px" />
+              <span class="skel-caption">rect</span>
+            </div>
+            <div class="skel-block skel-block--circle">
+              <TulparSkeleton variant="circle" width="56px" height="56px" />
+              <span class="skel-caption">circle</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ variantsCode }}</code></pre>
+    </section>
+
+    <!-- ── 3. Lines ───────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">3. Text lines</h2>
+      <p class="section-desc">
+        The <code class="inline-code">lines</code> prop sets how many bars the text variant renders;
+        the last bar is shortened so it reads like a real paragraph.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row demo-row--top">
+          <span class="row-label">lines</span>
+          <div class="row-items skel-variants">
+            <div class="skel-block">
+              <TulparSkeleton variant="text" :lines="1" />
+              <span class="skel-caption">1</span>
+            </div>
+            <div class="skel-block">
+              <TulparSkeleton variant="text" :lines="3" />
+              <span class="skel-caption">3</span>
+            </div>
+            <div class="skel-block">
+              <TulparSkeleton variant="text" :lines="5" />
+              <span class="skel-caption">5</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ linesCode }}</code></pre>
+    </section>
+
+    <!-- ── 4. Size overrides ──────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">4. Width / height / radius</h2>
+      <p class="section-desc">
+        Any CSS length works — fixed px, percentages, or a fully-rounded
+        <code class="inline-code">radius</code> for pill-shaped placeholders.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row demo-row--top">
+          <span class="row-label">overrides</span>
+          <div class="row-items skel-variants">
+            <div class="skel-block">
+              <TulparSkeleton variant="rect" width="120px" height="32px" />
+              <span class="skel-caption">120×32</span>
+            </div>
+            <div class="skel-block">
+              <TulparSkeleton variant="rect" width="160px" height="32px" radius="999px" />
+              <span class="skel-caption">pill radius</span>
+            </div>
+          </div>
+        </div>
+        <div class="demo-row demo-row--top">
+          <span class="row-label">&nbsp;</span>
+          <div class="row-items">
+            <div class="skel-fill">
+              <TulparSkeleton variant="rect" width="100%" height="120px" radius="12px" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ sizeCode }}</code></pre>
+    </section>
+
+    <!-- ── 5. Animations ──────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">5. Animations</h2>
+      <p class="section-desc">
+        <code class="inline-code">shimmer</code> (default) sweeps a highlight across the bar;
+        <code class="inline-code">pulse</code> fades opacity; <code class="inline-code">none</code>
+        is static. Every mode is suppressed under
+        <code class="inline-code">prefers-reduced-motion</code>.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row demo-row--top">
+          <span class="row-label">animations</span>
+          <div class="row-items skel-variants">
+            <div class="skel-block">
+              <TulparSkeleton variant="text" :lines="3" animation="shimmer" />
+              <span class="skel-caption">shimmer</span>
+            </div>
+            <div class="skel-block">
+              <TulparSkeleton variant="text" :lines="3" animation="pulse" />
+              <span class="skel-caption">pulse</span>
+            </div>
+            <div class="skel-block">
+              <TulparSkeleton variant="text" :lines="3" animation="none" />
+              <span class="skel-caption">none</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ animCode }}</code></pre>
+    </section>
+
+    <!-- ── 6. Composed ────────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">6. Composed placeholder</h2>
+      <p class="section-desc">
+        Combine variants to mirror a real component's layout — here an avatar + two text lines for a
+        list-item or comment-card placeholder.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row demo-row--top">
+          <span class="row-label">composed</span>
+          <div class="row-items">
+            <div class="skel-card">
+              <TulparSkeleton variant="circle" width="40px" height="40px" />
+              <div class="skel-card-body">
+                <TulparSkeleton variant="text" :lines="1" width="60%" />
+                <TulparSkeleton variant="text" :lines="1" width="40%" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ composedCode }}</code></pre>
+    </section>
+
+    <!-- ── 7. Live swap ───────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">7. Live loading swap</h2>
+      <p class="section-desc">
+        The real-world pattern: render the skeleton while loading, then swap to content. Press the
+        button to simulate a 1.6 s fetch — the skeleton's reserved space means the content drops in
+        with zero layout shift.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row demo-row--top">
+          <span class="row-label">demo</span>
+          <div class="row-items" style="flex-direction: column; align-items: flex-start; gap: 12px">
+            <div class="swap-card">
+              <div class="swap-row">
+                <TulparSkeleton v-if="loading" variant="circle" width="40px" height="40px" />
+                <span v-else style="font-size: 28px">🦄</span>
+                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+                  <TulparSkeleton v-if="loading" variant="text" :lines="2" />
+                  <template v-else>
+                    <strong style="font-size: 14px">Tulpar UI</strong>
+                    <span style="font-size: 13px; color: var(--tulpar-color-text-secondary, #57534e)">
+                      Web Components with idiomatic Angular &amp; Vue wrappers.
+                    </span>
+                  </template>
+                </div>
+              </div>
+            </div>
+            <button class="trigger-btn" @click="reload" :disabled="loading">
+              {{ loading ? "Loading…" : "Reload (simulate fetch)" }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ swapCode }}</code></pre>
     </section>
 
     <!-- ── 8. Accessibility ───────────────────────────────────────────────── -->
