@@ -148,6 +148,10 @@ export class TulparSelect extends FormFieldBase {
     // on every update — it short-circuits when there is no selection/icon. This
     // is plain imperative DOM (clone-only), NOT a slotchange loop.
     this._syncLeadingIcon();
+    // Stamp each option with the Select's size so option geometry (row height,
+    // padding, font) matches the trigger. Plain attribute writes (no reactive
+    // @property), so they cannot re-enter the update cycle.
+    this._syncOptionSizes();
     // Re-apply the virtual-focus (data-active + aria-activedescendant) and the
     // selected (aria-selected + data-selected) attributes AFTER every render so
     // they survive a re-render that re-reads the option collection. These are
@@ -184,6 +188,20 @@ export class TulparSelect extends FormFieldBase {
     const opts = this.querySelectorAll<TulparOption>("tulpar-option");
     opts.forEach((opt) => {
       opt.id ||= `tulpar-opt-${++optSeq}`;
+    });
+  }
+
+  /**
+   * Mirror the Select's `size` onto every `<tulpar-option>` via a `data-size`
+   * attribute, so option geometry (row height / padding / font) matches the
+   * trigger's size tier. Plain attribute writes — NOT reactive props — so they
+   * cannot re-enter the Lit update cycle. Called from `updated()` (catches a
+   * `size` change) and after a slotchange (catches newly projected options).
+   */
+  private _syncOptionSizes(): void {
+    const size = this.size;
+    this.querySelectorAll<TulparOption>("tulpar-option").forEach((opt) => {
+      if (opt.getAttribute("data-size") !== size) opt.setAttribute("data-size", size);
     });
   }
 
@@ -427,8 +445,10 @@ export class TulparSelect extends FormFieldBase {
    * class-level Lit-trap note).
    */
   protected _onOptionsSlotChange = (): void => {
-    // Newly projected options get their stable ids before the label refresh.
+    // Newly projected options get their stable ids + size before the label
+    // refresh (so the size lands even on the same render frame).
     this._ensureOptionIds();
+    this._syncOptionSizes();
     this.requestUpdate();
   };
 
