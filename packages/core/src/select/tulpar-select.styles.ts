@@ -68,7 +68,7 @@ export const selectStyles = css`
     /* Hovering the trigger lifts the chevron via the descendant rule below. */
   }
 
-  .select-trigger:disabled {
+  .select-trigger[aria-disabled="true"] {
     cursor: not-allowed;
   }
 
@@ -142,7 +142,7 @@ export const selectStyles = css`
   }
 
   /* Hover anywhere on the trigger lifts the chevron a step. */
-  .select-trigger:hover:not(:disabled) .select-chevron {
+  .select-trigger:hover:not([aria-disabled="true"]) .select-chevron {
     color: var(--tulpar-color-text-secondary, #4f5153);
   }
 

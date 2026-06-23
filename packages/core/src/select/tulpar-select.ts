@@ -553,11 +553,11 @@ export class TulparSelect extends FormFieldBase {
     return html`
       <div class="control-row">
         ${this._renderPrefixSlot()}
-        <button
+        <div
           class="select-trigger"
-          type="button"
           id="control"
           role="combobox"
+          tabindex=${this.disabled ? -1 : 0}
           aria-haspopup="listbox"
           aria-expanded=${this.open ? "true" : "false"}
           aria-controls=${this._listboxId}
@@ -565,7 +565,7 @@ export class TulparSelect extends FormFieldBase {
           aria-required=${this._ariaRequiredAttr()}
           aria-invalid=${this._ariaInvalidAttr()}
           aria-describedby=${this._ariaDescribedBy() ?? nothing}
-          ?disabled=${this.disabled}
+          aria-disabled=${this.disabled ? "true" : nothing}
           @click=${this._onTriggerClick}
           @keydown=${this._onTriggerKeydown}
         >
@@ -575,7 +575,7 @@ export class TulparSelect extends FormFieldBase {
           >
           ${this._renderClearButton()}
           ${this.loading ? this._renderTriggerSpinner() : this._renderChevron()}
-        </button>
+        </div>
         ${this._renderStatusZone()} ${this._renderSuffixSlot()}
       </div>
       ${this._renderListbox()}
