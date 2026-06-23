@@ -460,4 +460,51 @@ describe("tulpar-select (listbox states)", () => {
     expect(el.shadowRoot!.querySelector(".select-status")).to.be.null;
     expect(el.querySelectorAll("tulpar-option").length).to.equal(1);
   });
+  it("loading-text prop overrides the default loading message", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select label="X" loading loading-text="Fetching…"
+        ><tulpar-option value="a" label="A"></tulpar-option
+      ></tulpar-select>`,
+    );
+    await el.updateComplete;
+    expect(
+      el.shadowRoot!.querySelector('.select-status[data-kind="loading"]')!.textContent,
+    ).to.contain("Fetching…");
+  });
+  it("error slot child triggers the error row even without the error prop", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select label="X"
+        ><span slot="error">Boom</span><tulpar-option value="a" label="A"></tulpar-option
+      ></tulpar-select>`,
+    );
+    await el.updateComplete;
+    const row = el.shadowRoot!.querySelector('.select-status[data-kind="error"]')!;
+    expect(row, "error row present from slot").to.be.ok;
+    const slot = row.querySelector('slot[name="error"]') as HTMLSlotElement;
+    expect(
+      slot
+        .assignedNodes({ flatten: true })
+        .map((n) => n.textContent)
+        .join(""),
+    ).to.contain("Boom");
+  });
+  it("loading takes priority over error when both are set", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select label="X" loading error="Boom"
+        ><tulpar-option value="a" label="A"></tulpar-option
+      ></tulpar-select>`,
+    );
+    await el.updateComplete;
+    expect(el.shadowRoot!.querySelector('.select-status[data-kind="loading"]')).to.be.ok;
+    expect(el.shadowRoot!.querySelector('.select-status[data-kind="error"]')).to.be.null;
+  });
+  it("aria-busy is absent (not 'false') when not loading", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select label="X"
+        ><tulpar-option value="a" label="A"></tulpar-option
+      ></tulpar-select>`,
+    );
+    await el.updateComplete;
+    expect(el.shadowRoot!.querySelector(".select-listbox")!.hasAttribute("aria-busy")).to.be.false;
+  });
 });

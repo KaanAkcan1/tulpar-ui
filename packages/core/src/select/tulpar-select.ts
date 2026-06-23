@@ -488,14 +488,13 @@ export class TulparSelect extends FormFieldBase {
     </button>`;
   }
 
-  private _renderStatusRow(): TemplateResult | typeof nothing {
+  private _renderStatusRow(hasErrorSlot: boolean): TemplateResult | typeof nothing {
     if (this.loading) {
       return html`<div class="select-status" data-kind="loading" role="status">
         <tulpar-spinner size="sm"></tulpar-spinner>
         <span class="select-status-text"><slot name="loading">${this.loadingText}</slot></span>
       </div>`;
     }
-    const hasErrorSlot = !!this.querySelector('[slot="error"]');
     if (this.error || hasErrorSlot) {
       return html`<div class="select-status" data-kind="error" role="alert">
         <span class="select-status-text"><slot name="error">${this.error}</slot></span>
@@ -510,7 +509,8 @@ export class TulparSelect extends FormFieldBase {
   }
 
   private _renderListbox(): TemplateResult {
-    const showOptions = !this.loading && !this.error && !this.querySelector('[slot="error"]');
+    const hasErrorSlot = !!this.querySelector('[slot="error"]');
+    const showOptions = !this.loading && !this.error && !hasErrorSlot;
     return html`<div
       class="select-listbox"
       role="listbox"
@@ -523,7 +523,7 @@ export class TulparSelect extends FormFieldBase {
       <div class="select-options" ?hidden=${!showOptions}>
         <slot @slotchange=${this._onOptionsSlotChange}></slot>
       </div>
-      ${this._renderStatusRow()}
+      ${this._renderStatusRow(hasErrorSlot)}
     </div>`;
   }
 
