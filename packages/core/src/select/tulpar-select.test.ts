@@ -261,3 +261,147 @@ describe("tulpar-select (open/close)", () => {
     expect(el.open).to.be.false;
   });
 });
+
+const key = (el: TulparSelect, k: string, opts: KeyboardEventInit = {}) =>
+  el
+    .shadowRoot!.querySelector(".select-trigger")!
+    .dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: k,
+        bubbles: true,
+        composed: true,
+        cancelable: true,
+        ...opts,
+      }),
+    );
+
+describe("tulpar-select (keyboard)", () => {
+  const mk = () =>
+    html` <tulpar-select label="X">
+      <tulpar-option value="a" label="Apple"></tulpar-option>
+      <tulpar-option value="b" label="Banana" disabled></tulpar-option>
+      <tulpar-option value="c" label="Cherry"></tulpar-option>
+    </tulpar-select>`;
+
+  it("ArrowDown on a closed select opens it", async () => {
+    const el = await fixture<TulparSelect>(mk());
+    await el.updateComplete;
+    key(el, "ArrowDown");
+    await el.updateComplete;
+    expect(el.open).to.be.true;
+  });
+
+  it("ArrowDown/ArrowUp move active over ENABLED options (skip disabled, no-wrap) and set aria-activedescendant", async () => {
+    const el = await fixture<TulparSelect>(mk());
+    await el.updateComplete;
+    key(el, "ArrowDown");
+    await el.updateComplete; // open, active = first enabled (a, idx 0)
+    key(el, "ArrowDown");
+    await el.updateComplete; // skip disabled b → c (idx 2)
+    const trigger = el.shadowRoot!.querySelector(".select-trigger")!;
+    const cOpt = el.querySelectorAll("tulpar-option")[2];
+    expect(trigger.getAttribute("aria-activedescendant")).to.equal(cOpt.id);
+    expect(cOpt.hasAttribute("data-active")).to.be.true;
+    key(el, "ArrowDown");
+    await el.updateComplete; // no-wrap, stays at c
+    expect(trigger.getAttribute("aria-activedescendant")).to.equal(cOpt.id);
+  });
+
+  it("Enter commits the active option and closes", async () => {
+    const el = await fixture<TulparSelect>(mk());
+    await el.updateComplete;
+    let changed: string | null = null;
+    el.addEventListener("change", (e) => (changed = (e as CustomEvent).detail.value));
+    key(el, "ArrowDown");
+    await el.updateComplete; // active a
+    key(el, "Enter");
+    await el.updateComplete;
+    expect(el.value).to.equal("a");
+    expect(changed).to.equal("a");
+    expect(el.open).to.be.false;
+  });
+
+  it("Tab commits the active option then closes", async () => {
+    const el = await fixture<TulparSelect>(mk());
+    await el.updateComplete;
+    key(el, "ArrowDown");
+    await el.updateComplete;
+    key(el, "Tab");
+    await el.updateComplete;
+    expect(el.value).to.equal("a");
+    expect(el.open).to.be.false;
+  });
+
+  it("Escape closes WITHOUT changing value (revert) and does not fire change", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select label="X" value="c"
+        ><tulpar-option value="a" label="Apple"></tulpar-option
+        ><tulpar-option value="c" label="Cherry"></tulpar-option
+      ></tulpar-select>`,
+    );
+    await el.updateComplete;
+    let fired = false;
+    el.addEventListener("change", () => (fired = true));
+    key(el, "ArrowDown");
+    await el.updateComplete; // open
+    key(el, "ArrowUp");
+    await el.updateComplete; // move active
+    key(el, "Escape");
+    await el.updateComplete;
+    expect(el.open).to.be.false;
+    expect(el.value).to.equal("c");
+    expect(fired).to.be.false;
+  });
+
+  it("Home/End jump to first/last enabled", async () => {
+    const el = await fixture<TulparSelect>(mk());
+    await el.updateComplete;
+    key(el, "ArrowDown");
+    await el.updateComplete; // open
+    key(el, "End");
+    await el.updateComplete;
+    expect(
+      el.shadowRoot!.querySelector(".select-trigger")!.getAttribute("aria-activedescendant"),
+    ).to.equal(el.querySelectorAll("tulpar-option")[2].id);
+    key(el, "Home");
+    await el.updateComplete;
+    expect(
+      el.shadowRoot!.querySelector(".select-trigger")!.getAttribute("aria-activedescendant"),
+    ).to.equal(el.querySelectorAll("tulpar-option")[0].id);
+  });
+
+  it("typing a letter jumps to the matching option (typeahead)", async () => {
+    const el = await fixture<TulparSelect>(mk());
+    await el.updateComplete;
+    key(el, "ArrowDown");
+    await el.updateComplete; // open, active a
+    key(el, "c");
+    await el.updateComplete; // jump to Cherry
+    expect(
+      el.shadowRoot!.querySelector(".select-trigger")!.getAttribute("aria-activedescendant"),
+    ).to.equal(el.querySelectorAll("tulpar-option")[2].id);
+  });
+
+  it("DOM focus stays on the trigger while open (no roving)", async () => {
+    const el = await fixture<TulparSelect>(mk());
+    await el.updateComplete;
+    (el.shadowRoot!.querySelector(".select-trigger") as HTMLElement).focus();
+    key(el, "ArrowDown");
+    await el.updateComplete;
+    key(el, "ArrowDown");
+    await el.updateComplete;
+    expect(el.shadowRoot!.activeElement).to.equal(el.shadowRoot!.querySelector(".select-trigger"));
+  });
+
+  it("the selected option carries aria-selected/data-selected", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select label="X" value="a"
+        ><tulpar-option value="a" label="Apple"></tulpar-option
+      ></tulpar-select>`,
+    );
+    await el.updateComplete;
+    const opt = el.querySelector("tulpar-option")!;
+    expect(opt.getAttribute("aria-selected")).to.equal("true");
+    expect(opt.hasAttribute("data-selected")).to.be.true;
+  });
+});
