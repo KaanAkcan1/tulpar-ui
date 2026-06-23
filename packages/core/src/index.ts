@@ -19,3 +19,4 @@ export * from "./avatar";
 export * from "./skeleton";
 export * from "./spinner";
 export * from "./progress";
+export * from "./select";
