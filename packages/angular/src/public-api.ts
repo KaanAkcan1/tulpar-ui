@@ -114,3 +114,18 @@ export type {
   ProgressSize,
   ProgressValueFormatter,
 } from "./progress/tulpar-progress.component";
+
+// ── v0.14 Select ─────────────────────────────────────────────────────────────
+
+export { TulparSelectComponent } from "./select/tulpar-select.component";
+export type {
+  SelectChangeDetail,
+  FieldSize as SelectFieldSize,
+  FieldVariant as SelectFieldVariant,
+  LabelPosition as SelectLabelPosition,
+  NecessityIndicator as SelectNecessityIndicator,
+} from "./select/tulpar-select.component";
+
+export { TulparOptionComponent } from "./select/tulpar-option.component";
+
+export { TulparOptionGroupComponent } from "./select/tulpar-option-group.component";
