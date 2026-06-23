@@ -50,6 +50,12 @@ export class TulparSelect extends FormFieldBase {
   /** Shows a spinner in the trigger instead of the chevron. */
   @property({ type: Boolean, reflect: true }) loading = false;
 
+  /**
+   * When set, offers a clear (✕) affordance once a value is selected — UNLESS
+   * the field is `required` (a required field must never offer clear).
+   */
+  @property({ type: Boolean, reflect: true }) clearable = false;
+
   /** Open state. Drives listbox visibility; open/close is wired in a later task. */
   @property({ type: Boolean, reflect: true }) open = false;
 
@@ -58,6 +64,7 @@ export class TulparSelect extends FormFieldBase {
 
   @query(".select-trigger") protected _triggerEl!: HTMLElement;
   @query(".select-listbox") protected _listboxEl!: HTMLElement;
+  @query(".select-leading-icon") protected _leadingIconEl!: HTMLElement;
 
   /** Stable per-instance listbox id — used on the listbox + trigger aria-controls. */
   private _listboxId = `tulpar-select-listbox-${++seq}`;
@@ -71,6 +78,10 @@ export class TulparSelect extends FormFieldBase {
     if (changed.has("value")) {
       this._internals.setFormValue(this.value);
     }
+    // Mirror the selected option's leading icon into the trigger. Cheap to run
+    // on every update — it short-circuits when there is no selection/icon. This
+    // is plain imperative DOM (clone-only), NOT a slotchange loop.
+    this._syncLeadingIcon();
   }
 
   override connectedCallback(): void {
@@ -109,6 +120,47 @@ export class TulparSelect extends FormFieldBase {
     return i >= 0 ? c.items[i].label : "";
   }
 
+  /** The light-DOM `<tulpar-option>` element for the current value (or null). */
+  protected _selectedOptionEl(): HTMLElement | null {
+    const c = this._collection();
+    const i = c.indexByValue(this.value);
+    return i >= 0 ? (c.items[i].el ?? null) : null;
+  }
+
+  /**
+   * Commit a new value: update the property, the native form value, and emit a
+   * bubbling `change` event. The single mutation path reused by clear (here) and
+   * by option selection in a later task.
+   */
+  protected _commit(value: string): void {
+    this.value = value;
+    this._internals.setFormValue(value);
+    this.dispatchEvent(
+      new CustomEvent<SelectChangeDetail>("change", {
+        detail: { value },
+        bubbles: true,
+      }),
+    );
+  }
+
+  /**
+   * Clone the selected option's `slot="icon"` child into the trigger's leading
+   * span. Clone-only (the original stays in the option). Toggles the
+   * `data-has-leading-icon` host attribute so CSS can show/hide the zone.
+   */
+  private _syncLeadingIcon(): void {
+    const span = this._leadingIconEl;
+    if (!span) return;
+    const icon = this._selectedOptionEl()?.querySelector('[slot="icon"]') ?? null;
+    span.replaceChildren();
+    if (icon) {
+      span.appendChild(icon.cloneNode(true));
+      this.setAttribute("data-has-leading-icon", "");
+    } else {
+      this.removeAttribute("data-has-leading-icon");
+    }
+  }
+
   // ── Trigger interaction (STUBS) ───────────────────────────────────────────
   // Open/close + keyboard navigation are wired in Task 4.1/5.1.
   protected _onTriggerClick = (): void => {};
@@ -121,6 +173,17 @@ export class TulparSelect extends FormFieldBase {
    */
   protected _onOptionsSlotChange = (): void => {
     this.requestUpdate();
+  };
+
+  /**
+   * Clear handler: must NOT open the listbox (stop the click reaching the
+   * trigger), reset the value through the single commit path, and keep keyboard
+   * focus on the trigger.
+   */
+  protected _onClear = (e: Event): void => {
+    e.stopPropagation();
+    this._commit("");
+    queueMicrotask(() => this._triggerEl?.focus());
   };
 
   private _renderChevron(): TemplateResult {
@@ -139,6 +202,33 @@ export class TulparSelect extends FormFieldBase {
 
   private _renderTriggerSpinner(): TemplateResult {
     return html`<tulpar-spinner size="sm"></tulpar-spinner>`;
+  }
+
+  /**
+   * Clear (✕) button — rendered only when `clearable` is on, a value is set, the
+   * field is interactive, and it is NOT required (a required field must never
+   * offer clear). Sits at the start of the trailing cluster (before the
+   * chevron/spinner).
+   */
+  private _renderClearButton(): TemplateResult | typeof nothing {
+    if (!this.clearable || this.required || this.value === "" || this.disabled || this.readonly)
+      return nothing;
+    return html`<button
+      type="button"
+      class="select-clear"
+      aria-label="Clear selection"
+      @click=${this._onClear}
+    >
+      <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+        <path
+          d="M4 4 L12 12 M12 4 L4 12"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          fill="none"
+        ></path>
+      </svg>
+    </button>`;
   }
 
   private _renderListbox(): TemplateResult {
@@ -169,9 +259,11 @@ export class TulparSelect extends FormFieldBase {
           @click=${this._onTriggerClick}
           @keydown=${this._onTriggerKeydown}
         >
+          <span class="select-leading-icon" aria-hidden="true"></span>
           <span class="select-value" data-placeholder=${showPlaceholder ? "" : nothing}
             >${showPlaceholder ? this.placeholder : label}</span
           >
+          ${this._renderClearButton()}
           ${this.loading ? this._renderTriggerSpinner() : this._renderChevron()}
         </button>
         ${this._renderStatusZone()} ${this._renderSuffixSlot()}

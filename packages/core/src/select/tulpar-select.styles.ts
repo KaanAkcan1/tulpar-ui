@@ -54,6 +54,38 @@ export const selectStyles = css`
     color: var(--tulpar-input-icon-default, #74777a);
   }
 
+  /* Leading icon mirrored from the selected option. Hidden until populated. */
+  .select-leading-icon {
+    display: none;
+  }
+
+  :host([data-has-leading-icon]) .select-leading-icon {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--tulpar-input-icon-default, #74777a);
+  }
+
+  /* Clear (✕) affordance — small icon button at the start of the trailing cluster. */
+  .select-clear {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 0.125rem;
+    margin-inline-start: 0.25rem;
+    cursor: pointer;
+    color: var(--tulpar-input-icon-default, #74777a);
+    border-radius: 999px;
+  }
+
+  .select-clear:hover {
+    background: var(--tulpar-input-bg-readonly, #f0f7f5);
+  }
+
   /* Closed listbox is removed from layout. Opening is wired in a later task. */
   .select-listbox {
     display: none;
