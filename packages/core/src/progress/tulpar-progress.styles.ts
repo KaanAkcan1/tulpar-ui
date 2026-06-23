@@ -38,6 +38,9 @@ export const progressStyles = css`
   :host-context(.dark)[tone="custom"] {
     color: var(--tulpar-progress-accent-d, var(--tulpar-color-brand-default, #00c57a));
   }
+  /* flow tone: a value-driven oklab red->amber->green mix computed in JS. It
+     sets color inline (mode-resolved, always wins) and also emits -accent-l/-d
+     for ::part / external CSS readers, mirroring the custom-tone plumbing. */
 
   /* ── Host ─────────────────────────────────────────────────────────────── */
   :host {
@@ -192,6 +195,10 @@ export const progressStyles = css`
     width: 44px;
     height: 44px;
   }
+  :host([size="xs"]) .circular {
+    width: 24px;
+    height: 24px;
+  }
   :host([size="sm"]) .circular {
     width: 32px;
     height: 32px;
@@ -199,6 +206,10 @@ export const progressStyles = css`
   :host([size="lg"]) .circular {
     width: 56px;
     height: 56px;
+  }
+  :host([size="xl"]) .circular {
+    width: 64px;
+    height: 64px;
   }
   .circular svg {
     display: block;
@@ -263,7 +274,11 @@ export const progressStyles = css`
     font-size: 11px;
     color: var(--tulpar-color-text-secondary, #4f5153);
   }
-  :host([size="lg"]) .circular .value {
+  :host([size="xs"]) .circular .value {
+    font-size: 9px;
+  }
+  :host([size="lg"]) .circular .value,
+  :host([size="xl"]) .circular .value {
     font-size: 13px;
   }
   :host(:not([data-value-label])) .circular .value {

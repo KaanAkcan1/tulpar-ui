@@ -8,9 +8,16 @@ import { progressStyles } from "./tulpar-progress.styles";
 let progressLabelIdSeq = 0;
 
 export type ProgressVariant = "linear" | "circular";
-export type ProgressTone = "neutral" | "info" | "success" | "warning" | "danger" | "custom";
+export type ProgressTone =
+  | "neutral"
+  | "info"
+  | "success"
+  | "warning"
+  | "danger"
+  | "custom"
+  | "flow";
 export type ProgressThickness = "thin" | "regular" | "thick";
-export type ProgressSize = "sm" | "md" | "lg";
+export type ProgressSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 /** A value-label formatter: receives the raw value + bounds, returns a string. */
 export type ProgressValueFormatter = (value: number, min: number, max: number) => string;
@@ -36,6 +43,13 @@ export type ProgressValueFormatter = (value: number, min: number, max: number) =
  * `state-tone` auto-promotes to `success` once `value >= max` (a finished task
  * reads green). Failures are NOT auto-detected — a consumer signals an error by
  * setting `tone="danger"` (or a `data-error` attribute), which always wins.
+ *
+ * ## Flow tone (value-driven gradient)
+ * `tone="flow"` (determinate only) recolors the fill as a CONTINUOUS oklab
+ * interpolation across the value range: red (al) at 0% → amber (ulgen) at ~50%
+ * → green (otuken) at 100%. It is opt-in and purely visual (a11y is unchanged).
+ * Indeterminate + flow has no value to map, so it falls back to the brand
+ * accent. Light/dark swap the primitive steps for legibility per surface.
  *
  * ## Value label vs descriptive label
  * Two DISTINCT label concepts:
@@ -161,6 +175,9 @@ export class TulparProgress extends LitElement {
   /** The effective tone, honoring state-tone success-at-max (danger always wins). */
   private get _effectiveTone(): ProgressTone | undefined {
     if (this.tone === "danger" || this.hasAttribute("data-error")) return "danger";
+    // `flow` is value-driven (already green at max), so it stays flow rather than
+    // being overridden by the state-tone success-at-max promotion.
+    if (this.tone === "flow") return "flow";
     if (
       this.stateTone &&
       !this.indeterminate &&
@@ -260,10 +277,62 @@ export class TulparProgress extends LitElement {
       return; // CSS rules map -accent-l/-d → color per mode
     }
 
+    if (tone === "flow") {
+      // Value-driven continuous tone. Determinate only: interpolate the fill
+      // across the value range via two-segment oklab color-mix between our
+      // palette anchors (al → ulgen → otuken). Indeterminate has no value, so
+      // there is nothing to interpolate — fall back to the default brand accent
+      // (return without setting anything, leaving the stylesheet's brand green).
+      if (this.indeterminate || this._value === null) return;
+      // flow computes a LITERAL color-mix (not an auto-flipping token), so the
+      // light vs dark anchor set must be chosen here. We set BOTH:
+      //  - inline `color` with the correct-for-mode mix (highest specificity,
+      //    always wins — independent of :host-context reliability), and
+      //  - the -accent-l/-d vars (so ::part / external CSS can read them too,
+      //    mirroring the custom-tone plumbing).
+      const dark = this._isDarkContext();
+      this.style.setProperty("--tulpar-progress-accent-l", TulparProgress._flowMix(this._frac, false));
+      this.style.setProperty("--tulpar-progress-accent-d", TulparProgress._flowMix(this._frac, true));
+      this.style.setProperty("color", TulparProgress._flowMix(this._frac, dark));
+      return;
+    }
+
     this.style.setProperty("color", TulparProgress._toneAccent(tone));
   }
 
-  private static _toneAccent(tone: Exclude<ProgressTone, "custom">): string {
+  /**
+   * Whether the element sits inside a dark context. The project's dark trigger
+   * is a `.dark` class on an ancestor (Tailwind-compatible), so we walk up via
+   * `closest(".dark")`. (`:host-context(.dark)` is used elsewhere for tokens
+   * that auto-flip; flow computes a literal color, so it resolves the mode here
+   * and sets `color` inline — which always wins regardless of host-context.)
+   */
+  private _isDarkContext(): boolean {
+    return this.closest(".dark") !== null;
+  }
+
+  /**
+   * Continuous flow color for fraction `f` (0..1) as a two-segment perceptual
+   * (oklab) interpolation across our palette: red (al) → amber (ulgen) → green
+   * (otuken). Light vs dark swap the primitive steps so the sweep stays legible
+   * on each surface. f<=0.5 mixes al→ulgen; f>0.5 mixes ulgen→otuken.
+   */
+  private static _flowMix(f: number, dark: boolean): string {
+    const c = Math.min(1, Math.max(0, f));
+    // Light: solid-bg anchors (match danger/warning/success tones).
+    // Dark: brighter steps for contrast on dark surfaces.
+    const red = dark ? "#f84648" : "#d2202c"; // al 400 / 500
+    const amber = dark ? "#ecb32a" : "#d7a40f"; // ulgen 400 / 500
+    const green = dark ? "#488e73" : "#245d48"; // otuken 400 / 600
+    if (c <= 0.5) {
+      const t = c * 2; // 0..1 within the red→amber half
+      return `color-mix(in oklab, ${red} ${((1 - t) * 100).toFixed(2)}%, ${amber} ${(t * 100).toFixed(2)}%)`;
+    }
+    const t = (c - 0.5) * 2; // 0..1 within the amber→green half
+    return `color-mix(in oklab, ${amber} ${((1 - t) * 100).toFixed(2)}%, ${green} ${(t * 100).toFixed(2)}%)`;
+  }
+
+  private static _toneAccent(tone: Exclude<ProgressTone, "custom" | "flow">): string {
     switch (tone) {
       case "neutral":
         return "var(--tulpar-atom-tone-neutral-solid-bg, #404243)";
@@ -309,9 +378,28 @@ export class TulparProgress extends LitElement {
     </span>`;
   }
 
+  /** Circular box (px) + ring stroke width (px) per size. */
+  private static _circularGeom(
+    size: ProgressSize,
+  ): { box: number; stroke: number } {
+    switch (size) {
+      case "xs":
+        return { box: 24, stroke: 3 };
+      case "sm":
+        return { box: 32, stroke: 4 };
+      case "lg":
+        return { box: 56, stroke: 4 };
+      case "xl":
+        return { box: 64, stroke: 5 };
+      case "md":
+      default:
+        return { box: 44, stroke: 4 };
+    }
+  }
+
   private _renderCircular() {
-    const box = this.size === "sm" ? 32 : this.size === "lg" ? 56 : 44;
-    const r = box / 2 - 2; // stroke 4 kept inside the box
+    const { box, stroke } = TulparProgress._circularGeom(this.size);
+    const r = box / 2 - stroke / 2; // keep the stroke fully inside the box
     const cx = box / 2;
     const indet = this.indeterminate;
     // pathLength=100 → offset = 100 - pct (no per-size circumference math).
@@ -322,7 +410,7 @@ export class TulparProgress extends LitElement {
     return html`
       ${this._renderLabel()}
       <span class="circular" part="circular">
-        <svg viewBox="0 0 ${box} ${box}" fill="none" stroke-width="4">
+        <svg viewBox="0 0 ${box} ${box}" fill="none" stroke-width=${stroke}>
           <circle
             class="ring-track"
             part="ring-track"

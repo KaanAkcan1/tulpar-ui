@@ -42,6 +42,34 @@ describe("<tulpar-progress>", () => {
     expect(el.indeterminate).to.equal(false);
   });
 
+  describe("circular size scale (xs–xl)", () => {
+    // box (px) + ring stroke per size; r = box/2 - stroke/2 (pathLength=100).
+    const cases: Array<[TulparProgress["size"], number, number]> = [
+      ["xs", 24, 3],
+      ["sm", 32, 4],
+      ["md", 44, 4],
+      ["lg", 56, 4],
+      ["xl", 64, 5],
+    ];
+    for (const [size, box, stroke] of cases) {
+      it(`size="${size}" renders a ${box}px ring with stroke ${stroke}`, async () => {
+        const el = await fixture<TulparProgress>(
+          html`<tulpar-progress variant="circular" size=${size!} value="50"></tulpar-progress>`,
+        );
+        await el.updateComplete;
+        const svg = el.shadowRoot!.querySelector("svg")!;
+        expect(svg.getAttribute("viewBox")).to.equal(`0 0 ${box} ${box}`);
+        expect(svg.getAttribute("stroke-width")).to.equal(String(stroke));
+        const ring = el.shadowRoot!.querySelector("circle.ring-fill")!;
+        const r = box / 2 - stroke / 2;
+        expect(ring.getAttribute("r")).to.equal(String(r));
+        // the .circular box width tracks the size
+        const wrap = el.shadowRoot!.querySelector(".circular") as HTMLElement;
+        expect(getComputedStyle(wrap).width).to.equal(`${box}px`);
+      });
+    }
+  });
+
   describe("accessibility", () => {
     it('sets role="progressbar" + aria-valuemin/max/now', async () => {
       const el = await fixture<TulparProgress>(
@@ -303,6 +331,119 @@ describe("<tulpar-progress>", () => {
       await el.updateComplete;
       expect(el.style.getPropertyValue("--tulpar-progress-accent-l")).to.not.equal("");
       expect(el.style.color).to.equal("");
+    });
+  });
+
+  describe("tone=flow (value-driven gradient)", () => {
+    const accentL = (el: TulparProgress) => el.style.getPropertyValue("--tulpar-progress-accent-l");
+    const accentD = (el: TulparProgress) => el.style.getPropertyValue("--tulpar-progress-accent-d");
+
+    it("emits oklab color-mix accent vars (light + dark) + a mode-resolved inline color", async () => {
+      const el = await fixture<TulparProgress>(
+        html`<tulpar-progress value="50" tone="flow"></tulpar-progress>`,
+      );
+      await el.updateComplete;
+      // Custom properties keep the literal string (no normalization).
+      expect(accentL(el)).to.contain("color-mix(in oklab");
+      expect(accentD(el)).to.contain("color-mix(in oklab");
+      // flow ALSO sets `color` inline (mode-resolved) so it wins regardless of
+      // :host-context reliability. The DOM normalizes the value (hex→rgb, drops
+      // the redundant `in oklab` keyword), so just assert it is a non-empty mix.
+      expect(el.style.color).to.contain("color-mix(");
+    });
+
+    it("inline color follows the dark anchors inside a .dark ancestor", async () => {
+      const lightEl = await fixture<TulparProgress>(
+        html`<tulpar-progress value="50" tone="flow"></tulpar-progress>`,
+      );
+      await lightEl.updateComplete;
+
+      const host = await fixture<HTMLElement>(html`<div class="dark"></div>`);
+      const darkEl = document.createElement("tulpar-progress");
+      darkEl.setAttribute("tone", "flow");
+      darkEl.value = 50;
+      host.appendChild(darkEl);
+      await darkEl.updateComplete;
+
+      // The dark accent VAR uses the brighter ulgen 400 (#ecb32a); light = 500.
+      expect(accentD(darkEl)).to.contain("#ecb32a");
+      // And the inline color resolved for the dark element differs from light's.
+      expect(darkEl.style.color).to.not.equal("");
+      expect(darkEl.style.color).to.not.equal(lightEl.style.color);
+    });
+
+    it("low value leans red (al), high value leans green (otuken) — and they differ", async () => {
+      const lo = await fixture<TulparProgress>(
+        html`<tulpar-progress value="5" tone="flow"></tulpar-progress>`,
+      );
+      const hi = await fixture<TulparProgress>(
+        html`<tulpar-progress value="95" tone="flow"></tulpar-progress>`,
+      );
+      await lo.updateComplete;
+      await hi.updateComplete;
+      const loVar = accentL(lo);
+      const hiVar = accentL(hi);
+      expect(loVar).to.not.equal(hiVar);
+      // 5% sits in the red→amber half, weighted toward al red (#d2202c).
+      expect(loVar).to.contain("#d2202c");
+      // 95% sits in the amber→green half, weighted toward otuken green (#245d48).
+      expect(hiVar).to.contain("#245d48");
+    });
+
+    it("midpoint (50%) is the amber anchor (ulgen)", async () => {
+      const el = await fixture<TulparProgress>(
+        html`<tulpar-progress value="50" tone="flow"></tulpar-progress>`,
+      );
+      await el.updateComplete;
+      expect(accentL(el)).to.contain("#d7a40f"); // ulgen 500
+    });
+
+    it("dark accent uses the brighter primitive steps", async () => {
+      const el = await fixture<TulparProgress>(
+        html`<tulpar-progress value="50" tone="flow"></tulpar-progress>`,
+      );
+      await el.updateComplete;
+      expect(accentD(el)).to.contain("#ecb32a"); // ulgen 400 (dark amber)
+    });
+
+    it("recomputes the fill when value changes", async () => {
+      const el = await fixture<TulparProgress>(
+        html`<tulpar-progress value="10" tone="flow"></tulpar-progress>`,
+      );
+      await el.updateComplete;
+      const before = accentL(el);
+      el.value = 90;
+      await el.updateComplete;
+      const after = accentL(el);
+      expect(after).to.not.equal(before);
+    });
+
+    it("indeterminate + flow falls back to the brand accent (no crash, no accent var)", async () => {
+      const el = await fixture<TulparProgress>(
+        html`<tulpar-progress tone="flow" indeterminate></tulpar-progress>`,
+      );
+      await el.updateComplete;
+      expect(accentL(el)).to.equal("");
+      expect(el.style.color).to.equal("");
+    });
+
+    it("flow is purely visual — a11y attrs unchanged", async () => {
+      const el = await fixture<TulparProgress>(
+        html`<tulpar-progress value="40" tone="flow"></tulpar-progress>`,
+      );
+      await el.updateComplete;
+      expect(el.getAttribute("role")).to.equal("progressbar");
+      expect(el.getAttribute("aria-valuemin")).to.equal("0");
+      expect(el.getAttribute("aria-valuemax")).to.equal("100");
+      expect(el.getAttribute("aria-valuenow")).to.equal("40");
+    });
+
+    it("applies to the circular ring too", async () => {
+      const el = await fixture<TulparProgress>(
+        html`<tulpar-progress variant="circular" value="20" tone="flow"></tulpar-progress>`,
+      );
+      await el.updateComplete;
+      expect(accentL(el)).to.contain("color-mix(in oklab");
     });
   });
 

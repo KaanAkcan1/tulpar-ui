@@ -54,6 +54,18 @@ describe("TulparProgress (Vue)", () => {
     expect(wrapper.find("tulpar-progress").attributes("indeterminate")).toBeTruthy();
   });
 
+  it('forwards tone="flow" as an attribute', () => {
+    const wrapper = mount(TulparProgress, { props: { tone: "flow", value: 40 } });
+    expect(wrapper.find("tulpar-progress").attributes("tone")).toBe("flow");
+  });
+
+  it("forwards the xs and xl sizes as attributes", () => {
+    const xs = mount(TulparProgress, { props: { variant: "circular", size: "xs" } });
+    expect(xs.find("tulpar-progress").attributes("size")).toBe("xs");
+    const xl = mount(TulparProgress, { props: { variant: "circular", size: "xl" } });
+    expect(xl.find("tulpar-progress").attributes("size")).toBe("xl");
+  });
+
   it("stateTone=true sets the state-tone attribute", () => {
     const wrapper = mount(TulparProgress, { props: { stateTone: true } });
     expect(wrapper.find("tulpar-progress").attributes("state-tone")).toBeTruthy();

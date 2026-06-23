@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { TestBed } from "@angular/core/testing";
 import { Component, signal } from "@angular/core";
 import { TulparProgressComponent } from "./tulpar-progress.component";
-import type { ProgressValueFormatter } from "./tulpar-progress.component";
+import type { ProgressValueFormatter, ProgressSize, ProgressTone } from "./tulpar-progress.component";
 
 @Component({
   standalone: true,
@@ -13,6 +13,8 @@ import type { ProgressValueFormatter } from "./tulpar-progress.component";
       [value]="value()"
       [indeterminate]="indeterminate()"
       [valueLabel]="valueLabel()"
+      [tone]="tone()"
+      [size]="size()"
     ></tulpar-progress-ng>
   `,
 })
@@ -21,6 +23,8 @@ class Host {
   value = signal<number | undefined>(undefined);
   indeterminate = signal(false);
   valueLabel = signal<boolean | ProgressValueFormatter>(false);
+  tone = signal<ProgressTone | undefined>(undefined);
+  size = signal<ProgressSize | undefined>(undefined);
 }
 
 describe("TulparProgressComponent (TestBed)", () => {
@@ -48,6 +52,21 @@ describe("TulparProgressComponent (TestBed)", () => {
     expect(inner.getAttribute("variant")).toBe("circular");
     expect(inner.getAttribute("value")).toBe("42");
     expect(inner.hasAttribute("indeterminate")).toBe(true);
+  });
+
+  it('forwards tone="flow" and the xs/xl sizes to the core element', () => {
+    const fixture = TestBed.createComponent(Host);
+    fixture.componentInstance.variant.set("circular");
+    fixture.componentInstance.value.set(40);
+    fixture.componentInstance.tone.set("flow");
+    fixture.componentInstance.size.set("xs");
+    fixture.detectChanges();
+    const inner = fixture.nativeElement.querySelector("tulpar-progress") as HTMLElement;
+    expect(inner.getAttribute("tone")).toBe("flow");
+    expect(inner.getAttribute("size")).toBe("xs");
+    fixture.componentInstance.size.set("xl");
+    fixture.detectChanges();
+    expect(inner.getAttribute("size")).toBe("xl");
   });
 
   it("sets boolean valueLabel as a DOM property (not an attribute)", async () => {
