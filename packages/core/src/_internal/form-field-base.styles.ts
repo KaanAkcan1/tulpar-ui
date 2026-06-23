@@ -165,9 +165,57 @@ export const formFieldBaseStyles = css`
     border-color: transparent;
   }
 
-  :host([variant="ghost"]) .control-row:focus-within {
-    outline: 2px solid var(--tulpar-input-border-focus, #133a66);
-    outline-offset: -1px;
+  /* ── Soft keyboard focus ring (shared input-family treatment) ─────────────
+     A 3px soft ring drawn AROUND the field box, shown ONLY on KEYBOARD focus
+     (:focus-visible) — never on a mouse click. It is ADDITIVE (sits on top of
+     the border) and follows the control-row's own border-radius automatically
+     (box-shadow spread, not inset).
+
+     Cross-control: the inner focusable element differs per family member — an
+     input/textarea for the text fields, the .select-trigger div for
+     tulpar-select — so we key off the control-row with :has(:focus-visible)
+     (Chromium target) rather than the element itself. One rule, every member.
+
+     OPT-OUT IS THE TOKEN: there is no boolean prop. A consumer sets
+     --tulpar-color-focus-ring: transparent at theme / scope / instance level
+     to suppress the ring entirely. */
+  .control-row:has(:focus-visible) {
+    box-shadow: 0 0 0 3px var(--tulpar-color-focus-ring, rgba(81, 78, 207, 0.4));
+  }
+
+  /* Invalid / warn tint the ring toward the matching field-border hue via
+     color-mix (both are semantic input-border tokens). The status border wins
+     over the neutral focus ring so the field still reads as errored/warned
+     while focused. */
+  :host([invalid]) .control-row:has(:focus-visible) {
+    box-shadow: 0 0 0 3px
+      color-mix(in srgb, var(--tulpar-input-border-invalid, #b91c1c) 32%, transparent);
+  }
+  :host([warn]) .control-row:has(:focus-visible) {
+    box-shadow: 0 0 0 3px
+      color-mix(in srgb, var(--tulpar-input-border-warn, #b45309) 32%, transparent);
+  }
+
+  /* Underlined has no box — a full rectangular ring around a bottom-border-only
+     field reads wrong. Keep its minimal language: the ring collapses to the
+     baseline only. */
+  :host([variant="underlined"]) .control-row:has(:focus-visible) {
+    box-shadow: 0 2px 0 0 var(--tulpar-color-focus-ring, rgba(81, 78, 207, 0.4));
+  }
+  :host([variant="underlined"][invalid]) .control-row:has(:focus-visible) {
+    box-shadow: 0 2px 0 0
+      color-mix(in srgb, var(--tulpar-input-border-invalid, #b91c1c) 32%, transparent);
+  }
+  :host([variant="underlined"][warn]) .control-row:has(:focus-visible) {
+    box-shadow: 0 2px 0 0
+      color-mix(in srgb, var(--tulpar-input-border-warn, #b45309) 32%, transparent);
+  }
+
+  /* Ghost previously drew its OWN 2px focus outline; replacing it with the
+     shared soft ring keeps the family consistent and avoids a doubled
+     ring + outline. (:focus-visible, not :focus-within — keyboard only.) */
+  :host([variant="ghost"]) .control-row:has(:focus-visible) {
+    outline: none;
   }
 
   /* ── Float label common ──────────────────────────────────────────────── */
