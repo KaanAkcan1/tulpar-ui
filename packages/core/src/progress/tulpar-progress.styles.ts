@@ -19,8 +19,10 @@ import { css } from "lit";
  *
  * ## Tone
  * The fill reads `currentColor`; the host `color` is set to the tone accent
- * (brand green by default). The track is a neutral surface token. Custom tones
- * emit -accent-l/-d inline vars; this file maps them to `color` per mode.
+ * (brand green by default). The track is a neutral surface token. Custom AND
+ * flow tones emit -accent-l/-d inline vars; this file maps them to `color` per
+ * mode via :host-context(.dark), so a runtime `.dark` toggle auto-flips with no
+ * stale inline color.
  */
 export const progressStyles = css`
   /* ── Tone color (default brand green; built-in tones set color inline) ──── */
@@ -38,9 +40,16 @@ export const progressStyles = css`
   :host-context(.dark)[tone="custom"] {
     color: var(--tulpar-progress-accent-d, var(--tulpar-color-brand-default, #00c57a));
   }
-  /* flow tone: a value-driven oklab red->amber->green mix computed in JS. It
-     sets color inline (mode-resolved, always wins) and also emits -accent-l/-d
-     for ::part / external CSS readers, mirroring the custom-tone plumbing. */
+  /* flow tone: a value-driven oklab red->amber->green mix computed in JS. The
+     element emits BOTH -accent-l/-d (light + dark anchor mixes); CSS picks per
+     mode here, same plumbing as custom tone, so a runtime .dark toggle
+     auto-flips with no stale inline color. (fill + ring read currentColor.) */
+  :host([tone="flow"]) {
+    color: var(--tulpar-progress-accent-l, #d2202c);
+  }
+  :host-context(.dark)[tone="flow"] {
+    color: var(--tulpar-progress-accent-d, #f84648);
+  }
 
   /* ── Host ─────────────────────────────────────────────────────────────── */
   :host {

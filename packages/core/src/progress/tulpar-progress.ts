@@ -284,31 +284,23 @@ export class TulparProgress extends LitElement {
       // there is nothing to interpolate — fall back to the default brand accent
       // (return without setting anything, leaving the stylesheet's brand green).
       if (this.indeterminate || this._value === null) return;
-      // flow computes a LITERAL color-mix (not an auto-flipping token), so the
-      // light vs dark anchor set must be chosen here. We set BOTH:
-      //  - inline `color` with the correct-for-mode mix (highest specificity,
-      //    always wins — independent of :host-context reliability), and
-      //  - the -accent-l/-d vars (so ::part / external CSS can read them too,
-      //    mirroring the custom-tone plumbing).
-      const dark = this._isDarkContext();
-      this.style.setProperty("--tulpar-progress-accent-l", TulparProgress._flowMix(this._frac, false));
-      this.style.setProperty("--tulpar-progress-accent-d", TulparProgress._flowMix(this._frac, true));
-      this.style.setProperty("color", TulparProgress._flowMix(this._frac, dark));
+      // flow computes a LITERAL color-mix per mode (not an auto-flipping token),
+      // so we emit BOTH anchor sets as -accent-l/-d vars and let CSS pick per
+      // mode via :host-context(.dark) — exactly like the custom-tone plumbing.
+      // This auto-flips on a runtime `.dark` toggle (no inline `color`, no JS
+      // dark-detection that would go stale until the next value/prop change).
+      this.style.setProperty(
+        "--tulpar-progress-accent-l",
+        TulparProgress._flowMix(this._frac, false),
+      );
+      this.style.setProperty(
+        "--tulpar-progress-accent-d",
+        TulparProgress._flowMix(this._frac, true),
+      );
       return;
     }
 
     this.style.setProperty("color", TulparProgress._toneAccent(tone));
-  }
-
-  /**
-   * Whether the element sits inside a dark context. The project's dark trigger
-   * is a `.dark` class on an ancestor (Tailwind-compatible), so we walk up via
-   * `closest(".dark")`. (`:host-context(.dark)` is used elsewhere for tokens
-   * that auto-flip; flow computes a literal color, so it resolves the mode here
-   * and sets `color` inline — which always wins regardless of host-context.)
-   */
-  private _isDarkContext(): boolean {
-    return this.closest(".dark") !== null;
   }
 
   /**
@@ -379,9 +371,7 @@ export class TulparProgress extends LitElement {
   }
 
   /** Circular box (px) + ring stroke width (px) per size. */
-  private static _circularGeom(
-    size: ProgressSize,
-  ): { box: number; stroke: number } {
+  private static _circularGeom(size: ProgressSize): { box: number; stroke: number } {
     switch (size) {
       case "xs":
         return { box: 24, stroke: 3 };
