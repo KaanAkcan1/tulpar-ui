@@ -35,7 +35,11 @@ const { value, label, description, disabled = false } = defineProps<Props>();
     <span v-if="$slots.description" style="display: contents" slot="description"
       ><slot name="description"
     /></span>
-    <!-- Default slot: the label text. -->
-    <slot />
+    <!-- Default slot: the label text. Guarded with v-if so a prop-only option
+         (`<TulparOption :label="…" />` with no slot content) does NOT project
+         Vue's whitespace `#text` placeholder nodes into the core's default slot —
+         those empty assigned nodes would otherwise suppress the core's
+         `<slot>${this.label}</slot>` fallback and render a blank option row. -->
+    <slot v-if="$slots.default" />
   </tulpar-option>
 </template>
