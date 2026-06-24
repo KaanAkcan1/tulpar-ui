@@ -13,14 +13,22 @@
  * into the core's default slot naturally (no carrier needed for default slot).
  */
 import "@tulpar-ui/core/select";
-import type { SelectChangeDetail } from "@tulpar-ui/core/select";
+import type { SelectChangeDetail, SelectOptions } from "@tulpar-ui/core/select";
 import type { FieldSize, FieldVariant, LabelPosition, NecessityIndicator } from "@tulpar-ui/core";
 
-export type { SelectChangeDetail };
+export type { SelectChangeDetail, SelectOptions };
 
 interface Props {
   /** Currently selected option value ("" = nothing selected → placeholder). */
   value?: string;
+  /** Data-mode options (object array — bound as a property, not an attribute). */
+  options?: SelectOptions;
+  /** Opt-in in-popup search. */
+  searchable?: boolean;
+  /** Placeholder of the in-popup search input. */
+  searchPlaceholder?: string;
+  /** No-match status text. */
+  noMatchText?: string;
   /** Text shown on the trigger when no value is selected. */
   placeholder?: string;
   /** When set, shows a clear (✕) affordance once a value is selected. */
@@ -78,6 +86,10 @@ interface Props {
 
 const {
   value,
+  options,
+  searchable = false,
+  searchPlaceholder,
+  noMatchText,
   placeholder,
   clearable = false,
   loading = false,
@@ -121,7 +133,11 @@ function onChange(e: Event) {
 
 <template>
   <tulpar-select
+    :options="options ?? undefined"
     :value="value ?? undefined"
+    :searchable="searchable || undefined"
+    :search-placeholder="searchPlaceholder ?? undefined"
+    :no-match-text="noMatchText ?? undefined"
     :placeholder="placeholder ?? undefined"
     :clearable="clearable || undefined"
     :loading="loading || undefined"
@@ -155,6 +171,9 @@ function onChange(e: Event) {
     <span v-if="$slots.label" style="display: contents" slot="label"><slot name="label" /></span>
     <span v-if="$slots.prefix" style="display: contents" slot="prefix"><slot name="prefix" /></span>
     <span v-if="$slots.suffix" style="display: contents" slot="suffix"><slot name="suffix" /></span>
+    <span v-if="$slots['no-match']" style="display: contents" slot="no-match"
+      ><slot name="no-match"
+    /></span>
     <!-- Default slot: options / option-groups project naturally. -->
     <slot />
   </tulpar-select>

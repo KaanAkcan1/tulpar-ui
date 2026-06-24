@@ -1,6 +1,10 @@
 import { describe, it, expect, beforeAll } from "vitest";
 import { mount } from "@vue/test-utils";
-import TulparSelect from "./TulparSelect.vue";
+import TulparSelect, { type SelectOptions } from "./TulparSelect.vue";
+
+// Compile-time assertion that the SelectOptions re-export resolves (no runtime cost).
+const _optionsTypeCheck: SelectOptions = [{ value: "a", label: "A" }];
+void _optionsTypeCheck;
 
 describe("TulparSelect (Vue)", () => {
   beforeAll(async () => {
@@ -102,5 +106,32 @@ describe("TulparSelect (Vue)", () => {
   it("forwards the suffix named slot through a carrier with slot attr", () => {
     const wrapper = mount(TulparSelect, { slots: { suffix: "<span>▼</span>" } });
     expect(wrapper.find('[slot="suffix"]').exists()).toBe(true);
+  });
+
+  it("forwards options (property) + searchable to the core element", () => {
+    const wrapper = mount(TulparSelect, {
+      props: {
+        options: [{ value: "a", label: "A" }],
+        searchable: true,
+        searchPlaceholder: "Find…",
+      },
+    });
+    // The SFC's root element IS <tulpar-select>, so use find().element (matching
+    // the other tests) rather than querySelector (which only searches descendants).
+    const inner = wrapper.find("tulpar-select").element as HTMLElement & {
+      options?: unknown;
+      searchable?: unknown;
+    };
+    expect((inner as any).options).toEqual([{ value: "a", label: "A" }]); // property, not attribute
+    // `searchable` lands as a DOM PROPERTY (the core declares it as a reactive
+    // property, so Vue binds it as a property — Lit's attribute reflection is async
+    // and not observable synchronously in happy-dom).
+    expect((inner as any).searchable).toBe(true);
+    expect(inner.getAttribute("search-placeholder")).toBe("Find…");
+  });
+
+  it("forwards the no-match named slot through a carrier with slot attr", () => {
+    const wrapper = mount(TulparSelect, { slots: { "no-match": "<span>Nada</span>" } });
+    expect(wrapper.find('[slot="no-match"]').exists()).toBe(true);
   });
 });
