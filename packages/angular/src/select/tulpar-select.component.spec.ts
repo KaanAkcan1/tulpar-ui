@@ -186,7 +186,7 @@ describe("TulparSelectComponent (TestBed)", () => {
       options?: unknown;
     };
     // property binding (not attribute) — the object array lands on the DOM property
-    expect((inner as any).options).toEqual([{ value: "a", label: "A" }]);
+    expect(inner.options).toEqual([{ value: "a", label: "A" }]);
     expect(inner.hasAttribute("options")).toBe(false);
   });
 });

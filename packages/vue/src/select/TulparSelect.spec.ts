@@ -114,6 +114,7 @@ describe("TulparSelect (Vue)", () => {
         options: [{ value: "a", label: "A" }],
         searchable: true,
         searchPlaceholder: "Find…",
+        noMatchText: "None",
       },
     });
     // The SFC's root element IS <tulpar-select>, so use find().element (matching
@@ -122,12 +123,13 @@ describe("TulparSelect (Vue)", () => {
       options?: unknown;
       searchable?: unknown;
     };
-    expect((inner as any).options).toEqual([{ value: "a", label: "A" }]); // property, not attribute
+    expect(inner.options).toEqual([{ value: "a", label: "A" }]); // property, not attribute
     // `searchable` lands as a DOM PROPERTY (the core declares it as a reactive
     // property, so Vue binds it as a property — Lit's attribute reflection is async
     // and not observable synchronously in happy-dom).
-    expect((inner as any).searchable).toBe(true);
+    expect(inner.searchable).toBe(true);
     expect(inner.getAttribute("search-placeholder")).toBe("Find…");
+    expect(inner.getAttribute("no-match-text")).toBe("None");
   });
 
   it("forwards the no-match named slot through a carrier with slot attr", () => {
