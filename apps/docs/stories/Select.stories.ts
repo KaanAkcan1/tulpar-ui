@@ -128,6 +128,73 @@ const LONG_LIST = [
   "Greece",
 ];
 
+// Data-prop sources (the `options` array form — no slotted children).
+
+const DATA_FRAMEWORKS = [
+  { value: "react", label: "React" },
+  { value: "angular", label: "Angular" },
+  { value: "vue", label: "Vue" },
+  { value: "svelte", label: "Svelte", disabled: true },
+  { value: "solid", label: "Solid" },
+  { value: "qwik", label: "Qwik" },
+];
+
+const DATA_GROUPED = [
+  {
+    label: "Frontend",
+    options: [
+      { value: "react", label: "React", description: "Meta · component-based UI" },
+      { value: "angular", label: "Angular", description: "Google · opinionated full-stack" },
+      { value: "vue", label: "Vue", description: "Evan You · progressive framework" },
+    ],
+  },
+  {
+    label: "Backend",
+    options: [
+      { value: "node", label: "Node.js", description: "Event-driven JS runtime" },
+      { value: "django", label: "Django", description: "Python · batteries included" },
+      { value: "rails", label: "Ruby on Rails", description: "Convention over configuration" },
+    ],
+  },
+  {
+    label: "Deprecated",
+    disabled: true,
+    options: [
+      { value: "backbone", label: "Backbone", description: "Legacy MVC" },
+      { value: "ember-old", label: "Ember (classic)", description: "Pre-Octane" },
+    ],
+  },
+];
+
+// A long flat data-prop list for the searchable stories (Turkish + Latin
+// diacritics so diacritic-insensitive matching is demonstrable).
+const DATA_CITIES = [
+  { value: "ist", label: "İstanbul" },
+  { value: "ank", label: "Ankara" },
+  { value: "izm", label: "İzmir" },
+  { value: "brs", label: "Bursa" },
+  { value: "ant", label: "Antalya" },
+  { value: "adn", label: "Adana" },
+  { value: "kon", label: "Konya" },
+  { value: "gaz", label: "Gaziantep" },
+  { value: "ber", label: "Berlin" },
+  { value: "mun", label: "München" },
+  { value: "par", label: "Paris" },
+  { value: "mar", label: "Marseille" },
+  { value: "mad", label: "Madrid" },
+  { value: "bcn", label: "Barcelona" },
+  { value: "rom", label: "Roma" },
+  { value: "mil", label: "Milano" },
+  { value: "ams", label: "Amsterdam" },
+  { value: "cph", label: "København" },
+  { value: "sto", label: "Stockholm" },
+  { value: "osl", label: "Oslo" },
+  { value: "zur", label: "Zürich" },
+  { value: "vie", label: "Wien" },
+  { value: "ath", label: "Αθήνα (Athens)" },
+  { value: "lis", label: "Lisboa" },
+];
+
 const globeIcon = (slot?: string) => html`<svg
   ${slot ? `slot="${slot}"` : ""}
   viewBox="0 0 16 16"
@@ -615,6 +682,169 @@ export const LongList: Story = {
       <p style="margin-top:12px; font-size:12px; color:var(--tulpar-color-text-secondary,#74777a);">
         25 options. Open the listbox and press a letter key — typeahead jumps to the first match.
         <code>Page Down / Up</code> scrolls by visible row count.
+      </p>
+    </div>
+  `,
+};
+
+// ─── 13. DataPropFlat ──────────────────────────────────────────────────────────
+
+/**
+ * **DataPropFlat** — author options from a typed `options` array instead of
+ * slotting `<tulpar-option>` children. Bind it as a property
+ * (`.options=${[…]}`). Each entry is `{ value, label, disabled? }`. The prop and
+ * the slotted form render identically — shown side by side for parity.
+ */
+export const DataPropFlat: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => html`
+    <div style="padding:32px; display:flex; flex-direction:column; gap:32px; max-width:400px;">
+      ${sectionLabel("options data-prop — flat array")}
+      <tulpar-select
+        label="Framework"
+        placeholder="Choose a framework…"
+        .options=${DATA_FRAMEWORKS}
+        style="display:block;"
+      ></tulpar-select>
+
+      ${sectionLabel("equivalent slotted authoring (renders identically)")}
+      <tulpar-select label="Framework" placeholder="Choose a framework…" style="display:block;">
+        ${DATA_FRAMEWORKS.map(
+          (o) =>
+            html`<tulpar-option value=${o.value} label=${o.label} ?disabled=${o.disabled}></tulpar-option>`,
+        )}
+      </tulpar-select>
+      <p style="margin:0; font-size:12px; color:var(--tulpar-color-text-secondary,#74777a);">
+        "Svelte" is <code>disabled</code> in both — keyboard navigation skips it. The
+        <code>options</code> prop wins over slotted children when both are set.
+      </p>
+    </div>
+  `,
+};
+
+// ─── 14. DataPropGroups ─────────────────────────────────────────────────────────
+
+/**
+ * **DataPropGroups** — nested `SelectOptionGroup` entries (`{ label, options }`)
+ * render labelled groups; options carry an optional `description` second line.
+ * A group with `disabled: true` dims its header and disables every child option.
+ */
+export const DataPropGroups: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => html`
+    <div style="padding:32px; max-width:400px;">
+      ${sectionLabel("options data-prop — nested groups + descriptions")}
+      <tulpar-select
+        label="Technology stack"
+        placeholder="Choose a technology…"
+        .options=${DATA_GROUPED}
+        style="display:block;"
+      ></tulpar-select>
+      <p style="margin-top:12px; font-size:12px; color:var(--tulpar-color-text-secondary,#74777a);">
+        The "Deprecated" group sets <code>disabled: true</code> — its header dims and both options
+        inside are non-selectable. Each option's <code>description</code> renders as a muted second
+        line.
+      </p>
+    </div>
+  `,
+};
+
+// ─── 15. Searchable ──────────────────────────────────────────────────────────────
+
+/**
+ * **Searchable** — set `searchable` for a sticky in-popup search input. Filtering
+ * is diacritic- and Turkish-insensitive (type `istanbul` to match `İstanbul`,
+ * `munchen` to match `München`), the matched run is highlighted, and an empty
+ * result shows a dedicated no-match row. Open the listbox and start typing.
+ */
+export const Searchable: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => html`
+    <div style="padding:32px; max-width:400px;">
+      ${sectionLabel("searchable — diacritic-insensitive filter + highlight")}
+      <tulpar-select
+        label="City"
+        placeholder="Select a city…"
+        searchable
+        .options=${DATA_CITIES}
+        style="display:block;"
+      ></tulpar-select>
+      <p style="margin-top:12px; font-size:12px; color:var(--tulpar-color-text-secondary,#74777a);">
+        24 cities. Type <code>is</code> → matches İstanbul (highlighted); <code>munchen</code> →
+        München; <code>zzz</code> → the no-match row. Escape clears the query first, then closes.
+      </p>
+    </div>
+  `,
+};
+
+// ─── 16. SearchableClearable ──────────────────────────────────────────────────────
+
+/**
+ * **SearchableClearable** — `searchable` combined with `clearable` and a custom
+ * `search-placeholder` + `no-match-text`. Once a value is committed the ✕ button
+ * appears on the trigger; reopening resets the query.
+ */
+export const SearchableClearable: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => html`
+    <div style="padding:32px; max-width:400px;">
+      ${sectionLabel("searchable + clearable + custom placeholder/no-match")}
+      <tulpar-select
+        label="City"
+        placeholder="Select a city…"
+        searchable
+        clearable
+        value="ist"
+        search-placeholder="Filter cities…"
+        no-match-text="No city matches your search"
+        .options=${DATA_CITIES}
+        style="display:block;"
+      ></tulpar-select>
+      <p style="margin-top:12px; font-size:12px; color:var(--tulpar-color-text-secondary,#74777a);">
+        Pre-selected to İstanbul with the ✕ clear affordance. The search input shows a custom
+        placeholder; an empty result shows the custom <code>no-match-text</code>.
+      </p>
+    </div>
+  `,
+};
+
+// ─── 17. SearchableSlotted ────────────────────────────────────────────────────────
+
+/**
+ * **SearchableSlotted** — `searchable` works over slotted `<tulpar-option>`
+ * children too. The filter still applies (rows hide/show by label), but the match
+ * highlight is skipped on rich (slotted) labels — only plain text labels get the
+ * `<mark>` treatment.
+ */
+export const SearchableSlotted: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => html`
+    <div style="padding:32px; display:flex; flex-direction:column; gap:32px; max-width:400px;">
+      ${sectionLabel("searchable over slotted — highlight on plain text labels")}
+      <tulpar-select label="Country" placeholder="Search a country…" searchable style="display:block;">
+        ${COUNTRIES.map(
+          (c) => html`<tulpar-option value=${c.value} label=${c.label}></tulpar-option>`,
+        )}
+      </tulpar-select>
+
+      ${sectionLabel("searchable over slotted RICH options — filter, no highlight")}
+      <tulpar-select label="Framework" placeholder="Search a framework…" searchable style="display:block;">
+        <tulpar-option value="react" icon="⚛️" label="React">
+          <span slot="description">Meta · declarative, component-based</span>
+        </tulpar-option>
+        <tulpar-option value="angular" icon="🅰️" label="Angular">
+          <span slot="description">Google · opinionated full-stack</span>
+        </tulpar-option>
+        <tulpar-option value="vue" icon="💚" label="Vue">
+          <span slot="description">Evan You · progressive framework</span>
+        </tulpar-option>
+        <tulpar-option value="svelte" icon="🔥" label="Svelte">
+          <span slot="description">Rich Harris · compile-time magic</span>
+        </tulpar-option>
+      </tulpar-select>
+      <p style="margin:0; font-size:12px; color:var(--tulpar-color-text-secondary,#74777a);">
+        Filtering matches the option <code>label</code>. Rich (slotted) labels still filter but the
+        matched run is not wrapped in <code>&lt;mark&gt;</code> — highlight is text-label only.
       </p>
     </div>
   `,
