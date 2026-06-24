@@ -514,27 +514,28 @@ const PAGE_STYLES = `
           </label>
         </div>
         <div class="pg-stage">
-          <tulpar-select-ng
-            class="field"
-            [(value)]="pgValue"
-            [variant]="pgVariant()"
-            [size]="pgSize()"
-            label="Framework"
-            [labelPosition]="pgLabelPos()"
-            [placeholder]="pgPlaceholder()"
-            [clearable]="pgClearable()"
-            [loading]="pgLoading()"
-            [disabled]="pgDisabled()"
-            [required]="pgRequired()"
-            [invalid]="pgInvalid()"
-            [warn]="pgWarn()"
-            errorText="Selection is required"
-            warnText="Heads up — double-check this one"
-          >
-            @for (f of frameworks; track f.value) {
-              <tulpar-option-ng [value]="f.value" [label]="f.label" />
-            }
-          </tulpar-select-ng>
+          <div class="field">
+            <tulpar-select-ng
+              [(value)]="pgValue"
+              [variant]="pgVariant()"
+              [size]="pgSize()"
+              label="Framework"
+              [labelPosition]="pgLabelPos()"
+              [placeholder]="pgPlaceholder()"
+              [clearable]="pgClearable()"
+              [loading]="pgLoading()"
+              [disabled]="pgDisabled()"
+              [required]="pgRequired()"
+              [invalid]="pgInvalid()"
+              [warn]="pgWarn()"
+              errorText="Selection is required"
+              warnText="Heads up — double-check this one"
+            >
+              @for (f of frameworks; track f.value) {
+                <tulpar-option-ng [value]="f.value" [label]="f.label" />
+              }
+            </tulpar-select-ng>
+          </div>
         </div>
         <div class="pg-value">
           value = <strong>{{ pgValue() || '(empty)' }}</strong>
@@ -555,11 +556,13 @@ const PAGE_STYLES = `
       <div class="preview">
         <div class="grid">
           @for (v of variants; track v) {
-            <tulpar-select-ng class="field" [variant]="v" [label]="v" placeholder="Choose a fruit">
-              @for (o of fruits; track o.value) {
-                <tulpar-option-ng [value]="o.value" [label]="o.label" />
-              }
-            </tulpar-select-ng>
+            <div class="field">
+              <tulpar-select-ng [variant]="v" [label]="v" placeholder="Choose a fruit">
+                @for (o of fruits; track o.value) {
+                  <tulpar-option-ng [value]="o.value" [label]="o.label" />
+                }
+              </tulpar-select-ng>
+            </div>
           }
         </div>
       </div>
@@ -578,11 +581,13 @@ const PAGE_STYLES = `
           <div class="demo-row">
             <span class="row-label">{{ s }}</span>
             <div class="row-items">
-              <tulpar-select-ng class="field" [size]="s" placeholder="Select a fruit">
-                @for (o of fruits; track o.value) {
-                  <tulpar-option-ng [value]="o.value" [label]="o.label" />
-                }
-              </tulpar-select-ng>
+              <div class="field">
+                <tulpar-select-ng [size]="s" placeholder="Select a fruit">
+                  @for (o of fruits; track o.value) {
+                    <tulpar-option-ng [value]="o.value" [label]="o.label" />
+                  }
+                </tulpar-select-ng>
+              </div>
             </div>
           </div>
         }
@@ -603,16 +608,13 @@ const PAGE_STYLES = `
       <div class="preview">
         <div class="grid">
           @for (p of labelPositions; track p) {
-            <tulpar-select-ng
-              class="field"
-              label="Country"
-              [labelPosition]="p"
-              placeholder="Select a country"
-            >
-              @for (o of europe; track o.code) {
-                <tulpar-option-ng [value]="o.code" [label]="o.name" />
-              }
-            </tulpar-select-ng>
+            <div class="field">
+              <tulpar-select-ng label="Country" [labelPosition]="p" placeholder="Select a country">
+                @for (o of europe; track o.code) {
+                  <tulpar-option-ng [value]="o.code" [label]="o.name" />
+                }
+              </tulpar-select-ng>
+            </div>
           }
         </div>
       </div>
@@ -620,22 +622,26 @@ const PAGE_STYLES = `
         <div class="dual-card">
           <div class="dual-head">Label — prop form</div>
           <div class="dual-body">
-            <tulpar-select-ng class="field" label="Prop label" placeholder="Select…">
-              @for (o of europe; track o.code) {
-                <tulpar-option-ng [value]="o.code" [label]="o.name" />
-              }
-            </tulpar-select-ng>
+            <div class="field">
+              <tulpar-select-ng label="Prop label" placeholder="Select…">
+                @for (o of europe; track o.code) {
+                  <tulpar-option-ng [value]="o.code" [label]="o.name" />
+                }
+              </tulpar-select-ng>
+            </div>
           </div>
         </div>
         <div class="dual-card">
           <div class="dual-head">Label — slot form</div>
           <div class="dual-body">
-            <tulpar-select-ng class="field" placeholder="Select…">
-              <span slot="label">Slot label</span>
-              @for (o of europe; track o.code) {
-                <tulpar-option-ng [value]="o.code" [label]="o.name" />
-              }
-            </tulpar-select-ng>
+            <div class="field">
+              <tulpar-select-ng placeholder="Select…">
+                <span slot="label">Slot label</span>
+                @for (o of europe; track o.code) {
+                  <tulpar-option-ng [value]="o.code" [label]="o.name" />
+                }
+              </tulpar-select-ng>
+            </div>
           </div>
         </div>
       </div>
@@ -654,38 +660,42 @@ const PAGE_STYLES = `
         <div class="dual-card">
           <div class="dual-head">Prop form (label · description)</div>
           <div class="dual-body">
-            <tulpar-select-ng class="field" label="Language" placeholder="Pick a language">
-              <tulpar-option-ng value="ts" label="TypeScript" />
-              <tulpar-option-ng
-                value="js"
-                label="JavaScript"
-                description="The language of the web"
-              />
-              <tulpar-option-ng value="py" label="Python" description="Batteries included" />
-              <tulpar-option-ng value="rs" label="Rust" description="Fearless concurrency" />
-            </tulpar-select-ng>
+            <div class="field">
+              <tulpar-select-ng label="Language" placeholder="Pick a language">
+                <tulpar-option-ng value="ts" label="TypeScript" />
+                <tulpar-option-ng
+                  value="js"
+                  label="JavaScript"
+                  description="The language of the web"
+                />
+                <tulpar-option-ng value="py" label="Python" description="Batteries included" />
+                <tulpar-option-ng value="rs" label="Rust" description="Fearless concurrency" />
+              </tulpar-select-ng>
+            </div>
           </div>
         </div>
         <div class="dual-card">
           <div class="dual-head">Slot form (icon · label · description)</div>
           <div class="dual-body">
-            <tulpar-select-ng class="field" label="Language" placeholder="Pick a language">
-              <tulpar-option-ng value="ts">
-                <span slot="icon" aria-hidden="true">🟦</span>
-                TypeScript
-                <span slot="description">Typed superset of JavaScript</span>
-              </tulpar-option-ng>
-              <tulpar-option-ng value="js">
-                <span slot="icon" aria-hidden="true">🟨</span>
-                JavaScript
-                <span slot="description">The language of the web</span>
-              </tulpar-option-ng>
-              <tulpar-option-ng value="go">
-                <span slot="icon" aria-hidden="true">🔵</span>
-                Go
-                <span slot="description">Simple, fast, concurrent</span>
-              </tulpar-option-ng>
-            </tulpar-select-ng>
+            <div class="field">
+              <tulpar-select-ng label="Language" placeholder="Pick a language">
+                <tulpar-option-ng value="ts">
+                  <span slot="icon" aria-hidden="true">🟦</span>
+                  TypeScript
+                  <span slot="description">Typed superset of JavaScript</span>
+                </tulpar-option-ng>
+                <tulpar-option-ng value="js">
+                  <span slot="icon" aria-hidden="true">🟨</span>
+                  JavaScript
+                  <span slot="description">The language of the web</span>
+                </tulpar-option-ng>
+                <tulpar-option-ng value="go">
+                  <span slot="icon" aria-hidden="true">🔵</span>
+                  Go
+                  <span slot="description">Simple, fast, concurrent</span>
+                </tulpar-option-ng>
+              </tulpar-select-ng>
+            </div>
           </div>
         </div>
       </div>
@@ -702,26 +712,28 @@ const PAGE_STYLES = `
         <code class="inline-code">disabled</code> — keyboard nav skips it.
       </p>
       <div class="preview">
-        <tulpar-select-ng class="field--lg field" label="Destination" placeholder="Pick a city">
-          <tulpar-option-group-ng label="Europe">
-            <tulpar-option-ng value="ist" label="Istanbul" />
-            <tulpar-option-ng value="ldn" label="London" />
-            <tulpar-option-ng value="par" label="Paris" />
-            <tulpar-option-ng value="ber" label="Berlin" />
-          </tulpar-option-group-ng>
-          <tulpar-option-group-ng>
-            <span slot="label">Americas</span>
-            <tulpar-option-ng value="nyc" label="New York" />
-            <tulpar-option-ng value="sfo" label="San Francisco" />
-            <tulpar-option-ng value="sao" label="São Paulo (sold out)" [disabled]="true" />
-            <tulpar-option-ng value="yyz" label="Toronto" />
-          </tulpar-option-group-ng>
-          <tulpar-option-group-ng label="Asia-Pacific">
-            <tulpar-option-ng value="tyo" label="Tokyo" />
-            <tulpar-option-ng value="sin" label="Singapore" />
-            <tulpar-option-ng value="syd" label="Sydney" />
-          </tulpar-option-group-ng>
-        </tulpar-select-ng>
+        <div class="field--lg field">
+          <tulpar-select-ng label="Destination" placeholder="Pick a city">
+            <tulpar-option-group-ng label="Europe">
+              <tulpar-option-ng value="ist" label="Istanbul" />
+              <tulpar-option-ng value="ldn" label="London" />
+              <tulpar-option-ng value="par" label="Paris" />
+              <tulpar-option-ng value="ber" label="Berlin" />
+            </tulpar-option-group-ng>
+            <tulpar-option-group-ng>
+              <span slot="label">Americas</span>
+              <tulpar-option-ng value="nyc" label="New York" />
+              <tulpar-option-ng value="sfo" label="San Francisco" />
+              <tulpar-option-ng value="sao" label="São Paulo (sold out)" [disabled]="true" />
+              <tulpar-option-ng value="yyz" label="Toronto" />
+            </tulpar-option-group-ng>
+            <tulpar-option-group-ng label="Asia-Pacific">
+              <tulpar-option-ng value="tyo" label="Tokyo" />
+              <tulpar-option-ng value="sin" label="Singapore" />
+              <tulpar-option-ng value="syd" label="Sydney" />
+            </tulpar-option-group-ng>
+          </tulpar-select-ng>
+        </div>
       </div>
       <pre class="code"><code>{{ groupsCode }}</code></pre>
     </section>
@@ -739,34 +751,36 @@ const PAGE_STYLES = `
         <div class="demo-row">
           <span class="row-label">optional</span>
           <div class="row-items">
-            <tulpar-select-ng
-              class="field"
-              [clearable]="true"
-              label="Optional pick"
-              value="vue"
-              placeholder="Pick a framework"
-            >
-              @for (f of frameworks; track f.value) {
-                <tulpar-option-ng [value]="f.value" [label]="f.label" />
-              }
-            </tulpar-select-ng>
+            <div class="field">
+              <tulpar-select-ng
+                [clearable]="true"
+                label="Optional pick"
+                value="vue"
+                placeholder="Pick a framework"
+              >
+                @for (f of frameworks; track f.value) {
+                  <tulpar-option-ng [value]="f.value" [label]="f.label" />
+                }
+              </tulpar-select-ng>
+            </div>
           </div>
         </div>
         <div class="demo-row">
           <span class="row-label">required</span>
           <div class="row-items">
-            <tulpar-select-ng
-              class="field"
-              [clearable]="true"
-              [required]="true"
-              label="Required pick"
-              value="angular"
-              placeholder="Pick a framework"
-            >
-              @for (f of frameworks; track f.value) {
-                <tulpar-option-ng [value]="f.value" [label]="f.label" />
-              }
-            </tulpar-select-ng>
+            <div class="field">
+              <tulpar-select-ng
+                [clearable]="true"
+                [required]="true"
+                label="Required pick"
+                value="angular"
+                placeholder="Pick a framework"
+              >
+                @for (f of frameworks; track f.value) {
+                  <tulpar-option-ng [value]="f.value" [label]="f.label" />
+                }
+              </tulpar-select-ng>
+            </div>
           </div>
         </div>
       </div>
@@ -785,39 +799,38 @@ const PAGE_STYLES = `
       </p>
       <div class="preview">
         <div class="grid">
-          <tulpar-select-ng
-            class="field"
-            [invalid]="true"
-            [required]="true"
-            label="Plan"
-            placeholder="Choose a plan"
-            errorText="Please choose a plan"
-          >
-            <tulpar-option-ng value="free" label="Free" />
-            <tulpar-option-ng value="pro" label="Pro" />
-            <tulpar-option-ng value="ent" label="Enterprise" />
-          </tulpar-select-ng>
-          <tulpar-select-ng
-            class="field"
-            [warn]="true"
-            label="Region"
-            value="eu-west-1"
-            warnText="Legacy region — migrate soon"
-          >
-            <tulpar-option-ng value="eu-west-1" label="eu-west-1 (legacy)" />
-            <tulpar-option-ng value="eu-central-1" label="eu-central-1" />
-            <tulpar-option-ng value="us-east-1" label="us-east-1" />
-          </tulpar-select-ng>
-          <tulpar-select-ng
-            class="field"
-            [required]="true"
-            label="Role"
-            placeholder="Select a role"
-          >
-            <tulpar-option-ng value="admin" label="Administrator" />
-            <tulpar-option-ng value="editor" label="Editor" />
-            <tulpar-option-ng value="viewer" label="Viewer" />
-          </tulpar-select-ng>
+          <div class="field">
+            <tulpar-select-ng
+              [invalid]="true"
+              [required]="true"
+              label="Plan"
+              placeholder="Choose a plan"
+              errorText="Please choose a plan"
+            >
+              <tulpar-option-ng value="free" label="Free" />
+              <tulpar-option-ng value="pro" label="Pro" />
+              <tulpar-option-ng value="ent" label="Enterprise" />
+            </tulpar-select-ng>
+          </div>
+          <div class="field">
+            <tulpar-select-ng
+              [warn]="true"
+              label="Region"
+              value="eu-west-1"
+              warnText="Legacy region — migrate soon"
+            >
+              <tulpar-option-ng value="eu-west-1" label="eu-west-1 (legacy)" />
+              <tulpar-option-ng value="eu-central-1" label="eu-central-1" />
+              <tulpar-option-ng value="us-east-1" label="us-east-1" />
+            </tulpar-select-ng>
+          </div>
+          <div class="field">
+            <tulpar-select-ng [required]="true" label="Role" placeholder="Select a role">
+              <tulpar-option-ng value="admin" label="Administrator" />
+              <tulpar-option-ng value="editor" label="Editor" />
+              <tulpar-option-ng value="viewer" label="Viewer" />
+            </tulpar-select-ng>
+          </div>
         </div>
       </div>
       <pre class="code"><code>{{ validationCode }}</code></pre>
@@ -836,31 +849,34 @@ const PAGE_STYLES = `
       </p>
       <div class="preview">
         <div class="grid">
-          <tulpar-select-ng
-            class="field"
-            label="Empty"
-            placeholder="No options yet"
-            emptyText="No results found"
-          />
-          <tulpar-select-ng
-            class="field"
-            [loading]="true"
-            label="Loading"
-            placeholder="Fetching…"
-            loadingText="Fetching options…"
-          >
-            <tulpar-option-ng value="a" label="A" />
-            <tulpar-option-ng value="b" label="B" />
-          </tulpar-select-ng>
-          <tulpar-select-ng
-            class="field"
-            label="Error"
-            placeholder="Open me"
-            error="Failed to load options. Try again."
-          >
-            <tulpar-option-ng value="a" label="A" />
-            <tulpar-option-ng value="b" label="B" />
-          </tulpar-select-ng>
+          <div class="field">
+            <tulpar-select-ng
+              label="Empty"
+              placeholder="No options yet"
+              emptyText="No results found"
+            />
+          </div>
+          <div class="field">
+            <tulpar-select-ng
+              [loading]="true"
+              label="Loading"
+              placeholder="Fetching…"
+              loadingText="Fetching options…"
+            >
+              <tulpar-option-ng value="a" label="A" />
+              <tulpar-option-ng value="b" label="B" />
+            </tulpar-select-ng>
+          </div>
+          <div class="field">
+            <tulpar-select-ng
+              label="Error"
+              placeholder="Open me"
+              error="Failed to load options. Try again."
+            >
+              <tulpar-option-ng value="a" label="A" />
+              <tulpar-option-ng value="b" label="B" />
+            </tulpar-select-ng>
+          </div>
         </div>
       </div>
       <pre class="code"><code>{{ statesCode }}</code></pre>
@@ -876,24 +892,20 @@ const PAGE_STYLES = `
       </p>
       <div class="preview">
         <div class="grid">
-          <tulpar-select-ng
-            class="field"
-            label="Country (32 options)"
-            placeholder="Select a country"
-          >
-            @for (c of countries; track c.code) {
-              <tulpar-option-ng [value]="c.code" [label]="c.name" />
-            }
-          </tulpar-select-ng>
-          <tulpar-select-ng
-            class="field"
-            label="Long labels (truncate)"
-            placeholder="Select a region"
-          >
-            @for (c of longLabels; track c.code) {
-              <tulpar-option-ng [value]="c.code" [label]="c.name" />
-            }
-          </tulpar-select-ng>
+          <div class="field">
+            <tulpar-select-ng label="Country (32 options)" placeholder="Select a country">
+              @for (c of countries; track c.code) {
+                <tulpar-option-ng [value]="c.code" [label]="c.name" />
+              }
+            </tulpar-select-ng>
+          </div>
+          <div class="field">
+            <tulpar-select-ng label="Long labels (truncate)" placeholder="Select a region">
+              @for (c of longLabels; track c.code) {
+                <tulpar-option-ng [value]="c.code" [label]="c.name" />
+              }
+            </tulpar-select-ng>
+          </div>
         </div>
       </div>
       <pre class="code"><code>{{ longCode }}</code></pre>
