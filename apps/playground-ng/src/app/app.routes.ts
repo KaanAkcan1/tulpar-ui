@@ -4,6 +4,7 @@ import { ButtonDemoComponent } from './demos/button-demo.component';
 import { TextInputDemoComponent } from './demos/text-input-demo.component';
 import { TextareaDemoComponent } from './demos/textarea-demo.component';
 import { NumberInputDemoComponent } from './demos/number-input-demo.component';
+import { SelectDemoComponent } from './demos/select-demo.component';
 import { ColorsDemoComponent } from './demos/colors-demo.component';
 import { GuideDemoComponent } from './demos/guide-demo.component';
 import { SwitchDemoComponent } from './demos/switch-demo.component';
@@ -29,6 +30,7 @@ export const routes: Routes = [
   { path: 'text-input', component: TextInputDemoComponent, title: 'TextInput — Tulpar UI' },
   { path: 'textarea', component: TextareaDemoComponent, title: 'Textarea — Tulpar UI' },
   { path: 'number-input', component: NumberInputDemoComponent, title: 'NumberInput — Tulpar UI' },
+  { path: 'select', component: SelectDemoComponent, title: 'Select — Tulpar UI' },
   { path: 'colors', component: ColorsDemoComponent, title: 'Colors — Tulpar UI' },
   { path: 'guide', component: GuideDemoComponent, title: 'Sidebar & Theme — Tulpar UI' },
   { path: 'switch', component: SwitchDemoComponent, title: 'Switch — Tulpar UI' },

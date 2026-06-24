@@ -6,6 +6,7 @@ import {
   Bell,
   BookOpen,
   CheckSquare,
+  ChevronsUpDown,
   Circle,
   CircleDot,
   CircleUserRound,
@@ -79,6 +80,15 @@ class IconTextarea {
 })
 class IconNumberInput {
   readonly icon: LucideIconData = Hash;
+}
+@Component({
+  selector: 'app-icon-select',
+  standalone: true,
+  imports: [LucideAngularModule],
+  template: `<lucide-icon [img]="icon" [size]="18" />`,
+})
+class IconSelect {
+  readonly icon: LucideIconData = ChevronsUpDown;
 }
 @Component({
   selector: 'app-icon-colors',
@@ -592,6 +602,7 @@ export class App {
             { label: 'TextInput', href: '/text-input', icon: IconTextInput },
             { label: 'Textarea', href: '/textarea', icon: IconTextarea },
             { label: 'NumberInput', href: '/number-input', icon: IconNumberInput },
+            { label: 'Select', href: '/select', icon: IconSelect },
           ],
         },
         // Selection — a collapsible group under Components (matches playground-vue).
