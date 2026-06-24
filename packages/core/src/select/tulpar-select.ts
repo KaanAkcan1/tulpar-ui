@@ -10,7 +10,8 @@ import {
   prevEnabled,
 } from "../_internal/listbox/active-index";
 import { Typeahead } from "../_internal/listbox/typeahead";
-import { resolveKeyAction } from "../_internal/listbox/keymap";
+import { resolveKeyAction, type KeyAction } from "../_internal/listbox/keymap";
+import { filterOptions, type FilterResult } from "../_internal/listbox/filter";
 import { ListboxOverlay } from "../_internal/listbox/listbox-overlay";
 import { ActiveDescendantController } from "../_internal/listbox/active-descendant-controller";
 import type { TulparOption } from "./tulpar-option";
@@ -172,6 +173,39 @@ export class TulparSelect extends FormFieldBase {
     return this.value !== "";
   }
 
+  /**
+   * Current filter result (the single source of truth for search), recomputed in
+   * `willUpdate` from the RAW labels + `_query` BEFORE render — so `_options()`
+   * and `_renderStatusRow` read fresh state, never stale element attributes.
+   * Null when not searching (no query / not searchable).
+   */
+  private _filterResult: FilterResult | null = null;
+
+  override willUpdate(changed: Map<string, unknown>): void {
+    super.willUpdate?.(changed);
+    if (changed.has("_query") || changed.has("options") || changed.has("searchable")) {
+      this._filterResult =
+        this.searchable && this._query.trim() !== ""
+          ? filterOptions(this._rawLabels(), this._query)
+          : null;
+    }
+  }
+
+  /** Ordered raw labels (independent of hidden) for filtering. */
+  private _rawLabels(): string[] {
+    if (this.options != null) {
+      const out: string[] = [];
+      for (const e of this.options) {
+        if (isOptionGroup(e)) e.options.forEach((o) => out.push(o.label));
+        else out.push(e.label);
+      }
+      return out;
+    }
+    return Array.from(this.querySelectorAll<TulparOption>("tulpar-option")).map(
+      (o) => o.resolvedLabel,
+    );
+  }
+
   override updated(changed: Map<string, unknown>): void {
     super.updated(changed);
     if (changed.has("value")) {
@@ -198,6 +232,32 @@ export class TulparSelect extends FormFieldBase {
     const collection = this._collection();
     this._active.applyActiveAttrs(collection);
     this._active.applySelectedAttrs(this.value, collection);
+    // Stamp the search filter (hidden + highlight) onto the option elements and
+    // hide a group whose options are all filtered out. Plain attribute/property
+    // writes that mirror the pre-render `_filterResult`; they cannot re-enter the
+    // update cycle (the default options <slot> has no slotchange→requestUpdate).
+    this._applyFilterToDom();
+  }
+
+  /**
+   * Mirror `_filterResult` onto the option elements: `hidden` (nav-skip + paint)
+   * and `highlight` (the matched run → `<mark>`), plus group visibility. Reads
+   * the shadow options (data-mode) or the light-DOM options (slotted-mode) in the
+   * same RAW order `_rawLabels()` produced, so indices align with the result.
+   */
+  private _applyFilterToDom(): void {
+    const root: ParentNode = this.options != null ? this.renderRoot : this;
+    const opts = Array.from(root.querySelectorAll<TulparOption>("tulpar-option"));
+    const f = this._filterResult;
+    opts.forEach((opt, i) => {
+      opt.hidden = f ? !f.matched[i] : false;
+      opt.highlight = f ? f.ranges[i] : null;
+    });
+    // Hide a group whose every child option is hidden.
+    root.querySelectorAll<HTMLElement>("tulpar-option-group").forEach((g) => {
+      const children = Array.from(g.querySelectorAll<TulparOption>("tulpar-option"));
+      g.hidden = children.length > 0 && children.every((c) => c.hidden);
+    });
   }
 
   override connectedCallback(): void {
@@ -297,10 +357,12 @@ export class TulparSelect extends FormFieldBase {
   protected _options(): OptionLike[] {
     const root: ParentNode = this.options != null ? this.renderRoot : this;
     const opts = Array.from(root.querySelectorAll<TulparOption>("tulpar-option"));
-    return opts.map((opt) => ({
+    const f = this._filterResult;
+    return opts.map((opt, i) => ({
       value: opt.value,
       label: opt.resolvedLabel,
       disabled: opt.disabled,
+      hidden: f ? !f.matched[i] : false,
       el: opt,
     }));
   }
@@ -393,6 +455,8 @@ export class TulparSelect extends FormFieldBase {
     this.open = true;
     this._valueBeforeOpen = this.value;
     this._typeahead.reset();
+    // Searchable: every open starts with a clear query (resets the filter).
+    this._query = "";
     const c = this._collection();
     const selected = c.indexByValue(this.value);
     // Seed the active index directly (not via setActive, which early-returns on a
@@ -435,9 +499,10 @@ export class TulparSelect extends FormFieldBase {
 
   /**
    * Keyboard model — single source of truth for the key contract is the pure
-   * {@link resolveKeyAction}; this handler only performs the resolved side
-   * effects. Virtual-focus: arrows/Home/End/Page move only the active index;
-   * DOM focus stays on the trigger.
+   * {@link resolveKeyAction}; this handler only resolves the action then delegates
+   * the side effects to {@link _applyKeyAction}. Non-searchable state: the trigger
+   * IS the combobox (DOM focus stays on it; arrows/Home/End/Page move only the
+   * active index). The searchable counterpart is {@link _onSearchKeydown}.
    */
   protected _onTriggerKeydown = (e: KeyboardEvent): void => {
     if (!this.open && (this.disabled || this.readonly || this.loading)) return;
@@ -447,10 +512,21 @@ export class TulparSelect extends FormFieldBase {
       shiftKey: e.shiftKey,
       ctrlKey: e.ctrlKey,
       metaKey: e.metaKey,
+      searchable: false,
     });
+    this._applyKeyAction(action, e);
+  };
+
+  /**
+   * Perform the resolved {@link KeyAction}. Shared by the trigger handler
+   * (non-searchable) and the search-input handler (searchable). Two searchable
+   * tweaks vs. the original switch: `open-typeahead` runs the typeahead ONLY when
+   * not searchable (the input owns text entry), and a `clear-query` case clears
+   * the search query in place (keeping the listbox open) then re-seeds active.
+   */
+  private _applyKeyAction(action: KeyAction, e: KeyboardEvent): void {
     if (action.type === "none") return;
     if (action.preventDefault) e.preventDefault();
-
     const c = this._collection();
     const items = c.items;
     const active = this._active.activeIndex;
@@ -458,17 +534,18 @@ export class TulparSelect extends FormFieldBase {
       case "open":
         this._doOpen();
         break;
-      case "open-typeahead": {
+      case "open-typeahead":
         this._doOpen();
-        const t = this._typeahead.type(
-          e.key,
-          c.labels,
-          performance.now(),
-          this._active.activeIndex,
-        );
-        if (t >= 0) this._active.setActive(t, this._collection());
+        if (!this.searchable) {
+          const t = this._typeahead.type(
+            e.key,
+            c.labels,
+            performance.now(),
+            this._active.activeIndex,
+          );
+          if (t >= 0) this._active.setActive(t, this._collection());
+        }
         break;
-      }
       case "move-next":
         this._active.setActive(nextEnabled(items, active), c);
         break;
@@ -501,13 +578,22 @@ export class TulparSelect extends FormFieldBase {
         this._internals.setFormValue(this.value);
         this._doClose();
         break;
+      case "clear-query":
+        e.stopPropagation();
+        this._query = "";
+        // re-seed active after the filter clears (next update)
+        void this.updateComplete.then(() => {
+          const col = this._collection();
+          this._active.setActive(firstEnabled(col.items), col);
+        });
+        break;
       case "typeahead": {
         const t = this._typeahead.type(e.key, c.labels, performance.now(), active);
         if (t >= 0) this._active.setActive(t, c);
         break;
       }
     }
-  };
+  }
 
   /**
    * Hover unifies with keyboard: hovering an option makes it the active one so
@@ -563,12 +649,43 @@ export class TulparSelect extends FormFieldBase {
   };
 
   // ── Search (searchable mode) ──────────────────────────────────────────────
-  // STUBS — the full filter wiring (re-seed active, key routing) lands in Task
-  // 3.3; these minimal handlers exist so the search input renders + compiles.
+
+  /**
+   * Search-input change: update the query (drives `willUpdate` → `_filterResult`),
+   * then re-seed the active index to the first VISIBLE match (after the filter
+   * recomputes in the next update) and bring it into view.
+   */
   private _onSearchInput = (e: Event): void => {
     this._query = (e.target as HTMLInputElement).value;
+    void this.updateComplete.then(() => {
+      const col = this._collection();
+      this._active.setActive(firstEnabled(col.items), col);
+      this._active.scrollActiveIntoView(col);
+    });
   };
-  private _onSearchKeydown = (_e: KeyboardEvent): void => {};
+
+  /**
+   * Search-input keydown — the search input IS the combobox while searchable.
+   * Resolves through the same pure {@link resolveKeyAction} (searchable state) and
+   * delegates to {@link _applyKeyAction}, so arrows/Enter/Tab behave identically
+   * to the trigger handler, plus the two-stage Escape (clear-query → revert).
+   *
+   * No disabled/readonly/loading guard needed here: the search input only EXISTS
+   * while the listbox is open, and the Select cannot open when non-interactive
+   * (`_doOpen` early-returns). Do NOT add a guard — it would break the open path.
+   */
+  private _onSearchKeydown = (e: KeyboardEvent): void => {
+    const action = resolveKeyAction(e.key, {
+      open: this.open,
+      altKey: e.altKey,
+      shiftKey: e.shiftKey,
+      ctrlKey: e.ctrlKey,
+      metaKey: e.metaKey,
+      searchable: true,
+      hasQuery: this._query.trim() !== "",
+    });
+    this._applyKeyAction(action, e);
+  };
 
   /**
    * Clear handler: must NOT open the listbox (stop the click reaching the

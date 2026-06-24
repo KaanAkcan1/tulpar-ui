@@ -2,6 +2,7 @@ import { expect, fixture, html } from "@open-wc/testing";
 import "./tulpar-select";
 import "./tulpar-option";
 import type { TulparSelect } from "./tulpar-select";
+import type { TulparOption } from "./tulpar-option";
 import { type SelectOptions } from "./select-options";
 
 describe("tulpar-select (closed-state)", () => {
@@ -667,6 +668,81 @@ describe("tulpar-select — searchable (render + a11y)", () => {
     await new Promise((r) => requestAnimationFrame(r));
     expect(el.renderRoot.activeElement).to.equal(
       el.renderRoot.querySelector(".select-search-input"),
+    );
+  });
+});
+
+describe("tulpar-select — searchable (filtering)", () => {
+  const opts: SelectOptions = [
+    { value: "ist", label: "İstanbul" },
+    { value: "ank", label: "Ankara" },
+    { value: "izm", label: "İzmir" },
+  ];
+  const openSearchable = async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${opts} searchable></tulpar-select>`,
+    );
+    el.renderRoot.querySelector<HTMLElement>(".select-trigger")!.click();
+    await el.updateComplete;
+    return el;
+  };
+  const type = async (el: TulparSelect, q: string) => {
+    const input = el.renderRoot.querySelector<HTMLInputElement>(".select-search-input")!;
+    input.value = q;
+    input.dispatchEvent(new Event("input"));
+    await el.updateComplete;
+  };
+
+  it("hides non-matching options (diacritic-insensitive)", async () => {
+    const el = await openSearchable();
+    await type(el, "is");
+    const visible = [...el.renderRoot.querySelectorAll("tulpar-option")].filter(
+      (o) => !(o as HTMLElement).hidden,
+    );
+    expect(visible.map((o) => (o as TulparOption).value)).to.deep.equal(["ist"]);
+  });
+
+  it("arrow nav skips hidden options", async () => {
+    const el = await openSearchable();
+    await type(el, "i"); // matches İstanbul + İzmir
+    const input = el.renderRoot.querySelector<HTMLInputElement>(".select-search-input")!;
+    input.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
+    await el.updateComplete;
+    // active lands on a visible match; committing selects it
+    input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+    await el.updateComplete;
+    expect(["ist", "izm"]).to.include(el.value);
+  });
+
+  it("two-stage Escape: first clears query, second reverts/closes", async () => {
+    const el = await openSearchable();
+    await type(el, "an");
+    const input = el.renderRoot.querySelector<HTMLInputElement>(".select-search-input")!;
+    input.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    await el.updateComplete;
+    expect(el.open).to.equal(true);
+    expect(el.renderRoot.querySelector<HTMLInputElement>(".select-search-input")!.value).to.equal(
+      "",
+    );
+    input.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    await el.updateComplete;
+    expect(el.open).to.equal(false);
+  });
+
+  it("resets the query on reopen", async () => {
+    const el = await openSearchable();
+    await type(el, "an");
+    el.renderRoot
+      .querySelector<HTMLInputElement>(".select-search-input")!
+      .dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    await el.updateComplete; // cleared query (still open)
+    // close + reopen
+    (el as unknown as { _doClose(): void })._doClose();
+    await el.updateComplete;
+    el.renderRoot.querySelector<HTMLElement>(".select-trigger")!.click();
+    await el.updateComplete;
+    expect(el.renderRoot.querySelector<HTMLInputElement>(".select-search-input")!.value).to.equal(
+      "",
     );
   });
 });
