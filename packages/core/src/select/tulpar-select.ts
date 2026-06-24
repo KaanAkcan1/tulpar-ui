@@ -14,7 +14,11 @@ import { resolveKeyAction } from "../_internal/listbox/keymap";
 import { ListboxOverlay } from "../_internal/listbox/listbox-overlay";
 import { ActiveDescendantController } from "../_internal/listbox/active-descendant-controller";
 import type { TulparOption } from "./tulpar-option";
+import { isOptionGroup, type SelectOptions, type SelectOption } from "./select-options";
 import { selectStyles } from "./tulpar-select.styles";
+// Register the option elements so the data-mode render stamps real elements.
+import "./tulpar-option";
+import "./tulpar-option-group";
 // Register <tulpar-spinner> so the loading state renders (side-effect import).
 import "../spinner";
 
@@ -89,6 +93,13 @@ export class TulparSelect extends FormFieldBase {
 
   /** Open state. Drives listbox visibility + `aria-expanded` via render. */
   @property({ type: Boolean, reflect: true }) open = false;
+
+  /**
+   * Data-mode option source. When non-null the Select renders these into the
+   * shadow listbox and IGNORES slotted children (prop wins, §3.1). Object array —
+   * bind as a property, not an attribute.
+   */
+  @property({ attribute: false }) options: SelectOptions | null = null;
 
   @query(".select-trigger") protected _triggerEl!: HTMLElement;
   @query(".select-listbox") protected _listboxEl!: HTMLElement;
@@ -185,6 +196,9 @@ export class TulparSelect extends FormFieldBase {
    * `_onOptionsSlotChange`, so ids are guaranteed before options are read.
    */
   private _ensureOptionIds(): void {
+    // Data-mode options are stamped declaratively in _renderDataOptions; this
+    // light-DOM stamper only applies to slotted-mode.
+    if (this.options != null) return;
     const opts = this.querySelectorAll<TulparOption>("tulpar-option");
     opts.forEach((opt) => {
       opt.id ||= `tulpar-opt-${++optSeq}`;
@@ -199,6 +213,9 @@ export class TulparSelect extends FormFieldBase {
    * `size` change) and after a slotchange (catches newly projected options).
    */
   private _syncOptionSizes(): void {
+    // Data-mode options carry their data-size declaratively; this light-DOM
+    // stamper only applies to slotted-mode.
+    if (this.options != null) return;
     const size = this.size;
     this.querySelectorAll<TulparOption>("tulpar-option").forEach((opt) => {
       if (opt.getAttribute("data-size") !== size) opt.setAttribute("data-size", size);
@@ -213,7 +230,8 @@ export class TulparSelect extends FormFieldBase {
    * {@link _ensureOptionIds} (connectedCallback/slotchange), so no mutation here.
    */
   protected _options(): OptionLike[] {
-    const opts = Array.from(this.querySelectorAll<TulparOption>("tulpar-option"));
+    const root: ParentNode = this.options != null ? this.renderRoot : this;
+    const opts = Array.from(root.querySelectorAll<TulparOption>("tulpar-option"));
     return opts.map((opt) => ({
       value: opt.value,
       label: opt.resolvedLabel,
@@ -227,9 +245,30 @@ export class TulparSelect extends FormFieldBase {
   }
 
   protected _selectedLabel(): string {
+    // Data-mode: resolve the label straight from the data array. This avoids
+    // depending on the shadow `<tulpar-option>` elements being stamped first —
+    // they are committed by THIS render pass, so on the initial render they are
+    // not yet in `renderRoot` for `_options()` to read. Reading the data array
+    // keeps the trigger label correct on the first pass (no second re-render).
+    if (this.options != null) {
+      return this._dataLabelByValue(this.value);
+    }
     const c = this._collection();
     const i = c.indexByValue(this.value);
     return i >= 0 ? c.items[i].label : "";
+  }
+
+  /** Find the label for `value` by walking the `options` data array (data-mode). */
+  private _dataLabelByValue(value: string): string {
+    for (const entry of this.options ?? []) {
+      if (isOptionGroup(entry)) {
+        const hit = entry.options.find((o) => o.value === value);
+        if (hit) return hit.label;
+      } else if (entry.value === value) {
+        return entry.label;
+      }
+    }
+    return "";
   }
 
   /** The light-DOM `<tulpar-option>` element for the current value (or null). */
@@ -445,6 +484,9 @@ export class TulparSelect extends FormFieldBase {
    * class-level Lit-trap note).
    */
   protected _onOptionsSlotChange = (): void => {
+    // Data-mode ignores slotted children entirely (prop wins) — never react to a
+    // slotchange while the data prop is set.
+    if (this.options != null) return;
     // Newly projected options get their stable ids + size before the label
     // refresh (so the size lands even on the same render frame).
     this._ensureOptionIds();
@@ -528,6 +570,35 @@ export class TulparSelect extends FormFieldBase {
     return nothing;
   }
 
+  /** Render the data-prop options/groups into the shadow listbox (data-mode). */
+  private _renderDataOptions(): TemplateResult[] {
+    const out: TemplateResult[] = [];
+    let i = 0;
+    const opt = (o: SelectOption, groupDisabled: boolean): TemplateResult => {
+      const id = `${this._listboxId}-o${i++}`;
+      return html`<tulpar-option
+        id=${id}
+        value=${o.value}
+        .label=${o.label}
+        .description=${o.description ?? nothing}
+        ?disabled=${!!o.disabled || groupDisabled}
+        data-size=${this.size}
+      ></tulpar-option>`;
+    };
+    for (const entry of this.options ?? []) {
+      if (isOptionGroup(entry)) {
+        out.push(
+          html`<tulpar-option-group .label=${entry.label} ?disabled=${!!entry.disabled}
+            >${entry.options.map((o) => opt(o, !!entry.disabled))}</tulpar-option-group
+          >`,
+        );
+      } else {
+        out.push(opt(entry, false));
+      }
+    }
+    return out;
+  }
+
   private _renderListbox(): TemplateResult {
     const hasErrorSlot = !!this.querySelector('[slot="error"]');
     const showOptions = !this.loading && !this.error && !hasErrorSlot;
@@ -541,7 +612,10 @@ export class TulparSelect extends FormFieldBase {
       @pointerover=${this._onListboxPointerOver}
     >
       <div class="select-options" ?hidden=${!showOptions}>
-        <slot @slotchange=${this._onOptionsSlotChange}></slot>
+        ${this.options != null ? this._renderDataOptions() : nothing}
+        <div class="slotted-options" ?hidden=${this.options != null}>
+          <slot @slotchange=${this._onOptionsSlotChange}></slot>
+        </div>
       </div>
       ${this._renderStatusRow(hasErrorSlot)}
     </div>`;

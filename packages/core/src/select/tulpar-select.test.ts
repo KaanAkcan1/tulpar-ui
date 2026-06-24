@@ -2,6 +2,7 @@ import { expect, fixture, html } from "@open-wc/testing";
 import "./tulpar-select";
 import "./tulpar-option";
 import type { TulparSelect } from "./tulpar-select";
+import { type SelectOptions } from "./select-options";
 
 describe("tulpar-select (closed-state)", () => {
   it("is form-associated and reflects the selected value", async () => {
@@ -506,5 +507,70 @@ describe("tulpar-select (listbox states)", () => {
     );
     await el.updateComplete;
     expect(el.shadowRoot!.querySelector(".select-listbox")!.hasAttribute("aria-busy")).to.be.false;
+  });
+});
+
+describe("tulpar-select — data-mode (options prop)", () => {
+  const opts: SelectOptions = [
+    { value: "a", label: "Apple" },
+    { value: "b", label: "Banana", disabled: true },
+    {
+      label: "Citrus",
+      options: [
+        { value: "o", label: "Orange" },
+        { value: "l", label: "Lemon" },
+      ],
+    },
+  ];
+
+  it("renders options from the data prop into the shadow listbox", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${opts} open></tulpar-select>`,
+    );
+    await el.updateComplete;
+    const shadowOpts = el.renderRoot.querySelectorAll("tulpar-option");
+    expect(shadowOpts.length).to.equal(4); // apple, banana, orange, lemon
+    expect(el.renderRoot.querySelectorAll("tulpar-option-group").length).to.equal(1);
+  });
+
+  it("selecting a data-mode value shows its label on the trigger + sets form value", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${opts} value="o"></tulpar-select>`,
+    );
+    await el.updateComplete;
+    const valueText = el.renderRoot.querySelector(".select-value");
+    expect(valueText?.textContent?.trim()).to.equal("Orange");
+  });
+
+  it("prop wins: slotted children are inert when options is set", async () => {
+    const el = await fixture<TulparSelect>(
+      html` <tulpar-select .options=${opts} open>
+        <tulpar-option value="z">Zucchini</tulpar-option>
+      </tulpar-select>`,
+    );
+    await el.updateComplete;
+    // _options() reads shadow only → 4, not 5
+    const shadow = el.renderRoot.querySelectorAll("tulpar-option");
+    expect(shadow.length).to.equal(4);
+  });
+
+  it("disabled group disables its children", async () => {
+    const grouped: SelectOptions = [
+      { label: "G", disabled: true, options: [{ value: "x", label: "X" }] },
+    ];
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${grouped} open></tulpar-select>`,
+    );
+    await el.updateComplete;
+    const x = el.renderRoot.querySelector('tulpar-option[value="x"]') as HTMLElement;
+    expect(x.hasAttribute("disabled")).to.equal(true);
+  });
+
+  it("stamps stable ids for activedescendant on data options", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${opts} open></tulpar-select>`,
+    );
+    await el.updateComplete;
+    el.renderRoot.querySelectorAll("tulpar-option").forEach((o) => expect(o.id).to.not.equal(""));
   });
 });

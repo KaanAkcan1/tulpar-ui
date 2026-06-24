@@ -297,6 +297,13 @@ export const selectStyles = css`
     display: block;
   }
 
+  /* Data-mode hides the slotted-options wrapper (prop wins) — the wrapper is
+     always rendered (the <slot> inside it is never conditionally removed; see
+     the class-level Lit-trap note), only its visibility toggles. */
+  .slotted-options[hidden] {
+    display: none;
+  }
+
   /* ============================================================
    * Open visibility + origin-aware enter motion.
    *
