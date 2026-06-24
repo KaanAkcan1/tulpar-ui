@@ -73,4 +73,34 @@ describe("tulpar-option", () => {
     await elementUpdated(el);
     expect(el.hasAttribute("data-has-icon")).to.be.true;
   });
+
+  // ── Highlight hook (<mark part="match">) ───────────────────────────────────
+
+  it("wraps the highlight range of a text label in <mark>", async () => {
+    const el = await fixture<TulparOption>(
+      html`<tulpar-option value="a" label="İstanbul"></tulpar-option>`,
+    );
+    el.highlight = [0, 2];
+    await el.updateComplete;
+    const mark = el.renderRoot.querySelector('mark[part="match"]');
+    expect(mark?.textContent).to.equal("İs");
+  });
+
+  it("skips highlight when the label is slotted rich content", async () => {
+    const el = await fixture<TulparOption>(
+      html`<tulpar-option value="a"><b>İstanbul</b></tulpar-option>`,
+    );
+    el.highlight = [0, 2];
+    await el.updateComplete;
+    expect(el.renderRoot.querySelector("mark")).to.equal(null); // slot used, no mark
+  });
+
+  it("no highlight when highlight is null", async () => {
+    const el = await fixture<TulparOption>(
+      html`<tulpar-option value="a" label="Apple"></tulpar-option>`,
+    );
+    el.highlight = null;
+    await el.updateComplete;
+    expect(el.renderRoot.querySelector("mark")).to.equal(null);
+  });
 });

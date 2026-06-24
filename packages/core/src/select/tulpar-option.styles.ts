@@ -306,4 +306,22 @@ export const optionStyles = css`
       transition: none;
     }
   }
+
+  /* ============================================================
+   * Search highlight — the matched run of a text label (searchable Select).
+   * Never color-only: a faint brand tint + a weight bump carry the signal so it
+   * survives color-blindness and forced-colors.
+   * ============================================================ */
+  mark[part="match"] {
+    background: color-mix(in srgb, var(--tulpar-color-brand-default, #00c57a) 14%, transparent);
+    color: inherit;
+    font-weight: 600;
+    border-radius: 2px;
+  }
+  @media (forced-colors: active) {
+    mark[part="match"] {
+      background: Mark;
+      color: MarkText;
+    }
+  }
 `;
