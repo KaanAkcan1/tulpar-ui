@@ -163,6 +163,10 @@ export class TulparSelect extends FormFieldBase {
     // padding, font) matches the trigger. Plain attribute writes (no reactive
     // @property), so they cannot re-enter the update cycle.
     this._syncOptionSizes();
+    // Mirror a slotted disabled group's state onto its child options so they are
+    // skipped by keyboard nav and not committable — parity with data-mode. Plain
+    // attribute writes, so they cannot re-enter the update cycle.
+    this._syncGroupDisabled();
     // Re-apply the virtual-focus (data-active + aria-activedescendant) and the
     // selected (aria-selected + data-selected) attributes AFTER every render so
     // they survive a re-render that re-reads the option collection. These are
@@ -219,6 +223,44 @@ export class TulparSelect extends FormFieldBase {
     const size = this.size;
     this.querySelectorAll<TulparOption>("tulpar-option").forEach((opt) => {
       if (opt.getAttribute("data-size") !== size) opt.setAttribute("data-size", size);
+    });
+  }
+
+  /**
+   * Mirror a slotted `<tulpar-option-group disabled>`'s state onto its descendant
+   * `<tulpar-option>` children so they are skipped by keyboard nav and not
+   * committable — parity with data-mode (where `_renderDataOptions` already ORs
+   * `groupDisabled` into each option's `disabled`). Slotted-mode only; data-mode
+   * options carry their disabled state declaratively from `_renderDataOptions`.
+   *
+   * Reactive without clobbering a child's OWN `disabled`: when a group is
+   * disabled we stamp `disabled` on each child AND tag it with a
+   * `data-group-disabled` marker so we know we set it; when the group is later
+   * re-enabled we only clear `disabled` from children we previously marked, and
+   * drop the marker. A child that was independently `disabled` (no marker)
+   * survives untouched.
+   *
+   * Plain attribute writes (no reactive `@property`), so they cannot re-enter the
+   * Lit update cycle — same discipline as {@link _syncOptionSizes}.
+   */
+  private _syncGroupDisabled(): void {
+    // Data-mode options carry their disabled state declaratively; this light-DOM
+    // stamper only applies to slotted-mode.
+    if (this.options != null) return;
+    this.querySelectorAll<HTMLElement>("tulpar-option-group").forEach((group) => {
+      const groupDisabled = group.hasAttribute("disabled");
+      group.querySelectorAll<TulparOption>("tulpar-option").forEach((opt) => {
+        if (groupDisabled) {
+          if (!opt.hasAttribute("disabled")) {
+            opt.setAttribute("disabled", "");
+            opt.setAttribute("data-group-disabled", "");
+          }
+        } else if (opt.hasAttribute("data-group-disabled")) {
+          // Only clear the disable WE induced; a child's own disabled survives.
+          opt.removeAttribute("disabled");
+          opt.removeAttribute("data-group-disabled");
+        }
+      });
     });
   }
 
@@ -487,10 +529,11 @@ export class TulparSelect extends FormFieldBase {
     // Data-mode ignores slotted children entirely (prop wins) — never react to a
     // slotchange while the data prop is set.
     if (this.options != null) return;
-    // Newly projected options get their stable ids + size before the label
-    // refresh (so the size lands even on the same render frame).
+    // Newly projected options get their stable ids + size + group-disabled
+    // mirroring before the label refresh (so they land on the same render frame).
     this._ensureOptionIds();
     this._syncOptionSizes();
+    this._syncGroupDisabled();
     this.requestUpdate();
   };
 

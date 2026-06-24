@@ -574,3 +574,50 @@ describe("tulpar-select — data-mode (options prop)", () => {
     el.renderRoot.querySelectorAll("tulpar-option").forEach((o) => expect(o.id).to.not.equal(""));
   });
 });
+
+describe("tulpar-select — slotted group-disabled parity", () => {
+  it("a slotted disabled group disables its child options (parity with data-mode)", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select label="X" open>
+        <tulpar-option-group label="G" disabled>
+          <tulpar-option value="x">X</tulpar-option>
+        </tulpar-option-group>
+      </tulpar-select>`,
+    );
+    await el.updateComplete;
+    const x = el.querySelector('tulpar-option[value="x"]') as HTMLElement;
+    // The group's disabled state must be mirrored onto the child option.
+    expect(x.hasAttribute("disabled")).to.equal(true);
+    // …and the collection must treat it as disabled (so keyboard nav skips it).
+    const items = (
+      el as unknown as { _options(): { value: string; disabled: boolean }[] }
+    )._options();
+    const item = items.find((i) => i.value === "x");
+    expect(item?.disabled).to.equal(true);
+  });
+
+  it("re-enables child options when the group is re-enabled, preserving a child's own disabled", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select label="X" open>
+        <tulpar-option-group label="G" disabled>
+          <tulpar-option value="x">X</tulpar-option>
+          <tulpar-option value="y" disabled>Y</tulpar-option>
+        </tulpar-option-group>
+      </tulpar-select>`,
+    );
+    await el.updateComplete;
+    const group = el.querySelector("tulpar-option-group") as HTMLElement;
+    const x = el.querySelector('tulpar-option[value="x"]') as HTMLElement;
+    const y = el.querySelector('tulpar-option[value="y"]') as HTMLElement;
+    expect(x.hasAttribute("disabled")).to.equal(true);
+    expect(y.hasAttribute("disabled")).to.equal(true);
+
+    // Re-enable the group: the group-induced disable on `x` must clear, but
+    // `y`'s OWN disabled must survive.
+    group.removeAttribute("disabled");
+    el.requestUpdate();
+    await el.updateComplete;
+    expect(x.hasAttribute("disabled")).to.equal(false);
+    expect(y.hasAttribute("disabled")).to.equal(true);
+  });
+});
