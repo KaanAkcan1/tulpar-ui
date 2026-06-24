@@ -26,4 +26,15 @@ describe("buildCollection", () => {
     const c = buildCollection([opt("a", "Apple", true), opt("b", "Banana")]);
     expect(c.items.map((i) => i.disabled)).to.eql([true, false]);
   });
+
+  it("carries an optional hidden flag through buildCollection", () => {
+    const el = document.createElement("div");
+    const c = buildCollection([
+      { value: "a", label: "A", disabled: false, el },
+      { value: "b", label: "B", disabled: false, hidden: true, el },
+    ]);
+    expect(c.items[0].hidden ?? false).to.equal(false);
+    expect(c.items[1].hidden).to.equal(true);
+    expect(c.items.length).to.equal(2); // hidden items stay in the collection
+  });
 });
