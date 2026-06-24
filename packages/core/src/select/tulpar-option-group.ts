@@ -27,6 +27,9 @@ export class TulparOptionGroup extends LitElement {
   /** Convenience label (alias of the `label` slot). Slot wins when both set. */
   @property({ type: String }) label?: string;
 
+  /** Disables every option in the group (the Select disables the children). */
+  @property({ type: Boolean, reflect: true }) disabled = false;
+
   private _headerId = `tulpar-optgroup-${++groupSeq}`;
 
   override connectedCallback(): void {

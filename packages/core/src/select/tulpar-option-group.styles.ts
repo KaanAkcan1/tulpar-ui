@@ -52,6 +52,10 @@ export const optionGroupStyles = css`
     padding-block-start: 0.25rem;
   }
 
+  :host([disabled]) .group-header {
+    opacity: 0.55;
+  }
+
   @media (forced-colors: active) {
     .group-header {
       background: Canvas;

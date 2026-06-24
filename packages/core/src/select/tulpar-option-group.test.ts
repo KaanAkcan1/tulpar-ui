@@ -56,4 +56,12 @@ describe("tulpar-option-group", () => {
     );
     expect(el.getAttribute("aria-labelledby")).to.equal("my-label");
   });
+
+  it("reflects the disabled attribute", async () => {
+    const el = await fixture<TulparOptionGroup>(
+      html`<tulpar-option-group label="G" disabled></tulpar-option-group>`,
+    );
+    expect(el.disabled).to.equal(true);
+    expect(el.hasAttribute("disabled")).to.equal(true);
+  });
 });
