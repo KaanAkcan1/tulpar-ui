@@ -15,10 +15,18 @@ import type {
   FieldVariant,
   LabelPosition,
   NecessityIndicator,
+  SelectOptions,
 } from "@tulpar-ui/core/select";
 
 // Re-export the core types so consumers can import from the wrapper.
-export type { SelectChangeDetail, FieldSize, FieldVariant, LabelPosition, NecessityIndicator };
+export type {
+  SelectChangeDetail,
+  FieldSize,
+  FieldVariant,
+  LabelPosition,
+  NecessityIndicator,
+  SelectOptions,
+};
 
 /**
  * Angular signal wrapper for `<tulpar-select>` — single-select dropdown.
@@ -41,7 +49,11 @@ export type { SelectChangeDetail, FieldSize, FieldVariant, LabelPosition, Necess
   styles: [":host { display: contents; }"],
   template: `
     <tulpar-select
+      [options]="options()"
       [attr.value]="value() || null"
+      [attr.searchable]="searchable() ? '' : null"
+      [attr.search-placeholder]="searchPlaceholder() ?? null"
+      [attr.no-match-text]="noMatchText() ?? null"
       [attr.placeholder]="placeholder() ?? null"
       [attr.clearable]="clearable() ? '' : null"
       [attr.loading]="loading() ? '' : null"
@@ -72,6 +84,7 @@ export type { SelectChangeDetail, FieldSize, FieldVariant, LabelPosition, Necess
       <ng-content select="[slot='label']" />
       <ng-content select="[slot='prefix']" />
       <ng-content select="[slot='suffix']" />
+      <ng-content select="[slot='no-match']" />
       <ng-content />
     </tulpar-select>
   `,
@@ -79,6 +92,18 @@ export type { SelectChangeDetail, FieldSize, FieldVariant, LabelPosition, Necess
 export class TulparSelectComponent {
   /** Two-way bindable selected value. Use \`[(value)]="myVar"\`. */
   readonly value = model<string>("");
+
+  /** Data-mode options (object array — bound as a property, not an attribute). */
+  readonly options = input<SelectOptions | null>(null);
+
+  /** Opt-in in-popup search. */
+  readonly searchable = input<boolean>(false);
+
+  /** Placeholder of the in-popup search input. */
+  readonly searchPlaceholder = input<string | undefined>(undefined);
+
+  /** No-match status text. */
+  readonly noMatchText = input<string | undefined>(undefined);
 
   /** Placeholder text shown when no value is selected. */
   readonly placeholder = input<string | undefined>(undefined);

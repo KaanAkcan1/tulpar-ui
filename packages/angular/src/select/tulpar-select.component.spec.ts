@@ -147,4 +147,46 @@ describe("TulparSelectComponent (TestBed)", () => {
     const options = select.querySelectorAll("tulpar-option");
     expect(options.length).toBe(2);
   });
+
+  it("forwards searchable + search-placeholder + no-match-text attributes to core", () => {
+    @Component({
+      standalone: true,
+      imports: [TulparSelectComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      template: `<tulpar-select-ng
+        [searchable]="true"
+        searchPlaceholder="Find…"
+        noMatchText="None"
+      ></tulpar-select-ng>`,
+    })
+    class SearchHost {}
+    TestBed.configureTestingModule({ imports: [SearchHost] });
+    const fixture = TestBed.createComponent(SearchHost);
+    fixture.detectChanges();
+    const inner = fixture.nativeElement.querySelector("tulpar-select") as HTMLElement;
+    expect(inner.hasAttribute("searchable")).toBe(true);
+    expect(inner.getAttribute("search-placeholder")).toBe("Find…");
+    expect(inner.getAttribute("no-match-text")).toBe("None");
+  });
+
+  it("binds options as a PROPERTY (object array) on the core element", () => {
+    @Component({
+      standalone: true,
+      imports: [TulparSelectComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      template: `<tulpar-select-ng [options]="opts"></tulpar-select-ng>`,
+    })
+    class OptsHost {
+      opts = [{ value: "a", label: "A" }];
+    }
+    TestBed.configureTestingModule({ imports: [OptsHost] });
+    const fixture = TestBed.createComponent(OptsHost);
+    fixture.detectChanges();
+    const inner = fixture.nativeElement.querySelector("tulpar-select") as HTMLElement & {
+      options?: unknown;
+    };
+    // property binding (not attribute) — the object array lands on the DOM property
+    expect((inner as any).options).toEqual([{ value: "a", label: "A" }]);
+    expect(inner.hasAttribute("options")).toBe(false);
+  });
 });
