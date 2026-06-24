@@ -6,6 +6,7 @@ import {
   Bell,
   BookOpen,
   CheckSquare,
+  ChevronsUpDown,
   CircleDot,
   CircleUserRound,
   FormInput,
@@ -82,6 +83,7 @@ const menu: TulparNavItemVueData[] = [
           { label: "TextInput", href: "/text-input", icon: TextCursorInput },
           { label: "Textarea", href: "/textarea", icon: WrapText },
           { label: "NumberInput", href: "/number-input", icon: Hash },
+          { label: "Select", href: "/select", icon: ChevronsUpDown },
         ],
       },
       {

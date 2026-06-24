@@ -5,7 +5,7 @@
 > informed the ordering. Update as waves complete. Purpose: stop re-researching the landscape every
 > planning session — the sequence and the "why" live here.
 
-**Last updated:** 2026-06-22
+**Last updated:** 2026-06-24
 
 ---
 
@@ -24,15 +24,17 @@
 
 ---
 
-## 2. Current state (shipped, as of v0.12)
+## 2. Current state (shipped, as of v0.14)
 
 | Family | Components | Version |
 |---|---|---|
 | Buttons | Button, ButtonGroup | v0.1–v0.4 |
-| Inputs | TextInput, NumberInput, Textarea (shared `FormFieldBase` internal) | v0.5 |
+| Inputs | TextInput, NumberInput, Textarea (shared `FormFieldBase` internal; soft `:focus-visible` ring added v0.14) | v0.5 |
 | Selection | Checkbox, CheckboxGroup, Radio, RadioGroup, Switch | v0.10 |
 | Overlay | Tooltip, Toggletip, Popover (+ `_internal/overlay` engine) | v0.11 |
-| Feedback | Toast, Message (imperative service + `<tulpar-toaster>`) | v0.12 (current branch) |
+| Feedback | Toast, Message (imperative service + `<tulpar-toaster>`) | v0.12 |
+| Display & status | Tag, Badge, Chip, Avatar, Skeleton, Spinner, Progress (+ `_internal/tone`) | v0.13 |
+| Data entry (Wave 2) | **Select** (`<tulpar-select>` + `<tulpar-option>` + `<tulpar-option-group>`; `_internal/listbox` foundation) | v0.14 |
 | Shell | tulpar-shell, topbar, sidenav, nav-item | v0.6–v0.8 |
 | Infra | 3-layer multi-brand tokens; conventional tone system `neutral/info/success/warning/danger/custom`; `_internal` layering rule; primitive-token lint; CI/CD; changesets | v0.6 |
 
@@ -77,12 +79,15 @@ AG-Grid destination. Tier: **A** = grid-critical/table-stakes · **B** = complet
 
 ## 4. Wave plan (ordered — AG-Grid last)
 
-- **Wave 1 — Display & status atoms** `[IN PROGRESS — brainstorming]`
+- **Wave 1 — Display & status atoms** `[DONE — v0.13]`
   Tag · Badge · Chip · Avatar · Skeleton · Spinner · Progress.
   _Cheap, high-frequency; immediate enterprise completeness; double as grid cell renderers + loading states._
-- **Wave 2 — Overlay-anchored data entry & menus** (rides the v0.11 engine)
-  Select family (Select → Combobox → MultiSelect) · Menu/Dropdown (+Context) · DatePicker.
-  _Establishes the shared listbox internal; ChipGroup lands here._
+- **Wave 2 — Overlay-anchored data entry & menus** (rides the v0.11 engine) `[IN PROGRESS]`
+  **Select** `[DONE — v0.14: single select; established `_internal/listbox` = collection + active-index + typeahead + keymap]` →
+  Combobox → MultiSelect · Menu/Dropdown (+Context) · DatePicker.
+  _The shared listbox internal is now in place; ChipGroup, the `options` data-prop, Combobox (free-text filter),
+  MultiSelect, virtualization, in-popup search, and a mobile-native `<select>` fallback are the remaining Wave-2 work
+  (deferred from v0.14, binding)._
 - **Wave 3 — Modal & disclosure**
   Dialog (**+ imperative service**, mirrors Toast) · Drawer/Sheet · Tabs · Accordion · Alert (in-page).
 - **Wave 4 — Input family completion**

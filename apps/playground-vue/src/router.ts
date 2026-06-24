@@ -4,6 +4,7 @@ import ButtonDemo from "./components/ButtonDemo.vue";
 import TextInputDemo from "./components/TextInputDemo.vue";
 import TextareaDemo from "./components/TextareaDemo.vue";
 import NumberInputDemo from "./components/NumberInputDemo.vue";
+import SelectDemo from "./components/SelectDemo.vue";
 import ColorsDemo from "./components/ColorsDemo.vue";
 import GuideDemo from "./components/GuideDemo.vue";
 import SwitchDemo from "./components/SwitchDemo.vue";
@@ -35,6 +36,7 @@ export const router = createRouter({
       component: NumberInputDemo,
       meta: { title: "NumberInput — Tulpar UI" },
     },
+    { path: "/select", component: SelectDemo, meta: { title: "Select — Tulpar UI" } },
     { path: "/switch", component: SwitchDemo, meta: { title: "Switch — Tulpar UI" } },
     { path: "/checkbox", component: CheckboxDemo, meta: { title: "Checkbox — Tulpar UI" } },
     {

@@ -60,6 +60,10 @@
       "types": "./dist/radio-group/index.d.ts",
       "import": "./dist/radio-group/index.js"
     },
+    "./select": {
+      "types": "./dist/select/index.d.ts",
+      "import": "./dist/select/index.js"
+    },
     "./skeleton": {
       "types": "./dist/skeleton/index.d.ts",
       "import": "./dist/skeleton/index.js"

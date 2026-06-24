@@ -111,3 +111,9 @@ export type {
   ProgressSize,
   ProgressValueFormatter,
 } from "@tulpar-ui/core/progress";
+
+// --- Select (v0.14) -----------------------------------------------------------
+export { default as TulparSelect } from "./select/TulparSelect.vue";
+export { default as TulparOption } from "./select/TulparOption.vue";
+export { default as TulparOptionGroup } from "./select/TulparOptionGroup.vue";
+export type { SelectChangeDetail } from "./select/TulparSelect.vue";
