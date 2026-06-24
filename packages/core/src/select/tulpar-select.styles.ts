@@ -305,6 +305,53 @@ export const selectStyles = css`
   }
 
   /* ============================================================
+   * In-popup search (searchable mode) — a sticky row at the top of the listbox
+   * that scrolls with the panel header pinned. The combobox role lives on the
+   * <input>; the icon is decorative. Sized to the field's ink/placeholder tokens
+   * so it reads as the same surface as the trigger.
+   * ============================================================ */
+  .select-search {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding-inline: 0.625rem;
+    padding-block: 0.375rem;
+    background: var(--tulpar-overlay-surface-bg, #ffffff);
+    border-block-end: 1px solid var(--tulpar-overlay-surface-border, #d9e0df);
+  }
+  .select-search-icon {
+    flex: 0 0 auto;
+    display: inline-flex;
+    inline-size: 0.875rem;
+    block-size: 0.875rem;
+    color: var(--tulpar-input-icon-default, #74777a);
+  }
+  .select-search-icon svg {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+  .select-search-input {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    color: var(--tulpar-input-text-default, #15110b);
+    outline: none;
+  }
+  .select-search-input::placeholder {
+    color: var(--tulpar-input-text-placeholder, #a8a29e);
+  }
+  @media (forced-colors: active) {
+    .select-search {
+      border-block-end: 1px solid CanvasText;
+    }
+  }
+
+  /* ============================================================
    * Open visibility + origin-aware enter motion.
    *
    * [open] on the host AND :popover-open (native top-layer path) each reveal the

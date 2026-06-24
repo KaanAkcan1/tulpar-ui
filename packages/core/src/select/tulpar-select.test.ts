@@ -621,3 +621,52 @@ describe("tulpar-select — slotted group-disabled parity", () => {
     expect(y.hasAttribute("disabled")).to.equal(true);
   });
 });
+
+describe("tulpar-select — searchable (render + a11y)", () => {
+  const opts: SelectOptions = [
+    { value: "a", label: "Apple" },
+    { value: "b", label: "Banana" },
+  ];
+
+  it("renders a search input in the listbox when searchable", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${opts} searchable open></tulpar-select>`,
+    );
+    await el.updateComplete;
+    expect(el.renderRoot.querySelector(".select-search-input")).to.not.equal(null);
+  });
+
+  it("moves the combobox role to the search input (not the trigger) when searchable", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${opts} searchable open></tulpar-select>`,
+    );
+    await el.updateComplete;
+    const trigger = el.renderRoot.querySelector(".select-trigger")!;
+    const input = el.renderRoot.querySelector(".select-search-input")!;
+    expect(trigger.getAttribute("role")).to.not.equal("combobox");
+    expect(input.getAttribute("role")).to.equal("combobox");
+    expect(input.getAttribute("aria-controls")).to.equal(trigger.getAttribute("aria-controls"));
+  });
+
+  it("non-searchable keeps combobox role on the trigger", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${opts} open></tulpar-select>`,
+    );
+    await el.updateComplete;
+    expect(el.renderRoot.querySelector(".select-trigger")!.getAttribute("role")).to.equal(
+      "combobox",
+    );
+  });
+
+  it("focuses the search input on open", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${opts} searchable></tulpar-select>`,
+    );
+    el.renderRoot.querySelector<HTMLElement>(".select-trigger")!.click();
+    await el.updateComplete;
+    await new Promise((r) => requestAnimationFrame(r));
+    expect(el.renderRoot.activeElement).to.equal(
+      el.renderRoot.querySelector(".select-search-input"),
+    );
+  });
+});

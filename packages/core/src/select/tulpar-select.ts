@@ -1,5 +1,5 @@
 import { html, nothing, type TemplateResult } from "lit";
-import { property, query } from "lit/decorators.js";
+import { property, query, state } from "lit/decorators.js";
 import { FormFieldBase } from "../_internal/form-field-base";
 import { buildCollection, type Collection, type OptionLike } from "../_internal/listbox/collection";
 import {
@@ -101,9 +101,22 @@ export class TulparSelect extends FormFieldBase {
    */
   @property({ attribute: false }) options: SelectOptions | null = null;
 
+  /** Opt-in in-popup search. Works in data + slotted modes. */
+  @property({ type: Boolean, reflect: true }) searchable = false;
+
+  /** Placeholder of the in-popup search input. */
+  @property({ type: String, attribute: "search-placeholder" }) searchPlaceholder = "Search…";
+
+  /** Status text when the query matches nothing (distinct from emptyText). */
+  @property({ type: String, attribute: "no-match-text" }) noMatchText = "No matches";
+
+  /** Current search query (internal). */
+  @state() private _query = "";
+
   @query(".select-trigger") protected _triggerEl!: HTMLElement;
   @query(".select-listbox") protected _listboxEl!: HTMLElement;
   @query(".select-leading-icon") protected _leadingIconEl!: HTMLElement;
+  @query(".select-search-input") private _searchInputEl?: HTMLInputElement;
 
   /** Stable per-instance listbox id — used on the listbox + trigger aria-controls. */
   private _listboxId = `tulpar-select-listbox-${++seq}`;
@@ -140,10 +153,20 @@ export class TulparSelect extends FormFieldBase {
    * they survive a re-render that rebuilt the option collection.
    */
   private _active = new ActiveDescendantController({
-    getTrigger: () => this._triggerEl ?? null,
+    getTrigger: () => this._activeHostEl(),
     getListbox: () => this._listboxEl ?? null,
     getCollection: () => this._collection(),
   });
+
+  /**
+   * The element that carries `aria-activedescendant`: the in-popup search input
+   * while searchable + open, else the trigger. When searchable the combobox role
+   * lives on the input, so virtual focus must land there, never on the opener.
+   */
+  private _activeHostEl(): HTMLElement | null {
+    if (this.searchable && this.open && this._searchInputEl) return this._searchInputEl;
+    return this._triggerEl ?? null;
+  }
 
   protected override _hasValue(): boolean {
     return this.value !== "";
@@ -381,6 +404,8 @@ export class TulparSelect extends FormFieldBase {
       // and bring the selected/active option into view immediately.
       this._active.applyActiveAttrs();
       this._active.scrollActiveIntoView();
+      // Searchable: DOM focus moves into the in-popup search input (the combobox).
+      if (this.searchable) this._searchInputEl?.focus();
     });
   }
 
@@ -537,6 +562,14 @@ export class TulparSelect extends FormFieldBase {
     this.requestUpdate();
   };
 
+  // ── Search (searchable mode) ──────────────────────────────────────────────
+  // STUBS — the full filter wiring (re-seed active, key routing) lands in Task
+  // 3.3; these minimal handlers exist so the search input renders + compiles.
+  private _onSearchInput = (e: Event): void => {
+    this._query = (e.target as HTMLInputElement).value;
+  };
+  private _onSearchKeydown = (_e: KeyboardEvent): void => {};
+
   /**
    * Clear handler: must NOT open the listbox (stop the click reaching the
    * trigger), reset the value through the single commit path, and keep keyboard
@@ -591,6 +624,47 @@ export class TulparSelect extends FormFieldBase {
         ></path>
       </svg>
     </button>`;
+  }
+
+  /**
+   * Render the sticky in-popup search input (searchable mode only). The combobox
+   * role lives here while searchable + open — the trigger becomes a plain opener.
+   */
+  private _renderSearch(): TemplateResult | typeof nothing {
+    if (!this.searchable) return nothing;
+    return html`<div class="select-search">
+      <span class="select-search-icon" aria-hidden="true">
+        <svg viewBox="0 0 16 16" width="16" height="16" fill="none">
+          <circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5"></circle>
+          <path
+            d="M11 11 L14 14"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+          ></path>
+        </svg>
+      </span>
+      <input
+        class="select-search-input"
+        type="text"
+        role="combobox"
+        autocomplete="off"
+        aria-autocomplete="list"
+        aria-expanded="true"
+        aria-controls=${this._listboxId}
+        aria-label=${this._searchAriaLabel()}
+        placeholder=${this.searchPlaceholder}
+        .value=${this._query}
+        @input=${this._onSearchInput}
+        @keydown=${this._onSearchKeydown}
+      />
+    </div>`;
+  }
+
+  /** Accessible name for the search input, derived from the field label when present. */
+  private _searchAriaLabel(): string {
+    const base = this.label ?? this.querySelector('[slot="label"]')?.textContent?.trim() ?? "";
+    return base ? `Search ${base}` : "Search";
   }
 
   private _renderStatusRow(hasErrorSlot: boolean): TemplateResult | typeof nothing {
@@ -654,6 +728,7 @@ export class TulparSelect extends FormFieldBase {
       @click=${this._onListboxClick}
       @pointerover=${this._onListboxPointerOver}
     >
+      ${this._renderSearch()}
       <div class="select-options" ?hidden=${!showOptions}>
         ${this.options != null ? this._renderDataOptions() : nothing}
         <div class="slotted-options" ?hidden=${this.options != null}>
@@ -673,7 +748,7 @@ export class TulparSelect extends FormFieldBase {
         <div
           class="select-trigger"
           id="control"
-          role="combobox"
+          role=${this.searchable ? "button" : "combobox"}
           tabindex=${this.disabled ? -1 : 0}
           aria-haspopup="listbox"
           aria-expanded=${this.open ? "true" : "false"}
