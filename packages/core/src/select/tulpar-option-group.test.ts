@@ -64,4 +64,14 @@ describe("tulpar-option-group", () => {
     expect(el.disabled).to.equal(true);
     expect(el.hasAttribute("disabled")).to.equal(true);
   });
+
+  it("the [hidden] attribute visually hides the group (all options filtered out)", async () => {
+    const el = await fixture<TulparOptionGroup>(
+      html`<tulpar-option-group label="G"></tulpar-option-group>`,
+    );
+    expect(getComputedStyle(el).display).to.not.equal("none");
+    el.hidden = true;
+    await el.updateComplete;
+    expect(getComputedStyle(el).display).to.equal("none");
+  });
 });

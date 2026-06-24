@@ -103,4 +103,14 @@ describe("tulpar-option", () => {
     await el.updateComplete;
     expect(el.renderRoot.querySelector("mark")).to.equal(null);
   });
+
+  it("the [hidden] attribute visually hides the option (filter no-match)", async () => {
+    const el = await fixture<TulparOption>(
+      html`<tulpar-option value="a" label="Apple"></tulpar-option>`,
+    );
+    expect(getComputedStyle(el).display).to.not.equal("none");
+    el.hidden = true;
+    await el.updateComplete;
+    expect(getComputedStyle(el).display).to.equal("none");
+  });
 });

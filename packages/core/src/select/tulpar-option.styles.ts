@@ -63,6 +63,13 @@ export const optionStyles = css`
     transition: background 90ms ease;
   }
 
+  /* The Select sets the hidden attribute on filtered-out options (searchable
+     no-match). A custom element's :host display rule overrides the UA hidden
+     default, so restore it explicitly — else filtered rows would stay visible. */
+  :host([hidden]) {
+    display: none;
+  }
+
   /* ── Per-size geometry ───────────────────────────────────────────────────
      The Select stamps data-size to match its own size (xs–xl). Rows run a touch
      shorter than the trigger of the same size. */

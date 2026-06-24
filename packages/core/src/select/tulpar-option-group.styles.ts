@@ -20,6 +20,13 @@ export const optionGroupStyles = css`
     display: block;
   }
 
+  /* The Select sets the hidden attribute on a group whose every option is
+     filtered out (searchable no-match). :host display overrides the UA hidden
+     default, so restore it explicitly — else an emptied group header lingers. */
+  :host([hidden]) {
+    display: none;
+  }
+
   /* Spacing BETWEEN groups (not before the first one — the panel gutter covers
      that). A hairline-free gap reads cleaner than a divider at this density. */
   :host + :host {
