@@ -120,6 +120,7 @@ export type {
 export { TulparSelectComponent } from "./select/tulpar-select.component";
 export type {
   SelectChangeDetail,
+  SelectOptions,
   FieldSize as SelectFieldSize,
   FieldVariant as SelectFieldVariant,
   LabelPosition as SelectLabelPosition,
