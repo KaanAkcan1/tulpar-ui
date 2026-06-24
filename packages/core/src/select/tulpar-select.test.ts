@@ -746,3 +746,41 @@ describe("tulpar-select — searchable (filtering)", () => {
     );
   });
 });
+
+describe("tulpar-select — searchable (no-match status + group hide)", () => {
+  it("shows the no-match row when the query matches nothing", async () => {
+    const opts: SelectOptions = [{ value: "a", label: "Apple" }];
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${opts} searchable open></tulpar-select>`,
+    );
+    const input = el.renderRoot.querySelector<HTMLInputElement>(".select-search-input")!;
+    input.value = "zzz";
+    input.dispatchEvent(new Event("input"));
+    await el.updateComplete;
+    const row = el.renderRoot.querySelector('.select-status[data-kind="no-match"]');
+    expect(row).to.not.equal(null);
+    expect(row?.getAttribute("role")).to.equal("status");
+  });
+
+  it("empty (no options at all) still shows the empty row, not no-match", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${[]} searchable open></tulpar-select>`,
+    );
+    await el.updateComplete;
+    expect(el.renderRoot.querySelector('.select-status[data-kind="empty"]')).to.not.equal(null);
+    expect(el.renderRoot.querySelector('.select-status[data-kind="no-match"]')).to.equal(null);
+  });
+
+  it("hides a group whose every option is filtered out", async () => {
+    const opts: SelectOptions = [{ label: "Fruit", options: [{ value: "a", label: "Apple" }] }];
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${opts} searchable open></tulpar-select>`,
+    );
+    const input = el.renderRoot.querySelector<HTMLInputElement>(".select-search-input")!;
+    input.value = "zzz";
+    input.dispatchEvent(new Event("input"));
+    await el.updateComplete;
+    const group = el.renderRoot.querySelector("tulpar-option-group") as HTMLElement;
+    expect(group.hidden).to.equal(true);
+  });
+});

@@ -411,6 +411,15 @@ export const selectStyles = css`
     color: var(--tulpar-input-message-error, #b91c1c);
   }
 
+  /* No-match (search came up empty) reads like the empty row — muted, centered —
+     but is a DISTINCT kind so consumers/tests can target it and slot a custom
+     message. A touch tighter vertically than the no-options empty row since the
+     sticky search input already occupies the top. */
+  .select-status[data-kind="no-match"] {
+    color: var(--tulpar-color-text-muted, #737373);
+    padding-block: 1.5rem;
+  }
+
   /* ============================================================
    * Reduced motion — opacity-only enter; chevron snaps (no rotate transition).
    * ============================================================ */

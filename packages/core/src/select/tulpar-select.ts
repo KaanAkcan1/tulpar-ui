@@ -796,7 +796,22 @@ export class TulparSelect extends FormFieldBase {
         <span class="select-status-text"><slot name="error">${this.error}</slot></span>
       </div>`;
     }
-    if (this._collection().items.length === 0) {
+    const items = this._collection().items;
+    const f = this._filterResult;
+    // No-match (searchable, non-empty query, options exist but none match) reads
+    // BEFORE empty: an emptied filter is distinct from a Select with no options.
+    if (
+      this.searchable &&
+      this._query.trim() !== "" &&
+      items.length > 0 &&
+      f &&
+      f.matched.every((m) => !m)
+    ) {
+      return html`<div class="select-status" data-kind="no-match" role="status">
+        <span class="select-status-text"><slot name="no-match">${this.noMatchText}</slot></span>
+      </div>`;
+    }
+    if (items.length === 0) {
       return html`<div class="select-status" data-kind="empty" role="status">
         <span class="select-status-text"><slot name="empty">${this.emptyText}</slot></span>
       </div>`;
