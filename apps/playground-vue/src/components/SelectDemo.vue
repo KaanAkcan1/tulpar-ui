@@ -16,10 +16,18 @@
  *  9. Listbox states    — empty · loading · error.
  * 10. Long list (30+ → scroll/flip-up) + long labels (truncate). Realistic data
  *     (countries + frameworks + timezones).
+ * 11. Data-prop authoring — options=[…] flat + nested groups/descriptions, shown
+ *     next to the equivalent slotted authoring (prop wins).
+ * 12. Searchable long list — searchable over a long data-prop list; highlight,
+ *     no-match row, search-placeholder + no-match-text overrides.
+ * 13. Data-mode + searchable — combined (grouped data-prop + searchable).
+ * 14. Slotted + searchable — filter over slotted children (highlight on plain
+ *     text labels, skipped on rich labels; filter still applies).
+ * 15. Accessibility.
  * ════════════════════════════════════════════════════════════════════════════ */
 import { ref } from "vue";
 import { TulparSelect, TulparOption, TulparOptionGroup } from "@tulpar-ui/vue";
-import type { FieldVariant, FieldSize, LabelPosition } from "@tulpar-ui/vue";
+import type { FieldVariant, FieldSize, LabelPosition, SelectOptions } from "@tulpar-ui/vue";
 
 // ─── Code snippet strings ─────────────────────────────────────────────────────
 
@@ -100,6 +108,42 @@ const longCode = `// 30+ options → the listbox scrolls and flips above the tri
                 :value="c.code" :label="c.name" />
 </TulparSelect>`;
 
+const dataPropCode = `// Author options from a typed array — bind :options as a PROPERTY.
+// SelectOption = { value; label; disabled?; description? }
+// SelectOptionGroup = { label; disabled?; options[] }   (prop wins over slot)
+const flatOptions: SelectOptions = [
+  { value: 'react', label: 'React' },
+  { value: 'svelte', label: 'Svelte', disabled: true },
+];
+const groupedOptions: SelectOptions = [
+  { label: 'Frontend', options: [
+      { value: 'react', label: 'React', description: 'Meta · component-based UI' } ] },
+  { label: 'Deprecated', disabled: true, options: [
+      { value: 'backbone', label: 'Backbone', description: 'Legacy MVC' } ] },
+];
+
+<TulparSelect :options="flatOptions"    label="Framework" placeholder="Choose…" />
+<TulparSelect :options="groupedOptions" label="Stack"     placeholder="Choose…" />`;
+
+const searchCode = `// searchable → sticky in-popup search. Filter is diacritic- & Turkish-insensitive
+// (type 'istanbul' to match 'İstanbul'); the matched run is highlighted; an empty
+// result shows a dedicated no-match row. search-placeholder + no-match-text override.
+<TulparSelect :options="cities" searchable label="City"
+              placeholder="Select a city" />
+
+<TulparSelect :options="cities" searchable label="City"
+              search-placeholder="Filter cities…" no-match-text="No city matches" />`;
+
+const dataSearchCode = `// data-mode + searchable combined: grouped options + in-popup filter.
+<TulparSelect :options="groupedCities" searchable clearable
+              label="Destination" placeholder="Search a city" />`;
+
+const slottedSearchCode = `// searchable also filters SLOTTED children. Highlight is applied to plain text
+// labels only — rich (slotted) labels filter but are not wrapped in <mark>.
+<TulparSelect searchable label="Country" placeholder="Search a country">
+  <TulparOption v-for="c in countries" :key="c.code" :value="c.code" :label="c.name" />
+</TulparSelect>`;
+
 // ─── Realistic data ───────────────────────────────────────────────────────────
 
 interface Country {
@@ -146,6 +190,93 @@ const longLabels: Country[] = [
   { code: "congo", name: "Democratic Republic of the Congo (Kinshasa) — Central Africa" },
   { code: "uk-long", name: "United Kingdom of Great Britain and Northern Ireland" },
   { code: "venezuela", name: "Bolivarian Republic of Venezuela — South American Federation" },
+];
+
+// ─── Data-prop sources (the `options` array form — no slotted children) ─────────
+
+const dataFlat: SelectOptions = [
+  { value: "react", label: "React" },
+  { value: "angular", label: "Angular" },
+  { value: "vue", label: "Vue" },
+  { value: "svelte", label: "Svelte", disabled: true },
+  { value: "solid", label: "Solid" },
+  { value: "qwik", label: "Qwik" },
+];
+
+const dataGrouped: SelectOptions = [
+  {
+    label: "Frontend",
+    options: [
+      { value: "react", label: "React", description: "Meta · component-based UI" },
+      { value: "angular", label: "Angular", description: "Google · opinionated full-stack" },
+      { value: "vue", label: "Vue", description: "Evan You · progressive framework" },
+    ],
+  },
+  {
+    label: "Backend",
+    options: [
+      { value: "node", label: "Node.js", description: "Event-driven JS runtime" },
+      { value: "django", label: "Django", description: "Python · batteries included" },
+      { value: "rails", label: "Ruby on Rails", description: "Convention over configuration" },
+    ],
+  },
+  {
+    label: "Deprecated",
+    disabled: true,
+    options: [
+      { value: "backbone", label: "Backbone", description: "Legacy MVC" },
+      { value: "ember-old", label: "Ember (classic)", description: "Pre-Octane" },
+    ],
+  },
+];
+
+// Long flat data-prop list with Turkish + Latin diacritics so diacritic-
+// insensitive search is demonstrable (type "istanbul" → İstanbul, "munchen" → München).
+const dataCities: SelectOptions = [
+  { value: "ist", label: "İstanbul" },
+  { value: "ank", label: "Ankara" },
+  { value: "izm", label: "İzmir" },
+  { value: "brs", label: "Bursa" },
+  { value: "ant", label: "Antalya" },
+  { value: "adn", label: "Adana" },
+  { value: "kon", label: "Konya" },
+  { value: "gaz", label: "Gaziantep" },
+  { value: "ber", label: "Berlin" },
+  { value: "mun", label: "München" },
+  { value: "par", label: "Paris" },
+  { value: "mar", label: "Marseille" },
+  { value: "mad", label: "Madrid" },
+  { value: "bcn", label: "Barcelona" },
+  { value: "rom", label: "Roma" },
+  { value: "mil", label: "Milano" },
+  { value: "ams", label: "Amsterdam" },
+  { value: "cph", label: "København" },
+  { value: "sto", label: "Stockholm" },
+  { value: "osl", label: "Oslo" },
+  { value: "zur", label: "Zürich" },
+  { value: "vie", label: "Wien" },
+  { value: "lis", label: "Lisboa" },
+  { value: "dub", label: "Dublin" },
+];
+
+const dataGroupedCities: SelectOptions = [
+  {
+    label: "Türkiye",
+    options: [
+      { value: "ist", label: "İstanbul", description: "Marmara" },
+      { value: "ank", label: "Ankara", description: "İç Anadolu" },
+      { value: "izm", label: "İzmir", description: "Ege" },
+    ],
+  },
+  {
+    label: "Europe",
+    options: [
+      { value: "ber", label: "Berlin", description: "Germany" },
+      { value: "mun", label: "München", description: "Germany" },
+      { value: "par", label: "Paris", description: "France" },
+      { value: "zur", label: "Zürich", description: "Switzerland" },
+    ],
+  },
 ];
 
 const europe = countries.slice(0, 8);
@@ -628,9 +759,211 @@ const pgWarn = ref(false);
       <pre class="code"><code>{{ longCode }}</code></pre>
     </section>
 
-    <!-- ── 11. Accessibility ──────────────────────────────────────────────── -->
+    <!-- ── 11. Data-prop authoring ────────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">11. Accessibility</h2>
+      <h2 class="section-title">11. Data-prop authoring</h2>
+      <p class="section-desc">
+        Author options from a typed <code class="inline-code">:options</code> array (bound as a
+        property) instead of slotting <code class="inline-code">TulparOption</code> children.
+        Entries are <code class="inline-code">value · label · disabled? · description?</code>; an
+        entry with a <code class="inline-code">label</code> + nested
+        <code class="inline-code">options[]</code>
+        renders a group. The prop and the slotted form render identically — and the prop wins when
+        both are set.
+      </p>
+      <div class="dual-grid">
+        <div class="dual-card">
+          <div class="dual-head">:options data-prop — flat</div>
+          <div class="dual-body">
+            <TulparSelect
+              class="field"
+              :options="dataFlat"
+              label="Framework"
+              placeholder="Choose a framework"
+            />
+          </div>
+        </div>
+        <div class="dual-card">
+          <div class="dual-head">Equivalent slotted authoring</div>
+          <div class="dual-body">
+            <TulparSelect class="field" label="Framework" placeholder="Choose a framework">
+              <TulparOption
+                v-for="f in frameworks"
+                :key="f.value"
+                :value="f.value"
+                :label="f.label"
+                :disabled="f.value === 'svelte'"
+              />
+            </TulparSelect>
+          </div>
+        </div>
+      </div>
+      <div class="dual-grid" style="margin-top: 16px">
+        <div class="dual-card">
+          <div class="dual-head">:options — nested groups + descriptions</div>
+          <div class="dual-body">
+            <TulparSelect
+              class="field"
+              :options="dataGrouped"
+              label="Stack"
+              placeholder="Choose a technology"
+            />
+          </div>
+        </div>
+        <div class="dual-card">
+          <div class="dual-head">Equivalent slotted groups</div>
+          <div class="dual-body">
+            <TulparSelect class="field" label="Stack" placeholder="Choose a technology">
+              <TulparOptionGroup label="Frontend">
+                <TulparOption value="react" label="React" description="Meta · component-based UI" />
+                <TulparOption
+                  value="angular"
+                  label="Angular"
+                  description="Google · opinionated full-stack"
+                />
+                <TulparOption
+                  value="vue"
+                  label="Vue"
+                  description="Evan You · progressive framework"
+                />
+              </TulparOptionGroup>
+              <TulparOptionGroup label="Deprecated" disabled>
+                <TulparOption value="backbone" label="Backbone" description="Legacy MVC" />
+                <TulparOption value="ember-old" label="Ember (classic)" description="Pre-Octane" />
+              </TulparOptionGroup>
+            </TulparSelect>
+          </div>
+        </div>
+      </div>
+      <p
+        style="
+          margin: 14px 0 0;
+          font-size: 13px;
+          color: var(--tulpar-color-text-secondary, #57534e);
+        "
+      >
+        The "Deprecated" group sets <code class="inline-code">disabled: true</code> — its header
+        dims and every child option is non-selectable.
+      </p>
+      <pre class="code"><code>{{ dataPropCode }}</code></pre>
+    </section>
+
+    <!-- ── 12. Searchable ─────────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">12. Searchable</h2>
+      <p class="section-desc">
+        <code class="inline-code">searchable</code> adds a sticky in-popup search input. Filtering
+        is diacritic- and Turkish-insensitive (type <code class="inline-code">istanbul</code> to
+        match <em>İstanbul</em>, <code class="inline-code">munchen</code> to match
+        <em>München</em>), the matched run is <strong>highlighted</strong>, and an empty result
+        shows a dedicated no-match row. <code class="inline-code">search-placeholder</code> and
+        <code class="inline-code">no-match-text</code> customise the copy.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">default</span>
+          <div class="row-items">
+            <TulparSelect
+              class="field"
+              :options="dataCities"
+              searchable
+              label="City"
+              placeholder="Select a city"
+            />
+          </div>
+        </div>
+        <div class="demo-row">
+          <span class="row-label">overrides</span>
+          <div class="row-items">
+            <TulparSelect
+              class="field"
+              :options="dataCities"
+              searchable
+              label="City"
+              placeholder="Select a city"
+              search-placeholder="Filter cities…"
+              no-match-text="No city matches your search"
+            />
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ searchCode }}</code></pre>
+    </section>
+
+    <!-- ── 13. Data-mode + searchable ─────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">13. Data-mode + searchable</h2>
+      <p class="section-desc">
+        The two combine: a grouped <code class="inline-code">:options</code> array with
+        <code class="inline-code">searchable</code> on. Typing filters across all groups; a group
+        whose every option is filtered out is hidden entirely. Add
+        <code class="inline-code">clearable</code> to reset the committed value.
+      </p>
+      <div class="preview">
+        <TulparSelect
+          class="field field--lg"
+          :options="dataGroupedCities"
+          searchable
+          clearable
+          label="Destination"
+          placeholder="Search a city"
+        />
+      </div>
+      <pre class="code"><code>{{ dataSearchCode }}</code></pre>
+    </section>
+
+    <!-- ── 14. Slotted + searchable ───────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">14. Slotted + searchable</h2>
+      <p class="section-desc">
+        <code class="inline-code">searchable</code> filters slotted
+        <code class="inline-code">TulparOption</code> children too. The match highlight is applied
+        to plain text labels only — rich (slotted) labels still filter but are not wrapped in
+        <code class="inline-code">&lt;mark&gt;</code>.
+      </p>
+      <div class="dual-grid">
+        <div class="dual-card">
+          <div class="dual-head">Plain text labels (highlighted)</div>
+          <div class="dual-body">
+            <TulparSelect class="field" searchable label="Country" placeholder="Search a country">
+              <TulparOption v-for="c in countries" :key="c.code" :value="c.code" :label="c.name" />
+            </TulparSelect>
+          </div>
+        </div>
+        <div class="dual-card">
+          <div class="dual-head">Rich slotted labels (filter, no highlight)</div>
+          <div class="dual-body">
+            <TulparSelect class="field" searchable label="Language" placeholder="Search a language">
+              <TulparOption value="ts">
+                <template #icon><span aria-hidden="true">🟦</span></template>
+                TypeScript
+                <template #description>Typed superset of JavaScript</template>
+              </TulparOption>
+              <TulparOption value="js">
+                <template #icon><span aria-hidden="true">🟨</span></template>
+                JavaScript
+                <template #description>The language of the web</template>
+              </TulparOption>
+              <TulparOption value="py">
+                <template #icon><span aria-hidden="true">🐍</span></template>
+                Python
+                <template #description>Batteries included</template>
+              </TulparOption>
+              <TulparOption value="rs">
+                <template #icon><span aria-hidden="true">🦀</span></template>
+                Rust
+                <template #description>Fearless concurrency</template>
+              </TulparOption>
+            </TulparSelect>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ slottedSearchCode }}</code></pre>
+    </section>
+
+    <!-- ── 15. Accessibility ──────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">15. Accessibility</h2>
       <div class="a11y-notes">
         <div class="a11y-note">
           <strong>Virtual focus.</strong> DOM focus stays on the trigger (<code class="inline-code"
@@ -647,6 +980,11 @@ const pgWarn = ref(false);
           <strong>Light dismiss.</strong> Outside-click, scroll, and resize close the listbox; a
           click inside the listbox does not. Disabled options are skipped by keyboard nav and ignore
           clicks.
+        </div>
+        <div class="a11y-note">
+          <strong>Searchable.</strong> When <code class="inline-code">searchable</code> is on the
+          combobox role moves to the in-popup input; focus lands there on open and returns to the
+          trigger on close. Escape clears a non-empty query first, then reverts and closes.
         </div>
         <div class="a11y-note">
           <strong>Dark mode.</strong> Trigger, listbox, every variant, and all status rows flip
