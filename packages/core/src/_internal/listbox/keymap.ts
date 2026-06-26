@@ -72,6 +72,10 @@ export function resolveKeyAction(key: string, state: KeyState): KeyAction {
       case "ArrowUp":
         return { type: "open", preventDefault: true };
     }
+    // Closed-state printable → open + typeahead. NOTE: in `searchable` mode the host
+    // opens but skips the typeahead side-effect and moves focus to the search input
+    // on the next frame, so this first character is intentionally dropped (the user
+    // continues typing into the now-focused input). Benign, documented seam.
     if (isTypeaheadChar(key, state)) return { type: "open-typeahead", preventDefault: false };
     return NONE;
   }

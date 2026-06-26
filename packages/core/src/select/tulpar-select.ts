@@ -767,7 +767,7 @@ export class TulparSelect extends FormFieldBase {
         role="combobox"
         autocomplete="off"
         aria-autocomplete="list"
-        aria-expanded="true"
+        aria-expanded=${this.open ? "true" : "false"}
         aria-controls=${this._listboxId}
         aria-label=${this._searchAriaLabel()}
         placeholder=${this.searchPlaceholder}
