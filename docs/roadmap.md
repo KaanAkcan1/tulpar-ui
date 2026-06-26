@@ -5,7 +5,7 @@
 > informed the ordering. Update as waves complete. Purpose: stop re-researching the landscape every
 > planning session — the sequence and the "why" live here.
 
-**Last updated:** 2026-06-24
+**Last updated:** 2026-06-26
 
 ---
 
@@ -24,7 +24,7 @@
 
 ---
 
-## 2. Current state (shipped, as of v0.14)
+## 2. Current state (shipped, as of v0.15)
 
 | Family | Components | Version |
 |---|---|---|
@@ -35,6 +35,7 @@
 | Feedback | Toast, Message (imperative service + `<tulpar-toaster>`) | v0.12 |
 | Display & status | Tag, Badge, Chip, Avatar, Skeleton, Spinner, Progress (+ `_internal/tone`) | v0.13 |
 | Data entry (Wave 2) | **Select** (`<tulpar-select>` + `<tulpar-option>` + `<tulpar-option-group>`; `_internal/listbox` foundation) | v0.14 |
+| Data entry (Wave 2) | Select **completion**: `options` data-prop (`SelectOption`/`SelectOptionGroup`) + opt-in `searchable` in-popup filter (Turkish/diacritic-insensitive, match highlight, no-match row); option-group `disabled` parity; `_internal/listbox/filter` | v0.15 |
 | Shell | tulpar-shell, topbar, sidenav, nav-item | v0.6–v0.8 |
 | Infra | 3-layer multi-brand tokens; conventional tone system `neutral/info/success/warning/danger/custom`; `_internal` layering rule; primitive-token lint; CI/CD; changesets | v0.6 |
 
@@ -83,11 +84,13 @@ AG-Grid destination. Tier: **A** = grid-critical/table-stakes · **B** = complet
   Tag · Badge · Chip · Avatar · Skeleton · Spinner · Progress.
   _Cheap, high-frequency; immediate enterprise completeness; double as grid cell renderers + loading states._
 - **Wave 2 — Overlay-anchored data entry & menus** (rides the v0.11 engine) `[IN PROGRESS]`
-  **Select** `[DONE — v0.14: single select; established `_internal/listbox` = collection + active-index + typeahead + keymap]` →
+  **Select** `[DONE — v0.14: single select; established `_internal/listbox` = collection + active-index + typeahead + keymap]`
+  `[Select COMPLETE — v0.15: `options` data-prop + opt-in `searchable` in-popup filter (`_internal/listbox/filter` = 1:1 Turkish/diacritic fold + matcher; `hidden`-aware nav; keymap `clear-query`); option-group `disabled` parity]` →
   Combobox → MultiSelect · Menu/Dropdown (+Context) · DatePicker.
-  _The shared listbox internal is now in place; ChipGroup, the `options` data-prop, Combobox (free-text filter),
-  MultiSelect, virtualization, in-popup search, and a mobile-native `<select>` fallback are the remaining Wave-2 work
-  (deferred from v0.14, binding)._
+  _The shared listbox internal (incl. filter + hidden-aware nav) is in place. Remaining Wave-2 work: ChipGroup,
+  Combobox (free-text filter — reuses `filter.ts` + a `filterFn` hook), MultiSelect, Menu/Dropdown (+Context),
+  DatePicker, virtualization, and a mobile-native `<select>` fallback. (`options` data-prop + in-popup search shipped
+  in v0.15; custom `filterFn` + description-matching deferred to Combobox.)_
 - **Wave 3 — Modal & disclosure**
   Dialog (**+ imperative service**, mirrors Toast) · Drawer/Sheet · Tabs · Accordion · Alert (in-page).
 - **Wave 4 — Input family completion**
