@@ -93,17 +93,27 @@ jobs:
         if: ${{ !cancelled() }}
         run: pnpm --filter @tulpar-ui/shell exec wtr-strict --config web-test-runner.engines.config.js
 
+      - name: Test test-utils (all engines)
+        if: ${{ !cancelled() }}
+        run: pnpm --filter @tulpar-ui/test-utils run test:ci
+
+      # App builds report even when a test step failed, so one run shows every signal.
       - name: Build playground-ng
+        if: ${{ !cancelled() }}
         run: pnpm --filter playground-ng build
 
       - name: Build playground-vue
+        if: ${{ !cancelled() }}
         run: pnpm --filter playground-vue build
 
       # Production bundles must not contain dev warnings (esm-env DEV is false there).
-      # Checked for playground-vue only. playground-ng is deliberately NOT checked:
-      # controller ruling - the Angular CLI does not set the esm-env condition, so dead
-      # warning strings stay in its bundles for now.
+      # Checked for playground-vue only. playground-ng is deliberately NOT checked
+      # (phase 1.1 ruling, owner decision pending): the Angular CLI resolves the
+      # `production` condition, so DEV is false and nothing warns at runtime, but
+      # esbuild does not fold esm-env's re-exported constant, so dead warning
+      # strings stay in its bundle.
       - name: Check playground-vue bundle has no dev warnings
+        if: ${{ !cancelled() }}
         run: |
           if grep -rIl "icon-only/circle buttons require an aria-label" apps/playground-vue/dist; then
             echo "::error::Dev warning strings found in the playground-vue production bundle"
@@ -111,9 +121,11 @@ jobs:
           fi
 
       - name: Build docs (Storybook)
+        if: ${{ !cancelled() }}
         run: pnpm --filter docs build-storybook
 
       - name: Audit production dependencies
+        if: ${{ !cancelled() }}
         run: pnpm audit --prod --audit-level high
 
       - name: Changeset status (informational)
