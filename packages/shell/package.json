@@ -47,9 +47,9 @@
     "sync-exports:check": "tsx ../../scripts/sync-exports.ts . --check",
     "build": "tsx ../../scripts/sync-exports.ts . && vite build",
     "dev": "vite build --watch",
-    "test": "wtr",
-    "test:all-browsers": "wtr && wtr --config web-test-runner.engines.config.js",
-    "test:ci": "wtr --coverage && wtr --config web-test-runner.engines.config.js",
+    "test": "wtr-strict",
+    "test:all-browsers": "wtr-strict && wtr-strict --config web-test-runner.engines.config.js",
+    "test:ci": "wtr-strict --coverage && wtr-strict --config web-test-runner.engines.config.js",
     "test:watch": "wtr --watch"
   },
   "dependencies": {

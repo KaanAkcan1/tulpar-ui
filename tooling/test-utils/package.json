@@ -5,9 +5,17 @@
   "description": "Shared Web Test Runner helpers for Tulpar UI: aria-snapshot command, accessibility assertions, engine known-failure list",
   "license": "MIT",
   "type": "module",
+  "bin": {
+    "wtr-strict": "./bin/wtr-strict.mjs"
+  },
   "exports": {
     ".": "./src/index.ts",
     "./plugin": "./src/aria-snapshot-plugin.ts"
+  },
+  "scripts": {
+    "test": "node bin/wtr-strict.mjs",
+    "test:all-browsers": "node bin/wtr-strict.mjs && node bin/wtr-strict.mjs --config web-test-runner.engines.config.js",
+    "test:ci": "node bin/wtr-strict.mjs && node bin/wtr-strict.mjs --config web-test-runner.engines.config.js"
   },
   "peerDependencies": {
     "@open-wc/testing": "^5.0.0",
@@ -18,8 +26,10 @@
   "devDependencies": {
     "@open-wc/testing": "^5.0.0",
     "@types/mocha": "^10.0.6",
+    "@web/dev-server-esbuild": "^2.0.1",
     "@web/test-runner": "^1.0.1",
     "@web/test-runner-commands": "^1.0.2",
+    "@web/test-runner-playwright": "^1.0.1",
     "playwright": "^1.65.0"
   }
 }
