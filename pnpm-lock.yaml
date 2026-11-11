@@ -119,7 +119,7 @@ importers:
         version: 22.0.0(@angular/common@22.0.0(@angular/core@22.0.0(@angular/compiler@22.0.0)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@22.0.0(@angular/compiler@22.0.0)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/platform-browser@22.0.0(@angular/common@22.0.0(@angular/core@22.0.0(@angular/compiler@22.0.0)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@22.0.0(@angular/compiler@22.0.0)(rxjs@7.8.2)(zone.js@0.15.1)))(rxjs@7.8.2)
       '@tulpar-ui/angular':
         specifier: workspace:*
-        version: link:../../packages/angular
+        version: link:../../packages/angular/dist
       '@tulpar-ui/core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -216,21 +216,21 @@ importers:
   packages/angular:
     dependencies:
       '@tulpar-ui/core':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../core
       '@tulpar-ui/shell':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../shell
       '@tulpar-ui/tokens':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../tokens
     devDependencies:
       '@analogjs/vite-plugin-angular':
         specifier: ^2.9.6
-        version: 2.9.6(4bkfdwjvi7pn4t6hynb72khb3i)
+        version: 2.9.6(yjttjpuaqil2o6e2jcbjanxjdm)
       '@analogjs/vitest-angular':
         specifier: ^2.9.6
-        version: 2.9.6(@analogjs/vite-plugin-angular@2.9.6(4bkfdwjvi7pn4t6hynb72khb3i))(@angular-devkit/architect@0.2202.6(chokidar@5.0.0))(@angular-devkit/schematics@22.0.0(chokidar@5.0.0))(vitest@5.1.0(@types/node@26.6.6)(happy-dom@21.0.4)(vite@8.0.16(@types/node@26.6.6)(esbuild@0.28.2)(less@4.6.4)(sass-embedded@1.104.1)(sass@1.104.1)(tsx@4.22.4)(yaml@2.9.0)))(zone.js@0.15.1)
+        version: 2.9.6(@analogjs/vite-plugin-angular@2.9.6(yjttjpuaqil2o6e2jcbjanxjdm))(@angular-devkit/architect@0.2202.6(chokidar@5.0.0))(@angular-devkit/schematics@22.0.0(chokidar@5.0.0))(vitest@5.1.0(@types/node@26.6.6)(happy-dom@21.0.4)(vite@8.0.16(@types/node@26.6.6)(esbuild@0.28.2)(less@4.6.4)(sass-embedded@1.104.1)(sass@1.104.1)(tsx@4.22.4)(yaml@2.9.0)))(zone.js@0.15.1)
       '@angular/common':
         specifier: ^22.0.0
         version: 22.0.0(@angular/core@22.0.0(@angular/compiler@22.0.0)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2)
@@ -264,12 +264,16 @@ importers:
       vitest:
         specifier: ^5.1.0
         version: 5.1.0(@types/node@26.6.6)(happy-dom@21.0.4)(vite@8.0.16(@types/node@26.6.6)(esbuild@0.28.2)(less@4.6.4)(sass-embedded@1.104.1)(sass@1.104.1)(tsx@4.22.4)(yaml@2.9.0))
+    publishDirectory: dist
 
   packages/core:
     dependencies:
       '@tulpar-ui/tokens':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../tokens
+      esm-env:
+        specifier: ^1.2.2
+        version: 1.2.2
       lit:
         specifier: 'catalog:'
         version: 3.3.3
@@ -281,7 +285,7 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
       '@tulpar-ui/test-utils':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../../tooling/test-utils
       '@types/mocha':
         specifier: ^10.0.6
@@ -310,6 +314,9 @@ importers:
 
   packages/shell:
     dependencies:
+      '@tulpar-ui/tokens':
+        specifier: workspace:^
+        version: link:../tokens
       lit:
         specifier: 'catalog:'
         version: 3.3.3
@@ -321,11 +328,8 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
       '@tulpar-ui/test-utils':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../../tooling/test-utils
-      '@tulpar-ui/tokens':
-        specifier: workspace:*
-        version: link:../tokens
       '@types/mocha':
         specifier: ^10.0.6
         version: 10.0.10
@@ -372,11 +376,14 @@ importers:
   packages/vue:
     dependencies:
       '@tulpar-ui/core':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../core
       '@tulpar-ui/shell':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../shell
+      '@tulpar-ui/tokens':
+        specifier: workspace:^
+        version: link:../tokens
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^6.0.10
@@ -399,9 +406,6 @@ importers:
       vue:
         specifier: ^3.5.0
         version: 3.5.35(typescript@6.0.3)
-      vue-router:
-        specifier: ^4.0.0
-        version: 4.6.4(vue@3.5.35(typescript@6.0.3))
       vue-tsc:
         specifier: ^3.3.14
         version: 3.3.14(typescript@6.0.3)
@@ -4794,6 +4798,9 @@ packages:
       jiti:
         optional: true
 
+  esm-env@1.2.2:
+    resolution: {integrity: sha512-Epxrv+Nr/CaL4ZcFGPJIYLWFom+YeV1DqMLHJoEd9SYRxNbaFruBwfEX/kkHUJf55j2+TUbmDcmuilbP1TmXHA==}
+
   espree@10.4.0:
     resolution: {integrity: sha512-j6PAQ2uUr79PZhBjP5C5fhl8e39FmRnOjsD5lGnWrFU8i2G776tBK7+nP8KuQUTTyAZUwfQqXAgrVH5MbH9CYQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -7846,11 +7853,11 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
 
-  '@analogjs/vite-plugin-angular@2.9.6(4bkfdwjvi7pn4t6hynb72khb3i)':
+  '@analogjs/vite-plugin-angular@2.9.6(yjttjpuaqil2o6e2jcbjanxjdm)':
     dependencies:
       magic-string: 0.30.21
       obug: 2.1.2
-      oxc-parser: 0.121.0(@emnapi/core@2.0.0-beta.2)(@emnapi/runtime@2.0.0-beta.2)
+      oxc-parser: 0.121.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)
       tinyglobby: 0.2.17
     optionalDependencies:
       '@angular/build': 22.2.6(@angular/compiler-cli@22.0.0(@angular/compiler@22.0.0)(typescript@6.0.3))(@angular/compiler@22.0.0)(@angular/core@22.0.0(@angular/compiler@22.0.0)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/platform-browser@22.0.0(@angular/common@22.0.0(@angular/core@22.0.0(@angular/compiler@22.0.0)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@22.0.0(@angular/compiler@22.0.0)(rxjs@7.8.2)(zone.js@0.15.1)))(@types/node@26.6.6)(karma@6.4.4)(less@4.6.4)(ng-packagr@22.0.0(@angular/compiler-cli@22.0.0(@angular/compiler@22.0.0)(typescript@6.0.3))(tslib@2.9.1)(typescript@6.0.3))(postcss@8.5.32)(rollup@4.61.1)(tslib@2.9.1)(tsx@4.22.4)(typescript@6.0.3)(vitest@5.1.0(@types/node@26.6.6)(happy-dom@21.0.4)(vite@8.0.16(@types/node@26.6.6)(esbuild@0.28.2)(less@4.6.4)(sass-embedded@1.104.1)(sass@1.104.1)(tsx@4.22.4)(yaml@2.9.0)))(yaml@2.9.0)
@@ -7859,9 +7866,9 @@ snapshots:
       - '@emnapi/core'
       - '@emnapi/runtime'
 
-  '@analogjs/vitest-angular@2.9.6(@analogjs/vite-plugin-angular@2.9.6(4bkfdwjvi7pn4t6hynb72khb3i))(@angular-devkit/architect@0.2202.6(chokidar@5.0.0))(@angular-devkit/schematics@22.0.0(chokidar@5.0.0))(vitest@5.1.0(@types/node@26.6.6)(happy-dom@21.0.4)(vite@8.0.16(@types/node@26.6.6)(esbuild@0.28.2)(less@4.6.4)(sass-embedded@1.104.1)(sass@1.104.1)(tsx@4.22.4)(yaml@2.9.0)))(zone.js@0.15.1)':
+  '@analogjs/vitest-angular@2.9.6(@analogjs/vite-plugin-angular@2.9.6(yjttjpuaqil2o6e2jcbjanxjdm))(@angular-devkit/architect@0.2202.6(chokidar@5.0.0))(@angular-devkit/schematics@22.0.0(chokidar@5.0.0))(vitest@5.1.0(@types/node@26.6.6)(happy-dom@21.0.4)(vite@8.0.16(@types/node@26.6.6)(esbuild@0.28.2)(less@4.6.4)(sass-embedded@1.104.1)(sass@1.104.1)(tsx@4.22.4)(yaml@2.9.0)))(zone.js@0.15.1)':
     dependencies:
-      '@analogjs/vite-plugin-angular': 2.9.6(4bkfdwjvi7pn4t6hynb72khb3i)
+      '@analogjs/vite-plugin-angular': 2.9.6(yjttjpuaqil2o6e2jcbjanxjdm)
       '@angular-devkit/architect': 0.2202.6(chokidar@5.0.0)
       '@angular-devkit/schematics': 22.0.0(chokidar@5.0.0)
       vitest: 5.1.0(@types/node@26.6.6)(happy-dom@21.0.4)(vite@8.0.16(@types/node@26.6.6)(esbuild@0.28.2)(less@4.6.4)(sass-embedded@1.104.1)(sass@1.104.1)(tsx@4.22.4)(yaml@2.9.0))
@@ -9465,6 +9472,13 @@ snapshots:
       '@tybys/wasm-util': 0.10.2
     optional: true
 
+  '@napi-rs/wasm-runtime@1.2.6(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)':
+    dependencies:
+      '@emnapi/core': 1.10.0
+      '@emnapi/runtime': 1.10.0
+      '@tybys/wasm-util': 0.10.4
+    optional: true
+
   '@napi-rs/wasm-runtime@1.2.6(@emnapi/core@2.0.0-beta.2)(@emnapi/runtime@2.0.0-beta.2)':
     dependencies:
       '@emnapi/core': 2.0.0-beta.2
@@ -9742,9 +9756,9 @@ snapshots:
   '@oxc-parser/binding-openharmony-arm64@0.156.0':
     optional: true
 
-  '@oxc-parser/binding-wasm32-wasi@0.121.0(@emnapi/core@2.0.0-beta.2)(@emnapi/runtime@2.0.0-beta.2)':
+  '@oxc-parser/binding-wasm32-wasi@0.121.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)':
     dependencies:
-      '@napi-rs/wasm-runtime': 1.2.6(@emnapi/core@2.0.0-beta.2)(@emnapi/runtime@2.0.0-beta.2)
+      '@napi-rs/wasm-runtime': 1.2.6(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)
     transitivePeerDependencies:
       - '@emnapi/core'
       - '@emnapi/runtime'
@@ -12048,6 +12062,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  esm-env@1.2.2: {}
+
   espree@10.4.0:
     dependencies:
       acorn: 8.16.0
@@ -13580,7 +13596,7 @@ snapshots:
 
   outdent@0.5.0: {}
 
-  oxc-parser@0.121.0(@emnapi/core@2.0.0-beta.2)(@emnapi/runtime@2.0.0-beta.2):
+  oxc-parser@0.121.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0):
     dependencies:
       '@oxc-project/types': 0.121.0
     optionalDependencies:
@@ -13600,7 +13616,7 @@ snapshots:
       '@oxc-parser/binding-linux-x64-gnu': 0.121.0
       '@oxc-parser/binding-linux-x64-musl': 0.121.0
       '@oxc-parser/binding-openharmony-arm64': 0.121.0
-      '@oxc-parser/binding-wasm32-wasi': 0.121.0(@emnapi/core@2.0.0-beta.2)(@emnapi/runtime@2.0.0-beta.2)
+      '@oxc-parser/binding-wasm32-wasi': 0.121.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)
       '@oxc-parser/binding-win32-arm64-msvc': 0.121.0
       '@oxc-parser/binding-win32-ia32-msvc': 0.121.0
       '@oxc-parser/binding-win32-x64-msvc': 0.121.0

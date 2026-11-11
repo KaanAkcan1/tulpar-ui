@@ -18,12 +18,16 @@
     },
     "./css/tulpar-light.css": "./dist/css/tulpar-light.css",
     "./css/tulpar-dark.css": "./dist/css/tulpar-dark.css",
-    "./css/tulpar.css": "./dist/css/tulpar.css"
+    "./css/tulpar.css": "./dist/css/tulpar.css",
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",
     "README.md",
     "LICENSE"
+  ],
+  "sideEffects": [
+    "**/*.css"
   ],
   "scripts": {
     "prebuild": "tsx build/generate-fallbacks.ts",

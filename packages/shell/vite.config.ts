@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import { externalsFrom } from "../../scripts/vite-externals.ts";
+import { elementChunkFileNames } from "../../scripts/vite-chunks.ts";
 
 /** src/<dir>/index.ts olan her dizin bir entry'dir; _internal hariç. */
 export function scanEntries(srcDir: string): Record<string, string> {
@@ -32,6 +33,8 @@ export default defineConfig({
     // producing a second lit-html instance (INF-2).
     rolldownOptions: {
       external: externalsFrom(resolve(import.meta.dirname, "package.json")),
+      // Element chunks are named tulpar-*.js so `sideEffects` can list them.
+      output: { chunkFileNames: elementChunkFileNames },
     },
   },
   plugins: [

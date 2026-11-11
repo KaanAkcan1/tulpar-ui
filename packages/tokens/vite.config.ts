@@ -14,7 +14,9 @@ export default defineConfig({
     },
     outDir: "dist",
     sourcemap: true,
-    emptyOutDir: false,
+    // Build: start clean so no stale file (e.g. an old .d.ts.map) is published.
+    // Watch: keep dist, predev wrote dist/css before the watcher starts.
+    emptyOutDir: !process.argv.includes("--watch"),
   },
   plugins: [
     dts({

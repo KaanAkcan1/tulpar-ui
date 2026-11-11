@@ -99,13 +99,19 @@
     "./tooltip": {
       "types": "./dist/tooltip/index.d.ts",
       "import": "./dist/tooltip/index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",
     "custom-elements.json",
     "README.md",
     "LICENSE"
+  ],
+  "sideEffects": [
+    "./dist/index.js",
+    "./dist/*/index.js",
+    "./dist/tulpar-*.js"
   ],
   "scripts": {
     "sync-exports": "tsx ../../scripts/sync-exports.ts .",
@@ -118,14 +124,14 @@
     "test:watch": "wtr --watch"
   },
   "dependencies": {
-    "@tulpar-ui/tokens": "workspace:*",
+    "@tulpar-ui/tokens": "workspace:^",
+    "esm-env": "^1.2.2",
     "lit": "catalog:"
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "catalog:",
     "@open-wc/testing": "^5.0.0",
-    "@tulpar-ui/test-utils": "workspace:*",
-    "@tulpar-ui/tokens": "workspace:*",
+    "@tulpar-ui/test-utils": "workspace:^",
     "@types/mocha": "^10.0.6",
     "@web/dev-server-esbuild": "^2.0.1",
     "@web/test-runner": "^1.0.1",

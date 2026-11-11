@@ -4,30 +4,16 @@
   "description": "Angular wrappers for Tulpar UI Web Components",
   "license": "MIT",
   "type": "module",
-  "main": "./dist/fesm2022/tulpar-ui-angular.mjs",
-  "module": "./dist/fesm2022/tulpar-ui-angular.mjs",
-  "types": "./dist/types/tulpar-ui-angular.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/types/tulpar-ui-angular.d.ts",
-      "import": "./dist/fesm2022/tulpar-ui-angular.mjs"
-    }
-  },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ],
   "scripts": {
-    "build": "ng-packagr -p ng-package.json -c tsconfig.json",
+    "build": "ng-packagr -p ng-package.json -c tsconfig.lib.prod.json",
     "dev": "ng-packagr -p ng-package.json -c tsconfig.json --watch",
     "test": "vitest run",
     "test:ci": "vitest run"
   },
   "dependencies": {
-    "@tulpar-ui/core": "workspace:*",
-    "@tulpar-ui/shell": "workspace:*",
-    "@tulpar-ui/tokens": "workspace:*"
+    "@tulpar-ui/core": "workspace:^",
+    "@tulpar-ui/shell": "workspace:^",
+    "@tulpar-ui/tokens": "workspace:^"
   },
   "peerDependencies": {
     "@angular/common": "^22.0.0",
@@ -49,15 +35,14 @@
     "@angular/platform-browser": "^22.0.0",
     "@angular/platform-browser-dynamic": "^22.0.0",
     "@angular/router": "^22.0.0",
-    "@tulpar-ui/core": "workspace:*",
-    "@tulpar-ui/shell": "workspace:*",
-    "@tulpar-ui/tokens": "workspace:*",
     "happy-dom": "^21.0.4",
     "ng-packagr": "^22.0.0",
     "vite": "^8.0.0",
     "vitest": "^5.1.0"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "directory": "dist",
+    "linkDirectory": true
   }
 }

@@ -1,26 +1,18 @@
+import { DEV } from "esm-env";
+
 /**
- * Dev-only console.warn. In production bundles, the conditional is
- * tree-shaken by Vite/Rollup constant folding around `import.meta.env.DEV`
- * and `process.env.NODE_ENV`.
+ * Dev-only console.warn, following Lit's convention (INF-5).
  *
- * Defaults to dev (warning enabled) when neither flag is observable —
- * matches the principle that production must be opted into by a bundler
- * actively setting `NODE_ENV=production` or replacing `import.meta.env.DEV`
- * with `false`.
+ * `DEV` comes from `esm-env`, which resolves through the consumer's export
+ * conditions: `development` → `true` (bundler dev servers, Web Test Runner),
+ * `production` → `false` (production builds, where the body and the call are
+ * dropped as dead code). Without either condition (an unbundled CDN script)
+ * it falls back to `process.env.NODE_ENV`, so warnings stay off.
+ *
+ * Library source never reads `import.meta.env` or `process.env` directly.
  */
 export function warnDev(msg: string, ctx?: unknown): void {
-  const metaEnv =
-    typeof import.meta !== "undefined"
-      ? (import.meta as unknown as { env?: { DEV?: boolean; PROD?: boolean } }).env
-      : undefined;
-  const proc = (globalThis as unknown as { process?: { env?: { NODE_ENV?: string } } }).process;
-  const nodeEnv = proc?.env?.NODE_ENV;
-
-  const isProd = metaEnv?.PROD === true || nodeEnv === "production";
-  const isDev =
-    metaEnv?.DEV === true || (nodeEnv !== undefined && nodeEnv !== "production") || !isProd;
-
-  if (isDev && !isProd) {
+  if (DEV) {
     if (ctx === undefined) console.warn(msg);
     else console.warn(msg, ctx);
   }

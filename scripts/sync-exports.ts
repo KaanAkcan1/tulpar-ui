@@ -18,7 +18,7 @@ const pkgDir = resolve(process.cwd(), dirArg);
 const pkgPath = resolve(pkgDir, "package.json");
 const srcDir = resolve(pkgDir, "src");
 
-type ExportEntry = { types: string; import: string };
+type ExportEntry = { types: string; import: string } | string;
 const exportsMap: Record<string, ExportEntry> = {
   ".": { types: "./dist/index.d.ts", import: "./dist/index.js" },
 };
@@ -31,6 +31,8 @@ for (const d of readdirSync(srcDir, { withFileTypes: true })) {
     import: `./dist/${d.name}/index.js`,
   };
 }
+// Tools (bundler plugins, CEM consumers) read the manifest through `exports`.
+exportsMap["./package.json"] = "./package.json";
 
 const pkg = JSON.parse(readFileSync(pkgPath, "utf8"));
 const drift = JSON.stringify(exportsMap) !== JSON.stringify(pkg.exports);
