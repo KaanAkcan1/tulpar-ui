@@ -49,7 +49,7 @@
   },
   "lint-staged": {
     "**/*.{ts,vue}": [
-      "eslint --fix",
+      "eslint -c eslint.fix-safe.config.js --pass-on-unpruned-suppressions --fix",
       "prettier --write"
     ],
     "**/*.{js,json,md,css,html}": "prettier --write"
