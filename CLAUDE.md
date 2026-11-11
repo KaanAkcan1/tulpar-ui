@@ -6,7 +6,7 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 **Tulpar UI** — A from-scratch design system that ships as Web Components (Lit-based) with idiomatic Angular and Vue wrappers. The goal is a single source of truth for UI behavior + rendering, consumable from any framework.
 
-**Status:** v0.5 (input family) complete; v0.6 in progress — shell family (@tulpar-ui/shell) + infra hardening. Ships Button/ButtonGroup + TextInput/NumberInput/Textarea.
+**Status (2026-11-11):** v0.1–v0.15 are on `main` (24 core elements + 5 shell elements, see below). npm still publishes 0.6.0 — the pending changesets have not been released. A retrospective review (2026-11-11) found 181 findings (21 Blocker); the next work is **phase 1: hardening + token foundation**, before any new component. See "Current phase plan" below.
 
 **Owner:** Kaan Akcan. This is a personal project being built gradually — possible commercial product down the line.
 
@@ -14,23 +14,28 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 Always read these before making architectural decisions or expanding scope:
 
-- **Spec:** [`docs/superpowers/specs/2026-06-05-tulpar-ui-v0.1-button-design.md`](docs/superpowers/specs/2026-06-05-tulpar-ui-v0.1-button-design.md)
-- **Implementation plan:** [`docs/superpowers/plans/2026-06-05-tulpar-ui-v0.1-button-implementation.md`](docs/superpowers/plans/2026-06-05-tulpar-ui-v0.1-button-implementation.md)
+- **Roadmap (wave plan + locked decisions):** [`docs/roadmap.md`](docs/roadmap.md)
+- **Retrospective review v0.1→v0.15 (known defects, owner decisions):** [`docs/reviews/2026-11-11-retrospective/README.md`](docs/reviews/2026-11-11-retrospective/README.md) — agent reports + `findings.json` in `ekler/`
+- **Foundation spec (v0.1):** [`docs/superpowers/specs/2026-06-05-tulpar-ui-v0.1-button-design.md`](docs/superpowers/specs/2026-06-05-tulpar-ui-v0.1-button-design.md)
+- **Per-version specs and plans:** `docs/superpowers/specs/` and `docs/superpowers/plans/` (latest: v0.14 Select, v0.15 Select completion)
 - **Shell spec (v0.6b):** [`docs/superpowers/specs/2026-06-10-tulpar-ui-v0.6-shell-design.md`](docs/superpowers/specs/2026-06-10-tulpar-ui-v0.6-shell-design.md)
-- **Infra plan (v0.6a):** [`docs/superpowers/plans/2026-06-10-tulpar-ui-v0.6a-infra-quality.md`](docs/superpowers/plans/2026-06-10-tulpar-ui-v0.6a-infra-quality.md)
-- **Shell plan (v0.6b):** [`docs/superpowers/plans/2026-06-10-tulpar-ui-v0.6b-shell-family.md`](docs/superpowers/plans/2026-06-10-tulpar-ui-v0.6b-shell-family.md)
 - **Internal layering:** [`docs/architecture/internal-layering.md`](docs/architecture/internal-layering.md)
 
-The plan is the working contract. Follow it task by task. If a question is unclear, the spec is authoritative.
+The plan is the working contract. Follow it task by task. If a question is unclear, the spec is authoritative. **Known spec defect:** the v0.14/v0.15 Select specs mandate the search input inside `role=listbox` (invalid ARIA, retro DOC-9) — fix the spec before the code.
 
 ## Architecture (Quick Reference)
 
 ```
 @tulpar-ui/tokens   → TS source of truth, generates CSS custom properties (3-layer multi-brand)
-@tulpar-ui/core     → Lit Web Components — <tulpar-button>, <tulpar-button-group>, <tulpar-text-input>, <tulpar-number-input>, <tulpar-textarea> (source of truth)
-@tulpar-ui/angular  → Signal-based Angular wrapper (<tulpar-button-ng>, <tulpar-text-input-ng>, …)
-@tulpar-ui/vue      → Vue 3 SFC wrapper (<TulparButton>, <TulparTextInput>, …)
-@tulpar-ui/shell    → App shell (tulpar-shell, tulpar-topbar, tulpar-sidenav, tulpar-nav-item) [v0.6 target]
+@tulpar-ui/core     → Lit Web Components (source of truth):
+                      button, button-group · text-input, number-input, textarea ·
+                      checkbox, checkbox-group, radio, radio-group, switch ·
+                      tooltip, toggletip, popover · toast (+ toast/message service) ·
+                      tag, badge, chip, avatar, skeleton, spinner, progress ·
+                      select, option, option-group
+@tulpar-ui/shell    → App shell: tulpar-shell, tulpar-topbar, tulpar-sidenav, tulpar-nav-item, tulpar-nav-section
+@tulpar-ui/angular  → Signal-based Angular wrappers (<tulpar-button-ng>, <tulpar-select-ng>, …) + overlay directives + toast service
+@tulpar-ui/vue      → Vue 3 SFC wrappers (<TulparButton>, <TulparSelect>, …) + overlay directives + toast composables
 ```
 
 **Element prefix:** `tulpar-` (defensive against collisions like Toast UI's `tui-`)
@@ -39,7 +44,9 @@ The plan is the working contract. Follow it task by task. If a question is uncle
 
 **Theme triggers:**
 - Brand: `[data-brand="tulpar"]` (default fallback at `:root`)
-- Dark mode: `.dark` class (Tailwind-compatible — works the same way as Berdan's existing pattern)
+- Dark mode: `.dark` class (same convention as Tailwind's class strategy). Tulpar has **no** Tailwind dependency or Tailwind theme export. `color-scheme` is not emitted yet (retro TOK-9).
+
+**Page-structure themes (decided 2026-11-11, built in phase 2):** Theme 1 = **Tulpar** (today's layout). Theme 2 = **Tuğrul** (`tugrul`) = a Connect-style page structure. Tuğrul's default colours are Tulpar's colours and stay overridable; the sidebar is selectable independently of the page structure. Nothing in Theme 1 is removed.
 
 **Token layers:**
 1. Primitive — raw values (`blue.600`, `gray.900`)
@@ -50,17 +57,18 @@ The plan is the working contract. Follow it task by task. If a question is uncle
 
 | Concern | Tool |
 |---|---|
-| Package manager | pnpm 9 + catalogs (workspaces) |
-| Build | Vite (library mode) |
+| Package manager | pnpm 9.15 + catalogs (catalog covers only `lit` and `vite-plugin-dts` today — retro INF-9) |
+| Build | Vite library mode (core/shell/apps on Vite 8; tokens and vue still on Vite 5 — retro INF-9); ng-packagr for Angular |
 | Versioning + publish | Changesets (linked versioning for `@tulpar-ui/*`) |
-| TypeScript | 5.4+, strict, ES2022, `useDefineForClassFields: false`, `experimentalDecorators: true` (Lit requirement) |
+| TypeScript | 6.x, strict, ES2022, `useDefineForClassFields: false`, `experimentalDecorators: true` (still Lit's recommendation — keep) |
 | Web Component lib | Lit 3 |
-| Component testing (core) | `@web/test-runner` + `@open-wc/testing` (real-browser Shadow DOM) |
-| Wrapper testing | Vitest + happy-dom |
+| Component testing (core, shell) | `@web/test-runner` + `@open-wc/testing` + Playwright 1.65 (Chromium only today) |
+| Wrapper testing | Vitest (angular on 3.x, vue on 1.6 — retro INF-9/K5) + happy-dom |
 | Angular | v22, signal-based inputs, `CUSTOM_ELEMENTS_SCHEMA` inside wrapper |
-| Vue | 3.4+, SFC, `compilerOptions.isCustomElement` for `tulpar-` |
+| Vue | 3.5, SFC, `compilerOptions.isCustomElement` for `tulpar-` |
 | Docs | Storybook 8 + `@storybook/web-components-vite` + addon-themes + addon-a11y |
 | Linting | ESLint flat config + Prettier |
+| CI | GitHub Actions on `ubuntu-26.04` (pinned): `ci.yml` (PR + main), `deploy.yml` (Cloudflare Pages), `release.yml` (changesets) |
 | Node | 26.13.0 LTS (pinned in `.nvmrc`; CI + deploy read it via `node-version-file`) |
 
 ## Commands
@@ -105,6 +113,8 @@ pnpm release                                # build + publish to npm
 ### Angular wrapper selector
 
 Wrappers use `tulpar-<name>-ng` selector (e.g., `tulpar-button-ng`) to avoid recursion with the underlying Web Component (`<tulpar-button>`). Don't try to share the same selector.
+
+> **Under review (retro WR-3 / DOC-18, decision pending in phase 1):** the double-element model (`display:contents` wrapper + inner core element) breaks Angular overlay directives (0×0 anchor), ButtonGroup and shell state mirroring. The review found the "recursion" claim above is not true and recommends the Ionic/Stencil proxy pattern (selector = the core tag, template `<ng-content/>`). It is a breaking change — do not change it without Kaan's approval.
 
 ### Vue + Web Components
 
@@ -168,23 +178,31 @@ Components accept rich content via **both** a convenience prop and a slot, never
 
 ### Vue wrapper slot forwarding (gotcha)
 
-A Vue SFC that renders `<slot name="label" />` inside a web component does NOT reach the element's named slot — Vue consumes the `slot=` targeting and projects the content without it, so the core's shadow `<slot name="label">` stays empty. Forward each slot through a transparent carrier that keeps the real `slot` attribute, e.g. `<span style="display:contents" slot="label"><slot name="label" /></span>` (verify in-browser). This applies to every Vue wrapper, not just selection.
+A Vue SFC that renders `<slot name="label" />` inside a web component does NOT reach the element's named slot — Vue consumes the `slot=` targeting and projects the content without it, so the core's shadow `<slot name="label">` stays empty. Forward each slot through a transparent carrier that keeps the real `slot` attribute, e.g. `<span v-if="$slots.label" style="display:contents" slot="label"><slot name="label" /></span>` (verify in-browser). This applies to every Vue wrapper, not just selection. **Render the carrier only when the slot is filled (`v-if="$slots.x"`)** — an always-rendered empty carrier counts as slotted content and hides the `label` prop (retro WR-1: TextInput/Textarea/NumberInput labels never show).
+
+**Do not forward unset props as `prop ?? undefined`.** Vue then writes `''` to the custom element property and wipes the core default (retro VIS-1: Vue NumberInput crashes with `RangeError`, Tag/Chip lose their tone). Forward only the props that are set.
 
 ### Form-associated custom elements
 
 Buttons use `static formAssociated = true` + `attachInternals()`. The wrapper does NOT add another `ControlValueAccessor` — the Web Component already integrates with native `<form>`, and that bubbles up to Angular Reactive Forms / Vue native binding without extra plumbing.
 
+> **Known false (retro WR-4 / DOC-19, fix in phase 1):** Angular forms never read `ElementInternals`, and `DefaultValueAccessor` only matches `input`/`textarea`/`[ngDefaultControl]`, so `formControlName`/`ngModel` do not work on the wrappers today (the package has zero CVAs). Recommended: Angular 22 `FormValueControl` / `FormCheckboxControl`. Also: no component calls `setValidity()`, and the input family does not submit initial values or handle reset/disabled callbacks (retro CA-1, CA-2).
+
 ### Tests
 
 - Core: real browser via Web Test Runner. Test in `*.test.ts` adjacent to the component.
 - Wrappers: smoke tests only (class is exported, defaults are correct). Full integration is verified visually in playground apps.
+- **Gap (retro CB-26, AX-*):** tests check attribute strings, not the computed accessibility tree, so cross-shadow ARIA bugs pass CI. Accessibility-tree + axe checks are planned for phase 1.
 
 ## User Preferences (Important)
 
 These were established during brainstorming and apply throughout this project:
 
 - **Push back, don't validate.** When user asks "is X really the right call?", give honest analysis with concrete trade-offs and counter-examples. Don't soften to please.
-- **Gradual building.** User wants to shape this slowly. Don't add scope beyond what's in the current spec. Each version is tightly scoped (v0.1 Button → v0.5 input family → v0.6 shell); don't pull future components forward.
+- **Gradual building.** User wants to shape this slowly. Don't add scope beyond what's in the current spec. Each version is tightly scoped (see `docs/roadmap.md` waves); don't pull future components forward without an explicit roadmap decision.
+- **Never remove a feature without approval.** Work is additive: new behaviour comes as an option/variant next to the existing one. Breaking renames count as removals — propose them with a deprecation path and wait for approval.
+- **No decisions mid-discussion.** While brainstorming, don't record or announce anything as "decided" until Kaan says so.
+- **Guard the roadmap.** Check Kaan's proposals against the roadmap, specs and code; say plainly when something conflicts, and lead with the correct solution — never a patch that only makes a statement true.
 - **Angular: signals.** All new Angular code uses `input()`, `output()`, `signal()`, `computed()`. No `@Input/@Output`, no RxJS subscriptions for state, no `BehaviorSubject` for view state.
 - **Discuss backend/architecture changes first.** Don't refactor or restructure mid-implementation without checking. If the plan needs to deviate, surface it.
 - **Defensive defaults.** Tulpar UI is potentially commercial — choose collision-safe, conservative options when in doubt (e.g., full `tulpar-` prefix, not `tui-`).
@@ -194,23 +212,38 @@ These were established during brainstorming and apply throughout this project:
 
 - **v0.1–v0.4:** Button + ButtonGroup, architecture foundation, design-system redesign, button API expansion, enterprise hardening.
 - **v0.5:** Input family — TextInput, NumberInput, Textarea (shared internal `FormFieldBase`).
-- **v0.6 (in progress):** `@tulpar-ui/shell` app shell + infra hardening (pnpm 9 catalogs, CI/CD, glob exports, `_internal` rule, tokens split, primitive-token lint, READMEs, MIT license).
+- **v0.6:** `@tulpar-ui/shell` app shell + infra hardening (pnpm 9 catalogs, CI/CD, glob exports, `_internal` rule, tokens split, primitive-token lint, READMEs, MIT license).
+- **v0.7–v0.8:** Chromatic mythology palette (22 families), button polish, shell sidebar redesign (rail/flyout, sidenav search + Ctrl/Cmd+K).
+- **v0.10:** Selection family — Checkbox, CheckboxGroup, Radio, RadioGroup, Switch.
+- **v0.11:** Overlay family — Tooltip, Toggletip, Popover (+ `_internal/overlay` engine; directive + ref-by-id composition).
+- **v0.12:** Toast + Message (imperative service).
+- **v0.13:** Display & status atoms — Tag, Badge, Chip, Avatar, Skeleton, Spinner, Progress.
+- **v0.14–v0.15:** Select (single) + `options` data-prop + in-popup search. **v0.15 has 9 known blocking defects on `main`** (retro §3) — first item of phase 1.
 
-## Out of Scope for v0.6
+## Current phase plan (after the 2026-11-11 retro)
 
-(See the v0.6 shell spec for the full list)
+Order approved by Kaan; the details of each phase still need their own design (brainstorm → spec → plan) and approval.
 
-- Configurator panel (v2 — needs Select/Switch/Checkbox first)
-- Runtime color preset API (separate tokens-package spec)
-- `top` / `mix` shell layout modes
-- Breadcrumb, user-menu dropdown, separate footer component
-- RTL
-- Second brand theme
-- React wrapper
-- SSR optimization tuning
-- Mobile-native (RN/Flutter)
-- Split button, dropdown menu button, toggle button, badged button, FAB
-- Public Tooltip / Badge / Icon components
+| Phase | Content |
+|---|---|
+| 0 | CI fix (done: `ubuntu-26.04`, Playwright 1.65) + this CLAUDE.md refresh |
+| 1 — hardening + token foundation | v0.15 Select blockers (spec first); cross-shadow ARIA; form contract; Angular architecture + forms; Vue wrapper bugs; token foundation (semantic radius/density/type/motion scales, seed→brand generator, `color-scheme`, opaque focus ring, fill/text roles, `@layer`); vocabulary unification; overlay/toast behaviour; npm publish blockers; toolchain/CI. After phase 1 every Blocker/Major except the shell ones is closed. |
+| 2 — Connect layer | Theme 2 **Tuğrul**; Connect-style frame as an option; in-page parts (PageHeader, SectionCard, FieldRow); shell retro findings. |
+| 3 — Connect components | Drawer, Dialog + confirm, DatePicker/TimePicker, Tabs, Menu, Empty/Result, Card… (reorders roadmap waves — record the decision in `docs/roadmap.md`). |
+| Later | Grid (wrap AG Grid vs own grid — open), ECharts package. |
+
+**Do not publish to npm (and do not merge the "Version Packages" PR) before the phase-1 publish blockers are fixed:** Angular is built in full (not partial) compilation mode, `@tulpar-ui/shell` bundles its own lit-html copy, dev warnings are compiled out, and some pending changesets contain wrong API names (retro §4.8).
+
+## Out of Scope (current)
+
+From `docs/roadmap.md` §7 plus still-valid v0.6 items. Binding unless Kaan changes it:
+
+- Command palette, Cascader, Transfer/PickList, Mentions, Color picker, Carousel
+- Charts (separate package/spec), Gantt/Scheduler (after the grid)
+- `top` / `mix` shell layout modes, Breadcrumb, user-menu dropdown, separate footer component
+- Split button, dropdown menu button, toggle button, badged button, FAB; public Icon component (icons stay consumer-provided via prop/slot)
+- RTL, React wrapper, SSR optimization tuning, mobile-native (RN/Flutter)
+- ~~Second brand theme~~ — superseded: the Tuğrul page-structure theme is in scope for phase 2.
 
 ## Execution Workflow
 
@@ -220,3 +253,5 @@ The plan uses checkbox (`- [ ]`) syntax. Recommended approaches:
 - **Inline** (`superpowers:executing-plans`) — execute tasks in this session with checkpoints
 
 If user says "implementation'a başlayalım" or similar, invoke the appropriate skill and start at the first unchecked task.
+
+Note: the v0.1–v0.15 plans were never ticked (0 of 1,767 checkboxes, retro DOC-7) even though all their tasks were committed — treat them as historical, not as open work.
