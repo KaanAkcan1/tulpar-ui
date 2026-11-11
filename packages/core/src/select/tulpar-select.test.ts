@@ -666,7 +666,7 @@ describe("tulpar-select — searchable (render + a11y)", () => {
     el.renderRoot.querySelector<HTMLElement>(".select-trigger")!.click();
     await el.updateComplete;
     await new Promise((r) => requestAnimationFrame(r));
-    expect(el.renderRoot.activeElement).to.equal(
+    expect((el.renderRoot as ShadowRoot).activeElement).to.equal(
       el.renderRoot.querySelector(".select-search-input"),
     );
   });

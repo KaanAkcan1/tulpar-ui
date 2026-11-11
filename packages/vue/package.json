@@ -25,7 +25,8 @@
     "dev": "vite build --watch",
     "test": "vitest run",
     "test:ci": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
     "@tulpar-ui/core": "workspace:^",

@@ -121,7 +121,8 @@
     "test": "wtr-strict",
     "test:all-browsers": "wtr-strict && wtr-strict --config web-test-runner.engines.config.js",
     "test:ci": "wtr-strict --coverage && wtr-strict --config web-test-runner.engines.config.js",
-    "test:watch": "wtr --watch"
+    "test:watch": "wtr --watch",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json"
   },
   "dependencies": {
     "@tulpar-ui/tokens": "workspace:^",

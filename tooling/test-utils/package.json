@@ -15,7 +15,8 @@
   "scripts": {
     "test": "node bin/wtr-strict.mjs",
     "test:all-browsers": "node bin/wtr-strict.mjs && node bin/wtr-strict.mjs --config web-test-runner.engines.config.js",
-    "test:ci": "node bin/wtr-strict.mjs && node bin/wtr-strict.mjs --config web-test-runner.engines.config.js"
+    "test:ci": "node bin/wtr-strict.mjs && node bin/wtr-strict.mjs --config web-test-runner.engines.config.js",
+    "typecheck": "tsc -p tsconfig.json"
   },
   "peerDependencies": {
     "@open-wc/testing": "^5.0.0",

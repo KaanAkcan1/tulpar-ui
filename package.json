@@ -25,7 +25,8 @@
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "pnpm build && changeset publish",
-    "prepare": "husky"
+    "prepare": "husky",
+    "typecheck": "pnpm -r --no-bail run typecheck"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",

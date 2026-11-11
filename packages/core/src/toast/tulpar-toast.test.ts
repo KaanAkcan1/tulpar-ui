@@ -1283,7 +1283,7 @@ describe("<tulpar-toast> Esc key dismisses focused toast (Task 4.3)", () => {
     const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
     await el.updateComplete;
 
-    let detail: Record<string, unknown> | null = null;
+    let detail = null as Record<string, unknown> | null;
     el.addEventListener("tulpar-dismiss", (e) => (detail = (e as CustomEvent).detail));
 
     // Focus the element, then fire Esc.
@@ -1305,7 +1305,7 @@ describe("<tulpar-toast> Esc key dismisses focused toast (Task 4.3)", () => {
     const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
     await el.updateComplete;
 
-    let detail: Record<string, unknown> | null = null;
+    let detail = null as Record<string, unknown> | null;
     el.addEventListener("tulpar-dismiss", (e) => (detail = (e as CustomEvent).detail));
 
     // Simulate Esc from the close button inside shadow DOM (composed: true → bubbles out).

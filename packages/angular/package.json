@@ -8,7 +8,8 @@
     "build": "ng-packagr -p ng-package.json -c tsconfig.lib.prod.json",
     "dev": "ng-packagr -p ng-package.json -c tsconfig.json --watch",
     "test": "vitest run",
-    "test:ci": "vitest run"
+    "test:ci": "vitest run",
+    "typecheck": "tsc -p tsconfig.lib.prod.json --noEmit"
   },
   "dependencies": {
     "@tulpar-ui/core": "workspace:^",

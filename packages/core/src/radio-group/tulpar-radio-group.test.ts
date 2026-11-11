@@ -17,7 +17,7 @@ function radios(group: TulparRadioGroup): TulparRadio[] {
   return Array.from(group.querySelectorAll("tulpar-radio")) as TulparRadio[];
 }
 
-function arrow(group: TulparRadioGroup, from: TulparRadio, key: string) {
+function arrow(_group: TulparRadioGroup, from: TulparRadio, key: string) {
   box(from).dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true, composed: true }));
 }
 

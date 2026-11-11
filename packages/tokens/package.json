@@ -38,7 +38,8 @@
     "dev": "vite build --watch",
     "test": "vitest run",
     "test:ci": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
     "tsx": "^4.7.0",
