@@ -14,6 +14,7 @@ import {
   LucideGauge,
   LucideHash,
   LucideLayers,
+  LucideListChecks,
   LucideLoaderCircle,
   LucideMessageCircle,
   LucideMessageSquare,
@@ -151,7 +152,7 @@ class IconRadio {
   template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconCheckboxGroup {
-  readonly icon: LucideIconInput = LucideCheckSquare;
+  readonly icon: LucideIconInput = LucideListChecks;
 }
 @Component({
   selector: 'app-icon-overlay',

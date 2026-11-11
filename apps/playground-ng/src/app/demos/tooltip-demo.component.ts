@@ -22,7 +22,6 @@ import {
   LucideItalic,
   LucideUnderline,
   LucideLink2,
-  LucideCopy,
 } from '@lucide/angular';
 
 // ─── Code snippet strings (outside @Component to avoid backtick nesting) ──────
@@ -724,7 +723,6 @@ export class TooltipDemoComponent {
   protected readonly Italic = LucideItalic;
   protected readonly Underline = LucideUnderline;
   protected readonly Link2 = LucideLink2;
-  protected readonly Copy = LucideCopy;
 
   // The 12 placements (auto rendered separately).
   protected readonly placements: TooltipPlacement[] = [
