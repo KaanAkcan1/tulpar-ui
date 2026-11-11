@@ -885,13 +885,29 @@ function swipe(
     pointerType: "touch",
   });
 
-  // Set a timestamp gap to control velocity calculation.
-  // We cannot set `timeStamp` directly on PointerEvent constructors (read-only),
-  // so we rely on the implementation using Date.now() or event.timeStamp and
-  // we just confirm the threshold-based path works (threshold is more reliable).
-  target.dispatchEvent(down);
-  target.dispatchEvent(move);
-  target.dispatchEvent(up);
+  // `timeStamp` is read-only on PointerEvent, and the component measures the
+  // gesture with Date.now(). Synchronous dispatch usually gives elapsed = 0
+  // (velocity 0), but when a millisecond tick falls between down and up the
+  // 40 px move reads as 40 px/ms and counts as a fast flick — the source of the
+  // "small drag" flake under load. For `velocityFast: false`, pin the clock so
+  // the gesture takes 1000 ms (a slow drag) in every run.
+  if (opts.velocityFast !== false) {
+    target.dispatchEvent(down);
+    target.dispatchEvent(move);
+    target.dispatchEvent(up);
+    return;
+  }
+  const realNow = Date.now;
+  let clock = realNow.call(Date);
+  Date.now = () => clock;
+  try {
+    target.dispatchEvent(down);
+    target.dispatchEvent(move);
+    clock += 1000;
+    target.dispatchEvent(up);
+  } finally {
+    Date.now = realNow;
+  }
 }
 
 describe("<tulpar-toast> swipe-to-dismiss", () => {

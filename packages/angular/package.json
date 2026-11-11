@@ -21,7 +21,8 @@
   "scripts": {
     "build": "ng-packagr -p ng-package.json -c tsconfig.json",
     "dev": "ng-packagr -p ng-package.json -c tsconfig.json --watch",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:ci": "vitest run"
   },
   "dependencies": {
     "@tulpar-ui/core": "workspace:*",

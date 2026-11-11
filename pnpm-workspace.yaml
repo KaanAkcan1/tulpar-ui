@@ -1,6 +1,7 @@
 packages:
   - "packages/*"
   - "apps/*"
+  - "tooling/*"
 
 catalog:
   lit: ^3.1.0

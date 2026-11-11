@@ -33,6 +33,7 @@
     "predev": "pnpm run build:fallbacks && pnpm run build:css",
     "dev": "vite build --watch",
     "test": "vitest run",
+    "test:ci": "vitest run",
     "test:watch": "vitest"
   },
   "devDependencies": {

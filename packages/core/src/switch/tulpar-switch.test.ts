@@ -1,4 +1,5 @@
 import { fixture, html, expect } from "@open-wc/testing";
+import { expectA11yNode } from "@tulpar-ui/test-utils";
 import "./tulpar-switch";
 import type { TulparSwitch } from "./tulpar-switch";
 import { switchStyles } from "./tulpar-switch.styles";
@@ -239,6 +240,15 @@ describe("<tulpar-switch>", () => {
       const el = await fixture<TulparSwitch>(html`<tulpar-switch></tulpar-switch>`);
       // No label at all → aria-label should be absent (nothing)
       expect(track(el).hasAttribute("aria-label")).to.be.false;
+    });
+
+    it("is exposed as a named switch", async () => {
+      const el = await fixture(html`<tulpar-switch label="Wi-Fi"></tulpar-switch>`);
+      await expectA11yNode(el, { role: "switch", name: "Wi-Fi", states: { checked: false } });
+    });
+    it("passes axe", async () => {
+      const el = await fixture(html`<tulpar-switch label="Wi-Fi"></tulpar-switch>`);
+      await expect(el).to.be.accessible();
     });
   });
 

@@ -1,11 +1,21 @@
 import { playwrightLauncher } from "@web/test-runner-playwright";
 import { esbuildPlugin } from "@web/dev-server-esbuild";
+import { ariaSnapshotPlugin } from "@tulpar-ui/test-utils/plugin";
 
+// Default run: Chromium (fast local loop, and the only engine with native V8
+// coverage). Firefox + WebKit run from web-test-runner.engines.config.js.
 export default {
   files: "src/**/*.test.ts",
-  nodeResolve: true,
+  // "development" picks dev builds (lit dev mode, esm-env DEV=true) so dev-only warnings are testable.
+  nodeResolve: { exportConditions: ["development"] },
   browsers: [playwrightLauncher({ product: "chromium" })],
-  plugins: [esbuildPlugin({ ts: true, target: "es2022", tsconfig: "./tsconfig.wtr.json" })],
+  plugins: [
+    esbuildPlugin({ ts: true, target: "es2022", tsconfig: "./tsconfig.wtr.json" }),
+    ariaSnapshotPlugin(),
+  ],
+  // Lit prints its dev-mode banner once per test file; it is expected here and only noise.
+  filterBrowserLogs: ({ args }) =>
+    !(typeof args[0] === "string" && args[0].startsWith("Lit is in dev mode")),
   testFramework: {
     config: {
       ui: "bdd",
