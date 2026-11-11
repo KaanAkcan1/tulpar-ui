@@ -52,12 +52,12 @@
 - Produces: `tsx ../../scripts/sync-exports.ts <packageDir> [--check]` — rewrites `<packageDir>/package.json` exports from `src/*/index.ts`; writes **only** when the serialized result differs; `--check` exits 1 on drift.
 - Produces: in core and shell, `"build": "tsx ../../scripts/sync-exports.ts . && vite build && <cem step added in Task 6>"` (no `prebuild`).
 
-- [ ] **Step 1:** Add `.gitattributes`: `* text=auto eol=lf`; `binary` for `*.png *.jpg *.ico *.woff *.woff2 *.tgz`.
-- [ ] **Step 2:** Commit `git add --renormalize .` alone: `chore: normalize line endings to LF`.
-- [ ] **Step 3:** Merge both `sync-exports.ts` copies into `scripts/sync-exports.ts` (interface above); call it from `build` (not `prebuild`) and from `sync-exports` / `sync-exports:check`.
-- [ ] **Step 4: Verify** — `pnpm build && pnpm build && git status --porcelain` → Expected: empty.
-- [ ] **Step 5:** `git rm -r .claire build-output.txt`; add `graphify-out/`, `.wrangler/`, `.playwright/`, `*.log`, `build-output*.txt` to `.gitignore`; add `@tulpar-ui/shell` to the README package table.
-- [ ] **Step 6:** Commit `chore: repo hygiene (gitattributes, shared sync-exports, stray files)`.
+- [x] **Step 1:** Add `.gitattributes`: `* text=auto eol=lf`; `binary` for `*.png *.jpg *.ico *.woff *.woff2 *.tgz`.
+- [x] **Step 2:** Commit `git add --renormalize .` alone: `chore: normalize line endings to LF`.
+- [x] **Step 3:** Merge both `sync-exports.ts` copies into `scripts/sync-exports.ts` (interface above); call it from `build` (not `prebuild`) and from `sync-exports` / `sync-exports:check`.
+- [x] **Step 4: Verify** — `pnpm build && pnpm build && git status --porcelain` → Expected: empty.
+- [x] **Step 5:** `git rm -r .claire build-output.txt`; add `graphify-out/`, `.wrangler/`, `.playwright/`, `*.log`, `build-output*.txt` to `.gitignore`; add `@tulpar-ui/shell` to the README package table.
+- [x] **Step 6:** Commit `chore: repo hygiene (gitattributes, shared sync-exports, stray files)`.
 
 ### Task 2: Lint toolchain and guardrails
 

@@ -49,3 +49,10 @@ vite.config.ts.timestamp-*.mjs
 .claude/scheduled_tasks.lock
 # Playwright CLI output (may contain credentials)
 .playwright-cli/
+
+# Tooling output / scratch
+graphify-out/
+.wrangler/
+.playwright/
+build-output*.txt
+.superpowers/

@@ -22,6 +22,7 @@ rendering, consumable from any framework.
 | `@tulpar-ui/core`    | Lit Web Components (`<tulpar-button>`, input family) — source of truth                     |
 | `@tulpar-ui/angular` | Signal-based Angular wrappers (`<tulpar-button-ng>`)                                       |
 | `@tulpar-ui/vue`     | Vue 3 SFC wrappers (`<TulparButton>`)                                                      |
+| `@tulpar-ui/shell`   | App shell (`<tulpar-shell>`, topbar, sidenav, nav items)                                   |
 
 ## Quick start (Vue)
 

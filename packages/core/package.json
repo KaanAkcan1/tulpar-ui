@@ -107,10 +107,9 @@
     "LICENSE"
   ],
   "scripts": {
-    "sync-exports": "tsx build/sync-exports.ts",
-    "sync-exports:check": "tsx build/sync-exports.ts --check",
-    "prebuild": "tsx build/sync-exports.ts",
-    "build": "vite build",
+    "sync-exports": "tsx ../../scripts/sync-exports.ts .",
+    "sync-exports:check": "tsx ../../scripts/sync-exports.ts . --check",
+    "build": "tsx ../../scripts/sync-exports.ts . && vite build",
     "dev": "vite build --watch",
     "test": "wtr",
     "test:watch": "wtr --watch"
