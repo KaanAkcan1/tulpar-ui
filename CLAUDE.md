@@ -139,6 +139,20 @@ Each package's `src/_internal/` is package-private: never re-exported, never in 
 
 For any visual/UX judgment (colors, spacing, motion, layout, story design), invoke the `/frontend-design` and `/ui-ux-pro-max` skills before deciding. Target bar: enterprise, product-ready.
 
+#### Design & verification skill stack (use at every opportunity)
+
+Project-level skills live in `.claude/skills/` (pinned in `skills-lock.json`). Use them by phase — not optional:
+
+| Phase | Skills (invoke via Skill tool) |
+|---|---|
+| Brainstorm / spec — any new component or visual decision | `design-references` (benchmark ≥3 real systems, cite them in the spec) → `ui-ux-pro-max` → `frontend-design` → `design-taste-frontend` (anti-slop pre-flight, AI-tells list) |
+| Implementation of component CSS / stories / playground pages | `frontend-design` + `design-taste-frontend`; `minimalist-ui` as the restraint lens for product surfaces |
+| Review before claiming done (every component, story, playground page) | `web-design-guidelines` (a11y/UX compliance audit of the changed UI files) |
+| Visual verification in a real browser | `playwright-cli` (screenshots of both playgrounds, light + dark, rail/mobile where relevant, keyboard flows) |
+| Improving existing UI (design review passes) | `redesign-existing-projects` (audit-first) + `web-design-guidelines` |
+
+Caveats: `design-taste-frontend` is tuned for marketing pages — take its anti-slop, spacing, typography and a11y rules; ignore its landing-page defaults (GSAP, hero layouts, high VARIANCE). Reference systems in `design-references` are evidence only — never copy a brand's palette/type/look. Subagents doing UI work must be told to invoke the same skills.
+
 ### Playgrounds (playground-ng + playground-vue)
 
 These are the living, hands-on showcases — treat them as a product surface, not a scratchpad.
@@ -146,7 +160,7 @@ These are the living, hands-on showcases — treat them as a product surface, no
 - **Parity is mandatory.** The two playgrounds must stay in lockstep: same sidenav/menu structure, same pages, same examples, same visual design. A feature, section, or example present in one MUST be present in the other. Never let one drift ahead.
 - **Spec first, then apply to both.** Before building/editing playground pages, write a detailed spec of exactly what each page demonstrates — every prop, every state, every variant, every slot — then implement that identical spec in BOTH frameworks. Do not improvise per-framework.
 - **Show every feature, both prop and slot forms.** For every capability, demonstrate it. Where a component accepts content via both a prop and a slot (label, description, icons, …), show BOTH usages explicitly — they must both work.
-- **Run `/frontend-design` (and `/ui-ux-pro-max`) on every page.** Enterprise-grade, strong UI/UX. Verify visually in a real browser (headless Playwright screenshots) before claiming done — don't trust the build alone.
+- **Run `/frontend-design` (and `/ui-ux-pro-max`) on every page.** Enterprise-grade, strong UI/UX. Verify visually in a real browser (`playwright-cli` screenshots) and audit with `web-design-guidelines` before claiming done — don't trust the build alone.
 
 ### Props vs slots (dual support)
 

@@ -47,3 +47,5 @@ vite.config.ts.timestamp-*.mjs
 .claude/worktrees/
 .claude/settings.local.json
 .claude/scheduled_tasks.lock
+# Playwright CLI output (may contain credentials)
+.playwright-cli/
