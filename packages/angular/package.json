@@ -39,8 +39,8 @@
     }
   },
   "devDependencies": {
-    "@analogjs/vite-plugin-angular": "^2.6.0",
-    "@analogjs/vitest-angular": "^2.6.0",
+    "@analogjs/vite-plugin-angular": "^2.9.6",
+    "@analogjs/vitest-angular": "^2.9.6",
     "@angular/common": "^22.0.0",
     "@angular/compiler": "^22.0.0",
     "@angular/compiler-cli": "^22.0.0",
@@ -51,10 +51,10 @@
     "@tulpar-ui/core": "workspace:*",
     "@tulpar-ui/shell": "workspace:*",
     "@tulpar-ui/tokens": "workspace:*",
-    "happy-dom": "^20.0.0",
+    "happy-dom": "^21.0.4",
     "ng-packagr": "^22.0.0",
     "vite": "^8.0.0",
-    "vitest": "^3.0.0"
+    "vitest": "^5.1.0"
   },
   "publishConfig": {
     "access": "public"
