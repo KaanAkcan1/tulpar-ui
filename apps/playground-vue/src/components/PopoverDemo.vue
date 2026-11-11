@@ -10,7 +10,7 @@ import { ref } from "vue";
 import { TulparButton } from "@tulpar-ui/vue";
 import { vTulparPopover, vTulparTooltip } from "@tulpar-ui/vue";
 import "@tulpar-ui/core/popover";
-import { Settings2, UserRound, Filter, Bell, HelpCircle, Loader2 } from "lucide-vue-next";
+import { Settings2, UserRound, Filter, Bell, HelpCircle, Loader2 } from "@lucide/vue";
 
 const activity = Array.from({ length: 12 }, (_, i) => i + 1);
 

@@ -1,32 +1,32 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { LucideAngularModule, type LucideIconData } from 'lucide-angular';
+import { LucideDynamicIcon, type LucideIconInput } from '@lucide/angular';
 import {
-  BadgeCheck,
-  Bell,
-  BookOpen,
-  CheckSquare,
-  ChevronsUpDown,
-  Circle,
-  CircleDot,
-  CircleUserRound,
-  FormInput,
-  Gauge,
-  Hash,
-  Layers,
-  LoaderCircle,
-  MessageCircle,
-  MessageSquare,
-  MessageSquareText,
-  Palette,
-  PanelTop,
-  RectangleHorizontal,
-  SquareMousePointer,
-  Tag,
-  TextCursorInput,
-  ToggleLeft,
-  WrapText,
-} from 'lucide-angular';
+  LucideBadgeCheck,
+  LucideBell,
+  LucideBookOpen,
+  LucideCheckSquare,
+  LucideChevronsUpDown,
+  LucideCircle,
+  LucideCircleDot,
+  LucideCircleUserRound,
+  LucideFormInput,
+  LucideGauge,
+  LucideHash,
+  LucideLayers,
+  LucideLoaderCircle,
+  LucideMessageCircle,
+  LucideMessageSquare,
+  LucideMessageSquareText,
+  LucidePalette,
+  LucidePanelTop,
+  LucideRectangleHorizontal,
+  LucideSquareMousePointer,
+  LucideTag,
+  LucideTextCursorInput,
+  LucideToggleLeft,
+  LucideWrapText,
+} from '@lucide/angular';
 import {
   TulparShellComponent,
   TulparTopbarComponent,
@@ -40,7 +40,7 @@ type SidenavDensity = 'comfortable' | 'compact';
 type SidenavLayout = 'under-topbar' | 'over-topbar';
 
 /**
- * Tiny standalone wrappers so a lucide icon (which is plain `LucideIconData`,
+ * Tiny standalone wrappers so a lucide icon (which is plain `LucideIconInput`,
  * not an Angular component) can be passed as a nav item `icon` — the sidenav
  * wrapper projects component icons via `ngComponentOutlet`, which needs a `Type`.
  * One declarative component per icon keeps everything AOT-friendly.
@@ -48,227 +48,227 @@ type SidenavLayout = 'under-topbar' | 'over-topbar';
 @Component({
   selector: 'app-icon-button',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconButton {
-  readonly icon: LucideIconData = SquareMousePointer;
+  readonly icon: LucideIconInput = LucideSquareMousePointer;
 }
 @Component({
   selector: 'app-icon-text-input',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconTextInput {
-  readonly icon: LucideIconData = TextCursorInput;
+  readonly icon: LucideIconInput = LucideTextCursorInput;
 }
 @Component({
   selector: 'app-icon-textarea',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconTextarea {
-  readonly icon: LucideIconData = WrapText;
+  readonly icon: LucideIconInput = LucideWrapText;
 }
 @Component({
   selector: 'app-icon-number-input',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconNumberInput {
-  readonly icon: LucideIconData = Hash;
+  readonly icon: LucideIconInput = LucideHash;
 }
 @Component({
   selector: 'app-icon-select',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconSelect {
-  readonly icon: LucideIconData = ChevronsUpDown;
+  readonly icon: LucideIconInput = LucideChevronsUpDown;
 }
 @Component({
   selector: 'app-icon-colors',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconColors {
-  readonly icon: LucideIconData = Palette;
+  readonly icon: LucideIconInput = LucidePalette;
 }
 @Component({
   selector: 'app-icon-form-inputs',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconFormInputs {
-  readonly icon: LucideIconData = FormInput;
+  readonly icon: LucideIconInput = LucideFormInput;
 }
 @Component({
   selector: 'app-icon-guide',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconGuide {
-  readonly icon: LucideIconData = BookOpen;
+  readonly icon: LucideIconInput = LucideBookOpen;
 }
 @Component({
   selector: 'app-icon-switch',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconSwitch {
-  readonly icon: LucideIconData = ToggleLeft;
+  readonly icon: LucideIconInput = LucideToggleLeft;
 }
 @Component({
   selector: 'app-icon-checkbox',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconCheckbox {
-  readonly icon: LucideIconData = CheckSquare;
+  readonly icon: LucideIconInput = LucideCheckSquare;
 }
 @Component({
   selector: 'app-icon-radio',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconRadio {
-  readonly icon: LucideIconData = Circle;
+  readonly icon: LucideIconInput = LucideCircle;
 }
 @Component({
   selector: 'app-icon-checkbox-group',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconCheckboxGroup {
-  readonly icon: LucideIconData = CheckSquare;
+  readonly icon: LucideIconInput = LucideCheckSquare;
 }
 @Component({
   selector: 'app-icon-overlay',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconOverlay {
-  readonly icon: LucideIconData = Layers;
+  readonly icon: LucideIconInput = LucideLayers;
 }
 @Component({
   selector: 'app-icon-tooltip',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconTooltip {
-  readonly icon: LucideIconData = MessageSquare;
+  readonly icon: LucideIconInput = LucideMessageSquare;
 }
 @Component({
   selector: 'app-icon-toggletip',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconToggletip {
-  readonly icon: LucideIconData = MessageSquareText;
+  readonly icon: LucideIconInput = LucideMessageSquareText;
 }
 @Component({
   selector: 'app-icon-popover',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconPopover {
-  readonly icon: LucideIconData = PanelTop;
+  readonly icon: LucideIconInput = LucidePanelTop;
 }
 @Component({
   selector: 'app-icon-toast',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconToast {
-  readonly icon: LucideIconData = Bell;
+  readonly icon: LucideIconInput = LucideBell;
 }
 @Component({
   selector: 'app-icon-message',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconMessage {
-  readonly icon: LucideIconData = MessageCircle;
+  readonly icon: LucideIconInput = LucideMessageCircle;
 }
 @Component({
   selector: 'app-icon-tag',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconTag {
-  readonly icon: LucideIconData = Tag;
+  readonly icon: LucideIconInput = LucideTag;
 }
 @Component({
   selector: 'app-icon-badge',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconBadge {
-  readonly icon: LucideIconData = BadgeCheck;
+  readonly icon: LucideIconInput = LucideBadgeCheck;
 }
 @Component({
   selector: 'app-icon-chip',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconChip {
-  readonly icon: LucideIconData = CircleDot;
+  readonly icon: LucideIconInput = LucideCircleDot;
 }
 @Component({
   selector: 'app-icon-avatar',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconAvatar {
-  readonly icon: LucideIconData = CircleUserRound;
+  readonly icon: LucideIconInput = LucideCircleUserRound;
 }
 @Component({
   selector: 'app-icon-skeleton',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconSkeleton {
-  readonly icon: LucideIconData = RectangleHorizontal;
+  readonly icon: LucideIconInput = LucideRectangleHorizontal;
 }
 @Component({
   selector: 'app-icon-spinner',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconSpinner {
-  readonly icon: LucideIconData = LoaderCircle;
+  readonly icon: LucideIconInput = LucideLoaderCircle;
 }
 @Component({
   selector: 'app-icon-progress',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-icon [img]="icon" [size]="18" />`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="icon" [size]="18" />`,
 })
 class IconProgress {
-  readonly icon: LucideIconData = Gauge;
+  readonly icon: LucideIconInput = LucideGauge;
 }
 
 @Component({

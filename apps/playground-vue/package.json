@@ -10,10 +10,10 @@
     "typecheck": "vue-tsc -p tsconfig.app.json --noEmit && vue-tsc -p tsconfig.node.json --noEmit"
   },
   "dependencies": {
+    "@lucide/vue": "^1.72.0",
     "@tulpar-ui/core": "workspace:^",
     "@tulpar-ui/tokens": "workspace:^",
     "@tulpar-ui/vue": "workspace:^",
-    "lucide-vue-next": "^1.0.0",
     "vue": "catalog:",
     "vue-router": "^4.6.4"
   },

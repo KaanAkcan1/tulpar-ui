@@ -7,7 +7,7 @@
 import { TulparButton } from "@tulpar-ui/vue";
 import { vTulparToggletip } from "@tulpar-ui/vue";
 import "@tulpar-ui/core/toggletip";
-import { Info, CircleCheck, TriangleAlert, CircleAlert, HelpCircle } from "lucide-vue-next";
+import { Info, CircleCheck, TriangleAlert, CircleAlert, HelpCircle } from "@lucide/vue";
 
 // ─── Code snippet strings ─────────────────────────────────────────────────────
 

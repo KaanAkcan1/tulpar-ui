@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { TulparCheckbox } from "@tulpar-ui/vue";
-import { Star } from "lucide-vue-next";
+import { Star } from "@lucide/vue";
 
 // ─── State ───────────────────────────────────────────────────────────────────
 
@@ -129,7 +129,7 @@ function onSelectAll(e) {
 
 const iconPropCode = `<!-- Custom check glyph via PROP — pass a lucide component -->
 <script setup>
-import { Star } from "lucide-vue-next";
+import { Star } from "@lucide/vue";
 <\/script>
 
 <TulparCheckbox :model-value="true" :icon="Star" label="Star (prop)" />
@@ -288,7 +288,7 @@ const cardVariantCode = `<TulparCheckbox
     <section class="doc-section">
       <h2 class="section-title">5. Custom check glyph — prop form</h2>
       <p class="section-desc">
-        Pass a <code class="inline-code">lucide-vue-next</code> component to
+        Pass a <code class="inline-code">@lucide/vue</code> component to
         <code class="inline-code">:icon</code> to replace the default checkmark. The
         <code class="inline-code">indeterminate</code> dash is never overridden by a custom icon.
       </p>

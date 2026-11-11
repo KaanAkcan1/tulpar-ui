@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { TulparSwitch, TulparButton } from "@tulpar-ui/vue";
-import { Sun, Moon, Wifi, Bell, Shield, Eye } from "lucide-vue-next";
+import { Sun, Moon, Wifi, Bell, Shield, Eye } from "@lucide/vue";
 
 // ─── State ───────────────────────────────────────────────────────────────────
 const heroChecked = ref(true);
@@ -94,9 +94,9 @@ const showIconCode = `<!-- Default check / cross indicator inside the track -->
 <TulparSwitch :model-value="true" :show-icon="true" label="Show-icon on" />
 <TulparSwitch :model-value="false" :show-icon="true" label="Show-icon off" />`;
 
-const iconPropCode = `<!-- Custom icons via PROP — pass a lucide-vue-next component -->
+const iconPropCode = `<!-- Custom icons via PROP — pass a @lucide/vue component -->
 <script setup>
-import { Sun, Moon } from "lucide-vue-next";
+import { Sun, Moon } from "@lucide/vue";
 <\/script>
 
 <TulparSwitch
@@ -286,7 +286,7 @@ const colorCode = `<!-- Single color override (on-state) — BIND it -->
     <section class="doc-section">
       <h2 class="section-title">7. Custom icons — prop form</h2>
       <p class="section-desc">
-        Pass a <code class="inline-code">lucide-vue-next</code> component to
+        Pass a <code class="inline-code">@lucide/vue</code> component to
         <code class="inline-code">:icon-on</code> / <code class="inline-code">:icon-off</code> — the
         wrapper renders it into the right slot. Classic example: sun for day, moon for night.
       </p>

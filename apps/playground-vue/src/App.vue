@@ -25,7 +25,7 @@ import {
   TextCursorInput,
   ToggleLeft,
   WrapText,
-} from "lucide-vue-next";
+} from "@lucide/vue";
 import { TulparShell, TulparTopbar, TulparSidenav } from "@tulpar-ui/vue";
 import type { ShellSidenavMode, TulparNavItemVueData } from "@tulpar-ui/vue";
 

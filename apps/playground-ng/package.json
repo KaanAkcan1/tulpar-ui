@@ -30,10 +30,10 @@
     "@angular/forms": "catalog:",
     "@angular/platform-browser": "catalog:",
     "@angular/router": "catalog:",
+    "@lucide/angular": "^1.72.0",
     "@tulpar-ui/angular": "workspace:^",
     "@tulpar-ui/core": "workspace:^",
     "@tulpar-ui/tokens": "workspace:^",
-    "lucide-angular": "^1.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"

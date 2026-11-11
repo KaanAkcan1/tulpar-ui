@@ -9,7 +9,7 @@ import { ref } from "vue";
 import { TulparButton } from "@tulpar-ui/vue";
 import { vTulparTooltip, type TooltipPlacement } from "@tulpar-ui/vue";
 import "@tulpar-ui/core/tooltip";
-import { Settings, Info, Bell, Bold, Italic, Underline, Link2 } from "lucide-vue-next";
+import { Settings, Info, Bell, Bold, Italic, Underline, Link2 } from "@lucide/vue";
 
 // The Ref idiom (section 9) uses the SAME directive with the `:ref` arg —
 // `v-tulpar-tooltip:ref="'shared-tip'"` — so no separate registration is needed.

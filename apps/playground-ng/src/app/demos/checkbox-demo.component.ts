@@ -7,17 +7,17 @@ import {
   signal,
 } from '@angular/core';
 import { TulparCheckboxComponent } from '@tulpar-ui/angular';
-import { LucideAngularModule, Star } from 'lucide-angular';
+import { LucideDynamicIcon, LucideStar } from '@lucide/angular';
 
 // ─── Icon component for [icon] (named-component prop form) ──
 @Component({
   selector: 'app-star-icon',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-angular [img]="iconData" [size]="size()"></lucide-angular>`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="iconData" [size]="size()"></svg>`,
 })
 class AppStarIcon {
-  readonly iconData = Star;
+  readonly iconData = LucideStar;
   size = input(12);
 }
 
@@ -95,10 +95,10 @@ const ICON_PROP_CODE = `<!-- Custom check glyph via PROP — pass a component cl
 @Component({
   selector: 'app-star-icon',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: \`<lucide-angular [img]="iconData" [size]="size()"></lucide-angular>\`,
+  imports: [LucideDynamicIcon],
+  template: \`<svg [lucideIcon]="iconData" [size]="size()"></svg>\`,
 })
-class AppStarIcon { readonly iconData = Star; size = input(12); }
+class AppStarIcon { readonly iconData = LucideStar; size = input(12); }
 
 <tulpar-checkbox-ng [checked]="true" [icon]="AppStarIcon" label="Star (prop)"></tulpar-checkbox-ng>
 
@@ -138,7 +138,7 @@ const CARD_VARIANT_CODE = `<tulpar-checkbox-ng
   standalone: true,
   // AppStarIcon is rendered dynamically via NgComponentOutlet inside the
   // checkbox wrapper ([icon] class-reference binding).
-  imports: [TulparCheckboxComponent, LucideAngularModule],
+  imports: [TulparCheckboxComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
