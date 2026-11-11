@@ -1,5 +1,9 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // Publish build only: no .d.ts.map pointing at the unpublished src/ (INF-17).
+    "declarationMap": false
+  },
   "angularCompilerOptions": {
     "compilationMode": "partial"
   }

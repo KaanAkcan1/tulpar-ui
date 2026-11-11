@@ -47,6 +47,9 @@ importers:
       lint-staged:
         specifier: ^17.0.8
         version: 17.0.8
+      picomatch:
+        specifier: ^4.0.4
+        version: 4.0.7
       prettier:
         specifier: ^3.2.0
         version: 3.8.3
@@ -10183,7 +10186,7 @@ snapshots:
     dependencies:
       '@types/estree': 1.0.9
       estree-walker: 2.0.2
-      picomatch: 4.0.4
+      picomatch: 4.0.7
     optionalDependencies:
       rollup: 4.61.1
 
@@ -10859,7 +10862,7 @@ snapshots:
       alien-signals: 3.2.1
       muggle-string: 0.4.1
       path-browserify: 1.0.1
-      picomatch: 4.0.4
+      picomatch: 4.0.7
 
   '@vue/language-core@3.3.4':
     dependencies:
@@ -10869,7 +10872,7 @@ snapshots:
       alien-signals: 3.2.1
       muggle-string: 0.4.1
       path-browserify: 1.0.1
-      picomatch: 4.0.4
+      picomatch: 4.0.7
 
   '@vue/reactivity@3.5.35':
     dependencies:
@@ -13014,7 +13017,7 @@ snapshots:
   lint-staged@17.0.8:
     dependencies:
       listr2: 10.2.1
-      picomatch: 4.0.4
+      picomatch: 4.0.7
       string-argv: 0.3.2
       tinyexec: 1.2.4
     optionalDependencies:
@@ -14811,7 +14814,7 @@ snapshots:
     dependencies:
       '@jridgewell/remapping': 2.3.5
       acorn: 8.16.0
-      picomatch: 4.0.4
+      picomatch: 4.0.7
       webpack-virtual-modules: 0.6.2
 
   update-browserslist-db@1.2.3(browserslist@4.28.2):
@@ -14876,7 +14879,7 @@ snapshots:
   vite@8.0.16(@types/node@26.6.6)(esbuild@0.28.2)(less@4.6.4)(sass-embedded@1.104.1)(sass@1.104.1)(tsx@4.22.4)(yaml@2.9.0):
     dependencies:
       lightningcss: 1.32.0
-      picomatch: 4.0.4
+      picomatch: 4.0.7
       postcss: 8.5.15
       rolldown: 1.0.3
       tinyglobby: 0.2.17
