@@ -1,0 +1,1812 @@
+[
+ {
+  "id": "INF-1",
+  "title": "`@tulpar-ui/angular` built and published in FULL Ivy compilation mode",
+  "sev": "Blocker",
+  "mb": "No ",
+  "conf": "Verified",
+  "where": "`packages/angular/tsconfig.json` (no `compilationMode`); `packages/angular/package.json` build scrip",
+  "fix": "build with partial compilation as Angular documents. Quote: \"If you intend to publish your library to npm, compile with partial-Ivy code by setting `\"compilationMode\": \"partial\"`\" (https://angular.dev/tools/libraries/cre",
+  "effort": "S"
+ },
+ {
+  "id": "INF-2",
+  "title": "`@tulpar-ui/shell` dist bundles a private lit-html copy",
+  "sev": "Blocker",
+  "mb": "No ",
+  "conf": "Verified",
+  "where": "`packages/shell/vite.config.ts` and `packages/core/vite.config.ts` (`rollupOptions.external: [\"lit\",",
+  "fix": "externalize every dependency and peer dependency by pattern, never by exact string. Use `external: [/^lit($|\\/)/, /^@lit\\//, /^lit-html($|\\/)/, /^lit-element($|\\/)/, /^@tulpar-ui\\//]`. Better, derive the list from `packa",
+  "effort": "S"
+ },
+ {
+  "id": "INF-3",
+  "title": "Angular wrapper statically imports the \"optional\" `@angular/router`",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`packages/angular/src/shell/tulpar-shell.component.ts:13`; `packages/angular/package.json` `peerDepe",
+  "fix": "move router integration into a secondary entry point (`@tulpar-ui/angular/router`, ng-packagr secondary entry). It can provide a `withTulparRouter()` or a `TulparRouterLink` directive, which is the Angular Material/CDK p",
+  "effort": "M"
+ },
+ {
+  "id": "INF-4",
+  "title": "Angular publishes from the package root with hand-written exports; ng-packagr's `dist/package.json` is corrupted",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`packages/angular/package.json` (`main/module/types/exports` → `./dist/...`); `packages/angular/dist",
+  "fix": "follow the Angular Package Format. Keep the source `package.json` minimal (name, version, peers, deps; no main/module/types/exports). Let ng-packagr write `dist/package.json`. Publish `dist` with `\"publishConfig\": { \"dir",
+  "effort": "S"
+ },
+ {
+  "id": "INF-5",
+  "title": "`warnDev` is permanently disabled in the published core",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`packages/core/src/_internal/warn-dev.ts`; `packages/core/dist/warn-dev-BUb2H4m0.js`.",
+  "fix": "use export conditions, as Lit itself does. Ship a `development` build alongside the default build (`\"exports\": { \"./x\": { \"types\", \"development\": \"./dist/dev/x.js\", \"default\": \"./dist/x.js\" } }`). Alternatively, depend o",
+  "effort": "S"
+ },
+ {
+  "id": "INF-6",
+  "title": "Wrappers are a single entry that side-effect-imports every core component",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`packages/vue/vite.config.ts` (single `src/index.ts` entry); `packages/angular/ng-package.json` (sin",
+  "fix": "- Angular: one ng-packagr secondary entry point per component (`@tulpar-ui/angular/button`), the Angular Material model. It can be combined with INF-3.",
+  "effort": "L"
+ },
+ {
+  "id": "INF-7",
+  "title": "No Custom Elements Manifest",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "whole repo (`git ls-files | grep custom-elements` returns nothing); `apps/docs/.storybook/` has no `",
+  "fix": "add `@custom-elements-manifest/analyzer` (0.11.0) with `--litelement` to the core and shell builds. Publish the manifest and set `\"customElements\": \"custom-elements.json\"`. Wire `setCustomElementsManifest()` in `.storybo",
+  "effort": "M"
+ },
+ {
+  "id": "INF-8",
+  "title": "Release pipeline is token-based, unprovenanced, ungated",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`.github/workflows/release.yml`; all `packages/*/package.json` (no `repository`).",
+  "fix": "- Use npm Trusted Publishing (OIDC). Configure the trusted publisher on npmjs.com for each `@tulpar-ui/*` package and remove `NPM_TOKEN`. Provenance is then automatic. Requirements: npm CLI ≥ 11.5.1 and Node ≥ 22.14 (htt",
+  "effort": "S"
+ },
+ {
+  "id": "INF-9",
+  "title": "Toolchain drift and unsupported combinations; the catalog covers only 2 deps",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`pnpm-workspace.yaml` (catalog: only `lit`, `vite-plugin-dts`); package manifests; `pnpm outdated -r",
+  "fix": "- Move every shared devDependency into the pnpm catalog (vite, vitest, happy-dom, typescript, tsx, @web/*, @open-wc/testing, playwright, vue, vue-tsc, @vitejs/plugin-vue, @angular/*). Enable `catalogMode: strict` (pnpm ≥",
+  "effort": "M"
+ },
+ {
+  "id": "INF-10",
+  "title": "K5 root cause — Vitest 1.6 fs-cache writes on Windows",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Plausible",
+  "where": "`node_modules/.pnpm/vitest@1.6.1…/vitest/dist/vendor/cli-api.OdDWuB7Y.js:7945-7957` and `:10479`.",
+  "fix": "upgrade `@tulpar-ui/vue` (and tokens) to the catalog Vitest ≥ 4, as in INF-9. Verify with 10 consecutive `pnpm test` runs on Windows.",
+  "effort": "S"
+ },
+ {
+  "id": "INF-11",
+  "title": "WTR coverage thresholds are dead config",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`packages/core/web-test-runner.config.js` and `packages/shell/web-test-runner.config.js` (`coverageC",
+  "fix": "add `coverage: true` in CI (`wtr --coverage`). Copy core's `include`/`exclude` to shell. Upload lcov as a CI artifact or to Codecov. Keep the 80% thresholds once they are measured.",
+  "effort": "S"
+ },
+ {
+  "id": "INF-12",
+  "title": "Chromium-only browser matrix; no automated axe; no visual regression",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "both WTR configs (`browsers: [playwrightLauncher({ product: \"chromium\" })]`); `ci.yml` installs only",
+  "fix": "1. In CI, add `playwrightLauncher({ product: \"firefox\" })` and `({ product: \"webkit\" })`, as Shoelace and Spectrum WC do. Keep Chromium-only locally if speed matters.",
+  "effort": "M"
+ },
+ {
+  "id": "INF-13",
+  "title": "Lint guardrails have holes",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`eslint.config.js`.",
+  "fix": "extend `no-restricted-syntax` to `Literal` and `TemplateElement` in `packages/{core,shell}/src//*.ts` (excluding tokens). Add `group: [\"/_internal/\"]` for relative cross-package paths, or use `eslint-plugin-boundaries` /",
+  "effort": "S"
+ },
+ {
+  "id": "INF-14",
+  "title": "No `.gitattributes`; CRLF noise root cause",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "repo root (no `.gitattributes`); system git config `core.autocrlf=true`; `packages/{core,shell}/buil",
+  "fix": "commit a `.gitattributes` with `* text=auto eol=lf` (plus `*.png binary` etc.). Run `git add --renormalize .` once. Make `sync-exports` write only when `next !== current`, which also stops needless mtime churn in watch m",
+  "effort": "S"
+ },
+ {
+  "id": "INF-15",
+  "title": "No typecheck gate in CI for tokens/core/shell/vue",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "no `typecheck`/`tsc` script in any package; `ci.yml`.",
+  "fix": "add a `typecheck` script per package (`tsc -b --noEmit`; `vue-tsc --noEmit` for vue; test tsconfigs included) and a CI step. Use `tsc -b` with project references, which already exist (`composite`, `references`).",
+  "effort": "S"
+ },
+ {
+  "id": "INF-16",
+  "title": "Deployed playgrounds run vulnerable framework versions; no automated dependency updates",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`pnpm audit --prod` (saved at `review/infra-audit-prod.json`): 20 advisories (15 high, 5 moderate), ",
+  "fix": "bump Angular to 22.2.x and Vue to 3.5.45 now. Add Renovate (`config:recommended`, group `angular`/`vue`/`storybook`/`vitest`, `rangeStrategy: bump`, weekly lockfile maintenance) or Dependabot with groups. Add `pnpm audit",
+  "effort": "S"
+ },
+ {
+  "id": "INF-17",
+  "title": "Manifest hygiene",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`packages/*/package.json`.",
+  "fix": "1. Use `workspace:^`.",
+  "effort": "S"
+ },
+ {
+  "id": "INF-18",
+  "title": "CI workflow hardening",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`.github/workflows/ci.yml`, `deploy.yml`.",
+  "fix": "add `permissions: contents: read` at the top of `ci.yml`. Pin third-party actions to SHAs with Renovate `helpers:pinGitHubActionDigests`, per GitHub's security hardening guide (https://docs.github.com/actions/security-fo",
+  "effort": "S"
+ },
+ {
+  "id": "INF-19",
+  "title": "Changesets/versioning process (adds to K4)",
+  "sev": "Info",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`.changeset/config.json` (`linked: [[\"@tulpar-ui/*\"]]`); `origin/changeset-release/main` (commit da6",
+  "fix": "decide on one model. Recommended: switch to `fixed: [[\"@tulpar-ui/*\"]]`, since the wrappers are lockstep with core. Release (merge the Version PR) at the end of each milestone, so the npm version tracks the milestone. Pr",
+  "effort": "S"
+ },
+ {
+  "id": "INF-20",
+  "title": "Repo hygiene",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "tracked files.",
+  "fix": "`git rm` the stray files. Add `graphify-out/`, `.wrangler/`, `.playwright/` and `*.log`/`build-output*.txt` to `.gitignore`. Add commitlint (Conventional Commits) to the husky `commit-msg` hook; most commits already foll",
+  "effort": "S"
+ },
+ {
+  "id": "INF-21",
+  "title": "Package manager and engines",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "root `package.json` (`\"packageManager\": \"pnpm@9.15.9\"`, `engines.node \">=26.13.0\"`); `.npmrc`.",
+  "fix": "move to the current pnpm major via `corepack use pnpm@latest`. Move settings into `pnpm-workspace.yaml`, set `onlyBuiltDependencies: [esbuild, playwright, …]`, and turn the `pre*` hooks into explicit scripts (`\"dev\": \"pn",
+  "effort": "S"
+ },
+ {
+  "id": "TOK-1",
+  "title": "Selection message row uses undefined tokens → hardcoded light colors in dark mode",
+  "sev": "Blocker",
+  "mb": "No ",
+  "conf": "Verified",
+  "where": "`packages/core/src/_internal/selection-message-row.styles.ts:12,21,25,29`. The row is used by `selec",
+  "fix": "Do not add a `selection.message` group. Use one cross-family form-message role: either make the selection row consume the existing `--tulpar-input-message-*`, or rename both to `--tulpar-field-message-{helper,error,warn}",
+  "effort": "S"
+ },
+ {
+  "id": "TOK-2",
+  "title": "Focus ring fails 3:1; the input focus is a translucent shadow; `input-border-focus` is unused",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`brand/tulpar/light.ts` `focusRing: \"rgba(81, 78, 207, 0.40)\"` (×3: `color.focusRing`, `selection.fo",
+  "fix": "Use one focus token, `--tulpar-color-focus-ring`, as an opaque colour with ≥3:1 against every surface it sits on. Draw it as `outline: 2px solid` with `outline-offset: 2px`. An outline survives forced-colors (see TOK-3).",
+  "effort": "M"
+ },
+ {
+  "id": "TOK-3",
+  "title": "forced-colors gaps — input focus and shell active state disappear",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "No `@media (forced-colors)` in `form-field-base.styles.ts`, `text-input`, `textarea`, `number-input`",
+  "fix": "Use outline-based focus, as TOK-2 describes. Outline is preserved and recoloured to the system `Highlight`/`CanvasText`. Add a forced-colors block per family, as button, select and selection-control already have, for exa",
+  "effort": "S"
+ },
+ {
+  "id": "TOK-4",
+  "title": "`VariantColorTokens` mixes fill and foreground → brand/premium text fails AA",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`semantic/color.ts` `VariantColorTokens { default, hover, active, disabled, onColor, subtle, subtleH",
+  "fix": "Split roles in the semantic contract, as mature systems do:",
+  "effort": "M"
+ },
+ {
+  "id": "TOK-5",
+  "title": "Control boundaries fail WCAG 1.4.11 (non-text contrast)",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`light.ts`/`dark.ts` `input.border.default`, `selection.control.border`, `switch.trackOff`, `input.b",
+  "fix": "Add a dedicated `border.input` / `control.border` role at ≥3:1, distinct from the decorative `border.default`. Atlassian introduced `color.border.input` (#8590A2, about 3.2:1) for exactly this reason. Carbon uses a `$bor",
+  "effort": "M"
+ },
+ {
+  "id": "TOK-6",
+  "title": "Dark theme — every `subtle`/`subtleHover` equals the surface",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`brand/tulpar/dark.ts` — every intent has `subtle: c.mergen[900], subtleHover: c.mergen[800]`. `colo",
+  "fix": "Give each intent a per-intent dark tint, as Radix Colors dark scales (steps 3–4 per hue) and Primer dark (`bgColor.accent.muted` = accent at about 10–15% alpha) do. Either bind `family[950]` / `family[900]`, or derive `c",
+  "effort": "S"
+ },
+ {
+  "id": "TOK-7",
+  "title": "Remaining text-contrast failures",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "",
+  "fix": "Bind muted text one step darker (`kara-600`) in light mode. Set placeholder ≥4.5:1; the W3C WAI forms tutorial and Atlassian `color.text.subtlest` both treat placeholder as text. Use `al-300` for dark error text. Remove ",
+  "effort": "S"
+ },
+ {
+  "id": "TOK-8",
+  "title": "`:host-context(.dark)` still drives avatar and custom-tone dark flip — only Chromium supports it",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`avatar.styles.ts:63` (all deterministic avatar colours); `chip.styles.ts:80,201,214`; `tag.styles.t",
+  "fix": "Set `color-scheme` per mode in the token sheet (TOK-9). Then express mode pairs with CSS `light-dark()`, for example `--_av-bg: light-dark(var(--tulpar-avatar-bg-l), var(--tulpar-avatar-bg-d))`. `color-scheme` is inherit",
+  "effort": "M"
+ },
+ {
+  "id": "TOK-9",
+  "title": "No `color-scheme`; no system (auto) mode; no light-island",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`build/generate-css.ts` emits only custom properties. A grep for `color-scheme` across packages find",
+  "fix": "Generate the following, which is what Primer (`data-color-mode=\"auto\"`), Spectrum and Web Awesome (`.wa-dark` + color-scheme) ship:",
+  "effort": "S"
+ },
+ {
+  "id": "TOK-10",
+  "title": "Custom tones and avatars use the primitive palette as runtime API; avatar initials and custom dark borders fail contrast",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`core/src/_internal/tone/tone-resolver.ts:122-147` (`BRAND_FAMILIES` is a hand-copied duplicate of `",
+  "fix": "Add a semantic accent (display) colour set to the brand layer, one entry per curated family, with roles `{bg, bgSubtle, fg, border, onBg}` per mode. Primer has `--display-<hue>-bgColor-muted/emphasis`, `-fgColor`, `-bord",
+  "effort": "M"
+ },
+ {
+  "id": "TOK-11",
+  "title": "The fallback system is effectively unused, and hand-typed fallbacks drift from the tokens",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`tokens/build/generate-fallbacks.ts` (43 keys). Its only consumer is `button.styles.ts:4` (`FALLBACK",
+  "fix": "Choose one of the following.",
+  "effort": "M"
+ },
+ {
+  "id": "TOK-12",
+  "title": "Other references to non-existent tokens",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "- `--tulpar-radius-sm`: `chip.styles.ts:394`, `shell sidenav/parts/{account:103, header:21, utility:",
+  "fix": "Fix the names. Add a build or CI check that collects every `var(--tulpar-…)` in component sources and fails on names that are neither in the token sheet nor in a declared component-hook list. Generate that hook list from",
+  "effort": "S"
+ },
+ {
+  "id": "TOK-13",
+  "title": "\"Warning\" has two hues and three tonal recipes",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`color.warn` = `kuyas` (orange), used by the input warn border/message/icon and button `severity=\"wa",
+  "fix": "Define one status-colour role set per intent (`status.<intent>.{surface, surfaceStrong, text, border, icon, onStrong}`) bound once per mode. Overlay, feedback, atom and input alias it. Use one family per intent and one n",
+  "effort": "M"
+ },
+ {
+  "id": "TOK-14",
+  "title": "Semantic layer has no foundation scales",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`semantic/types.ts`. The only foundation groups are `font.family`, `transition` (2 values), `easing.",
+  "fix": "Add semantic foundation tokens now, without density, which the roadmap defers until first needed:",
+  "effort": "L"
+ },
+ {
+  "id": "TOK-15",
+  "title": "Source format is not DTCG / not exportable; brand×mode duplication; no cascade layers",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`src/brand/tulpar/{light,dark}.ts` (TS object literals with no `$value`/`$type`/`$description`); `bu",
+  "fix": "- Author tokens in DTCG format: the W3C Design Tokens Community Group spec 2025.10 stable, which has `$value`/`$type`/aliases plus the Resolver module for sets and modifiers. Model brand and mode as modifiers.",
+  "effort": "L"
+ },
+ {
+  "id": "TOK-16",
+  "title": "Token tests — contrast gate covers 3 of 11 groups",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`semantic/{atom,feedback,overlay}.contrast.test.ts`, each with its own copy of `luminance()`/`contra",
+  "fix": "Write one table-driven suite. Declare every rendered (fg, bg, min) pair once, as in `review/tok/contrast.mjs`, and run it over both modes and every brand. Use 4.5 for text and 3 for non-text. Report APCA Lc as informatio",
+  "effort": "S"
+ },
+ {
+  "id": "TOK-17",
+  "title": "tokens (and vue) pin vitest ^1 / vite ^5 outside the catalog",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`packages/tokens/package.json:40,42` (`vite ^5.1.0` → installed 5.4.21, `vitest ^1.3.0` → installed ",
+  "fix": "Add `vite`, `vitest`, `typescript` and `tsx` to the catalog. Move all packages to one supported major (Vite 8 / Vitest 4, verifying the Angular peer). Enforce with `pnpm` `catalogMode: strict`, or a syncpack/manypkg chec",
+  "effort": "S"
+ },
+ {
+  "id": "TOK-18",
+  "title": "README is inaccurate or incomplete",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`packages/tokens/README.md`",
+  "fix": "Generate the token reference from source (Style Dictionary or Storybook doc block). Document the files, font loading, dark and auto mode, brand authoring and the full type exports.",
+  "effort": "S"
+ },
+ {
+  "id": "TOK-19",
+  "title": "Leftovers — navy shadows and `transition: all`",
+  "sev": "Nit",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "- `primitive/shadow.ts` uses `rgba(10, 37, 64, …)` (navy from the removed `navy` family; the tests c",
+  "fix": "Tint shadows from the current ink (`yagiz-950`) or neutral black. Remove the `focus` primitive shadow (TOK-2). Replace `transition: all` with explicit properties (`color, background-color, border-color, box-shadow, opaci",
+  "effort": "S"
+ },
+ {
+  "id": "CA-1",
+  "title": "No constraint validation anywhere (`setValidity` never called)",
+  "sev": "Blocker",
+  "mb": "No ",
+  "conf": "Verified",
+  "where": "`packages/core/src/_internal/form-field-base.ts` (whole file), `_internal/selection-control-base.ts`",
+  "fix": "mirror the native control into ElementInternals after every value/constraint change:",
+  "effort": "M"
+ },
+ {
+  "id": "CA-2",
+  "title": "Input family: initial/programmatic `value` not submitted; no reset/disabled/restore callbacks",
+  "sev": "Blocker",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`text-input/tulpar-text-input.ts:202-206` (only `_onInput`, `_onClear`, `_onPaste` and the mask call",
+  "fix": "in `FormFieldBase.willUpdate`/`updated`, when `value` changes, call `setFormValue(serialised value)` and refresh validity (CA-1). Add these to the base:",
+  "effort": "M"
+ },
+ {
+  "id": "CA-3",
+  "title": "`change`/`input` event semantics broken in the input family",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`text-input/tulpar-text-input.ts:173-176, 227-236, 250-269`; `textarea/tulpar-textarea.ts:41-56, 154",
+  "fix": "define one event contract for every value-bearing component and document it:",
+  "effort": "M"
+ },
+ {
+  "id": "CA-4",
+  "title": "Mask engine is not production-safe",
+  "sev": "Blocker",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`_internal/mask-engine.ts:42-206`, `text-input/tulpar-text-input.ts:43-57, 150-153, 202-225, 427-467",
+  "fix": "process on `input` (not `beforeinput`) with selection-range-aware conformance:",
+  "effort": "L"
+ },
+ {
+  "id": "CA-5",
+  "title": "Input/selection hosts are not focusable; Enter does not submit",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`form-field-base.ts` (no `shadowRootOptions`), `selection-control-base.ts` (same). Only `button/tulp",
+  "fix": "- Set `shadowRootOptions = {...LitElement.shadowRootOptions, delegatesFocus: true}` on both bases (keep the checkbox/radio roving `tabIndex` logic on the host).",
+  "effort": "S"
+ },
+ {
+  "id": "CA-6",
+  "title": "Button: host `aria-label` not forwarded; `data-disabled` is not exposed to AT",
+  "sev": "Blocker",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`button/tulpar-button.ts:213-215` (warns only), `301-330` (inner `<button>`/`<a>` gets no `aria-labe",
+  "fix": "- Forward the host ARIA to the inner control. Read `this.getAttribute('aria-label')` (observe `aria-label`, `aria-describedby`, `aria-pressed`, `aria-expanded`, `aria-haspopup`, `aria-controls`). Render it on the inner `",
+  "effort": "S"
+ },
+ {
+  "id": "CA-7",
+  "title": "Checkbox/radio role span is not labelled; `_ariaLabel()` is dead code",
+  "sev": "Blocker",
+  "mb": "No",
+  "conf": "Plausible",
+  "where": "`_internal/selection-control-base.ts:195-198, 232-247`; `checkbox/tulpar-checkbox.ts:98-112`; `radio",
+  "fix": "- Give the label span an id and set `aria-labelledby=\"<labelId>\"` on the control (same shadow root, so it works). Set `aria-describedby=\"<descId> <msgId>\"`.",
+  "effort": "S"
+ },
+ {
+  "id": "CA-8",
+  "title": "NumberInput is not an APG spinbutton; parsing is locale-unaware",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`number-input/tulpar-number-input.ts:71-90, 120-129, 173-203, 234-242`; `_internal/intl-format-build",
+  "fix": "- Add `role=\"spinbutton\"` with `aria-valuenow`, `aria-valuemin`, `aria-valuemax` and `aria-valuetext` (formatted string) on the input. Add PageUp/PageDown = `step × 10` (APG Spinbutton).",
+  "effort": "M"
+ },
+ {
+  "id": "CA-9",
+  "title": "`formDisabledCallback` overwrites the author's `disabled`; reflected `checked` has no `defaultChecked`",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`_internal/selection-control-base.ts:131-133`; `checkbox.ts:22,43-48,61-65`; `radio.ts:29,39-43`; `s",
+  "fix": "- Keep `_formDisabled` private state and compute `effectiveDisabled = disabled || _formDisabled`. Expose it through `:state(disabled)` / the `:disabled` pseudo-class (FACE hosts already match `:disabled` when form-disabl",
+  "effort": "S"
+ },
+ {
+  "id": "CA-10",
+  "title": "Library vocabulary split (severity/tone, warn/warning, outlined/outline, tonal/soft-tonal, `color`)",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "- `button/tulpar-button.ts:13-24` (`severity`: primary|secondary|info|success|warn|help|danger|contr",
+  "fix": "one cross-component vocabulary, as in Web Awesome 3 / Shoelace:",
+  "effort": "M"
+ },
+ {
+  "id": "CA-11",
+  "title": "Groups reuse the name `change` with two shapes → two `change` events per click",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`radio-group/tulpar-radio-group.ts:115-150`, `checkbox-group/tulpar-checkbox-group.ts:117-137`, chil",
+  "fix": "the group should own a single canonical event. Either stop propagation of child `change` at the group and re-dispatch one `change` (as native radios effectively do per group), or keep native-like child events and emit a ",
+  "effort": "S"
+ },
+ {
+  "id": "CA-12",
+  "title": "Shell skip link cannot work from a shadow root",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`shell/src/shell/tulpar-shell.ts:254,259`; test `tulpar-shell.test.ts:16-22`",
+  "fix": "handle the click — `preventDefault()`, then `main.focus({preventScroll:false})` with `tabindex=\"-1\"` on `<main>`, then `main.scrollIntoView()`. Make the text a prop (`skip-link-label`, CA-21). Test it by asserting `shado",
+  "effort": "S"
+ },
+ {
+  "id": "CA-13",
+  "title": "Overlay/mobile sidenav: no inert/focus containment",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`shell/tulpar-shell.styles.ts:107-121` (closed = `transform: translateX(-100%)` only); `tulpar-shell",
+  "fix": "- Closed: `inert` + `visibility:hidden` on `.sidenav` (after the transition, via `transition-behavior: allow-discrete` or `transitionend`).",
+  "effort": "M"
+ },
+ {
+  "id": "CA-14",
+  "title": "Rail mode: nav links have no accessible name",
+  "sev": "Blocker",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`shell/src/nav-item/tulpar-nav-item.styles.ts:161-170` (`:host([data-rail]) .label { display:none }`",
+  "fix": "visually hide instead of removing — `.label` gets the sr-only clip pattern (`position:absolute; width:1px; height:1px; overflow:hidden; clip-path: inset(50%); white-space:nowrap`). Alternatively, set `aria-label=${label}",
+  "effort": "S"
+ },
+ {
+  "id": "CA-15",
+  "title": "`<tulpar-shell>` removes the document `.dark` class on first render",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`shell/tulpar-shell.ts:42-43, 178-188`",
+  "fix": "- Make theme ownership opt-in. Either `dark` is `undefined` by default and the shell writes only when the value is explicitly set (initialise from `documentElement.classList.contains('dark')`), or theme handling moves to",
+  "effort": "S"
+ },
+ {
+  "id": "CA-16",
+  "title": "Nav-item ARIA details",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`shell/src/nav-item/tulpar-nav-item.ts:486-504, 472-479, 177-196, 430`; styles `57-60`",
+  "fix": "- Inline: remove `aria-haspopup`, give `.children` an id, and point `aria-controls` at it.",
+  "effort": "S"
+ },
+ {
+  "id": "CA-17",
+  "title": "Keyboard models rely on `document.activeElement`",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`button-group/tulpar-button-group.ts:96`; `shell/sidenav/tulpar-sidenav.ts:187-207`",
+  "fix": "resolve the current item from the event (`e.composedPath()`: find the first path element that is in the item list), or use `this.getRootNode().activeElement` / the item's `:focus-within`. Add a data-driven keyboard test.",
+  "effort": "S"
+ },
+ {
+  "id": "CA-18",
+  "title": "Touch targets below 24 px",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "- `text-input/tulpar-text-input.styles.ts:19-90`: clear/reveal/copy/paste = 14 px svg + 2 px padding",
+  "fix": "give each action button `min-inline-size/min-block-size: 24px` (Tulpar's own enterprise bar should be 32 px at md). Enlarge the hit area with an invisible `::before` (`inset: -4px`) to keep the visual density. Steppers: ",
+  "effort": "S"
+ },
+ {
+  "id": "CA-19",
+  "title": "Focus ring contrast and forced-colors",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`tokens/src/brand/tulpar/light.ts:119,325,354` (`rgba(81,78,207,0.40)`); used by `form-field-base.st",
+  "fix": "- Use a solid focus-ring token (≥3:1 against adjacent colours), e.g. kam-500 at 100 % with 2 px outline + 2 px offset. Pair it with a halo if the soft look is wanted (two-tone ring: GitHub Primer, Fluent 2).",
+  "effort": "S"
+ },
+ {
+  "id": "CA-20",
+  "title": "Every `warnDev` is compiled out of the published package",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`core/src/_internal/warn-dev.ts:11-26`; built `packages/core/dist/warn-dev-BUb2H4m0.js`:",
+  "fix": "do what Lit does. Ship a `development` export condition (a dev build with warnings) next to the default production build (`\"exports\": {\".\": {\"development\": \"./dist/dev/index.js\", \"default\": \"./dist/index.js\"}}`). Vite/we",
+  "effort": "S"
+ },
+ {
+  "id": "CA-21",
+  "title": "Hard-coded English UI strings",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "- `text-input.ts:279,321,344,383`: \"Show/Hide password\", \"Clear value\", \"Copied\", \"Paste from clipbo",
+  "fix": "one strategy library-wide:",
+  "effort": "S"
+ },
+ {
+  "id": "CA-22",
+  "title": "ButtonGroup always forces `role=toolbar` + roving tabindex",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`button-group/tulpar-button-group.ts:18-24, 61-66, 94-123`",
+  "fix": "default to `role=\"group\"` with natural Tab order. Offer an explicit `toolbar` (or `segmented`) mode for roving. Skip `[disabled]` in roving, or use focusable-disabled (`soft-disabled`, CA-6). References: Spectrum `sp-but",
+  "effort": "S"
+ },
+ {
+  "id": "CA-23",
+  "title": "Lit hygiene items",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "",
+  "fix": "- Derive autosize in `willUpdate` (`_effectiveAutosize = autosize && rows === undefined`). Use CSS `field-sizing: content` with `min-block-size: calc(var(--min-rows) * 1lh)` / `max-block-size` as the primary path (Chromi",
+  "effort": "M"
+ },
+ {
+  "id": "CA-24",
+  "title": "Sidenav filter matching",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`shell/sidenav/tulpar-sidenav.ts:311,335,460-469`",
+  "fix": "share one fold/match utility. Cross-package `_internal` import is forbidden, so copy it (≤50 lines per `internal-layering.md`) or promote it to a shared package. Gate the hotkey on visibility and allow `hotkey=\"\"` to dis",
+  "effort": "S"
+ },
+ {
+  "id": "CA-25",
+  "title": "Shell has no `banner`/`contentinfo` landmarks",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`shell/tulpar-shell.ts:255,262` (`<div class=\"topbar\">`, `<div class=\"footer\">`); `topbar/tulpar-top",
+  "fix": "`tulpar-topbar` sets `this._internals.role = \"banner\"` (or renders `<header>`). The shell footer region gets `role=\"contentinfo\"`. This is the APG Landmark Regions pattern.",
+  "effort": "S"
+ },
+ {
+  "id": "CA-26",
+  "title": "Test gaps (important behaviour not covered)",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`core/src/{button…switch}/*.test.ts`, `core/src/_internal/*.test.ts`, `shell/src//*.test.ts`",
+  "fix": "add an `a11y.test.ts` per component with axe plus `computedName`/`computedRole`. Add a shared \"FACE contract\" test suite (value/reset/disabled/validity/restore) that runs against every form control; Material Web and FAST",
+  "effort": "M"
+ },
+ {
+  "id": "CA-27",
+  "title": "Graphify hint — `FieldSize`/`SelectionSize` `_internal` boundary",
+  "sev": "Info",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`core/src/text-input/index.ts:3-8`, `checkbox/index.ts:2`, `radio/index.ts`, `switch/index.ts`, `rad",
+  "fix": "",
+  "effort": "S"
+ },
+ {
+  "id": "CA-28",
+  "title": "Physical CSS properties",
+  "sev": "Nit",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`form-field-base.styles.ts:20,26,58,159-160,265`; `text-input.styles.ts:26,44,56,78`; `number-input.",
+  "fix": "`margin-inline-start`, `padding-inline`, `inset-inline-start`, `transform-origin: left` → logical.",
+  "effort": "S"
+ },
+ {
+  "id": "CB-1",
+  "title": "Cross-shadow IDREFs — the ARIA relationship resolves to nothing",
+  "sev": "Blocker",
+  "mb": "No ",
+  "conf": "Verified.",
+  "where": "- `_internal/overlay/aria.ts:33-38` + `tooltip/tulpar-tooltip.ts` `_wireTrigger`. The trigger sits i",
+  "fix": "Do not use string IDREFs across a shadow boundary. Use one of these, per case:",
+  "effort": "M"
+ },
+ {
+  "id": "CB-2",
+  "title": "Select trigger has no accessible name",
+  "sev": "Blocker",
+  "mb": "No ",
+  "conf": "Verified.",
+  "where": "`_internal/form-field-base.ts:268-276` renders `<label for=\"control\">`. `select/tulpar-select.ts:880",
+  "fix": "Give the label an id and set `aria-labelledby=\"<labelId>\"` on the trigger. Both live in the same shadow root, so this is safe. In button mode use `aria-labelledby=\"<labelId> <valueId>\"`, which follows the APG select-only",
+  "effort": "S"
+ },
+ {
+  "id": "CB-3",
+  "title": "K1 extension — status rows also sit inside `role=listbox`; correct searchable structure",
+  "sev": "Major",
+  "mb": "Yes",
+  "conf": "Verified",
+  "where": "`select/tulpar-select.ts:851-871` (`_renderListbox`), `:787-820` (`_renderStatusRow`), `:883-885` (t",
+  "fix": "",
+  "effort": "M"
+ },
+ {
+  "id": "CB-4",
+  "title": "K2 verification, item by item",
+  "sev": "Major",
+  "mb": "Yes",
+  "conf": "Verified",
+  "where": "",
+  "fix": "",
+  "effort": "M"
+ },
+ {
+  "id": "CB-5",
+  "title": "Typeahead lands on disabled options; Enter commits a disabled value",
+  "sev": "Major",
+  "mb": "No ",
+  "conf": "Verified",
+  "where": "`_internal/listbox/typeahead.ts` (searches `labels` with no disabled check); `tulpar-select.ts:540-5",
+  "fix": "Pass a navigability predicate to `Typeahead.type` (skip `disabled || hidden`), the same rule as `active-index.ts`. Also guard `commit` with `if (active >= 0 && !items[active].disabled)`. APG says disabled options are not",
+  "effort": "S"
+ },
+ {
+  "id": "CB-6",
+  "title": "Overlay positioning — no scroll reflow, CSS Anchor never wired, `popover=\"manual\"` re-implements native behavior",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`tooltip/tulpar-tooltip.ts` `reposition()` (called only on open and on placement change), `toggletip",
+  "fix": "",
+  "effort": "M"
+ },
+ {
+  "id": "CB-7",
+  "title": "Tooltip/toggletip/popover lose trigger listeners after a DOM move",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`tooltip/tulpar-tooltip.ts` `disconnectedCallback` (calls `_detachTriggerListeners()` but keeps `thi",
+  "fix": "In `disconnectedCallback`, set `this._anchorEl = null` after detaching and unlinking, and close the overlay (`_doClose(true)`). This is the Lit \"symmetrical connect/disconnect\" rule ([Lit lifecycle docs](https://lit.dev/",
+  "effort": "S"
+ },
+ {
+  "id": "CB-8",
+  "title": "Toast hover/focus counter can stick → timers paused forever",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Plausible.",
+  "where": "`toast/toast-service.ts` `pointerenter/pointerleave/focusin/focusout` listeners and `_hoverCount`. `",
+  "fix": "Track hover and focus per location container, not per toast. Put one `pointerenter`/`pointerleave` and `focusin`/`focusout` pair on the location container (Sonner and Radix Viewport do this). Derive \"paused\" from `contai",
+  "effort": "S"
+ },
+ {
+  "id": "CB-9",
+  "title": "Toast ARIA model",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`toast/tulpar-toast.ts:503-512` (`_ariaRole`: actions → `alertdialog`), `:549-556` (role and `aria-l",
+  "fix": "",
+  "effort": "M"
+ },
+ {
+  "id": "CB-10",
+  "title": "F6 handler hijacks F6/Shift+F6 globally and forever",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`_internal/toaster/toaster-root.ts` `onKeydown`: `if (e.key !== \"F6\") return; e.preventDefault();` r",
+  "fix": "Intercept only while visible toasts exist. Make the hotkey configurable and announce it in the region label (Sonner: `hotkey={['altKey','KeyT']}`, `aria-label=\"Notifications alt+T\"`; Radix: `F8`, `label=\"Notifications ({",
+  "effort": "S"
+ },
+ {
+  "id": "CB-11",
+  "title": "Chip — interactive host containing a real button",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`chip/tulpar-chip.ts:122-123` (host `role=\"button\"` + `tabindex=0`), `:410-421` (shadow `<button cla",
+  "fix": "Do not put a role on the host. Render two sibling controls in the shadow root: `<button part=\"action\">label</button>` and `<button part=\"remove\" aria-label=\"Remove label\">`. This is how Material Web `md-input-chip` (prim",
+  "effort": "M"
+ },
+ {
+  "id": "CB-12",
+  "title": "Diacritic fold incomplete and asymmetric",
+  "sev": "Minor",
+  "mb": "Yes",
+  "conf": "Verified",
+  "where": "`_internal/listbox/filter.ts` `FOLD` + `normalize()`",
+  "fix": "Keep the 1:1 index map but generate the fold instead of hand-listing it. For each UTF-16 unit: `ch.toLocaleLowerCase(locale).normalize(\"NFD\")[0]`. This drops combining marks per character and keeps length 1:1. Keep the e",
+  "effort": "S"
+ },
+ {
+  "id": "CB-13",
+  "title": "Tag uses `role=\"status\"`",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`tag/tulpar-tag.ts:94-95`",
+  "fix": "No role (generic inline text), the same as Carbon `Tag` (read-only), Spectrum `Badge`, and Polaris `Badge`. When tags form a set, the consumer wraps them in a list. Use `role=status` only on an explicit live usage, for e",
+  "effort": "S"
+ },
+ {
+  "id": "CB-14",
+  "title": "Toggletip `aria-haspopup=\"dialog\"` without a dialog",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`toggletip/tulpar-toggletip.ts` `_wireTrigger` (`setHasPopup(next,\"dialog\")`), surface has no role. ",
+  "fix": "Use the Inclusive Components toggletip pattern ([Heydon Pickering](https://inclusive-components.design/tooltips-toggletips/)). Use a plain `<button aria-expanded>` with no `aria-haspopup`. The bubble is the `role=\"status",
+  "effort": "S"
+ },
+ {
+  "id": "CB-15",
+  "title": "Popover non-modal focus order",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Plausible",
+  "where": "`popover/tulpar-popover.ts` `_focusInitial`, the \"Tab flows out; no trap\" model",
+  "fix": "Use native invoker semantics, `popovertarget`/`commandfor` or `showPopover({source})`. They give the browser's \"popover focus navigation\" (Tab from the invoker goes into the popover, and Tab out returns after the invoker",
+  "effort": "M"
+ },
+ {
+  "id": "CB-16",
+  "title": "Built-in English strings not localizable",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "| String | Location | Overridable? |",
+  "fix": "Add one central, `lang`-aware message registry. Web Awesome / Shoelace use `@shoelace-style/localize`: components read the closest `lang`, and translations are registered once. Expose a per-instance prop override as well",
+  "effort": "M"
+ },
+ {
+  "id": "CB-17",
+  "title": "Select `change` semantics",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`tulpar-select.ts:414-422` (`_commit` has no equality guard), `:567-569`",
+  "fix": "`if (value === this.value) return;` before the dispatch. Dispatch `input` (bubbles, composed) and then `change` (bubbles), the same as native `<select>`. React Aria `onSelectionChange` also does not fire on reselection.",
+  "effort": "S"
+ },
+ {
+  "id": "CB-18",
+  "title": "Service-level dismiss scope and `setDefaults` orphaning",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`toast-service.ts` `_message.dismiss()` and `_toast.dismiss()` with no id (both iterate all `_entrie",
+  "fix": "Filter by `entry.variant` (store it in `ToastEntry`). In `setDefaults`, migrate the existing records (`queue.setMaxVisible(n)` then re-promote) instead of replacing the queue.",
+  "effort": "S"
+ },
+ {
+  "id": "CB-19",
+  "title": "Toast motion and gesture details",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`toast-service.ts` `ICON_SPINNER`; `tulpar-toast.ts:656-657, 700-712, 756-757`",
+  "fix": "Render `<tulpar-spinner size=\"sm\">` as the loading icon, which reuses its reduced-motion and a11y handling and needs no inline style. Keep swipe under reduced motion and swap the transition for an opacity cut. Require `|",
+  "effort": "S"
+ },
+ {
+  "id": "CB-20",
+  "title": "Toaster root is not in the top layer",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Plausible",
+  "where": "`toaster-root.ts` (`position:fixed; z-index: var(--tulpar-feedback-z-index, 9000)`)",
+  "fix": "Make the toaster root `popover=\"manual\"` and call `showPopover()` when the first toast mounts. When a new toast arrives while another top-layer element is above it, hide and show it again to move it back to the top. Conf",
+  "effort": "S"
+ },
+ {
+  "id": "CB-21",
+  "title": "Select closes on any scroll and refocuses the trigger; mobile risk",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Plausible",
+  "where": "`listbox-overlay.ts` (`window` capture `scroll` + `resize` → `_doClose`); `tulpar-select.ts:481-486`",
+  "fix": "Reposition instead of closing on ancestor scroll (the same autoUpdate as CB-6). Close only if the anchor leaves the clip rect, as Radix and React Aria do. Ignore `visualViewport` and keyboard resizes. Return focus only o",
+  "effort": "M"
+ },
+ {
+  "id": "CB-22",
+  "title": "Avatar token layering and initials",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`avatar/tulpar-avatar.ts` `_applyColorVars` (`var(--tulpar-primitive-color-${family}-600)` set from ",
+  "fix": "Add an `atom.avatar.palette.{n}` semantic layer that each brand binds to primitives, and set only `--tulpar-avatar-bg-*` from those. Extend the lint rule to template strings in `.ts` that build `--tulpar-primitive-`. Use",
+  "effort": "S"
+ },
+ {
+  "id": "CB-23",
+  "title": "Dead overlay code",
+  "sev": "Nit",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`_internal/overlay/overlay-root.ts` `getOverlayRoot()` (portal root plus a `MutationObserver` on `<h",
+  "fix": "Delete the unused code, or wire it as CB-6 describes. Rename the module to `overlay-stack.ts`.",
+  "effort": "S"
+ },
+ {
+  "id": "CB-24",
+  "title": "Hard-coded motion values bypass the motion tokens",
+  "sev": "Nit",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "- `tulpar-option.styles.ts:63,120` (90 ms `ease`)",
+  "fix": "Use the tokens everywhere. Remove the exit timing duplicated in JS: listen for `transitionend` or `animationend`, or use `element.getAnimations()` and `Promise.all(a.finished)`, with a fallback timeout. Do not parse CSS ",
+  "effort": "S"
+ },
+ {
+  "id": "CB-25",
+  "title": "Smaller keyboard and APG gaps",
+  "sev": "Nit",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`keymap.ts`; `overlay-root.ts onKeydown`; popover/toggletip `_onTriggerKeydown`",
+  "fix": "Follow the APG select-only keyboard table. Skip Escape when `e.isComposing || e.defaultPrevented`. Call `stopPropagation()` after the top overlay handles it (Radix `DismissableLayer`). Remove the Space `preventDefault` o",
+  "effort": "S"
+ },
+ {
+  "id": "CB-26",
+  "title": "Test gaps — strings, not relationships",
+  "sev": "Info",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "",
+  "fix": "Add axe-core (`chai-a11y-axe`, already part of the open-wc stack) to every component suite. Add a small `expectIdrefResolves(el, attr)` helper.",
+  "effort": "M"
+ },
+ {
+  "id": "WR-1",
+  "title": "Vue TextInput/Textarea/NumberInput — `label` prop never renders",
+  "sev": "Blocker",
+  "mb": "No ",
+  "conf": "Verified",
+  "where": "`packages/vue/src/text-input/TulparTextInput.vue:108-110`, `textarea/TulparTextarea.vue:90`, `number",
+  "fix": "(1) Wrapper: render each named carrier only when the slot is filled: `<span v-if=\"$slots.label\" style=\"display:contents\" slot=\"label\"><slot name=\"label\"/></span>`. Apply this to every carrier in TextInput, Textarea, Numb",
+  "effort": "S"
+ },
+ {
+  "id": "WR-2",
+  "title": "Angular overlay directives on `*-ng` wrappers anchor to a `display:contents` element",
+  "sev": "Blocker",
+  "mb": "No ",
+  "conf": "Verified",
+  "where": "`packages/angular/src/overlay/overlay-directive-base.ts:96-104` (`ensureHostId` on the directive hos",
+  "fix": "fix the root cause in WR-3 (the host must be the custom element itself). Separately (cross-ref overlay agent), a directive on a shadow host still needs the core to expose the description on the focusable inner control. U",
+  "effort": "S"
+ },
+ {
+  "id": "WR-3",
+  "title": "Angular double-element wrapper architecture (`<tulpar-x-ng>` + inner `<tulpar-x>`) is the wrong pattern",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "every Angular component (`styles: [\":host { display: contents; }\"]` + template that renders the core",
+  "fix": "the proxy-component pattern used by Ionic Angular and the Stencil Angular output target.",
+  "effort": "L"
+ },
+ {
+  "id": "WR-4",
+  "title": "No Angular Forms integration — the \"form-associated is enough\" decision is false",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "all Angular form wrappers; decision text in `docs/superpowers/specs/2026-06-09-tulpar-ui-v0.5-input-",
+  "fix": "",
+  "effort": "M"
+ },
+ {
+  "id": "WR-5",
+  "title": "Angular outputs named like native DOM events fire twice",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`change = output()` in `checkbox`, `switch`, `radio`, `radio-group`, `checkbox-group`, `text-input` ",
+  "fix": "never name an output after a DOM event. Value changes are already covered by `model()` (`checkedChange`/`valueChange`). Remove the `change` outputs, or rename them to `tulparChange`. Document that the native `(change)`/`",
+  "effort": "S"
+ },
+ {
+  "id": "WR-6",
+  "title": "Vue slot forwarding uses three inconsistent strategies; idiomatic `#slot` usage silently fails",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "- (a) Unconditional carriers: `TulparButton.vue:131-134`, `TulparTextInput.vue:108-110`, `TulparText",
+  "fix": "one rule for every Vue wrapper. Each named core slot gets `<span v-if=\"$slots.x\" style=\"display:contents\" slot=\"x\"><slot name=\"x\"/></span>`. Keep the default `<slot/>` passthrough for advanced users. Add `defineSlots<{ l",
+  "effort": "S"
+ },
+ {
+  "id": "WR-7",
+  "title": "No tree-shaking — single entry point, every element registered on import, no `sideEffects`",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`packages/vue/package.json` / `packages/angular/package.json` (single `\".\"` export, no `sideEffects`",
+  "fix": "per-component entry points that mirror core's subpaths. Vue: `@tulpar-ui/vue/button` etc. via a Vite multi-entry lib build plus an `exports` map; keep the root barrel for convenience. Angular: ng-packagr secondary entry ",
+  "effort": "M"
+ },
+ {
+  "id": "WR-8",
+  "title": "Angular statically imports the \"optional\" peer `@angular/router`",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`packages/angular/src/shell/tulpar-shell.component.ts` (`import { NavigationEnd, Router } from \"@ang",
+  "fix": "move router integration out of the component. Expose an `InjectionToken<TulparNavigate>` that the shell injects optionally. Ship `provideTulparRouter()` in a secondary entry point (`@tulpar-ui/angular/router`, see WR-7) ",
+  "effort": "S"
+ },
+ {
+  "id": "WR-9",
+  "title": "ButtonGroup has no wrapper; wrapper buttons are invisible to `<tulpar-button-group>`",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "core `packages/core/src/button-group/tulpar-button-group.ts:60` (`querySelectorAll(\":scope > tulpar-",
+  "fix": "the WR-3 proxy pattern removes the problem (children are real `tulpar-button`s). Add `TulparButtonGroupComponent` / `TulparButtonGroup` wrappers (`stacked` prop + default slot) in both frameworks. Cross-ref core: query d",
+  "effort": "S"
+ },
+ {
+  "id": "WR-10",
+  "title": "API parity gaps (from the matrix)",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "see the parity matrix above.",
+  "fix": "close each gap. Make `sidenavCollapsed`, `asideOpen`, `indeterminate` and select `open` `model()`s / `v-model:x`. Accept `provideTulparToast(defaults?)` → `provideEnvironmentInitializer(() => toast.setDefaults(defaults))",
+  "effort": "S"
+ },
+ {
+  "id": "WR-11",
+  "title": "Angular binds state through attributes; inverted `allow-empty`; `value || null`",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "- `tulpar-number-input.component.ts`: `[attr.allow-empty]=\"allowEmpty() ? null : ''\"` plus `[allowEm",
+  "fix": "bind properties (`[value]`, `[allowEmpty]`, `[autosize]`) for all state. Under `CUSTOM_ELEMENTS_SCHEMA` Angular sets them directly; with WR-3 they become host property bindings. Do not set `locale` unless the consumer pr",
+  "effort": "S"
+ },
+ {
+  "id": "WR-12",
+  "title": "Overlay directive design details",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`angular/src/overlay/*.ts`, `vue/src/overlay/overlay-directive-factory.ts`",
+  "fix": "append the created overlay to a single overlay root (`document.body` or a library-owned container). The core already uses top-layer/Popover API and resolves `for` via `ownerDocument.getElementById`, which works from `bod",
+  "effort": "S"
+ },
+ {
+  "id": "WR-13",
+  "title": "SSR safety of Angular overlay directives and shell",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Plausible",
+  "where": "Angular overlay directives `ngOnInit` (`doc.createElement` + `appendChild`); `tulpar-shell.component",
+  "fix": "perform DOM creation in `afterNextRender` (browser-only by contract) and guard `window` with `inject(PLATFORM_ID)`/`isPlatformBrowser`, or move it into the WR-8 provider. This is not \"SSR optimization tuning\" (out of sco",
+  "effort": "S"
+ },
+ {
+  "id": "WR-14",
+  "title": "README drift — documented APIs do not exist",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`packages/angular/README.md` (overlay section): `<tulpar-popover-ng …>` (no such component) and \"`op",
+  "fix": "regenerate the README examples from the playground's verified snippets. Add sections for Forms (WR-4), v-model names, slot syntax (WR-6) and per-component imports (WR-7).",
+  "effort": "S"
+ },
+ {
+  "id": "WR-15",
+  "title": "Package hygiene",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "- `packages/vue/tsconfig.json` excludes `/*.test.ts` only, so `dist/select/TulparSelect.spec.d.ts`, ",
+  "fix": "exclude `/*.spec.ts` from the dts build. Move Vue dev tooling to `catalog:`. Decide one policy for tokens: either both wrappers depend on `@tulpar-ui/tokens` (the CSS is required at runtime, so this is reasonable), or ne",
+  "effort": "S"
+ },
+ {
+  "id": "WR-16",
+  "title": "No Custom Elements Manifest — raw elements untyped, wrappers hand-maintained",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "",
+  "fix": "generate `custom-elements.json` with `@custom-elements-manifest/analyzer` and reference it via `\"customElements\"` in core's package.json. From it, generate (a) Vue `GlobalComponents`/JSX typings for raw tags, and (b) opt",
+  "effort": "M"
+ },
+ {
+  "id": "WR-17",
+  "title": "Test gaps hide wrapper bugs; Angular playground is not zoneless",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "no Vue tests exist for `TulparTextInput`, `TulparTextarea`, `TulparNumberInput` (file list). All wra",
+  "fix": "keep smoke tests, and add a small real-browser wrapper suite (Vitest browser mode + Playwright) per component: (1) prop → core property forwarding, (2) prop renders when no slot is used and slot wins when it is used, (3)",
+  "effort": "M"
+ },
+ {
+  "id": "WR-18",
+  "title": "Angular idiom nits",
+  "sev": "Nit",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "",
+  "fix": "",
+  "effort": "S"
+ },
+ {
+  "id": "AX-1",
+  "title": "Checkbox and Radio have no accessible name",
+  "sev": "Blocker",
+  "mb": "No ",
+  "conf": "Verified",
+  "where": "`packages/core/src/_internal/selection-control-base.ts:235-247` (`<label class=\"root\">` wraps `<span",
+  "fix": "Give the control an IDREF name *inside the same shadow root*. Render `<span id=\"label\">…<slot name=\"label\">` and put `aria-labelledby=\"label\"` (plus `aria-describedby` for the description) on the `role=checkbox|radio` sp",
+  "effort": "M"
+ },
+ {
+  "id": "AX-2",
+  "title": "Select trigger has no accessible name; searchable trigger is named by its value",
+  "sev": "Blocker",
+  "mb": "Yes",
+  "conf": "Verified",
+  "where": "`_internal/form-field-base.ts:268,275` (`<label for=\"control\">`), `select/tulpar-select.ts:880-893` ",
+  "fix": "In `FormFieldBase`, render the label with an `id` (`id=\"label\"`) and set `aria-labelledby=\"label\"` on the trigger (same shadow root). For the APG \"Select-Only Combobox\" pattern (https://www.w3.org/WAI/ARIA/apg/patterns/c",
+  "effort": "S"
+ },
+ {
+  "id": "AX-3",
+  "title": "Icon-only / circle Button: host `aria-label` is never forwarded",
+  "sev": "Blocker",
+  "mb": "No ",
+  "conf": "Verified",
+  "where": "`button/tulpar-button.ts:301-311` (`<button class=\"btn\">` has no aria-label binding), `:213-214` (de",
+  "fix": "Add an explicit `label` / `accessible-label` property that renders onto the inner `<button aria-label>`. This is the pattern in Shoelace/Web Awesome `label` on `wa-icon-button` and Spectrum `sp-action-button label`. Alte",
+  "effort": "S"
+ },
+ {
+  "id": "AX-4",
+  "title": "Slotted-option Select: `aria-activedescendant` crosses the shadow root and never resolves",
+  "sev": "Blocker",
+  "mb": "Yes",
+  "conf": "Verified",
+  "where": "`select/tulpar-select.ts` virtual-focus reflection (~l.151-163, 227-232, 281). The active option id ",
+  "fix": "Industry choice for WC selects with light-DOM options:",
+  "effort": "M"
+ },
+ {
+  "id": "AX-5",
+  "title": "K1 confirmed + searchable listbox / search-input structure",
+  "sev": "Blocker",
+  "mb": "Yes",
+  "conf": "Verified",
+  "where": "`select/tulpar-select.ts:853-863` (`_renderSearch()` inside `role=listbox`), `:765-776`.",
+  "fix": "Follow the APG \"Editable Combobox with List Autocomplete\" pattern in a popup. Structure: the popup is a generic container (or `role=dialog` with a label when it holds more than a list). It contains the search `<input rol",
+  "effort": "M"
+ },
+ {
+  "id": "AX-6",
+  "title": "Toast and Message buttons are unreachable by keyboard; F6 dead-ends",
+  "sev": "Blocker",
+  "mb": "No ",
+  "conf": "Verified",
+  "where": "`toast/tulpar-toast.ts:270-276` (host `tabindex=\"-1\"`), `_internal/toaster/toaster-root.ts:164-200` ",
+  "fix": "Do not put `tabindex=-1` on the host. Make the toast card itself non-focusable and let its inner buttons stay in natural order inside the region. Give the region `role=region aria-label=\"Notifications (F6)\"` and make it ",
+  "effort": "S"
+ },
+ {
+  "id": "AX-7",
+  "title": "Light-mode focus ring is 1.89:1 (fails 1.4.11); the token contrast test ignores alpha",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`packages/tokens/src/brand/tulpar/light.ts:119,325,354` (`rgba(81, 78, 207, 0.40)`), used by `button",
+  "fix": "Use an opaque focus colour with ≥3:1 against all surfaces it can sit on (kam-500 `#514ecf` on white is about 6.5:1), and use a 2 px outline with 2 px offset. Optionally use the \"double ring\" (inner surface-colour ring + ",
+  "effort": "S"
+ },
+ {
+  "id": "AX-8",
+  "title": "Forced colors: switch invisible; checked radio and indeterminate checkbox lost",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "switch / radio / checkbox styles (`switch/*.styles.ts`, `radio/*.styles.ts`, `checkbox/*.styles.ts`)",
+  "fix": "Add `@media (forced-colors: active)` blocks:",
+  "effort": "S"
+ },
+ {
+  "id": "AX-9",
+  "title": "Progress `aria-labelledby` points into the shadow root; the progressbar is unnamed",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`progress/tulpar-progress.ts:218-222` (host `aria-labelledby=_labelId`), `:366` (`<span id=_labelId>",
+  "fix": "ARIA element reflection (`ariaLabelledByElements`) cannot fix this, because the spec allows references *out of* a shadow root, not *into* one. So move the role into the shadow root: render `<div role=progressbar aria-lab",
+  "effort": "S"
+ },
+ {
+  "id": "AX-10",
+  "title": "Radio group: extra Tab stop on a role-less host before the radio",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`radio-group/tulpar-radio-group.ts:150-165` (sets `radio.tabIndex = 0/-1` on the host), `radio/tulpa",
+  "fix": "Put roving tabindex on the *focusable control*, not the host. Use `delegatesFocus: true` on the radio's shadow root with the inner span as the only focusable element, and set the host `tabindex` only as the delegate. Bet",
+  "effort": "S"
+ },
+ {
+  "id": "AX-11",
+  "title": "Chip: host `role=button` contains a remove `<button>` (nested-interactive)",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`chip/tulpar-chip.ts:123` (host `role=button`), `:412` (inner `button.x`).",
+  "fix": "Make the chip a *container* (no role, or `role=listitem` inside a `role=list`/`group`) with two sibling controls: an optional body `<button>` (when clickable) and the remove `<button aria-label=\"Remove X\">`. This is the ",
+  "effort": "M"
+ },
+ {
+  "id": "AX-12",
+  "title": "Brand text colours fail 4.5:1",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "brand tokens in `packages/tokens/src/brand/tulpar/light.ts` (brand text on surface; placeholder/labe",
+  "fix": "Make the brand step used for *text* on light surfaces a darker step (green ~700, ≥4.5:1 on white and on the tonal tint). Keep the bright step for fills and large text only. Encode this as separate semantic tokens `color.",
+  "effort": "M"
+ },
+ {
+  "id": "AX-13",
+  "title": "Ghost chip text invisible in dark mode (1.04:1)",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "chip ghost variant colours (`chip/tulpar-chip.styles.ts`), story `display-status-chip--dark-mode`.",
+  "fix": "Bind the ghost text to an auto-flipping semantic token (`color.text.*` / tone `onSurface`) rather than a fixed primitive. Never use `:host-context`. Add the ghost variant to the dark-mode contrast matrix test.",
+  "effort": "S"
+ },
+ {
+  "id": "AX-14",
+  "title": "Shell skip link does not move focus",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`packages/shell/src/shell/tulpar-shell.ts:254` (`<a href=\"#tulpar-shell-content\">`), `:259` (`<main ",
+  "fix": "Handle the click: `preventDefault()`, then `main.focus()` with `main tabindex=\"-1\"`. Optionally use `scrollIntoView`. Do not touch `location.hash`, because SPA routers own it. This is how GOV.UK Frontend's skip link work",
+  "effort": "S"
+ },
+ {
+  "id": "AX-15",
+  "title": "Tag sets `role=\"status\"` on every tag",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`tag/tulpar-tag.ts:94-95`.",
+  "fix": "No role by default (plain text). Consumers who want an announcement wrap the region themselves. Carbon `Tag`, Spectrum `sp-badge` and Polaris `Badge` have no live role. If tone conveys meaning, add visually hidden tone t",
+  "effort": "S"
+ },
+ {
+  "id": "AX-16",
+  "title": "Target size < 24×24 (WCAG 2.5.8)",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "number-input steppers, `form-field-base` affordance buttons, `select-clear`, `toast-close` (`toast/t",
+  "fix": "Give icon buttons at least a 24×24 hit area (visual glyph can stay 14–16 px) through padding or a `::before` hit-area extension. Steppers: 24 px wide and at least 12 px tall each, with the input's ArrowUp/Down as the pri",
+  "effort": "S"
+ },
+ {
+  "id": "AX-17",
+  "title": "Invalid ARIA attributes on radio / checkbox group",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`radio/tulpar-radio.ts:92` (`aria-readonly` on `role=radio`), `_internal/selection-group-base.ts:209",
+  "fix": "Put `aria-readonly` on the radiogroup. For a required checkbox group, express it through the group label text (\"(required)\") and/or `aria-describedby` hint, which is the ARIA APG / GOV.UK approach. Keep `aria-required` o",
+  "effort": "S"
+ },
+ {
+  "id": "AX-18",
+  "title": "K2 partly confirmed — Home/End hijacked in the search input",
+  "sev": "Minor",
+  "mb": "Yes",
+  "conf": "Verified",
+  "where": "`select/tulpar-select.ts` `_onSearchKeydown` / listbox keymap.",
+  "fix": "In the search input, do not intercept Home/End (and Ctrl+Home/End). Alt+Up/Down and arrows remain for the list. Reference: https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-autocomplete-list/ (keyboard ",
+  "effort": "S"
+ },
+ {
+  "id": "AX-19",
+  "title": "NumberInput is exposed as `textbox`, not `spinbutton`",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`number-input/tulpar-number-input.ts` (input `inputmode=decimal`, no role, no `aria-valuenow`).",
+  "fix": "Follow the APG Spinbutton pattern: `role=\"spinbutton\"` with `aria-valuenow/min/max` and `aria-valuetext` (formatted, e.g. \"₺1.250,00\"). React Aria `useNumberField` does exactly this on a text input (role spinbutton + val",
+  "effort": "S"
+ },
+ {
+  "id": "AX-20",
+  "title": "Font sizes in px ignore the user's browser font-size setting",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`packages/tokens/dist/css/tulpar.css` (`--tulpar-primitive-typography-font-size-*: 12px…72px`, `--tu",
+  "fix": "Emit typography and spacing tokens that scale with type in `rem` (Carbon, Spectrum 2, Primer, GOV.UK all use rem). Keep borders and hairlines in px.",
+  "effort": "M"
+ },
+ {
+  "id": "AX-21",
+  "title": "Shell naming details",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`packages/shell/src/nav-item/tulpar-nav-item.ts` (link content), `topbar/tulpar-topbar.ts:22` (menu ",
+  "fix": "`aria-hidden` the kbd hint (expose it through `aria-keyshortcuts=\"D\"`). Render the count as a visually hidden suffix (\"12 new\") or `aria-describedby`. Render the child `group` only when children exist. Add `aria-expanded",
+  "effort": "S"
+ },
+ {
+  "id": "AX-22",
+  "title": "Unnamed listbox / toolbar; low-contrast initials and counter",
+  "sev": "Nit",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "",
+  "fix": "Listbox `aria-labelledby` the field label. Add a `label` prop on ButtonGroup → `internals.ariaLabel`. Generate avatar background lightness with a contrast constraint (choose black or white text by APCA/WCAG ratio, as Atl",
+  "effort": "S"
+ },
+ {
+  "id": "VIS-1",
+  "title": "Vue wrappers turn unset props into `''` and wipe core defaults",
+  "sev": "Blocker",
+  "mb": "No ",
+  "conf": "Verified",
+  "where": "`packages/vue/src/tag/TulparTag.vue:62-64` (`:variant=\"variant ?? undefined\"` …), `packages/vue/src/",
+  "fix": "1. A wrapper must not forward props the consumer did not set. Build the binding object in a `computed` that drops `undefined` keys, then `v-bind` it: `const fwd = computed(() => Object.fromEntries(Object.entries(props).f",
+  "effort": "M"
+ },
+ {
+  "id": "VIS-2",
+  "title": "Off-canvas sidenav and closed configurator stay in the tab order; wrong state; mobile menu button overlaps the topbar",
+  "sev": "Blocker",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`packages/shell/src/sidenav/tulpar-sidenav.ts`, `packages/shell/src/shell/tulpar-shell.ts` (aside pa",
+  "fix": "- A closed drawer must be `inert` (the HTML `inert` attribute, Baseline 2023), or `visibility:hidden` after the exit transition. On mobile the open drawer follows the APG modal-dialog pattern: focus moves in, focus is tr",
+  "effort": "M"
+ },
+ {
+  "id": "VIS-3",
+  "title": "Shell scroll architecture (scroll kept across routes; the document scrolls behind the frame)",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`packages/shell/src/shell/tulpar-shell.ts` (inner `<main id=\"tulpar-shell-content\">` is the scroller",
+  "fix": "- Use document-level scrolling with a `position: sticky` topbar and a sticky, independently scrolling sidenav. Native router scroll restoration (Vue `scrollBehavior`, Angular `withInMemoryScrolling`), `scroll-margin-top`",
+  "effort": "M"
+ },
+ {
+  "id": "VIS-4",
+  "title": "Escape does not close a hover-opened tooltip",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`packages/core/src/tooltip/tulpar-tooltip.ts:409-414` (`_dismiss()` → `_doClose(true)` then `trigger",
+  "fix": "follow the WAI-ARIA APG tooltip pattern (https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/) and WCAG Understanding 1.4.13:",
+  "effort": "S"
+ },
+ {
+  "id": "VIS-5",
+  "title": "Focus ring below 3:1 in both themes",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "semantic token `--tulpar-color-focus-ring` (light `rgba(81, 78, 207, 0.4)`, dark `rgba(132, 151, 255",
+  "fix": "- Make the focus-ring token opaque per brand × mode, with ≥3:1 against `color.bg.surface` and `color.bg.subtle` in both modes.",
+  "effort": "S"
+ },
+ {
+  "id": "VIS-6",
+  "title": "K8 confirmed and extended — search-match highlight is invisible on active rows, in both themes",
+  "sev": "Major",
+  "mb": "Yes",
+  "conf": "Verified",
+  "where": "`packages/core/src/select/tulpar-option.styles.ts:322-327` (`mark[part=\"match\"] { background: color-",
+  "fix": "",
+  "effort": "S"
+ },
+ {
+  "id": "VIS-7",
+  "title": "Vue Switch `on-color` never reaches the core",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`packages/vue/src/switch/TulparSwitch.vue:11,61` (prop `onColor`); `apps/playground-vue/src/componen",
+  "fix": "do not name props `on*`, because that prefix is reserved for listeners in Vue (and in JSX/React and Solid). Rename the API in core and in all wrappers to `checked-color` / `unchecked-color` (this matches `aria-checked`, ",
+  "effort": "S"
+ },
+ {
+  "id": "VIS-8",
+  "title": "No `color-scheme` for dark mode; native controls stay light; native select border equals its background",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "tokens CSS (`@tulpar-ui/tokens/css/tulpar.css`): no `color-scheme` anywhere (grep across `packages/t",
+  "fix": "the brand × mode layer emits `:root { color-scheme: light; } .dark { color-scheme: dark; }`. If a brand later supports auto, use `color-scheme: light dark` with the `light-dark()` function. The playgrounds also add `<met",
+  "effort": "S"
+ },
+ {
+  "id": "VIS-9",
+  "title": "The playgrounds do not use Tulpar's own controls",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "29 native `<select>` in `apps/playground-vue/src/components/*.vue` and 30 in `apps/playground-ng/src",
+  "fix": "- Rebuild the playground control panels and the configurator from `tulpar-select`, `tulpar-switch`, `tulpar-checkbox` and `tulpar-radio-group` (a segmented ButtonGroup for mode/density).",
+  "effort": "M"
+ },
+ {
+  "id": "VIS-10",
+  "title": "Parity drifts between ng and vue (root cause: two hand-written page sets)",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "",
+  "fix": "- One source of truth for page content: a framework-neutral spec per page (sections, ids, copy, example list) in a shared workspace file.",
+  "effort": "M"
+ },
+ {
+  "id": "VIS-11",
+  "title": "Vue NumberInput \"Advanced — formatOptions\" demo teaches a wrong pattern and throws",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`apps/playground-vue/src/components/NumberInputDemo.vue:35-47, 115-123, 318-340`.",
+  "fix": "`<TulparNumberInput :format-options=\"compactTRYOptions\" … />`, with copy explaining that the wrapper forwards it as a DOM property. Match the Angular demo (`[formatOptions]`).",
+  "effort": "S"
+ },
+ {
+  "id": "VIS-12",
+  "title": "Horizontal overflow at 375px",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "",
+  "fix": "below ~480px the demo-row stacks the row label above the items (`grid-template-columns: 1fr`). Components inside demos get `max-inline-size: 100%`. The inline-toast demo sets `inline-size: 100%`.",
+  "effort": "S"
+ },
+ {
+  "id": "VIS-13",
+  "title": "No landing page and no 404",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`apps/playground-vue/src/router.ts` (`/` → redirect `/button`; `/:pathMatch(.*)*` → redirect `/butto",
+  "fix": "an Overview route at `/`, and a NotFound component on the catch-all route (Vue Router catch-all component, Angular `path: '', component: NotFoundComponent`) that suggests the closest route.",
+  "effort": "S"
+ },
+ {
+  "id": "VIS-14",
+  "title": "Demo page template inconsistent; numbered h2s; no deep links",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "",
+  "fix": "one DocPage template.",
+  "effort": "M"
+ },
+ {
+  "id": "VIS-15",
+  "title": "Colors page legibility and role copy",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`apps/playground-vue/src/components/ColorsDemo.vue` and `apps/playground-ng/src/app/demos/colors-dem",
+  "fix": "- Pick the label colour per step by contrast (or from an `on-*` token per step).",
+  "effort": "S"
+ },
+ {
+  "id": "VIS-16",
+  "title": "Visual weight — glow shadows, heavy unthemed code blocks, saturated panels",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "",
+  "fix": "- Solid button elevation = none, or the `shadow-xs` token (1px). Keep the \"raised\" modifier as the opt-in it already is.",
+  "effort": "M"
+ },
+ {
+  "id": "VIS-17",
+  "title": "Empty topbar; brand sits in the sidenav beneath it",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`apps/playground-vue/src/App.vue` `<TulparTopbar>` (only a 12px \"Vue playground\" label); same in Ang",
+  "fix": "the topbar carries the brand mark plus the controls a docs surface needs:",
+  "effort": "S"
+ },
+ {
+  "id": "VIS-18",
+  "title": "Copy and terminology inconsistencies",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "",
+  "fix": "one copy register. Use human labels in nav (\"Text input\", \"Radio group\"); keep class names in code blocks. Use sentence case for nav and headings (web-design-guidelines and frontend-design). Keep demo strings in English,",
+  "effort": "S"
+ },
+ {
+  "id": "VIS-19",
+  "title": "Select trigger's accessible name is the placeholder, not the label",
+  "sev": "Minor",
+  "mb": "No ",
+  "conf": "Verified",
+  "where": "`packages/core/src/select/tulpar-select.ts` (trigger naming).",
+  "fix": "the APG select-only combobox (https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-select-only/) sets `aria-labelledby=\"label-id trigger-value-id\"`, so the name is \"City, Select a city\".",
+  "effort": "S"
+ },
+ {
+  "id": "VIS-20",
+  "title": "Static Tag gets `role=\"status\"`",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`packages/core/src/tag/tulpar-tag.ts:94-95` (`if (!this.hasAttribute(\"role\")) this.setAttribute(\"rol",
+  "fix": "no role (plain text). If grouping is needed, consumers wrap tags in `role=\"list\"` / `listitem`. Reserve `status` for Badge-like live counts that the consumer opts into. Carbon and Spectrum tags carry no live role.",
+  "effort": "S"
+ },
+ {
+  "id": "VIS-21",
+  "title": "Motion and asset nits",
+  "sev": "Nit",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "",
+  "fix": "- (a) `transform: scaleX(var(--p))` with `transform-origin: inline-start` (genjutsu / ui-ux-pro-max `transform-performance`).",
+  "effort": "S"
+ },
+ {
+  "id": "VIS-22",
+  "title": "Dead Vite scaffold files",
+  "sev": "Nit",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`apps/playground-vue/src/components/HelloWorld.vue`, `apps/playground-vue/src/style.css` (purple sca",
+  "fix": "delete them. They mislead readers (style.css is the only file in the repo that declares `color-scheme`).",
+  "effort": "S"
+ },
+ {
+  "id": "VIS-23",
+  "title": "The pre-existing Angular dev server served a stale bundle",
+  "sev": "Info",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "process on :4310 (`ng serve`, started 10:02); merge commits at 10:50.",
+  "fix": "verification scripts always start a fresh `ng serve` (or `ng build` + static serve) per check. The Phase-4 parity CI job runs against a production build, not a watch server.",
+  "effort": "S"
+ },
+ {
+  "id": "DOC-1",
+  "title": "CLAUDE.md is stale well beyond the status line (extends K3)",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`CLAUDE.md` (Status, Authoritative Docs, Architecture, Tech Stack, Out of Scope, Shipped so far, Exe",
+  "fix": "Make CLAUDE.md *point* to living sources instead of duplicating them:",
+  "effort": "S"
+ },
+ {
+  "id": "DOC-2",
+  "title": "READMEs and a changeset document overlay APIs that do not exist",
+  "sev": "Major",
+  "mb": "No ",
+  "conf": "Verified",
+  "where": "- `packages/angular/README.md:72-75` — `<tulpar-popover-ng id=\"acctMenu\" …>`. No Angular selector `t",
+  "fix": "Generate the usage snippets from tested sources. Make README examples doctests: extract the fenced blocks and type-check them in CI, as Angular Material and Lit do for docs snippets. Better still, point READMEs to the St",
+  "effort": "S"
+ },
+ {
+  "id": "DOC-3",
+  "title": "READMEs cover about a third of the shipped surface",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "- `README.md:19-24`: the packages table omits `@tulpar-ui/shell`. It describes core as \"`<tulpar-but",
+  "fix": "One README pattern per package: install → minimum setup → link to the per-component docs. The component list in the README must be generated from the CEM (DOC-16), so it cannot drift again.",
+  "effort": "S"
+ },
+ {
+  "id": "DOC-4",
+  "title": "A breaking palette rewrite shipped without a changeset; the migration guide says \"no breaking changes\"",
+  "sev": "Major",
+  "mb": "No ",
+  "conf": "Verified",
+  "where": "- `packages/tokens/src/primitive/color.ts` (commit `f9d9eee feat(tokens): replace primitive palette ",
+  "fix": "Add a changeset for `@tulpar-ui/tokens` (minor, which is valid for 0.x under semver §4, but labelled BREAKING in the text). Add a \"Palette migration\" section with an old→new family map, and correct the v0.6→v0.10 guide. ",
+  "effort": "S"
+ },
+ {
+  "id": "DOC-5",
+  "title": "Pending changesets contain wrong API names and token names (they become the published CHANGELOG)",
+  "sev": "Major",
+  "mb": "No ",
+  "conf": "Verified",
+  "where": "- `.changeset/v0.12-toast-message.md:8`: \"Angular (`provideTulparToast`, `TulparToast`/`TulparMessag",
+  "fix": "Review changesets as API documentation in PR review, with the same rigor as code. Derive the changeset's API list from the CEM/api-extractor diff (DOC-4).",
+  "effort": "S"
+ },
+ {
+  "id": "DOC-6",
+  "title": "Internal milestone names (v0.7…v0.15) collide with semver; npm is still 0.6.0",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "every spec and plan filename, the roadmap, `docs/migration/v0.6-to-v0.10.md`, and the changeset name",
+  "fix": "Pick one model and record it as a decision:",
+  "effort": "S"
+ },
+ {
+  "id": "DOC-7",
+  "title": "Plans have 0 of 1,767 checkboxes ticked; the \"plan as working contract\" record cannot be trusted",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "all 19 files in `docs/superpowers/plans/`. Counts: v0.1 0/205, v0.2 0/53, v0.3 0/53, v0.4 0/143, v0.",
+  "fix": "",
+  "effort": "S"
+ },
+ {
+  "id": "DOC-8",
+  "title": "Spec lifecycle — no Implemented/Superseded status and no decision log",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "the status headers of all 22 specs (`grep -m1 '^\\*\\*(Status|Durum)'`):",
+  "fix": "Use the status lifecycle `Draft → Approved → Implemented (sha) → Superseded by <link>`, the same as IETF/RFC status and Python PEP \"Final/Superseded\". Put the active decisions in an ADR index. Specs stay as design histor",
+  "effort": "S"
+ },
+ {
+  "id": "DOC-9",
+  "title": "The Select specs (v0.14/v0.15) mandate invalid ARIA — the spec is the root cause of K1 — plus other drifts",
+  "sev": "Major",
+  "mb": "Yes",
+  "conf": "Verified",
+  "where": "",
+  "fix": "",
+  "effort": "M"
+ },
+ {
+  "id": "DOC-10",
+  "title": "v0.13 atoms spec ↔ code drift (Tag/Badge/Chip split implemented, but with a11y errors)",
+  "sev": "Major",
+  "mb": "No ",
+  "conf": "Verified",
+  "where": "",
+  "fix": "Fix the Tag role and the Progress labelling in code. Rewrite the Chip anatomy in the spec, then in code. Add an errata section to S13 for flow/xs/xl, or remove them. Align the roadmap §5 Tag line with the spec.",
+  "effort": "M"
+ },
+ {
+  "id": "DOC-11",
+  "title": "The v0.11 overlay spec contradicts itself; the code misses some acceptance criteria",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "",
+  "fix": "- Spec errata: remove the element-wrapper and portal passages and document the real binding idioms.",
+  "effort": "M"
+ },
+ {
+  "id": "DOC-12",
+  "title": "v0.12 toast/message spec ↔ code drift",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "",
+  "fix": "Fix in code: channel-scoped dismiss, Message pill variant, Message role always `status`. Add spec errata for names, tokens, `actions` and the toaster element. Decide whether `<tulpar-toaster>` becomes real; Sonner, Prime",
+  "effort": "M"
+ },
+ {
+  "id": "DOC-13",
+  "title": "v0.10 selection spec ↔ code drift",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "",
+  "fix": "",
+  "effort": "S"
+ },
+ {
+  "id": "DOC-14",
+  "title": "v0.1–v0.8 spec ↔ code drift",
+  "sev": "",
+  "mb": "",
+  "conf": "",
+  "where": "",
+  "fix": "",
+  "effort": ""
+ },
+ {
+  "id": "DOC-15",
+  "title": "Layering ADR rule 4 was never executed (hand-rolled rail-flyout positioning)",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "- `docs/architecture/internal-layering.md:16-17`: \"First known candidate: shell's rail-flyout positi",
+  "fix": "Apply rule 3 as written. The positioner is >50 lines, so promote `_internal/overlay/{positioner,anchor}` to a published-but-undocumented `@tulpar-ui/base` (or `@tulpar-ui/overlay-engine`), as Spectrum WC does with `@spec",
+  "effort": "M"
+ },
+ {
+  "id": "DOC-16",
+  "title": "The consumer documentation set is incomplete for a commercial DS",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "whole repo. `git grep` for `custom-elements`, `customElements.json`, `setCustomElementsManifest` and",
+  "fix": "1. Add `@custom-elements-manifest/analyzer` with the Lit plugin to core and shell builds. Publish `custom-elements.json` and set `\"customElements\": \"custom-elements.json\"` in `package.json`.",
+  "effort": "M"
+ },
+ {
+  "id": "DOC-17",
+  "title": "Storybook — v8 (two majors behind), a11y \"test: error\" is a no-op, 0 play tests, no docs pages",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`apps/docs/package.json` (`storybook ^8.0.0`, installed 8.6.18), `apps/docs/.storybook/{main,preview",
+  "fix": "- Upgrade to Storybook 10 with `@storybook/web-components-vite`.",
+  "effort": "M"
+ },
+ {
+  "id": "DOC-18",
+  "title": "Decision — the Angular `-ng` wrapper element with a `display:contents` host is the wrong wrapper model",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`CLAUDE.md` \"Angular wrapper selector\" (\"Wrappers use `tulpar-<name>-ng` … to avoid recursion … Don'",
+  "fix": "Use same-selector proxy components (`selector: 'tulpar-button'`, `template: '<ng-content/>'`, `ChangeDetectionStrategy.OnPush`), with signal `input()`s written to the host element properties through `effect()` or host bi",
+  "effort": "L"
+ },
+ {
+  "id": "DOC-19",
+  "title": "Decision — \"no ControlValueAccessor; form association bubbles up to Reactive Forms\" is false",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`CLAUDE.md` \"Form-associated custom elements\" (\"The wrapper does NOT add another ControlValueAccesso",
+  "fix": "Ship CVA directives in `@tulpar-ui/angular`:",
+  "effort": "M"
+ },
+ {
+  "id": "DOC-20",
+  "title": "Decision — four intent vocabularies (severity / tone / color; warn vs warning; outlined vs outline)",
+  "sev": "Major",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "- Button: `severity` = `primary|secondary|info|success|warn|help|danger|contrast|premium` and `varia",
+  "fix": "Record an ADR with one intent prop (`tone`, already used by 8 components) and one appearance prop with one spelling set. Map the button's brand intents (`primary`, `secondary`, `contrast`, `premium`, `help`) as the tone ",
+  "effort": "M"
+ },
+ {
+  "id": "DOC-21",
+  "title": "Dark-mode contract — `.dark` only, and no `color-scheme` anywhere",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "`CLAUDE.md` (theme triggers), `packages/tokens/README.md:69-76`. `grep -n color-scheme packages/toke",
+  "fix": "- Emit `color-scheme: light` on `:root` and `color-scheme: dark` on `.dark` (and on `[data-theme=dark]` if added).",
+  "effort": "S"
+ },
+ {
+  "id": "DOC-22",
+  "title": "Broken relative links in plans and specs (25+)",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "- `docs/superpowers/plans/2026-06-23-…-v0.14-select.md` and `…-v0.15-select-completion.md` use `../.",
+  "fix": "Add `markdown-link-check` or `lychee` (https://github.com/lycheeverse/lychee) to CI for `/*.md`, then fix the reported links.",
+  "effort": "S"
+ },
+ {
+  "id": "DOC-23",
+  "title": "Language mixing (TR/EN) and terminology drift",
+  "sev": "Minor",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "- These are mostly Turkish: v0.1 button spec, v0.6 shell spec, v0.6a/v0.6b plans, palette spec, bran",
+  "fix": "Make it a rule that public and binding docs (README, ADR, specs, roadmap) are English and that working notes may be Turkish. Add `docs/glossary.md`, and lint it with Vale (https://vale.sh) using a project vocabulary. Tra",
+  "effort": "S"
+ },
+ {
+  "id": "DOC-24",
+  "title": "Repo hygiene in the documentation layer",
+  "sev": "Nit",
+  "mb": "No",
+  "conf": "Verified",
+  "where": "- `build-output.txt` (UTF-16 build log) is tracked.",
+  "fix": "Remove these files and add them to `.gitignore`. Enforce Conventional Commits with commitlint in the existing husky hook; the changeset flow benefits from it.",
+  "effort": "S"
+ }
+]
