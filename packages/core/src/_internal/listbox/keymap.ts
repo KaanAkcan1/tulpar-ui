@@ -22,6 +22,10 @@ export interface KeyModifiers {
 export interface KeyState extends KeyModifiers {
   /** Whether the listbox is currently open. */
   open: boolean;
+  /** Searchable mode: an in-popup search input owns text entry. Optional. */
+  searchable?: boolean;
+  /** Searchable + the search query is non-empty (drives two-stage Escape). Optional. */
+  hasQuery?: boolean;
 }
 
 /** The kind of action the host should perform for a keystroke. */
@@ -31,6 +35,7 @@ export type KeyActionType =
   | "close" // close, keeping the current selection (Alt+ArrowUp)
   | "commit" // commit the active option, then close (Enter/Space/Tab)
   | "revert" // restore value-before-open, then close (Escape)
+  | "clear-query" // searchable: clear the query, keep the listbox open
   | "move-next" // active → next enabled
   | "move-prev" // active → previous enabled
   | "first" // active → first enabled
@@ -67,11 +72,29 @@ export function resolveKeyAction(key: string, state: KeyState): KeyAction {
       case "ArrowUp":
         return { type: "open", preventDefault: true };
     }
+    // Closed-state printable → open + typeahead. NOTE: in `searchable` mode the host
+    // opens but skips the typeahead side-effect and moves focus to the search input
+    // on the next frame, so this first character is intentionally dropped (the user
+    // continues typing into the now-focused input). Benign, documented seam.
     if (isTypeaheadChar(key, state)) return { type: "open-typeahead", preventDefault: false };
     return NONE;
   }
 
   // OPEN
+  if (state.searchable) {
+    switch (key) {
+      case "Escape":
+        return state.hasQuery
+          ? { type: "clear-query", preventDefault: true }
+          : { type: "revert", preventDefault: true };
+      case " ":
+        return NONE; // space is text in the search input
+    }
+    // printable chars belong to the <input>; let them through (filter replaces typeahead)
+    if (isTypeaheadChar(key, state)) return NONE;
+    // everything else (arrows/Home/End/Page/Enter/Tab) falls through to the shared switch
+  }
+
   switch (key) {
     case "ArrowDown":
       return { type: "move-next", preventDefault: true };

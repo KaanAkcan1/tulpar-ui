@@ -1,5 +1,5 @@
 import { expect } from "@open-wc/testing";
-import { resolveKeyAction } from "./keymap";
+import { resolveKeyAction, type KeyState } from "./keymap";
 
 const mods = (
   m: Partial<{ altKey: boolean; shiftKey: boolean; ctrlKey: boolean; metaKey: boolean }> = {},
@@ -96,5 +96,48 @@ describe("resolveKeyAction (listbox keymap)", () => {
       expect(open("c", { ctrlKey: true }).type).to.equal("none");
       expect(open("c", { metaKey: true }).type).to.equal("none");
     });
+  });
+});
+
+describe("keymap — searchable mode", () => {
+  const open = (over: Partial<KeyState> = {}): KeyState => ({
+    open: true,
+    altKey: false,
+    shiftKey: false,
+    ctrlKey: false,
+    metaKey: false,
+    searchable: true,
+    hasQuery: false,
+    ...over,
+  });
+
+  it("Escape with a non-empty query clears the query (keeps open)", () => {
+    expect(resolveKeyAction("Escape", open({ hasQuery: true })).type).to.equal("clear-query");
+  });
+  it("Escape with empty query reverts (closes)", () => {
+    expect(resolveKeyAction("Escape", open({ hasQuery: false })).type).to.equal("revert");
+  });
+  it("Space is text in the search input (none, not commit)", () => {
+    expect(resolveKeyAction(" ", open()).type).to.equal("none");
+  });
+  it("printable chars pass through to the input (none, not typeahead)", () => {
+    expect(resolveKeyAction("a", open()).type).to.equal("none");
+  });
+  it("arrows/Enter/Tab are unchanged in searchable mode", () => {
+    expect(resolveKeyAction("ArrowDown", open()).type).to.equal("move-next");
+    expect(resolveKeyAction("Enter", open()).type).to.equal("commit");
+    expect(resolveKeyAction("Tab", open()).preventDefault).to.equal(false);
+  });
+  it("non-searchable behavior is unchanged (Space commits, Escape reverts)", () => {
+    const ns = {
+      open: true,
+      altKey: false,
+      shiftKey: false,
+      ctrlKey: false,
+      metaKey: false,
+      searchable: false,
+    };
+    expect(resolveKeyAction(" ", ns as KeyState).type).to.equal("commit");
+    expect(resolveKeyAction("Escape", ns as KeyState).type).to.equal("revert");
   });
 });

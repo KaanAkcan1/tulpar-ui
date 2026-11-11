@@ -3,6 +3,8 @@ export interface OptionLike {
   value: string;
   label: string;
   disabled: boolean;
+  /** Filtered out (search no-match). Kept in the collection so indices stay stable. */
+  hidden?: boolean;
   el: HTMLElement;
 }
 
