@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-11T13:30:00Z",
+  "title": "Design System: Tulpar UI",
+  "extensions": {
+    "colorMeta": {
+      "courier-jade": {
+        "role": "primary",
+        "displayName": "Courier Jade",
+        "canonical": "#00c57a",
+        "tonalRamp": [
+          "#07291f",
+          "#0a4731",
+          "#0b7e52",
+          "#00a468",
+          "#00c57a",
+          "#4ee9a6",
+          "#8cf5c6",
+          "#deffea"
+        ]
+      },
+      "indigo-dusk": { "role": "secondary", "displayName": "Indigo Dusk", "canonical": "#393b8b" },
+      "morning-frost": {
+        "role": "neutral",
+        "displayName": "Morning Frost",
+        "canonical": "#f0f7f5"
+      },
+      "felt-black": { "role": "neutral", "displayName": "Felt Black", "canonical": "#15110b" },
+      "night-steppe": {
+        "role": "neutral",
+        "displayName": "Night Steppe",
+        "canonical": "#202c43",
+        "tonalRamp": [
+          "#1b2230",
+          "#202c43",
+          "#243553",
+          "#283d64",
+          "#31528f",
+          "#6f9bd7",
+          "#9ac3f5",
+          "#e8f8ff"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Page titles only (serif)." },
+      "headline": { "displayName": "Headline", "purpose": "Section headings (serif)." },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default UI size for controls, table cells and form text."
+      },
+      "label": { "displayName": "Label", "purpose": "Helper text, captions, badges." },
+      "mono": { "displayName": "Mono", "purpose": "Code samples and technical values." }
+    },
+    "shadows": [
+      {
+        "name": "sm",
+        "value": "0 1px 3px rgba(10, 37, 64, 0.06), 0 2px 6px rgba(10, 37, 64, 0.04)",
+        "purpose": "Small overlays. Navy tint is a retired-palette leftover (retro TOK-19)."
+      },
+      {
+        "name": "md",
+        "value": "0 1px 3px rgba(10, 37, 64, 0.08), 0 8px 24px rgba(10, 37, 64, 0.06)",
+        "purpose": "Popovers, listboxes, toasts."
+      },
+      {
+        "name": "flyout",
+        "value": "0 4px 6px -2px rgba(10, 37, 64, 0.10), 0 12px 28px -6px rgba(10, 37, 64, 0.14)",
+        "purpose": "Sidebar rail flyouts."
+      }
+    ],
+    "motion": [
+      {
+        "name": "transition-default",
+        "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Default state transition (hover, press). Token currently uses `transition: all` (retro TOK-19)."
+      },
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0.2, 0, 0, 1)",
+        "purpose": "Standard easing for moving elements."
+      },
+      {
+        "name": "ease-decelerate",
+        "value": "cubic-bezier(0, 0, 0.2, 1)",
+        "purpose": "Entering elements (overlays opening)."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "shell-mobile",
+        "value": "991px",
+        "purpose": "tulpar-shell switches to the mobile layout at (max-width: 991px)."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The main action; Courier Jade fill with Felt Black text.",
+      "html": "<button class=\"ds-btn-primary\">Save changes</button>",
+      "css": ".ds-btn-primary { background: var(--tulpar-color-brand-default, #00c57a); color: var(--tulpar-color-brand-on-color, #15110b); height: 40px; padding: 0 16px; border: 1px solid transparent; border-radius: 7px; font: 500 14px/1 var(--tulpar-font-family-ui, 'Source Sans 3', sans-serif); cursor: pointer; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-primary:hover { background: var(--tulpar-color-brand-hover, #00a468); } .ds-btn-primary:focus-visible { outline: 2px solid var(--tulpar-color-focus-ring, rgba(81, 78, 207, 0.4)); outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Secondary action in Indigo Dusk.",
+      "html": "<button class=\"ds-btn-secondary\">Export</button>",
+      "css": ".ds-btn-secondary { background: var(--tulpar-color-secondary-default, #393b8b); color: var(--tulpar-color-secondary-on-color, #f0f7f5); height: 40px; padding: 0 16px; border: 1px solid transparent; border-radius: 7px; font: 500 14px/1 var(--tulpar-font-family-ui, 'Source Sans 3', sans-serif); cursor: pointer; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-secondary:hover { background: var(--tulpar-color-secondary-hover, #303271); } .ds-btn-secondary:focus-visible { outline: 2px solid var(--tulpar-color-focus-ring, rgba(81, 78, 207, 0.4)); outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Default text field: Frost White, 1px Frost Border, 6px corners.",
+      "html": "<input class=\"ds-input\" placeholder=\"Email address\" />",
+      "css": ".ds-input { background: var(--tulpar-color-bg-surface, #ffffff); color: var(--tulpar-color-text-primary, #15110b); height: 36px; padding: 6px 12px; border: 1px solid var(--tulpar-color-border-default, #d9e0df); border-radius: 6px; font: 400 14px/1.55 var(--tulpar-font-family-ui, 'Source Sans 3', sans-serif); } .ds-input::placeholder { color: var(--tulpar-color-text-muted, #74777a); } .ds-input:hover { border-color: var(--tulpar-color-border-strong, #c8d0ce); } .ds-input:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--tulpar-color-focus-ring, rgba(81, 78, 207, 0.4)); }"
+    },
+    {
+      "name": "Navigation Item",
+      "kind": "nav",
+      "refersTo": "nav-item",
+      "description": "Sidebar item; the current page uses Courier Jade Mist.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-item\" href=\"#\">Dashboard</a><a class=\"ds-nav-item\" aria-current=\"page\" href=\"#\">Employees</a></nav>",
+      "css": ".ds-nav { display: grid; gap: 2px; width: 240px; } .ds-nav-item { display: flex; align-items: center; height: 40px; padding: 0 12px; border-radius: 8px; color: var(--tulpar-color-text-secondary, #27231d); text-decoration: none; font: 500 14px/1 var(--tulpar-font-family-ui, 'Source Sans 3', sans-serif); transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-nav-item:hover { background: var(--tulpar-color-bg-muted, #e9f1ef); } .ds-nav-item[aria-current=\"page\"] { background: var(--tulpar-color-brand-subtle, #deffea); color: var(--tulpar-color-text-primary, #15110b); } .ds-nav-item:focus-visible { outline: 2px solid var(--tulpar-color-focus-ring, rgba(81, 78, 207, 0.4)); outline-offset: 2px; }"
+    },
+    {
+      "name": "Soft Tag",
+      "kind": "chip",
+      "refersTo": "tag-soft",
+      "description": "Static tonal label in pill shape.",
+      "html": "<span class=\"ds-tag\">Active</span>",
+      "css": ".ds-tag { display: inline-flex; align-items: center; height: 22px; padding: 0 10px; border-radius: 9999px; background: var(--tulpar-color-brand-subtle, #deffea); color: var(--tulpar-color-text-primary, #15110b); font: 500 12px/1 var(--tulpar-font-family-ui, 'Source Sans 3', sans-serif); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Steppe Courier",
+    "overview": "Tulpar is the courier of the steppe: fast, dependable, and the same message no matter where it rides. The system carries one behaviour into every framework and every consuming product, so its look stays quiet and exact rather than loud. A screen built with Tulpar should feel calm and precise even when it is dense with forms, tables and navigation, because the people using it are working, not browsing. Character comes from the Turkic-mythology palette and a single confident accent, Courier Jade, used sparingly on actions and current state. Surfaces are flat and separated by tone, not by shadow; elevation is reserved for things that open on top of the page. Every value is a token, so another brand or the Tuğrul page structure can change it without forking components.",
+    "keyCharacteristics": [
+      "Calm and precise components: thin strokes, moderate corners, restrained states.",
+      "One accent (Courier Jade) for action and current state; intent colours only where they carry meaning.",
+      "Flat surfaces with tonal layering; shadows only on overlays.",
+      "Serif display headings over a humanist sans UI.",
+      "Both light (\"Morning Frost\") and dark (\"Night Steppe\") modes designed together."
+    ],
+    "rules": [
+      {
+        "name": "The One Jade Rule",
+        "body": "Courier Jade marks action and current state only. It is never decoration and never body text.",
+        "section": "colors"
+      },
+      {
+        "name": "The Grass-Is-Not-Ink Rule",
+        "body": "Do not use Courier Jade as a text colour on light surfaces: it reaches only about 3.2:1 against white (retro TOK-4/AX-12). Text needs ≥ 4.5:1; a darker jade text role is planned for phase 1.",
+        "section": "colors"
+      },
+      {
+        "name": "The Meaning-Only Intent Rule",
+        "body": "Intent colours (danger, warn, success, info, help, premium) appear only where the state is real, and always together with text or an icon, never colour alone.",
+        "section": "colors"
+      },
+      {
+        "name": "The Serif-For-Titles Rule",
+        "body": "Source Serif 4 is for headings only; every control, label and data value uses Source Sans 3.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Steppe Rule",
+        "body": "Surfaces are flat at rest. A shadow means \"this is floating above the page\"; cards, panels and inputs never carry one.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Tinted Shadow Rule",
+        "body": "Shadow colour derives from the surface it sits on. The current navy tint (rgba(10, 37, 64, …)) is a leftover from the retired palette (retro TOK-19) and will be re-derived.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do take every value from a --tulpar-* token; component CSS uses semantic tokens only.",
+      "Do keep Courier Jade for actions and current state, with Felt Black text on it.",
+      "Do separate surfaces by tone (Frost White on Morning Frost; Night Steppe steps in dark mode).",
+      "Do design light and dark together; check both before calling a component done.",
+      "Do pair every intent colour with text or an icon."
+    ],
+    "donts": [
+      "Don't use Courier Jade as a text colour on light surfaces (≈3.2:1).",
+      "Don't put shadows on cards, panels or inputs; shadows are for overlays only.",
+      "Don't use pure black (#000000) or pure white text on white; text is Felt Black, inverse text is Morning Frost.",
+      "Don't use the serif display face inside controls or data.",
+      "Don't hard-code colours or pixel values in component styles; another brand or the Tuğrul page structure must be able to change them."
+    ]
+  }
+}
