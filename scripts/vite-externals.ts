@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 
-const escape = (s: string): string => s.replace(/[.*+?^${}()|[\]\/]/g, "\$&");
+const escape = (s: string): string => s.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
 
 /**
  * Rollup/Rolldown `external` patterns for a package: every name in

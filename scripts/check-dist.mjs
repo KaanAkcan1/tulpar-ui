@@ -2,8 +2,9 @@
 // A bundled lit-html registers `litHtmlVersions`; two copies break directives.
 import { readdirSync, readFileSync, statSync, existsSync } from "node:fs";
 import { join, relative } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const root = new URL("..", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
+const root = fileURLToPath(new URL("..", import.meta.url));
 const FORBIDDEN = ["litHtmlVersions"];
 
 function* walk(dir) {
@@ -15,16 +16,23 @@ function* walk(dir) {
 }
 
 const offenders = [];
+let distCount = 0;
 const pkgsDir = join(root, "packages");
 for (const pkg of readdirSync(pkgsDir)) {
   const dist = join(pkgsDir, pkg, "dist");
   if (!existsSync(dist)) continue;
+  distCount++;
   for (const file of walk(dist)) {
     const text = readFileSync(file, "utf8");
     for (const token of FORBIDDEN) {
       if (text.includes(token)) offenders.push(`${relative(root, file)}  (${token})`);
     }
   }
+}
+
+if (distCount === 0) {
+  console.error("check:dist FAILED: no dist found - run pnpm build first");
+  process.exit(1);
 }
 
 if (offenders.length > 0) {
