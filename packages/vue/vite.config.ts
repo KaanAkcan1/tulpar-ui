@@ -2,6 +2,7 @@ import { resolve } from "node:path";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import dts from "vite-plugin-dts";
+import { externalsFrom } from "../../scripts/vite-externals.ts";
 
 export default defineConfig({
   plugins: [
@@ -20,15 +21,13 @@ export default defineConfig({
   ],
   build: {
     lib: {
-      entry: resolve(__dirname, "src/index.ts"),
+      entry: resolve(import.meta.dirname, "src/index.ts"),
       formats: ["es"],
       fileName: () => "index.js",
     },
-    rollupOptions: {
-      // Regex: subpath imports (@tulpar-ui/core/text-input etc.) must stay
-      // external too — an exact-string external silently bundles them INTO
-      // this wrapper (duplicating core's components in the vue dist).
-      external: ["vue", "vue-router", /^@tulpar-ui\/(core|shell)(\/.*)?$/],
+    rolldownOptions: {
+      // Patterns: dependencies + peerDependencies, bare name and any subpath.
+      external: externalsFrom(resolve(import.meta.dirname, "package.json")),
     },
     outDir: "dist",
     sourcemap: true,

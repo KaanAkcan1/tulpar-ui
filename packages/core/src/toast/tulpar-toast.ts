@@ -14,8 +14,7 @@ export interface ToastAction {
 
 // ─── Built-in SVG icons (one per tone) ───────────────────────────────────────
 //
-// Defined as static SVG strings (not Lit svg`` templates) to avoid the
-// Lit-directive dual-instance crash in hot paths — see CLAUDE.md gotcha.
+// Defined as static SVG strings (not Lit svg`` templates). Dual-instance cause fixed in phase 1.1 (INF-2).
 // They are injected via el.innerHTML in the `updated()` lifecycle callback,
 // never via Lit directives (unsafeSVG / unsafeHTML).
 
@@ -81,7 +80,7 @@ function nextToastId(): string {
  * - No icon prop / absent → built-in default SVG for the active tone.
  * - `icon="success"` → built-in "success" SVG (overrides the tone default).
  * - `icon="<svg>...</svg>"` → raw SVG string, injected imperatively as innerHTML
- *   (never via Lit directives — avoids the dual-instance directive crash).
+ *   (not via Lit directives). Dual-instance cause fixed in phase 1.1 (INF-2).
  * - `icon="🎉"` → treated as text/emoji, rendered as text content.
  * - `icon=""` (empty string) OR `iconProp = false` → no icon.
  * - `slot="icon"` → slot content wins over all prop forms.
@@ -321,8 +320,7 @@ export class TulparToast extends LitElement {
       this._applyToneVars();
     }
 
-    // Update icon innerHTML imperatively (avoids unsafeSVG/unsafeHTML directive
-    // dual-instance crash — see CLAUDE.md Lit directive gotcha).
+    // Update icon innerHTML imperatively. Dual-instance cause fixed in phase 1.1 (INF-2).
     const iconRelated = ["icon", "tone", "iconProp"];
     if (iconRelated.some((k) => changed.has(k))) {
       this._applyIconContent();
@@ -431,7 +429,7 @@ export class TulparToast extends LitElement {
 
   /**
    * Imperatively set the icon prop target's content.
-   * This avoids the Lit unsafeSVG/unsafeHTML directive dual-instance crash.
+   * Dual-instance cause fixed in phase 1.1 (INF-2).
    */
   private _applyIconContent(): void {
     const target = this._iconPropTarget;

@@ -35,7 +35,7 @@ export const GAP_DEFAULT = 8;
 export interface StackEntry {
   /**
    * Plain CSS transform string — assign directly to `el.style.transform`.
-   * Never a styleMap object (avoids Lit directive cross-instance crash).
+   * Never a styleMap object. Dual-instance cause fixed in phase 1.1 (INF-2).
    */
   transform: string;
   /** 0–1 opacity value. 0 for hidden items. */

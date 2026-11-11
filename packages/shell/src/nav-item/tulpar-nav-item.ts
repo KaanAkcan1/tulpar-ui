@@ -407,10 +407,7 @@ export class TulparNavItem extends LitElement {
   /**
    * Shared fixed-position style STRING for both the group flyout and the leaf
    * tooltip. Returns a plain CSS string (bound via `style=${...}`) rather than the
-   * `styleMap` directive on purpose: a directive instance created by one copy of
-   * lit-html throws `currentDirective._$initialize is not a function` if the
-   * element is rendered by a second copy (which can happen in consumer bundlers
-   * that don't dedupe lit). A plain string has no such cross-instance dependency.
+   * `styleMap` directive on purpose. Dual-instance cause fixed in phase 1.1 (INF-2).
    * @param extra optional trailing declarations (e.g. the caret custom property)
    */
   private _flyoutPositionStyles(extra = ""): string {

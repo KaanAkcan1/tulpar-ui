@@ -51,8 +51,7 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "port": 4310,
-            "prebundle": false
+            "port": 4310
           },
           "configurations": {
             "production": {

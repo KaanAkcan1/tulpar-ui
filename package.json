@@ -17,6 +17,7 @@
     "dev": "pnpm --parallel --filter @tulpar-ui/tokens --filter @tulpar-ui/core --filter @tulpar-ui/shell --filter @tulpar-ui/angular --filter @tulpar-ui/vue --filter playground-ng --filter playground-vue --filter docs run dev",
     "test": "pnpm -r run test",
     "lint": "eslint .",
+    "check:dist": "node scripts/check-dist.mjs",
     "lint:probe": "node scripts/lint-probe.mjs",
     "check:suppressions": "node scripts/check-suppressions.mjs",
     "format": "prettier --write \"**/*.{ts,js,json,md,css,html,vue}\"",

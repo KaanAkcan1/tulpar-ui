@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "tsx": "^4.7.0",
-    "vite": "^5.1.0",
+    "vite": "^8.3.8",
     "vite-plugin-dts": "catalog:",
     "vitest": "^1.3.0"
   },

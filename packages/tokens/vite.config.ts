@@ -6,8 +6,8 @@ export default defineConfig({
   build: {
     lib: {
       entry: {
-        index: resolve(__dirname, "src/index.ts"),
-        fallbacks: resolve(__dirname, "src/fallbacks.ts"),
+        index: resolve(import.meta.dirname, "src/index.ts"),
+        fallbacks: resolve(import.meta.dirname, "src/fallbacks.ts"),
       },
       formats: ["es"],
       fileName: (_format, entryName) => `${entryName}.js`,
