@@ -61,7 +61,7 @@ The plan is the working contract. Follow it task by task. If a question is uncle
 | Vue | 3.4+, SFC, `compilerOptions.isCustomElement` for `tulpar-` |
 | Docs | Storybook 8 + `@storybook/web-components-vite` + addon-themes + addon-a11y |
 | Linting | ESLint flat config + Prettier |
-| Node | 22.22.3 (pinned in `.nvmrc`) |
+| Node | 26.13.0 LTS (pinned in `.nvmrc`; CI + deploy read it via `node-version-file`) |
 
 ## Commands
 
