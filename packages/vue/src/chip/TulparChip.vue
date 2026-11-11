@@ -83,8 +83,8 @@ const emit = defineEmits<{
     @tulpar-click="emit('clicked', $event as CustomEvent)"
     @tulpar-remove="emit('removed', $event as CustomEvent)"
   >
-    <span v-if="$slots.avatar" style="display: contents" slot="avatar"><slot name="avatar" /></span>
-    <span v-if="$slots.icon" style="display: contents" slot="icon"><slot name="icon" /></span>
+    <span v-if="$slots.avatar" slot="avatar" style="display: contents"><slot name="avatar" /></span>
+    <span v-if="$slots.icon" slot="icon" style="display: contents"><slot name="icon" /></span>
     <slot />
   </tulpar-chip>
 </template>

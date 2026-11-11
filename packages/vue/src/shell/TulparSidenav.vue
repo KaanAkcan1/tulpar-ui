@@ -182,21 +182,21 @@ watchEffect(() => {
          unconditional empty <span slot="x"> registers as assigned slot content
          on the web component, which suppresses its built-in brand/search/account
          (the element treats "slot present" as "app owns this region"). -->
-    <span v-if="$slots.header" style="display: contents" slot="header"><slot name="header" /></span>
-    <span v-if="$slots['header-actions']" style="display: contents" slot="header-actions"
+    <span v-if="$slots.header" slot="header" style="display: contents"><slot name="header" /></span>
+    <span v-if="$slots['header-actions']" slot="header-actions" style="display: contents"
       ><slot name="header-actions"
     /></span>
-    <span v-if="$slots.search" style="display: contents" slot="search"><slot name="search" /></span>
-    <span v-if="$slots['utility-start']" style="display: contents" slot="utility-start"
+    <span v-if="$slots.search" slot="search" style="display: contents"><slot name="search" /></span>
+    <span v-if="$slots['utility-start']" slot="utility-start" style="display: contents"
       ><slot name="utility-start"
     /></span>
-    <span v-if="$slots['utility-end']" style="display: contents" slot="utility-end"
+    <span v-if="$slots['utility-end']" slot="utility-end" style="display: contents"
       ><slot name="utility-end"
     /></span>
     <template v-if="renderItemsInLightDom">
       <NavNode v-for="(item, i) in items" :key="item.href ?? item.label ?? i" :item="item" />
     </template>
     <slot />
-    <span v-if="$slots.footer" style="display: contents" slot="footer"><slot name="footer" /></span>
+    <span v-if="$slots.footer" slot="footer" style="display: contents"><slot name="footer" /></span>
   </tulpar-sidenav>
 </template>

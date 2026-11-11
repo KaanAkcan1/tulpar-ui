@@ -778,17 +778,17 @@ function dismissAll() {
             <button
               class="stepper-btn"
               :disabled="stackMaxVisible <= 1"
-              @click="decrementMaxVisible"
               aria-label="Decrease max visible"
+              @click="decrementMaxVisible"
             >
               −
             </button>
-            <span class="stepper-value" id="stack-max-visible">{{ stackMaxVisible }}</span>
+            <span id="stack-max-visible" class="stepper-value">{{ stackMaxVisible }}</span>
             <button
               class="stepper-btn"
               :disabled="stackMaxVisible >= 8"
-              @click="incrementMaxVisible"
               aria-label="Increase max visible"
+              @click="incrementMaxVisible"
             >
               +
             </button>
@@ -805,8 +805,8 @@ function dismissAll() {
             id="stack-expand-toggle"
             class="stack-toggle"
             :class="{ 'stack-toggle--on': stackExpand }"
-            @click="toggleStackExpand"
             :aria-pressed="stackExpand"
+            @click="toggleStackExpand"
           >
             <span class="stack-toggle-knob"></span>
           </button>

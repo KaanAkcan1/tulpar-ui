@@ -324,18 +324,18 @@ const statesCode = `<TulparTextInput label="Disabled" :disabled="true" value="Ca
     </p>
     <div class="preview preview--col">
       <TulparTextInput
+        v-model="clearableVal"
         label="Clearable"
         :clearable="true"
-        v-model="clearableVal"
         placeholder="Type something…"
       />
       <p class="value-display">value = "{{ clearableVal }}"</p>
 
       <TulparTextInput
+        v-model="countVal"
         label="Show Count (max 50)"
         :show-count="true"
         :max-length="50"
-        v-model="countVal"
         placeholder="Type to see counter…"
       />
 
@@ -367,9 +367,9 @@ const statesCode = `<TulparTextInput label="Disabled" :disabled="true" value="Ca
     </p>
     <div class="preview preview--col">
       <TulparTextInput
+        v-model="maskPhone"
         label="TR Phone"
         mask="+\90 (999) 999 99 99"
-        v-model="maskPhone"
         placeholder="+90 (___) ___ __ __"
       />
       <p class="value-display">masked value = "{{ maskPhone }}"</p>
@@ -390,15 +390,15 @@ const statesCode = `<TulparTextInput label="Disabled" :disabled="true" value="Ca
 
       <div class="preview-row">
         <div>
-          <TulparTextInput label="mask-emit=raw" mask="999-999" mask-emit="raw" v-model="maskRaw" />
+          <TulparTextInput v-model="maskRaw" label="mask-emit=raw" mask="999-999" mask-emit="raw" />
           <p class="value-display">raw = "{{ maskRaw }}"</p>
         </div>
         <div>
           <TulparTextInput
+            v-model="maskMasked"
             label="mask-emit=masked (default)"
             mask="999-999"
             mask-emit="masked"
-            v-model="maskMasked"
           />
           <p class="value-display">masked = "{{ maskMasked }}"</p>
         </div>

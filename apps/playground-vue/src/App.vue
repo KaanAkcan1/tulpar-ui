@@ -166,18 +166,17 @@ const densities: { value: SidenavDensity; label: string }[] = [
 
 function onLogout() {
   // Placeholder action — a real app would clear the session and redirect.
-  // eslint-disable-next-line no-console
   console.info("[playground-vue] logout requested");
 }
 </script>
 
 <template>
   <TulparShell
+    v-model:aside-open="asideOpen"
     :sidenav-mode="sidenavMode"
     :sidenav-layout="sidenavLayout"
     persist-key="playground-vue-shell"
     :dark="dark"
-    v-model:aside-open="asideOpen"
   >
     <!-- ── Topbar ───────────────────────────────────────────────────────── -->
     <TulparTopbar slot="topbar">

@@ -114,27 +114,27 @@ const pgSnippet = computed(() => {
         <div class="pg-controls">
           <label class="pg-field">
             <span class="pg-field-label">Name</span>
-            <input class="pg-input" type="text" v-model="pgName" placeholder="Ada Byron" />
+            <input v-model="pgName" class="pg-input" type="text" placeholder="Ada Byron" />
           </label>
           <label class="pg-field">
             <span class="pg-field-label">Image src</span>
-            <input class="pg-input" type="text" v-model="pgSrc" placeholder="https://…" />
+            <input v-model="pgSrc" class="pg-input" type="text" placeholder="https://…" />
           </label>
           <label class="pg-field">
             <span class="pg-field-label">Shape</span>
-            <select class="pg-select" v-model="pgShape">
+            <select v-model="pgShape" class="pg-select">
               <option v-for="s in shapes" :key="s" :value="s">{{ s }}</option>
             </select>
           </label>
           <label class="pg-field">
             <span class="pg-field-label">Size</span>
-            <select class="pg-select" v-model="pgSize">
+            <select v-model="pgSize" class="pg-select">
               <option v-for="s in sizes" :key="s" :value="s">{{ s }}</option>
             </select>
           </label>
           <label class="pg-field">
             <span class="pg-field-label">Color</span>
-            <select class="pg-select" v-model="pgColor">
+            <select v-model="pgColor" class="pg-select">
               <option value="">(hashed from name)</option>
               <option v-for="c in customColors" :key="c" :value="c">{{ c }}</option>
             </select>

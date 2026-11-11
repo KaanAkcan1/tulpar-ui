@@ -176,10 +176,10 @@ const sizesVariantsCode = `<TulparTextarea size="sm" variant="outlined" label="s
     </p>
     <div class="preview preview--col">
       <TulparTextarea
+        v-model="counterBody"
         label="Post body"
         :show-count="true"
         :max-length="200"
-        v-model="counterBody"
         placeholder="Type your post…"
       />
       <p class="value-display">{{ counterBody.length }} / 200 characters</p>
@@ -276,6 +276,7 @@ const sizesVariantsCode = `<TulparTextarea size="sm" variant="outlined" label="s
         <span class="composer-name">Kaan Akcan</span>
       </div>
       <TulparTextarea
+        v-model="composerBody"
         label="Add a comment"
         label-position="none"
         :autosize="true"
@@ -283,7 +284,6 @@ const sizesVariantsCode = `<TulparTextarea size="sm" variant="outlined" label="s
         :max-rows="8"
         :show-count="true"
         :max-length="500"
-        v-model="composerBody"
         placeholder="Share your thoughts…"
       />
       <div class="composer-actions">

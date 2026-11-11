@@ -128,9 +128,9 @@ const effectiveIconSize = computed(() => iconSize ?? ICON_SIZE_BY_BUTTON_SIZE[si
     <span v-if="icon" slot="start">
       <component :is="icon" :size="effectiveIconSize" />
     </span>
-    <span style="display: contents" slot="start"><slot name="start" /></span>
+    <span slot="start" style="display: contents"><slot name="start" /></span>
     <slot />
-    <span style="display: contents" slot="end"><slot name="end" /></span>
-    <span style="display: contents" slot="loading-icon"><slot name="loading-icon" /></span>
+    <span slot="end" style="display: contents"><slot name="end" /></span>
+    <span slot="loading-icon" style="display: contents"><slot name="loading-icon" /></span>
   </tulpar-button>
 </template>

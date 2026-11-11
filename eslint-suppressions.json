@@ -1,0 +1,190 @@
+{
+  "packages/angular/src/checkbox-group/tulpar-checkbox-group.component.ts": {
+    "@angular-eslint/no-output-native": {
+      "count": 1
+    }
+  },
+  "packages/angular/src/checkbox/tulpar-checkbox.component.ts": {
+    "@angular-eslint/no-output-native": {
+      "count": 1
+    }
+  },
+  "packages/angular/src/overlay/tulpar-popover.directive.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 4
+    }
+  },
+  "packages/angular/src/overlay/tulpar-toggletip.directive.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 4
+    }
+  },
+  "packages/angular/src/overlay/tulpar-tooltip.directive.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 3
+    }
+  },
+  "packages/angular/src/radio-group/tulpar-radio-group.component.ts": {
+    "@angular-eslint/no-output-native": {
+      "count": 1
+    }
+  },
+  "packages/angular/src/radio/tulpar-radio.component.ts": {
+    "@angular-eslint/no-output-native": {
+      "count": 1
+    }
+  },
+  "packages/angular/src/switch/tulpar-switch.component.ts": {
+    "@angular-eslint/no-output-native": {
+      "count": 1
+    }
+  },
+  "packages/angular/src/text-input/tulpar-text-input.component.ts": {
+    "@angular-eslint/no-output-native": {
+      "count": 1
+    }
+  },
+  "packages/core/src/switch/tulpar-switch.test.ts": {
+    "lit/no-legacy-template-syntax": {
+      "count": 1
+    }
+  },
+  "packages/core/src/toast/tulpar-toast.ts": {
+    "lit/no-invalid-html": {
+      "count": 1
+    }
+  },
+  "packages/shell/src/nav-item/tulpar-nav-item.test.ts": {
+    "lit/attribute-value-entities": {
+      "count": 21
+    }
+  },
+  "packages/shell/src/sidenav/tulpar-sidenav.test.ts": {
+    "lit/attribute-value-entities": {
+      "count": 2
+    }
+  },
+  "packages/vue/src/avatar/TulparAvatar.vue": {
+    "vue/require-default-prop": {
+      "count": 7
+    }
+  },
+  "packages/vue/src/badge/TulparBadge.vue": {
+    "vue/require-default-prop": {
+      "count": 7
+    }
+  },
+  "packages/vue/src/button/TulparButton.vue": {
+    "vue/require-default-prop": {
+      "count": 11
+    }
+  },
+  "packages/vue/src/checkbox-group/TulparCheckboxGroup.vue": {
+    "vue/require-default-prop": {
+      "count": 7
+    }
+  },
+  "packages/vue/src/checkbox/TulparCheckbox.vue": {
+    "vue/require-default-prop": {
+      "count": 8
+    }
+  },
+  "packages/vue/src/chip/TulparChip.vue": {
+    "vue/require-default-prop": {
+      "count": 11
+    }
+  },
+  "packages/vue/src/number-input/TulparNumberInput.vue": {
+    "vue/require-default-prop": {
+      "count": 16
+    }
+  },
+  "packages/vue/src/progress/TulparProgress.vue": {
+    "vue/require-default-prop": {
+      "count": 9
+    }
+  },
+  "packages/vue/src/radio-group/TulparRadioGroup.vue": {
+    "vue/require-default-prop": {
+      "count": 7
+    }
+  },
+  "packages/vue/src/radio/TulparRadio.vue": {
+    "vue/require-default-prop": {
+      "count": 7
+    }
+  },
+  "packages/vue/src/select/TulparOption.vue": {
+    "vue/require-default-prop": {
+      "count": 2
+    }
+  },
+  "packages/vue/src/select/TulparOptionGroup.vue": {
+    "vue/require-default-prop": {
+      "count": 1
+    }
+  },
+  "packages/vue/src/select/TulparSelect.vue": {
+    "vue/require-default-prop": {
+      "count": 17
+    }
+  },
+  "packages/vue/src/shell/TulparNavItem.vue": {
+    "vue/require-default-prop": {
+      "count": 9
+    }
+  },
+  "packages/vue/src/shell/TulparNavSection.vue": {
+    "vue/require-default-prop": {
+      "count": 1
+    }
+  },
+  "packages/vue/src/shell/TulparShell.vue": {
+    "vue/require-default-prop": {
+      "count": 1
+    }
+  },
+  "packages/vue/src/shell/TulparSidenav.vue": {
+    "vue/no-template-shadow": {
+      "count": 1
+    },
+    "vue/require-default-prop": {
+      "count": 16
+    }
+  },
+  "packages/vue/src/shell/TulparTopbar.vue": {
+    "vue/require-default-prop": {
+      "count": 1
+    }
+  },
+  "packages/vue/src/spinner/TulparSpinner.vue": {
+    "vue/require-default-prop": {
+      "count": 5
+    }
+  },
+  "packages/vue/src/switch/TulparSwitch.vue": {
+    "vue/require-default-prop": {
+      "count": 11
+    }
+  },
+  "packages/vue/src/tag/TulparTag.vue": {
+    "vue/require-default-prop": {
+      "count": 10
+    }
+  },
+  "packages/vue/src/text-input/TulparTextInput.vue": {
+    "vue/require-default-prop": {
+      "count": 12
+    }
+  },
+  "packages/vue/src/textarea/TulparTextarea.vue": {
+    "vue/require-default-prop": {
+      "count": 10
+    }
+  },
+  "packages/vue/src/toast/TulparToast.vue": {
+    "vue/require-default-prop": {
+      "count": 7
+    }
+  }
+}

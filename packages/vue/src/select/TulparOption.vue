@@ -31,8 +31,8 @@ const { value, label, description, disabled = false } = defineProps<Props>();
     :disabled="disabled || undefined"
   >
     <!-- Named slot carriers for icon and description. -->
-    <span v-if="$slots.icon" style="display: contents" slot="icon"><slot name="icon" /></span>
-    <span v-if="$slots.description" style="display: contents" slot="description"
+    <span v-if="$slots.icon" slot="icon" style="display: contents"><slot name="icon" /></span>
+    <span v-if="$slots.description" slot="description" style="display: contents"
       ><slot name="description"
     /></span>
     <!-- Default slot: the label text. Guarded with v-if so a prop-only option

@@ -171,20 +171,20 @@ const forIdCode = `<!-- The plain core form — no Vue directive at all. Declare
     <!-- ── Hero ────────────────────────────────────────────────────────── -->
     <section class="doc-section">
       <div class="hero">
-        <TulparButton severity="primary" v-tulpar-tooltip="'The directive needs no wrapper'">
+        <TulparButton v-tulpar-tooltip="'The directive needs no wrapper'" severity="primary">
           Hover me
         </TulparButton>
         <TulparButton
+          v-tulpar-tooltip="'3 unread notifications'"
           severity="secondary"
           variant="outlined"
           :icon="Bell"
           aria-label="Notifications"
-          v-tulpar-tooltip="'3 unread notifications'"
         />
         <span
+          v-tulpar-tooltip="'Tooltips attach to non-button elements too'"
           class="hero-chip"
           tabindex="0"
-          v-tulpar-tooltip="'Tooltips attach to non-button elements too'"
         >
           Focus me (a span)
         </span>
@@ -201,7 +201,7 @@ const forIdCode = `<!-- The plain core form — no Vue directive at all. Declare
         <code class="inline-code">&lt;TulparTooltip&gt;</code> component, no slot-wrap.
       </p>
       <div class="preview">
-        <button class="plain-btn" v-tulpar-tooltip="'Save your changes'">Save</button>
+        <button v-tulpar-tooltip="'Save your changes'" class="plain-btn">Save</button>
       </div>
       <pre class="code"><code>{{ inlineCode }}</code></pre>
     </section>
@@ -216,20 +216,20 @@ const forIdCode = `<!-- The plain core form — no Vue directive at all. Declare
       </p>
       <div class="preview preview--baseline">
         <TulparButton
+          v-tulpar-tooltip="'Open settings'"
           :icon="Settings"
           aria-label="Open settings"
-          v-tulpar-tooltip="'Open settings'"
         />
         <span
+          v-tulpar-tooltip="'Pulled from the billing API'"
           class="info-dot"
           tabindex="0"
           role="button"
           aria-label="Source info"
-          v-tulpar-tooltip="'Pulled from the billing API'"
         >
           <Info :size="18" />
         </span>
-        <span class="ref-text" tabindex="0" v-tulpar-tooltip="'The unique customer reference'"
+        <span v-tulpar-tooltip="'The unique customer reference'" class="ref-text" tabindex="0"
           >CUST-4815</span
         >
       </div>
@@ -251,14 +251,14 @@ const forIdCode = `<!-- The plain core form — no Vue directive at all. Declare
         <button
           v-for="p in placements"
           :key="p"
-          class="plain-btn"
           v-tulpar-tooltip="{ text: p, placement: p }"
+          class="plain-btn"
         >
           {{ p }}
         </button>
         <button
-          class="plain-btn plain-btn--accent"
           v-tulpar-tooltip="{ text: 'auto-resolved', placement: 'auto' }"
+          class="plain-btn plain-btn--accent"
         >
           auto
         </button>
@@ -275,11 +275,11 @@ const forIdCode = `<!-- The plain core form — no Vue directive at all. Declare
         chip.
       </p>
       <div class="preview preview--baseline">
-        <button class="plain-btn" v-tulpar-tooltip="'With a pointer arrow'">Arrow on</button>
-        <button class="plain-btn" v-tulpar-tooltip="{ text: 'No arrow', arrow: false }">
+        <button v-tulpar-tooltip="'With a pointer arrow'" class="plain-btn">Arrow on</button>
+        <button v-tulpar-tooltip="{ text: 'No arrow', arrow: false }" class="plain-btn">
           Arrow off
         </button>
-        <button class="plain-btn" v-tulpar-tooltip="{ text: 'Pushed further out', offset: 16 }">
+        <button v-tulpar-tooltip="{ text: 'Pushed further out', offset: 16 }" class="plain-btn">
           Offset 16
         </button>
       </div>
@@ -299,19 +299,19 @@ const forIdCode = `<!-- The plain core form — no Vue directive at all. Declare
         <div>
           <p class="preview-label">Grouped toolbar (skip-delay between siblings)</p>
           <div class="fmt-toolbar">
-            <button class="fmt-btn" aria-label="Bold" v-tulpar-tooltip="'Bold (Ctrl+B)'">
+            <button v-tulpar-tooltip="'Bold (Ctrl+B)'" class="fmt-btn" aria-label="Bold">
               <Bold :size="16" />
             </button>
-            <button class="fmt-btn" aria-label="Italic" v-tulpar-tooltip="'Italic (Ctrl+I)'">
+            <button v-tulpar-tooltip="'Italic (Ctrl+I)'" class="fmt-btn" aria-label="Italic">
               <Italic :size="16" />
             </button>
-            <button class="fmt-btn" aria-label="Underline" v-tulpar-tooltip="'Underline (Ctrl+U)'">
+            <button v-tulpar-tooltip="'Underline (Ctrl+U)'" class="fmt-btn" aria-label="Underline">
               <Underline :size="16" />
             </button>
             <button
+              v-tulpar-tooltip="'Insert link (Ctrl+K)'"
               class="fmt-btn"
               aria-label="Insert link"
-              v-tulpar-tooltip="'Insert link (Ctrl+K)'"
             >
               <Link2 :size="16" />
             </button>
@@ -319,7 +319,7 @@ const forIdCode = `<!-- The plain core form — no Vue directive at all. Declare
         </div>
         <div>
           <p class="preview-label">Lone trigger (full open-delay each time)</p>
-          <button class="plain-btn" v-tulpar-tooltip="'Waits the full grace every hover'">
+          <button v-tulpar-tooltip="'Waits the full grace every hover'" class="plain-btn">
             Ungrouped
           </button>
         </div>
@@ -338,14 +338,14 @@ const forIdCode = `<!-- The plain core form — no Vue directive at all. Declare
       </p>
       <div class="preview preview--baseline">
         <TulparButton
-          :data-disabled="true"
           v-tulpar-tooltip="'You need edit permission to publish'"
+          :data-disabled="true"
         >
           Publish (data-disabled)
         </TulparButton>
         <TulparButton
-          :disabled="true"
           v-tulpar-tooltip="'This tip will not show (and warns in dev)'"
+          :disabled="true"
         >
           Publish (disabled)
         </TulparButton>
@@ -363,10 +363,10 @@ const forIdCode = `<!-- The plain core form — no Vue directive at all. Declare
       </p>
       <div class="preview">
         <button
-          class="plain-btn"
           v-tulpar-tooltip="
             'Move your cursor onto this tip — it stays open because the surface itself is hoverable.'
           "
+          class="plain-btn"
         >
           Hover, then reach the tip
         </button>
@@ -387,8 +387,8 @@ const forIdCode = `<!-- The plain core form — no Vue directive at all. Declare
       <div class="preview preview--col">
         <button
           id="imp-trigger"
-          class="plain-btn"
           v-tulpar-tooltip="{ text: 'Driven imperatively', onOpenChange }"
+          class="plain-btn"
         >
           Imperative target
         </button>
@@ -414,9 +414,9 @@ const forIdCode = `<!-- The plain core form — no Vue directive at all. Declare
       </p>
       <div class="preview preview--baseline">
         <tulpar-tooltip id="shared-tip" text="Shared explanation chip"></tulpar-tooltip>
-        <button class="plain-btn" v-tulpar-tooltip:ref="'shared-tip'">Trigger A</button>
-        <button class="plain-btn" v-tulpar-tooltip:ref="'shared-tip'">Trigger B</button>
-        <button class="plain-btn" v-tulpar-tooltip:ref="'shared-tip'">Trigger C</button>
+        <button v-tulpar-tooltip:ref="'shared-tip'" class="plain-btn">Trigger A</button>
+        <button v-tulpar-tooltip:ref="'shared-tip'" class="plain-btn">Trigger B</button>
+        <button v-tulpar-tooltip:ref="'shared-tip'" class="plain-btn">Trigger C</button>
       </div>
       <pre class="code"><code>{{ refReuseCode }}</code></pre>
     </section>

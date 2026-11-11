@@ -69,18 +69,18 @@
 - Produces: `pnpm lint:probe` — `scripts/lint-probe.mjs` uses `new ESLint().lintText(code, { filePath })` with virtual file paths and asserts the reported rule IDs; exits 1 on mismatch.
 - Produces: `pnpm check:suppressions` — exits 1 if any rule's count in `eslint-suppressions.json` is higher than in `origin/main` (new code may not add suppressions).
 
-- [ ] **Step 1:** Upgrade to the `typescript-eslint` 8 meta-package (`tseslint.config()`), ESLint to the newest major every plugin in Step 6 supports, TypeScript catalog entry `~6.0.x`. Keep existing rules. Run `pnpm lint` → green.
-- [ ] **Step 2: Write `scripts/lint-probe.mjs`** with three cases:
+- [x] **Step 1:** Upgrade to the `typescript-eslint` 8 meta-package (`tseslint.config()`), ESLint to the newest major every plugin in Step 6 supports, TypeScript catalog entry `~6.0.x`. Keep existing rules. Run `pnpm lint` → green.
+- [x] **Step 2: Write `scripts/lint-probe.mjs`** with three cases:
   - `filePath: "packages/core/src/__probe__/a.ts"`, code `export const c = "var(--tulpar-primitive-color-colpan-50)";` → expects `no-restricted-syntax`.
   - `filePath: "packages/shell/src/__probe__/b.ts"`, code `import "../../../core/src/_internal/warn-dev";` → expects `no-restricted-imports`.
   - `filePath: "packages/shell/src/__probe__/c.ts"`, code `import "@tulpar-ui/core/src/_internal/warn-dev";` → expects `no-restricted-imports`.
   - Control: `filePath: "packages/core/src/button/__probe__.ts"`, code `import "../_internal/warn-dev";` → expects **no** error (own-package `_internal` stays legal).
-- [ ] **Step 3: Run** `pnpm lint:probe` → Expected: FAIL on the first three cases (rules not extended yet).
-- [ ] **Step 4:** Extend `no-restricted-syntax` to `Literal` and `TemplateElement` for `packages/{core,shell}/src/**/*.ts`, excluding `**/*.test.ts`. Extend `no-restricted-imports` with cross-package patterns only: `**/packages/*/src/_internal/**`, `../../*/src/_internal/**`, `../../../*/src/_internal/**`, `@tulpar-ui/*/src/_internal/**`. Wrap the intentional primitive uses in **block** disables with a reason: `/* eslint-disable no-restricted-syntax -- custom-colour escape hatch, moved to the brand layer in phase 1.2 */ … /* eslint-enable */` around `packages/core/src/button/tulpar-button.ts` L67-88 and L249, and `packages/core/src/avatar/tulpar-avatar.ts` L196-213.
-- [ ] **Step 5: Run** `pnpm lint:probe` → PASS (all four cases). `pnpm lint` → green.
-- [ ] **Step 6:** Add `eslint-plugin-lit` + `eslint-plugin-wc` (recommended) for `packages/{core,shell}/src`, `eslint-plugin-vue` (flat `recommended`) for `**/*.vue`, `angular-eslint` (TS + template recommended) for `packages/angular` and `apps/playground-ng`. Apply behaviour-neutral autofixes only; record the rest with `eslint --suppress-all`. If one rule exceeds 200 violations → stop and report.
-- [ ] **Step 7:** Add `check:suppressions`; `lint-staged`: `eslint --fix` (rules whose fix is behaviour-neutral) then `prettier --write`.
-- [ ] **Step 8:** Commit `chore(lint): typescript-eslint 8, lit/wc/vue/angular linters, closed guardrail gaps`.
+- [x] **Step 3: Run** `pnpm lint:probe` → Expected: FAIL on the first three cases (rules not extended yet).
+- [x] **Step 4:** Extend `no-restricted-syntax` to `Literal` and `TemplateElement` for `packages/{core,shell}/src/**/*.ts`, excluding `**/*.test.ts`. Extend `no-restricted-imports` with cross-package patterns only: `**/packages/*/src/_internal/**`, `../../*/src/_internal/**`, `../../../*/src/_internal/**`, `@tulpar-ui/*/src/_internal/**`. Wrap the intentional primitive uses in **block** disables with a reason: `/* eslint-disable no-restricted-syntax -- custom-colour escape hatch, moved to the brand layer in phase 1.2 */ … /* eslint-enable */` around `packages/core/src/button/tulpar-button.ts` L67-88 and L249, and `packages/core/src/avatar/tulpar-avatar.ts` L196-213.
+- [x] **Step 5: Run** `pnpm lint:probe` → PASS (all four cases). `pnpm lint` → green.
+- [x] **Step 6:** Add `eslint-plugin-lit` + `eslint-plugin-wc` (recommended) for `packages/{core,shell}/src`, `eslint-plugin-vue` (flat `recommended`) for `**/*.vue`, `angular-eslint` (TS + template recommended) for `packages/angular` and `apps/playground-ng`. Apply behaviour-neutral autofixes only; record the rest with `eslint --suppress-all`. If one rule exceeds 200 violations → stop and report.
+- [x] **Step 7:** Add `check:suppressions`; `lint-staged`: `eslint --fix` (rules whose fix is behaviour-neutral) then `prettier --write`.
+- [x] **Step 8:** Commit `chore(lint): typescript-eslint 8, lit/wc/vue/angular linters, closed guardrail gaps`.
 
 ### Task 3: Vite 8, vite-plugin-dts 5, externals by pattern
 

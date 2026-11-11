@@ -218,7 +218,8 @@ export class TulparSidenav extends LitElement {
       const focused = this._focusedItem();
       if (!focused) return;
       e.preventDefault();
-      e.key === "ArrowRight" ? focused.expand?.() : focused.collapse?.();
+      if (e.key === "ArrowRight") focused.expand?.();
+      else focused.collapse?.();
       return;
     }
   };

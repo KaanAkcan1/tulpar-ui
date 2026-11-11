@@ -105,25 +105,25 @@ const pgSnippet = computed(() => {
         <div class="pg-controls">
           <label class="pg-field">
             <span class="pg-field-label">Size</span>
-            <select class="pg-select" v-model="pgSize">
+            <select v-model="pgSize" class="pg-select">
               <option v-for="s in sizes" :key="s" :value="s">{{ s }}</option>
             </select>
           </label>
           <label class="pg-field">
             <span class="pg-field-label">Tone</span>
-            <select class="pg-select" v-model="pgTone">
+            <select v-model="pgTone" class="pg-select">
               <option value="">(inherit)</option>
               <option v-for="t in tones" :key="t" :value="t">{{ t }}</option>
             </select>
           </label>
           <label v-if="pgTone === 'custom'" class="pg-field">
             <span class="pg-field-label">Color</span>
-            <select class="pg-select" v-model="pgColor">
+            <select v-model="pgColor" class="pg-select">
               <option v-for="c in customColors" :key="c" :value="c">{{ c }}</option>
             </select>
           </label>
           <label class="pg-check">
-            <input type="checkbox" v-model="pgTrack" />
+            <input v-model="pgTrack" type="checkbox" />
             <span>track</span>
           </label>
         </div>

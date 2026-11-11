@@ -400,7 +400,8 @@ export class TulparNavItem extends LitElement {
   }
 
   private _toggle() {
-    this._expanded ? this.collapse() : this.expand();
+    if (this._expanded) this.collapse();
+    else this.expand();
   }
 
   /**

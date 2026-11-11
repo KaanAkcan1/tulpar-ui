@@ -67,7 +67,7 @@ const {
     :disabled="disabled || undefined"
     :label="label ?? undefined"
   >
-    <span v-if="$slots.icon" style="display: contents" slot="icon"><slot name="icon" /></span>
+    <span v-if="$slots.icon" slot="icon" style="display: contents"><slot name="icon" /></span>
     <slot />
   </tulpar-tag>
 </template>
