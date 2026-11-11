@@ -2,6 +2,8 @@ import { expect, fixture, html } from "@open-wc/testing";
 import "./tulpar-select";
 import "./tulpar-option";
 import type { TulparSelect } from "./tulpar-select";
+import type { TulparOption } from "./tulpar-option";
+import { type SelectOptions } from "./select-options";
 
 describe("tulpar-select (closed-state)", () => {
   it("is form-associated and reflects the selected value", async () => {
@@ -506,5 +508,279 @@ describe("tulpar-select (listbox states)", () => {
     );
     await el.updateComplete;
     expect(el.shadowRoot!.querySelector(".select-listbox")!.hasAttribute("aria-busy")).to.be.false;
+  });
+});
+
+describe("tulpar-select — data-mode (options prop)", () => {
+  const opts: SelectOptions = [
+    { value: "a", label: "Apple" },
+    { value: "b", label: "Banana", disabled: true },
+    {
+      label: "Citrus",
+      options: [
+        { value: "o", label: "Orange" },
+        { value: "l", label: "Lemon" },
+      ],
+    },
+  ];
+
+  it("renders options from the data prop into the shadow listbox", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${opts} open></tulpar-select>`,
+    );
+    await el.updateComplete;
+    const shadowOpts = el.renderRoot.querySelectorAll("tulpar-option");
+    expect(shadowOpts.length).to.equal(4); // apple, banana, orange, lemon
+    expect(el.renderRoot.querySelectorAll("tulpar-option-group").length).to.equal(1);
+  });
+
+  it("selecting a data-mode value shows its label on the trigger + sets form value", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${opts} value="o"></tulpar-select>`,
+    );
+    await el.updateComplete;
+    const valueText = el.renderRoot.querySelector(".select-value");
+    expect(valueText?.textContent?.trim()).to.equal("Orange");
+  });
+
+  it("prop wins: slotted children are inert when options is set", async () => {
+    const el = await fixture<TulparSelect>(
+      html` <tulpar-select .options=${opts} open>
+        <tulpar-option value="z">Zucchini</tulpar-option>
+      </tulpar-select>`,
+    );
+    await el.updateComplete;
+    // _options() reads shadow only → 4, not 5
+    const shadow = el.renderRoot.querySelectorAll("tulpar-option");
+    expect(shadow.length).to.equal(4);
+  });
+
+  it("disabled group disables its children", async () => {
+    const grouped: SelectOptions = [
+      { label: "G", disabled: true, options: [{ value: "x", label: "X" }] },
+    ];
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${grouped} open></tulpar-select>`,
+    );
+    await el.updateComplete;
+    const x = el.renderRoot.querySelector('tulpar-option[value="x"]') as HTMLElement;
+    expect(x.hasAttribute("disabled")).to.equal(true);
+  });
+
+  it("stamps stable ids for activedescendant on data options", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${opts} open></tulpar-select>`,
+    );
+    await el.updateComplete;
+    el.renderRoot.querySelectorAll("tulpar-option").forEach((o) => expect(o.id).to.not.equal(""));
+  });
+});
+
+describe("tulpar-select — slotted group-disabled parity", () => {
+  it("a slotted disabled group disables its child options (parity with data-mode)", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select label="X" open>
+        <tulpar-option-group label="G" disabled>
+          <tulpar-option value="x">X</tulpar-option>
+        </tulpar-option-group>
+      </tulpar-select>`,
+    );
+    await el.updateComplete;
+    const x = el.querySelector('tulpar-option[value="x"]') as HTMLElement;
+    // The group's disabled state must be mirrored onto the child option.
+    expect(x.hasAttribute("disabled")).to.equal(true);
+    // …and the collection must treat it as disabled (so keyboard nav skips it).
+    const items = (
+      el as unknown as { _options(): { value: string; disabled: boolean }[] }
+    )._options();
+    const item = items.find((i) => i.value === "x");
+    expect(item?.disabled).to.equal(true);
+  });
+
+  it("re-enables child options when the group is re-enabled, preserving a child's own disabled", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select label="X" open>
+        <tulpar-option-group label="G" disabled>
+          <tulpar-option value="x">X</tulpar-option>
+          <tulpar-option value="y" disabled>Y</tulpar-option>
+        </tulpar-option-group>
+      </tulpar-select>`,
+    );
+    await el.updateComplete;
+    const group = el.querySelector("tulpar-option-group") as HTMLElement;
+    const x = el.querySelector('tulpar-option[value="x"]') as HTMLElement;
+    const y = el.querySelector('tulpar-option[value="y"]') as HTMLElement;
+    expect(x.hasAttribute("disabled")).to.equal(true);
+    expect(y.hasAttribute("disabled")).to.equal(true);
+
+    // Re-enable the group: the group-induced disable on `x` must clear, but
+    // `y`'s OWN disabled must survive.
+    group.removeAttribute("disabled");
+    el.requestUpdate();
+    await el.updateComplete;
+    expect(x.hasAttribute("disabled")).to.equal(false);
+    expect(y.hasAttribute("disabled")).to.equal(true);
+  });
+});
+
+describe("tulpar-select — searchable (render + a11y)", () => {
+  const opts: SelectOptions = [
+    { value: "a", label: "Apple" },
+    { value: "b", label: "Banana" },
+  ];
+
+  it("renders a search input in the listbox when searchable", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${opts} searchable open></tulpar-select>`,
+    );
+    await el.updateComplete;
+    expect(el.renderRoot.querySelector(".select-search-input")).to.not.equal(null);
+  });
+
+  it("moves the combobox role to the search input (not the trigger) when searchable", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${opts} searchable open></tulpar-select>`,
+    );
+    await el.updateComplete;
+    const trigger = el.renderRoot.querySelector(".select-trigger")!;
+    const input = el.renderRoot.querySelector(".select-search-input")!;
+    expect(trigger.getAttribute("role")).to.not.equal("combobox");
+    expect(input.getAttribute("role")).to.equal("combobox");
+    expect(input.getAttribute("aria-controls")).to.equal(trigger.getAttribute("aria-controls"));
+  });
+
+  it("non-searchable keeps combobox role on the trigger", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${opts} open></tulpar-select>`,
+    );
+    await el.updateComplete;
+    expect(el.renderRoot.querySelector(".select-trigger")!.getAttribute("role")).to.equal(
+      "combobox",
+    );
+  });
+
+  it("focuses the search input on open", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${opts} searchable></tulpar-select>`,
+    );
+    el.renderRoot.querySelector<HTMLElement>(".select-trigger")!.click();
+    await el.updateComplete;
+    await new Promise((r) => requestAnimationFrame(r));
+    expect(el.renderRoot.activeElement).to.equal(
+      el.renderRoot.querySelector(".select-search-input"),
+    );
+  });
+});
+
+describe("tulpar-select — searchable (filtering)", () => {
+  const opts: SelectOptions = [
+    { value: "ist", label: "İstanbul" },
+    { value: "ank", label: "Ankara" },
+    { value: "izm", label: "İzmir" },
+  ];
+  const openSearchable = async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${opts} searchable></tulpar-select>`,
+    );
+    el.renderRoot.querySelector<HTMLElement>(".select-trigger")!.click();
+    await el.updateComplete;
+    return el;
+  };
+  const type = async (el: TulparSelect, q: string) => {
+    const input = el.renderRoot.querySelector<HTMLInputElement>(".select-search-input")!;
+    input.value = q;
+    input.dispatchEvent(new Event("input"));
+    await el.updateComplete;
+  };
+
+  it("hides non-matching options (diacritic-insensitive)", async () => {
+    const el = await openSearchable();
+    await type(el, "is");
+    const visible = [...el.renderRoot.querySelectorAll("tulpar-option")].filter(
+      (o) => !(o as HTMLElement).hidden,
+    );
+    expect(visible.map((o) => (o as TulparOption).value)).to.deep.equal(["ist"]);
+  });
+
+  it("arrow nav skips hidden options", async () => {
+    const el = await openSearchable();
+    await type(el, "i"); // matches İstanbul + İzmir
+    const input = el.renderRoot.querySelector<HTMLInputElement>(".select-search-input")!;
+    input.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
+    await el.updateComplete;
+    // active lands on a visible match; committing selects it
+    input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+    await el.updateComplete;
+    expect(["ist", "izm"]).to.include(el.value);
+  });
+
+  it("two-stage Escape: first clears query, second reverts/closes", async () => {
+    const el = await openSearchable();
+    await type(el, "an");
+    const input = el.renderRoot.querySelector<HTMLInputElement>(".select-search-input")!;
+    input.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    await el.updateComplete;
+    expect(el.open).to.equal(true);
+    expect(el.renderRoot.querySelector<HTMLInputElement>(".select-search-input")!.value).to.equal(
+      "",
+    );
+    input.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    await el.updateComplete;
+    expect(el.open).to.equal(false);
+  });
+
+  it("resets the query on reopen", async () => {
+    const el = await openSearchable();
+    await type(el, "an");
+    el.renderRoot
+      .querySelector<HTMLInputElement>(".select-search-input")!
+      .dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    await el.updateComplete; // cleared query (still open)
+    // close + reopen
+    (el as unknown as { _doClose(): void })._doClose();
+    await el.updateComplete;
+    el.renderRoot.querySelector<HTMLElement>(".select-trigger")!.click();
+    await el.updateComplete;
+    expect(el.renderRoot.querySelector<HTMLInputElement>(".select-search-input")!.value).to.equal(
+      "",
+    );
+  });
+});
+
+describe("tulpar-select — searchable (no-match status + group hide)", () => {
+  it("shows the no-match row when the query matches nothing", async () => {
+    const opts: SelectOptions = [{ value: "a", label: "Apple" }];
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${opts} searchable open></tulpar-select>`,
+    );
+    const input = el.renderRoot.querySelector<HTMLInputElement>(".select-search-input")!;
+    input.value = "zzz";
+    input.dispatchEvent(new Event("input"));
+    await el.updateComplete;
+    const row = el.renderRoot.querySelector('.select-status[data-kind="no-match"]');
+    expect(row).to.not.equal(null);
+    expect(row?.getAttribute("role")).to.equal("status");
+  });
+
+  it("empty (no options at all) still shows the empty row, not no-match", async () => {
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${[]} searchable open></tulpar-select>`,
+    );
+    await el.updateComplete;
+    expect(el.renderRoot.querySelector('.select-status[data-kind="empty"]')).to.not.equal(null);
+    expect(el.renderRoot.querySelector('.select-status[data-kind="no-match"]')).to.equal(null);
+  });
+
+  it("hides a group whose every option is filtered out", async () => {
+    const opts: SelectOptions = [{ label: "Fruit", options: [{ value: "a", label: "Apple" }] }];
+    const el = await fixture<TulparSelect>(
+      html`<tulpar-select .options=${opts} searchable open></tulpar-select>`,
+    );
+    const input = el.renderRoot.querySelector<HTMLInputElement>(".select-search-input")!;
+    input.value = "zzz";
+    input.dispatchEvent(new Event("input"));
+    await el.updateComplete;
+    const group = el.renderRoot.querySelector("tulpar-option-group") as HTMLElement;
+    expect(group.hidden).to.equal(true);
   });
 });

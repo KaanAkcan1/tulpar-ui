@@ -46,6 +46,9 @@ export class TulparOption extends LitElement {
   /** Dims + marks as non-selectable. Keyboard nav skips disabled options. */
   @property({ type: Boolean, reflect: true }) disabled = false;
 
+  /** Parent-set highlight range `[start,end]` into the text label, or null. */
+  @property({ attribute: false }) highlight: [number, number] | null = null;
+
   override connectedCallback(): void {
     super.connectedCallback();
     // Assign role if not already set (the parent may set it before connection).
@@ -94,6 +97,36 @@ export class TulparOption extends LitElement {
     return !!this.querySelector('[slot="description"]');
   }
 
+  /** True when the consumer slotted meaningful default-slot content (vs the label prop). */
+  private _hasSlottedLabel(): boolean {
+    for (const node of this.childNodes) {
+      // skip elements explicitly assigned to a NAMED slot (icon/description)
+      if (node instanceof HTMLElement && node.getAttribute("slot")) continue;
+      if (isMeaningfulNode(node)) return true;
+    }
+    return false;
+  }
+
+  /**
+   * Render the label, wrapping the highlight range in `<mark>` when text-only.
+   * Slotted rich content renders through the default `<slot>` unhighlighted.
+   *
+   * Lit-trap note: the default `<slot>` here has NO slotchange→requestUpdate
+   * handler (only the icon slot does), so conditionally rendering `<mark>` vs
+   * `<slot>` for the label does NOT trigger the infinite-update loop.
+   */
+  private _renderLabel() {
+    const h = this.highlight;
+    const label = this.label ?? "";
+    if (h && label && !this._hasSlottedLabel()) {
+      const [s, e] = h;
+      return html`${label.slice(0, s)}<mark part="match">${label.slice(s, e)}</mark>${label.slice(
+          e,
+        )}`;
+    }
+    return html`<slot>${this.label}</slot>`;
+  }
+
   // ── Icon slot tracking ────────────────────────────────────────────────────
   // Toggles [data-has-icon] on the host via a plain attribute (NOT @state) so
   // Lit does NOT re-render when the slotchange fires — avoids the known
@@ -125,7 +158,7 @@ export class TulparOption extends LitElement {
         ><slot name="icon" @slotchange=${this._onIconSlotChange}></slot
       ></span>
       <span class="opt-text">
-        <span class="opt-label"><slot>${this.label}</slot></span>
+        <span class="opt-label">${this._renderLabel()}</span>
         ${this.description || this._hasDescriptionSlot()
           ? html`<span class="opt-desc"><slot name="description">${this.description}</slot></span>`
           : nothing}

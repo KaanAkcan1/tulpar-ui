@@ -1,5 +1,5 @@
 import { html, nothing, type TemplateResult } from "lit";
-import { property, query } from "lit/decorators.js";
+import { property, query, state } from "lit/decorators.js";
 import { FormFieldBase } from "../_internal/form-field-base";
 import { buildCollection, type Collection, type OptionLike } from "../_internal/listbox/collection";
 import {
@@ -10,11 +10,16 @@ import {
   prevEnabled,
 } from "../_internal/listbox/active-index";
 import { Typeahead } from "../_internal/listbox/typeahead";
-import { resolveKeyAction } from "../_internal/listbox/keymap";
+import { resolveKeyAction, type KeyAction } from "../_internal/listbox/keymap";
+import { filterOptions, type FilterResult } from "../_internal/listbox/filter";
 import { ListboxOverlay } from "../_internal/listbox/listbox-overlay";
 import { ActiveDescendantController } from "../_internal/listbox/active-descendant-controller";
 import type { TulparOption } from "./tulpar-option";
+import { isOptionGroup, type SelectOptions, type SelectOption } from "./select-options";
 import { selectStyles } from "./tulpar-select.styles";
+// Register the option elements so the data-mode render stamps real elements.
+import "./tulpar-option";
+import "./tulpar-option-group";
 // Register <tulpar-spinner> so the loading state renders (side-effect import).
 import "../spinner";
 
@@ -90,9 +95,29 @@ export class TulparSelect extends FormFieldBase {
   /** Open state. Drives listbox visibility + `aria-expanded` via render. */
   @property({ type: Boolean, reflect: true }) open = false;
 
+  /**
+   * Data-mode option source. When non-null the Select renders these into the
+   * shadow listbox and IGNORES slotted children (prop wins, §3.1). Object array —
+   * bind as a property, not an attribute.
+   */
+  @property({ attribute: false }) options: SelectOptions | null = null;
+
+  /** Opt-in in-popup search. Works in data + slotted modes. */
+  @property({ type: Boolean, reflect: true }) searchable = false;
+
+  /** Placeholder of the in-popup search input. */
+  @property({ type: String, attribute: "search-placeholder" }) searchPlaceholder = "Search…";
+
+  /** Status text when the query matches nothing (distinct from emptyText). */
+  @property({ type: String, attribute: "no-match-text" }) noMatchText = "No matches";
+
+  /** Current search query (internal). */
+  @state() private _query = "";
+
   @query(".select-trigger") protected _triggerEl!: HTMLElement;
   @query(".select-listbox") protected _listboxEl!: HTMLElement;
   @query(".select-leading-icon") protected _leadingIconEl!: HTMLElement;
+  @query(".select-search-input") private _searchInputEl?: HTMLInputElement;
 
   /** Stable per-instance listbox id — used on the listbox + trigger aria-controls. */
   private _listboxId = `tulpar-select-listbox-${++seq}`;
@@ -129,13 +154,56 @@ export class TulparSelect extends FormFieldBase {
    * they survive a re-render that rebuilt the option collection.
    */
   private _active = new ActiveDescendantController({
-    getTrigger: () => this._triggerEl ?? null,
+    getTrigger: () => this._activeHostEl(),
     getListbox: () => this._listboxEl ?? null,
     getCollection: () => this._collection(),
   });
 
+  /**
+   * The element that carries `aria-activedescendant`: the in-popup search input
+   * while searchable + open, else the trigger. When searchable the combobox role
+   * lives on the input, so virtual focus must land there, never on the opener.
+   */
+  private _activeHostEl(): HTMLElement | null {
+    if (this.searchable && this.open && this._searchInputEl) return this._searchInputEl;
+    return this._triggerEl ?? null;
+  }
+
   protected override _hasValue(): boolean {
     return this.value !== "";
+  }
+
+  /**
+   * Current filter result (the single source of truth for search), recomputed in
+   * `willUpdate` from the RAW labels + `_query` BEFORE render — so `_options()`
+   * and `_renderStatusRow` read fresh state, never stale element attributes.
+   * Null when not searching (no query / not searchable).
+   */
+  private _filterResult: FilterResult | null = null;
+
+  override willUpdate(changed: Map<string, unknown>): void {
+    super.willUpdate?.(changed);
+    if (changed.has("_query") || changed.has("options") || changed.has("searchable")) {
+      this._filterResult =
+        this.searchable && this._query.trim() !== ""
+          ? filterOptions(this._rawLabels(), this._query)
+          : null;
+    }
+  }
+
+  /** Ordered raw labels (independent of hidden) for filtering. */
+  private _rawLabels(): string[] {
+    if (this.options != null) {
+      const out: string[] = [];
+      for (const e of this.options) {
+        if (isOptionGroup(e)) e.options.forEach((o) => out.push(o.label));
+        else out.push(e.label);
+      }
+      return out;
+    }
+    return Array.from(this.querySelectorAll<TulparOption>("tulpar-option")).map(
+      (o) => o.resolvedLabel,
+    );
   }
 
   override updated(changed: Map<string, unknown>): void {
@@ -152,6 +220,10 @@ export class TulparSelect extends FormFieldBase {
     // padding, font) matches the trigger. Plain attribute writes (no reactive
     // @property), so they cannot re-enter the update cycle.
     this._syncOptionSizes();
+    // Mirror a slotted disabled group's state onto its child options so they are
+    // skipped by keyboard nav and not committable — parity with data-mode. Plain
+    // attribute writes, so they cannot re-enter the update cycle.
+    this._syncGroupDisabled();
     // Re-apply the virtual-focus (data-active + aria-activedescendant) and the
     // selected (aria-selected + data-selected) attributes AFTER every render so
     // they survive a re-render that re-reads the option collection. These are
@@ -160,6 +232,32 @@ export class TulparSelect extends FormFieldBase {
     const collection = this._collection();
     this._active.applyActiveAttrs(collection);
     this._active.applySelectedAttrs(this.value, collection);
+    // Stamp the search filter (hidden + highlight) onto the option elements and
+    // hide a group whose options are all filtered out. Plain attribute/property
+    // writes that mirror the pre-render `_filterResult`; they cannot re-enter the
+    // update cycle (the default options <slot> has no slotchange→requestUpdate).
+    this._applyFilterToDom();
+  }
+
+  /**
+   * Mirror `_filterResult` onto the option elements: `hidden` (nav-skip + paint)
+   * and `highlight` (the matched run → `<mark>`), plus group visibility. Reads
+   * the shadow options (data-mode) or the light-DOM options (slotted-mode) in the
+   * same RAW order `_rawLabels()` produced, so indices align with the result.
+   */
+  private _applyFilterToDom(): void {
+    const root: ParentNode = this.options != null ? this.renderRoot : this;
+    const opts = Array.from(root.querySelectorAll<TulparOption>("tulpar-option"));
+    const f = this._filterResult;
+    opts.forEach((opt, i) => {
+      opt.hidden = f ? !f.matched[i] : false;
+      opt.highlight = f ? f.ranges[i] : null;
+    });
+    // Hide a group whose every child option is hidden.
+    root.querySelectorAll<HTMLElement>("tulpar-option-group").forEach((g) => {
+      const children = Array.from(g.querySelectorAll<TulparOption>("tulpar-option"));
+      g.hidden = children.length > 0 && children.every((c) => c.hidden);
+    });
   }
 
   override connectedCallback(): void {
@@ -185,6 +283,9 @@ export class TulparSelect extends FormFieldBase {
    * `_onOptionsSlotChange`, so ids are guaranteed before options are read.
    */
   private _ensureOptionIds(): void {
+    // Data-mode options are stamped declaratively in _renderDataOptions; this
+    // light-DOM stamper only applies to slotted-mode.
+    if (this.options != null) return;
     const opts = this.querySelectorAll<TulparOption>("tulpar-option");
     opts.forEach((opt) => {
       opt.id ||= `tulpar-opt-${++optSeq}`;
@@ -199,9 +300,50 @@ export class TulparSelect extends FormFieldBase {
    * `size` change) and after a slotchange (catches newly projected options).
    */
   private _syncOptionSizes(): void {
+    // Data-mode options carry their data-size declaratively; this light-DOM
+    // stamper only applies to slotted-mode.
+    if (this.options != null) return;
     const size = this.size;
     this.querySelectorAll<TulparOption>("tulpar-option").forEach((opt) => {
       if (opt.getAttribute("data-size") !== size) opt.setAttribute("data-size", size);
+    });
+  }
+
+  /**
+   * Mirror a slotted `<tulpar-option-group disabled>`'s state onto its descendant
+   * `<tulpar-option>` children so they are skipped by keyboard nav and not
+   * committable — parity with data-mode (where `_renderDataOptions` already ORs
+   * `groupDisabled` into each option's `disabled`). Slotted-mode only; data-mode
+   * options carry their disabled state declaratively from `_renderDataOptions`.
+   *
+   * Reactive without clobbering a child's OWN `disabled`: when a group is
+   * disabled we stamp `disabled` on each child AND tag it with a
+   * `data-group-disabled` marker so we know we set it; when the group is later
+   * re-enabled we only clear `disabled` from children we previously marked, and
+   * drop the marker. A child that was independently `disabled` (no marker)
+   * survives untouched.
+   *
+   * Plain attribute writes (no reactive `@property`), so they cannot re-enter the
+   * Lit update cycle — same discipline as {@link _syncOptionSizes}.
+   */
+  private _syncGroupDisabled(): void {
+    // Data-mode options carry their disabled state declaratively; this light-DOM
+    // stamper only applies to slotted-mode.
+    if (this.options != null) return;
+    this.querySelectorAll<HTMLElement>("tulpar-option-group").forEach((group) => {
+      const groupDisabled = group.hasAttribute("disabled");
+      group.querySelectorAll<TulparOption>("tulpar-option").forEach((opt) => {
+        if (groupDisabled) {
+          if (!opt.hasAttribute("disabled")) {
+            opt.setAttribute("disabled", "");
+            opt.setAttribute("data-group-disabled", "");
+          }
+        } else if (opt.hasAttribute("data-group-disabled")) {
+          // Only clear the disable WE induced; a child's own disabled survives.
+          opt.removeAttribute("disabled");
+          opt.removeAttribute("data-group-disabled");
+        }
+      });
     });
   }
 
@@ -213,11 +355,14 @@ export class TulparSelect extends FormFieldBase {
    * {@link _ensureOptionIds} (connectedCallback/slotchange), so no mutation here.
    */
   protected _options(): OptionLike[] {
-    const opts = Array.from(this.querySelectorAll<TulparOption>("tulpar-option"));
-    return opts.map((opt) => ({
+    const root: ParentNode = this.options != null ? this.renderRoot : this;
+    const opts = Array.from(root.querySelectorAll<TulparOption>("tulpar-option"));
+    const f = this._filterResult;
+    return opts.map((opt, i) => ({
       value: opt.value,
       label: opt.resolvedLabel,
       disabled: opt.disabled,
+      hidden: f ? !f.matched[i] : false,
       el: opt,
     }));
   }
@@ -227,9 +372,30 @@ export class TulparSelect extends FormFieldBase {
   }
 
   protected _selectedLabel(): string {
+    // Data-mode: resolve the label straight from the data array. This avoids
+    // depending on the shadow `<tulpar-option>` elements being stamped first —
+    // they are committed by THIS render pass, so on the initial render they are
+    // not yet in `renderRoot` for `_options()` to read. Reading the data array
+    // keeps the trigger label correct on the first pass (no second re-render).
+    if (this.options != null) {
+      return this._dataLabelByValue(this.value);
+    }
     const c = this._collection();
     const i = c.indexByValue(this.value);
     return i >= 0 ? c.items[i].label : "";
+  }
+
+  /** Find the label for `value` by walking the `options` data array (data-mode). */
+  private _dataLabelByValue(value: string): string {
+    for (const entry of this.options ?? []) {
+      if (isOptionGroup(entry)) {
+        const hit = entry.options.find((o) => o.value === value);
+        if (hit) return hit.label;
+      } else if (entry.value === value) {
+        return entry.label;
+      }
+    }
+    return "";
   }
 
   /** The light-DOM `<tulpar-option>` element for the current value (or null). */
@@ -289,6 +455,8 @@ export class TulparSelect extends FormFieldBase {
     this.open = true;
     this._valueBeforeOpen = this.value;
     this._typeahead.reset();
+    // Searchable: every open starts with a clear query (resets the filter).
+    this._query = "";
     const c = this._collection();
     const selected = c.indexByValue(this.value);
     // Seed the active index directly (not via setActive, which early-returns on a
@@ -300,6 +468,8 @@ export class TulparSelect extends FormFieldBase {
       // and bring the selected/active option into view immediately.
       this._active.applyActiveAttrs();
       this._active.scrollActiveIntoView();
+      // Searchable: DOM focus moves into the in-popup search input (the combobox).
+      if (this.searchable) this._searchInputEl?.focus();
     });
   }
 
@@ -329,9 +499,10 @@ export class TulparSelect extends FormFieldBase {
 
   /**
    * Keyboard model — single source of truth for the key contract is the pure
-   * {@link resolveKeyAction}; this handler only performs the resolved side
-   * effects. Virtual-focus: arrows/Home/End/Page move only the active index;
-   * DOM focus stays on the trigger.
+   * {@link resolveKeyAction}; this handler only resolves the action then delegates
+   * the side effects to {@link _applyKeyAction}. Non-searchable state: the trigger
+   * IS the combobox (DOM focus stays on it; arrows/Home/End/Page move only the
+   * active index). The searchable counterpart is {@link _onSearchKeydown}.
    */
   protected _onTriggerKeydown = (e: KeyboardEvent): void => {
     if (!this.open && (this.disabled || this.readonly || this.loading)) return;
@@ -341,10 +512,21 @@ export class TulparSelect extends FormFieldBase {
       shiftKey: e.shiftKey,
       ctrlKey: e.ctrlKey,
       metaKey: e.metaKey,
+      searchable: false,
     });
+    this._applyKeyAction(action, e);
+  };
+
+  /**
+   * Perform the resolved {@link KeyAction}. Shared by the trigger handler
+   * (non-searchable) and the search-input handler (searchable). Two searchable
+   * tweaks vs. the original switch: `open-typeahead` runs the typeahead ONLY when
+   * not searchable (the input owns text entry), and a `clear-query` case clears
+   * the search query in place (keeping the listbox open) then re-seeds active.
+   */
+  private _applyKeyAction(action: KeyAction, e: KeyboardEvent): void {
     if (action.type === "none") return;
     if (action.preventDefault) e.preventDefault();
-
     const c = this._collection();
     const items = c.items;
     const active = this._active.activeIndex;
@@ -352,17 +534,18 @@ export class TulparSelect extends FormFieldBase {
       case "open":
         this._doOpen();
         break;
-      case "open-typeahead": {
+      case "open-typeahead":
         this._doOpen();
-        const t = this._typeahead.type(
-          e.key,
-          c.labels,
-          performance.now(),
-          this._active.activeIndex,
-        );
-        if (t >= 0) this._active.setActive(t, this._collection());
+        if (!this.searchable) {
+          const t = this._typeahead.type(
+            e.key,
+            c.labels,
+            performance.now(),
+            this._active.activeIndex,
+          );
+          if (t >= 0) this._active.setActive(t, this._collection());
+        }
         break;
-      }
       case "move-next":
         this._active.setActive(nextEnabled(items, active), c);
         break;
@@ -395,13 +578,22 @@ export class TulparSelect extends FormFieldBase {
         this._internals.setFormValue(this.value);
         this._doClose();
         break;
+      case "clear-query":
+        e.stopPropagation();
+        this._query = "";
+        // re-seed active after the filter clears (next update)
+        void this.updateComplete.then(() => {
+          const col = this._collection();
+          this._active.setActive(firstEnabled(col.items), col);
+        });
+        break;
       case "typeahead": {
         const t = this._typeahead.type(e.key, c.labels, performance.now(), active);
         if (t >= 0) this._active.setActive(t, c);
         break;
       }
     }
-  };
+  }
 
   /**
    * Hover unifies with keyboard: hovering an option makes it the active one so
@@ -445,11 +637,54 @@ export class TulparSelect extends FormFieldBase {
    * class-level Lit-trap note).
    */
   protected _onOptionsSlotChange = (): void => {
-    // Newly projected options get their stable ids + size before the label
-    // refresh (so the size lands even on the same render frame).
+    // Data-mode ignores slotted children entirely (prop wins) — never react to a
+    // slotchange while the data prop is set.
+    if (this.options != null) return;
+    // Newly projected options get their stable ids + size + group-disabled
+    // mirroring before the label refresh (so they land on the same render frame).
     this._ensureOptionIds();
     this._syncOptionSizes();
+    this._syncGroupDisabled();
     this.requestUpdate();
+  };
+
+  // ── Search (searchable mode) ──────────────────────────────────────────────
+
+  /**
+   * Search-input change: update the query (drives `willUpdate` → `_filterResult`),
+   * then re-seed the active index to the first VISIBLE match (after the filter
+   * recomputes in the next update) and bring it into view.
+   */
+  private _onSearchInput = (e: Event): void => {
+    this._query = (e.target as HTMLInputElement).value;
+    void this.updateComplete.then(() => {
+      const col = this._collection();
+      this._active.setActive(firstEnabled(col.items), col);
+      this._active.scrollActiveIntoView(col);
+    });
+  };
+
+  /**
+   * Search-input keydown — the search input IS the combobox while searchable.
+   * Resolves through the same pure {@link resolveKeyAction} (searchable state) and
+   * delegates to {@link _applyKeyAction}, so arrows/Enter/Tab behave identically
+   * to the trigger handler, plus the two-stage Escape (clear-query → revert).
+   *
+   * No disabled/readonly/loading guard needed here: the search input only EXISTS
+   * while the listbox is open, and the Select cannot open when non-interactive
+   * (`_doOpen` early-returns). Do NOT add a guard — it would break the open path.
+   */
+  private _onSearchKeydown = (e: KeyboardEvent): void => {
+    const action = resolveKeyAction(e.key, {
+      open: this.open,
+      altKey: e.altKey,
+      shiftKey: e.shiftKey,
+      ctrlKey: e.ctrlKey,
+      metaKey: e.metaKey,
+      searchable: true,
+      hasQuery: this._query.trim() !== "",
+    });
+    this._applyKeyAction(action, e);
   };
 
   /**
@@ -508,6 +743,47 @@ export class TulparSelect extends FormFieldBase {
     </button>`;
   }
 
+  /**
+   * Render the sticky in-popup search input (searchable mode only). The combobox
+   * role lives here while searchable + open — the trigger becomes a plain opener.
+   */
+  private _renderSearch(): TemplateResult | typeof nothing {
+    if (!this.searchable) return nothing;
+    return html`<div class="select-search">
+      <span class="select-search-icon" aria-hidden="true">
+        <svg viewBox="0 0 16 16" width="16" height="16" fill="none">
+          <circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5"></circle>
+          <path
+            d="M11 11 L14 14"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+          ></path>
+        </svg>
+      </span>
+      <input
+        class="select-search-input"
+        type="text"
+        role="combobox"
+        autocomplete="off"
+        aria-autocomplete="list"
+        aria-expanded=${this.open ? "true" : "false"}
+        aria-controls=${this._listboxId}
+        aria-label=${this._searchAriaLabel()}
+        placeholder=${this.searchPlaceholder}
+        .value=${this._query}
+        @input=${this._onSearchInput}
+        @keydown=${this._onSearchKeydown}
+      />
+    </div>`;
+  }
+
+  /** Accessible name for the search input, derived from the field label when present. */
+  private _searchAriaLabel(): string {
+    const base = this.label ?? this.querySelector('[slot="label"]')?.textContent?.trim() ?? "";
+    return base ? `Search ${base}` : "Search";
+  }
+
   private _renderStatusRow(hasErrorSlot: boolean): TemplateResult | typeof nothing {
     if (this.loading) {
       return html`<div class="select-status" data-kind="loading" role="status">
@@ -520,12 +796,56 @@ export class TulparSelect extends FormFieldBase {
         <span class="select-status-text"><slot name="error">${this.error}</slot></span>
       </div>`;
     }
-    if (this._collection().items.length === 0) {
+    const items = this._collection().items;
+    const f = this._filterResult;
+    // No-match (searchable, non-empty query, options exist but none match) reads
+    // BEFORE empty: an emptied filter is distinct from a Select with no options.
+    if (
+      this.searchable &&
+      this._query.trim() !== "" &&
+      items.length > 0 &&
+      f &&
+      f.matched.every((m) => !m)
+    ) {
+      return html`<div class="select-status" data-kind="no-match" role="status">
+        <span class="select-status-text"><slot name="no-match">${this.noMatchText}</slot></span>
+      </div>`;
+    }
+    if (items.length === 0) {
       return html`<div class="select-status" data-kind="empty" role="status">
         <span class="select-status-text"><slot name="empty">${this.emptyText}</slot></span>
       </div>`;
     }
     return nothing;
+  }
+
+  /** Render the data-prop options/groups into the shadow listbox (data-mode). */
+  private _renderDataOptions(): TemplateResult[] {
+    const out: TemplateResult[] = [];
+    let i = 0;
+    const opt = (o: SelectOption, groupDisabled: boolean): TemplateResult => {
+      const id = `${this._listboxId}-o${i++}`;
+      return html`<tulpar-option
+        id=${id}
+        value=${o.value}
+        .label=${o.label}
+        .description=${o.description ?? nothing}
+        ?disabled=${!!o.disabled || groupDisabled}
+        data-size=${this.size}
+      ></tulpar-option>`;
+    };
+    for (const entry of this.options ?? []) {
+      if (isOptionGroup(entry)) {
+        out.push(
+          html`<tulpar-option-group .label=${entry.label} ?disabled=${!!entry.disabled}
+            >${entry.options.map((o) => opt(o, !!entry.disabled))}</tulpar-option-group
+          >`,
+        );
+      } else {
+        out.push(opt(entry, false));
+      }
+    }
+    return out;
   }
 
   private _renderListbox(): TemplateResult {
@@ -540,8 +860,12 @@ export class TulparSelect extends FormFieldBase {
       @click=${this._onListboxClick}
       @pointerover=${this._onListboxPointerOver}
     >
+      ${this._renderSearch()}
       <div class="select-options" ?hidden=${!showOptions}>
-        <slot @slotchange=${this._onOptionsSlotChange}></slot>
+        ${this.options != null ? this._renderDataOptions() : nothing}
+        <div class="slotted-options" ?hidden=${this.options != null}>
+          <slot @slotchange=${this._onOptionsSlotChange}></slot>
+        </div>
       </div>
       ${this._renderStatusRow(hasErrorSlot)}
     </div>`;
@@ -556,7 +880,7 @@ export class TulparSelect extends FormFieldBase {
         <div
           class="select-trigger"
           id="control"
-          role="combobox"
+          role=${this.searchable ? "button" : "combobox"}
           tabindex=${this.disabled ? -1 : 0}
           aria-haspopup="listbox"
           aria-expanded=${this.open ? "true" : "false"}

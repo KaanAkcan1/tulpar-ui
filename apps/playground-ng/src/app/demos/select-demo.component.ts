@@ -6,6 +6,7 @@ import {
   type FieldVariant,
   type FieldSize,
   type LabelPosition,
+  type SelectOptions,
 } from '@tulpar-ui/angular';
 
 /* ════════════════════════════════════════════════════════════════════════════
@@ -25,6 +26,14 @@ import {
  *  9. Listbox states    — empty · loading · error.
  * 10. Long list (30+ → scroll/flip-up) + long labels (truncate). Realistic data
  *     (countries + frameworks + timezones).
+ * 11. Data-prop authoring — options=[…] flat + nested groups/descriptions, shown
+ *     next to the equivalent slotted authoring (prop wins).
+ * 12. Searchable long list — searchable over a long data-prop list; highlight,
+ *     no-match row, search-placeholder + no-match-text overrides.
+ * 13. Data-mode + searchable — combined (grouped data-prop + searchable).
+ * 14. Slotted + searchable — filter over slotted children (highlight on plain
+ *     text labels, skipped on rich labels; filter still applies).
+ * 15. Accessibility.
  * ════════════════════════════════════════════════════════════════════════════ */
 
 // ─── Code snippet strings (outside @Component to avoid backtick nesting) ──────
@@ -107,6 +116,45 @@ const LONG_CODE = `// 30+ options → the listbox scrolls and flips above the tr
   }
 </tulpar-select-ng>`;
 
+const DATA_PROP_CODE = `// Author options from a typed array — bind [options] as a PROPERTY.
+// SelectOption = { value; label; disabled?; description? }
+// SelectOptionGroup = { label; disabled?; options[] }   (prop wins over slot)
+flatOptions: SelectOptions = [
+  { value: 'react', label: 'React' },
+  { value: 'svelte', label: 'Svelte', disabled: true },
+];
+groupedOptions: SelectOptions = [
+  { label: 'Frontend', options: [
+      { value: 'react', label: 'React', description: 'Meta · component-based UI' } ] },
+  { label: 'Deprecated', disabled: true, options: [
+      { value: 'backbone', label: 'Backbone', description: 'Legacy MVC' } ] },
+];
+
+<tulpar-select-ng [options]="flatOptions"    label="Framework" placeholder="Choose…" />
+<tulpar-select-ng [options]="groupedOptions" label="Stack"     placeholder="Choose…" />`;
+
+const SEARCH_CODE = `// searchable → sticky in-popup search. Filter is diacritic- & Turkish-insensitive
+// (type 'istanbul' to match 'İstanbul'); the matched run is highlighted; an empty
+// result shows a dedicated no-match row. search-placeholder + no-match-text override.
+<tulpar-select-ng [options]="cities" [searchable]="true" label="City"
+                  placeholder="Select a city" />
+
+<tulpar-select-ng [options]="cities" [searchable]="true" label="City"
+                  searchPlaceholder="Filter cities…" noMatchText="No city matches" />`;
+
+const DATA_SEARCH_CODE = `// data-mode + searchable combined: grouped options + in-popup filter.
+<tulpar-select-ng [options]="groupedCities" [searchable]="true" [clearable]="true"
+                  label="Destination" placeholder="Search a city">
+</tulpar-select-ng>`;
+
+const SLOTTED_SEARCH_CODE = `// searchable also filters SLOTTED children. Highlight is applied to plain text
+// labels only — rich (slotted) labels filter but are not wrapped in <mark>.
+<tulpar-select-ng [searchable]="true" label="Country" placeholder="Search a country">
+  @for (c of countries; track c.code) {
+    <tulpar-option-ng [value]="c.code" [label]="c.name" />
+  }
+</tulpar-select-ng>`;
+
 // ─── Realistic data ───────────────────────────────────────────────────────────
 
 interface Country {
@@ -161,6 +209,93 @@ const LONG_LABELS: Country[] = [
   {
     code: 'venezuela',
     name: 'Bolivarian Republic of Venezuela — South American Federation',
+  },
+];
+
+// ─── Data-prop sources (the `options` array form — no slotted children) ─────────
+
+const DATA_FLAT: SelectOptions = [
+  { value: 'react', label: 'React' },
+  { value: 'angular', label: 'Angular' },
+  { value: 'vue', label: 'Vue' },
+  { value: 'svelte', label: 'Svelte', disabled: true },
+  { value: 'solid', label: 'Solid' },
+  { value: 'qwik', label: 'Qwik' },
+];
+
+const DATA_GROUPED: SelectOptions = [
+  {
+    label: 'Frontend',
+    options: [
+      { value: 'react', label: 'React', description: 'Meta · component-based UI' },
+      { value: 'angular', label: 'Angular', description: 'Google · opinionated full-stack' },
+      { value: 'vue', label: 'Vue', description: 'Evan You · progressive framework' },
+    ],
+  },
+  {
+    label: 'Backend',
+    options: [
+      { value: 'node', label: 'Node.js', description: 'Event-driven JS runtime' },
+      { value: 'django', label: 'Django', description: 'Python · batteries included' },
+      { value: 'rails', label: 'Ruby on Rails', description: 'Convention over configuration' },
+    ],
+  },
+  {
+    label: 'Deprecated',
+    disabled: true,
+    options: [
+      { value: 'backbone', label: 'Backbone', description: 'Legacy MVC' },
+      { value: 'ember-old', label: 'Ember (classic)', description: 'Pre-Octane' },
+    ],
+  },
+];
+
+// Long flat data-prop list with Turkish + Latin diacritics so diacritic-
+// insensitive search is demonstrable (type "istanbul" → İstanbul, "munchen" → München).
+const DATA_CITIES: SelectOptions = [
+  { value: 'ist', label: 'İstanbul' },
+  { value: 'ank', label: 'Ankara' },
+  { value: 'izm', label: 'İzmir' },
+  { value: 'brs', label: 'Bursa' },
+  { value: 'ant', label: 'Antalya' },
+  { value: 'adn', label: 'Adana' },
+  { value: 'kon', label: 'Konya' },
+  { value: 'gaz', label: 'Gaziantep' },
+  { value: 'ber', label: 'Berlin' },
+  { value: 'mun', label: 'München' },
+  { value: 'par', label: 'Paris' },
+  { value: 'mar', label: 'Marseille' },
+  { value: 'mad', label: 'Madrid' },
+  { value: 'bcn', label: 'Barcelona' },
+  { value: 'rom', label: 'Roma' },
+  { value: 'mil', label: 'Milano' },
+  { value: 'ams', label: 'Amsterdam' },
+  { value: 'cph', label: 'København' },
+  { value: 'sto', label: 'Stockholm' },
+  { value: 'osl', label: 'Oslo' },
+  { value: 'zur', label: 'Zürich' },
+  { value: 'vie', label: 'Wien' },
+  { value: 'lis', label: 'Lisboa' },
+  { value: 'dub', label: 'Dublin' },
+];
+
+const DATA_GROUPED_CITIES: SelectOptions = [
+  {
+    label: 'Türkiye',
+    options: [
+      { value: 'ist', label: 'İstanbul', description: 'Marmara' },
+      { value: 'ank', label: 'Ankara', description: 'İç Anadolu' },
+      { value: 'izm', label: 'İzmir', description: 'Ege' },
+    ],
+  },
+  {
+    label: 'Europe',
+    options: [
+      { value: 'ber', label: 'Berlin', description: 'Germany' },
+      { value: 'mun', label: 'München', description: 'Germany' },
+      { value: 'par', label: 'Paris', description: 'France' },
+      { value: 'zur', label: 'Zürich', description: 'Switzerland' },
+    ],
   },
 ];
 
@@ -911,9 +1046,234 @@ const PAGE_STYLES = `
       <pre class="code"><code>{{ longCode }}</code></pre>
     </section>
 
-    <!-- ── 11. Accessibility ──────────────────────────────────────────────── -->
+    <!-- ── 11. Data-prop authoring ────────────────────────────────────────── -->
     <section class="doc-section">
-      <h2 class="section-title">11. Accessibility</h2>
+      <h2 class="section-title">11. Data-prop authoring</h2>
+      <p class="section-desc">
+        Author options from a typed <code class="inline-code">[options]</code> array (bound as a
+        property) instead of slotting <code class="inline-code">tulpar-option-ng</code> children.
+        Entries are
+        <code class="inline-code">{{ '{' }} value, label, disabled?, description? {{ '}' }}</code
+        >; a <code class="inline-code">{{ '{' }} label, options[] {{ '}' }}</code> entry renders a
+        group. The prop and the slotted form render identically — and the prop wins when both are
+        set.
+      </p>
+      <div class="dual-grid">
+        <div class="dual-card">
+          <div class="dual-head">[options] data-prop — flat</div>
+          <div class="dual-body">
+            <div class="field">
+              <tulpar-select-ng
+                [options]="dataFlat"
+                label="Framework"
+                placeholder="Choose a framework"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="dual-card">
+          <div class="dual-head">Equivalent slotted authoring</div>
+          <div class="dual-body">
+            <div class="field">
+              <tulpar-select-ng label="Framework" placeholder="Choose a framework">
+                @for (f of frameworks; track f.value) {
+                  <tulpar-option-ng
+                    [value]="f.value"
+                    [label]="f.label"
+                    [disabled]="f.value === 'svelte'"
+                  />
+                }
+              </tulpar-select-ng>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dual-grid" style="margin-top: 16px">
+        <div class="dual-card">
+          <div class="dual-head">[options] — nested groups + descriptions</div>
+          <div class="dual-body">
+            <div class="field">
+              <tulpar-select-ng
+                [options]="dataGrouped"
+                label="Stack"
+                placeholder="Choose a technology"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="dual-card">
+          <div class="dual-head">Equivalent slotted groups</div>
+          <div class="dual-body">
+            <div class="field">
+              <tulpar-select-ng label="Stack" placeholder="Choose a technology">
+                <tulpar-option-group-ng label="Frontend">
+                  <tulpar-option-ng
+                    value="react"
+                    label="React"
+                    description="Meta · component-based UI"
+                  />
+                  <tulpar-option-ng
+                    value="angular"
+                    label="Angular"
+                    description="Google · opinionated full-stack"
+                  />
+                  <tulpar-option-ng
+                    value="vue"
+                    label="Vue"
+                    description="Evan You · progressive framework"
+                  />
+                </tulpar-option-group-ng>
+                <tulpar-option-group-ng label="Deprecated" [disabled]="true">
+                  <tulpar-option-ng value="backbone" label="Backbone" description="Legacy MVC" />
+                  <tulpar-option-ng
+                    value="ember-old"
+                    label="Ember (classic)"
+                    description="Pre-Octane"
+                  />
+                </tulpar-option-group-ng>
+              </tulpar-select-ng>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p
+        style="margin: 14px 0 0; font-size: 13px; color: var(--tulpar-color-text-secondary, #57534e)"
+      >
+        The "Deprecated" group sets <code class="inline-code">disabled: true</code> — its header
+        dims and every child option is non-selectable.
+      </p>
+      <pre class="code"><code>{{ dataPropCode }}</code></pre>
+    </section>
+
+    <!-- ── 12. Searchable long list ───────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">12. Searchable</h2>
+      <p class="section-desc">
+        <code class="inline-code">searchable</code> adds a sticky in-popup search input. Filtering
+        is diacritic- and Turkish-insensitive (type <code class="inline-code">istanbul</code> to
+        match <em>İstanbul</em>, <code class="inline-code">munchen</code> to match
+        <em>München</em>), the matched run is <strong>highlighted</strong>, and an empty result
+        shows a dedicated no-match row. <code class="inline-code">search-placeholder</code> and
+        <code class="inline-code">no-match-text</code> customise the copy.
+      </p>
+      <div class="preview preview--col">
+        <div class="demo-row">
+          <span class="row-label">default</span>
+          <div class="row-items">
+            <div class="field">
+              <tulpar-select-ng
+                [options]="dataCities"
+                [searchable]="true"
+                label="City"
+                placeholder="Select a city"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="demo-row">
+          <span class="row-label">overrides</span>
+          <div class="row-items">
+            <div class="field">
+              <tulpar-select-ng
+                [options]="dataCities"
+                [searchable]="true"
+                label="City"
+                placeholder="Select a city"
+                searchPlaceholder="Filter cities…"
+                noMatchText="No city matches your search"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ searchCode }}</code></pre>
+    </section>
+
+    <!-- ── 13. Data-mode + searchable ─────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">13. Data-mode + searchable</h2>
+      <p class="section-desc">
+        The two combine: a grouped <code class="inline-code">[options]</code> array with
+        <code class="inline-code">searchable</code> on. Typing filters across all groups; a group
+        whose every option is filtered out is hidden entirely. Add
+        <code class="inline-code">clearable</code> to reset the committed value.
+      </p>
+      <div class="preview">
+        <div class="field--lg field">
+          <tulpar-select-ng
+            [options]="dataGroupedCities"
+            [searchable]="true"
+            [clearable]="true"
+            label="Destination"
+            placeholder="Search a city"
+          />
+        </div>
+      </div>
+      <pre class="code"><code>{{ dataSearchCode }}</code></pre>
+    </section>
+
+    <!-- ── 14. Slotted + searchable ───────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">14. Slotted + searchable</h2>
+      <p class="section-desc">
+        <code class="inline-code">searchable</code> filters slotted
+        <code class="inline-code">tulpar-option-ng</code> children too. The match highlight is
+        applied to plain text labels only — rich (slotted) labels still filter but are not wrapped
+        in <code class="inline-code">&lt;mark&gt;</code>.
+      </p>
+      <div class="dual-grid">
+        <div class="dual-card">
+          <div class="dual-head">Plain text labels (highlighted)</div>
+          <div class="dual-body">
+            <div class="field">
+              <tulpar-select-ng [searchable]="true" label="Country" placeholder="Search a country">
+                @for (c of countries; track c.code) {
+                  <tulpar-option-ng [value]="c.code" [label]="c.name" />
+                }
+              </tulpar-select-ng>
+            </div>
+          </div>
+        </div>
+        <div class="dual-card">
+          <div class="dual-head">Rich slotted labels (filter, no highlight)</div>
+          <div class="dual-body">
+            <div class="field">
+              <tulpar-select-ng
+                [searchable]="true"
+                label="Language"
+                placeholder="Search a language"
+              >
+                <tulpar-option-ng value="ts">
+                  <span slot="icon" aria-hidden="true">🟦</span>
+                  TypeScript
+                  <span slot="description">Typed superset of JavaScript</span>
+                </tulpar-option-ng>
+                <tulpar-option-ng value="js">
+                  <span slot="icon" aria-hidden="true">🟨</span>
+                  JavaScript
+                  <span slot="description">The language of the web</span>
+                </tulpar-option-ng>
+                <tulpar-option-ng value="py">
+                  <span slot="icon" aria-hidden="true">🐍</span>
+                  Python
+                  <span slot="description">Batteries included</span>
+                </tulpar-option-ng>
+                <tulpar-option-ng value="rs">
+                  <span slot="icon" aria-hidden="true">🦀</span>
+                  Rust
+                  <span slot="description">Fearless concurrency</span>
+                </tulpar-option-ng>
+              </tulpar-select-ng>
+            </div>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code>{{ slottedSearchCode }}</code></pre>
+    </section>
+
+    <!-- ── 15. Accessibility ──────────────────────────────────────────────── -->
+    <section class="doc-section">
+      <h2 class="section-title">15. Accessibility</h2>
       <div class="a11y-notes">
         <div class="a11y-note">
           <strong>Virtual focus.</strong> DOM focus stays on the trigger (<code class="inline-code"
@@ -930,6 +1290,11 @@ const PAGE_STYLES = `
           <strong>Light dismiss.</strong> Outside-click, scroll, and resize close the listbox; a
           click inside the listbox does not. Disabled options are skipped by keyboard nav and ignore
           clicks.
+        </div>
+        <div class="a11y-note">
+          <strong>Searchable.</strong> When <code class="inline-code">searchable</code> is on the
+          combobox role moves to the in-popup input; focus lands there on open and returns to the
+          trigger on close. Escape clears a non-empty query first, then reverts and closes.
         </div>
         <div class="a11y-note">
           <strong>Dark mode.</strong> Trigger, listbox, every variant, and all status rows flip
@@ -951,6 +1316,10 @@ export class SelectDemoComponent {
   readonly validationCode = VALIDATION_CODE;
   readonly statesCode = STATES_CODE;
   readonly longCode = LONG_CODE;
+  readonly dataPropCode = DATA_PROP_CODE;
+  readonly searchCode = SEARCH_CODE;
+  readonly dataSearchCode = DATA_SEARCH_CODE;
+  readonly slottedSearchCode = SLOTTED_SEARCH_CODE;
 
   readonly variants: FieldVariant[] = ['outlined', 'filled', 'underlined', 'ghost'];
   readonly sizes: FieldSize[] = ['xs', 'sm', 'md', 'lg', 'xl'];
@@ -959,6 +1328,11 @@ export class SelectDemoComponent {
   readonly countries = COUNTRIES;
   readonly longLabels = LONG_LABELS;
   readonly europe = COUNTRIES.slice(0, 8);
+
+  readonly dataFlat = DATA_FLAT;
+  readonly dataGrouped = DATA_GROUPED;
+  readonly dataCities = DATA_CITIES;
+  readonly dataGroupedCities = DATA_GROUPED_CITIES;
 
   readonly fruits = [
     { value: 'apple', label: 'Apple' },

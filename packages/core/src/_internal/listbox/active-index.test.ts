@@ -70,3 +70,37 @@ describe("active-index reducer", () => {
     expect(clampActive(items([false, false]), 5)).to.equal(0);
   });
 });
+
+describe("active-index reducer — hidden (filter)", () => {
+  const mk = (rows: Array<{ disabled?: boolean; hidden?: boolean }>) =>
+    rows.map((r) => ({ disabled: !!r.disabled, hidden: !!r.hidden }));
+
+  it("nextEnabled skips hidden items", () => {
+    const items = mk([{}, { hidden: true }, {}]); // 0 visible, 1 hidden, 2 visible
+    expect(nextEnabled(items, 0)).to.equal(2);
+  });
+  it("prevEnabled skips hidden items", () => {
+    const items = mk([{}, { hidden: true }, {}]);
+    expect(prevEnabled(items, 2)).to.equal(0);
+  });
+  it("firstEnabled / lastEnabled ignore hidden", () => {
+    const items = mk([{ hidden: true }, {}, { hidden: true }]);
+    expect(firstEnabled(items)).to.equal(1);
+    expect(lastEnabled(items)).to.equal(1);
+  });
+  it("all hidden → -1", () => {
+    expect(firstEnabled(mk([{ hidden: true }, { hidden: true }]))).to.equal(-1);
+  });
+  it("a disabled-or-hidden `from` is not returned as a stay-point", () => {
+    const items = mk([{}, { hidden: true }]);
+    expect(nextEnabled(items, 1)).to.equal(-1); // 1 is hidden → no valid stay
+  });
+  it("pageMove lands on a visible (non-hidden) row", () => {
+    const items = mk([{}, { hidden: true }, { hidden: true }, {}]);
+    expect(pageMove(items, 0, 2)).to.equal(3); // target 2 is hidden → next visible
+  });
+  it("clampActive skips a hidden index to the nearest visible", () => {
+    const items = mk([{}, { hidden: true }, {}]);
+    expect(clampActive(items, 1)).to.equal(2); // 1 hidden → nearest visible (forward bias)
+  });
+});
