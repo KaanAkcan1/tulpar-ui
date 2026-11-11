@@ -39,13 +39,14 @@
   },
   "files": [
     "dist",
+    "custom-elements.json",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
     "sync-exports": "tsx ../../scripts/sync-exports.ts .",
     "sync-exports:check": "tsx ../../scripts/sync-exports.ts . --check",
-    "build": "tsx ../../scripts/sync-exports.ts . && vite build",
+    "build": "tsx ../../scripts/sync-exports.ts . && vite build && cem analyze --litelement",
     "dev": "vite build --watch",
     "test": "wtr-strict",
     "test:all-browsers": "wtr-strict && wtr-strict --config web-test-runner.engines.config.js",
@@ -56,6 +57,7 @@
     "lit": "catalog:"
   },
   "devDependencies": {
+    "@custom-elements-manifest/analyzer": "catalog:",
     "@open-wc/testing": "^5.0.0",
     "@tulpar-ui/test-utils": "workspace:*",
     "@tulpar-ui/tokens": "workspace:*",
@@ -71,5 +73,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "customElements": "custom-elements.json"
 }

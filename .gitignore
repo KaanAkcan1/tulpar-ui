@@ -56,3 +56,6 @@ graphify-out/
 .playwright/
 build-output*.txt
 .superpowers/
+
+# Custom Elements Manifest (generated at build)
+custom-elements.json
