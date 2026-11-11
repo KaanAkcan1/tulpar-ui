@@ -30,7 +30,7 @@
     "@angular/forms": "catalog:",
     "@angular/platform-browser": "catalog:",
     "@angular/router": "catalog:",
-    "@lucide/angular": "^1.72.0",
+    "@lucide/angular": "^1.71.0",
     "@tulpar-ui/angular": "workspace:^",
     "@tulpar-ui/core": "workspace:^",
     "@tulpar-ui/tokens": "workspace:^",
