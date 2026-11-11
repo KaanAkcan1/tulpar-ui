@@ -1,6 +1,6 @@
 {
   "name": "@tulpar-ui/shell",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Application shell components for Tulpar UI",
   "license": "MIT",
   "type": "module",
