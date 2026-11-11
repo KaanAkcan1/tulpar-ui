@@ -13,6 +13,15 @@ const BASE_REF = process.env.SUPPRESSIONS_BASE_REF ?? "origin/main";
 const git = (...args) =>
   execFileSync("git", args, { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
 
+function refResolves(ref) {
+  try {
+    git("rev-parse", "--verify", "--quiet", ref);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function readBase() {
   const refs = [BASE_REF];
   try {
@@ -39,6 +48,14 @@ function totals(json) {
 
 const base = readBase();
 if (!base) {
+  // In CI a missing base ref means a shallow checkout (set `fetch-depth: 0`); passing
+  // would let new suppressions through unnoticed, so fail closed.
+  if (process.env.CI === "true" && !refResolves(BASE_REF)) {
+    console.error(
+      `check:suppressions: cannot resolve ${BASE_REF} in CI (shallow checkout?). Use fetch-depth: 0.`,
+    );
+    process.exit(1);
+  }
   console.log(
     `check:suppressions: no ${FILE} on ${BASE_REF}/merge-base — first introduction, pass.`,
   );
