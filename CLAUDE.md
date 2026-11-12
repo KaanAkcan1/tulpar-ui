@@ -69,7 +69,7 @@ The plan is the working contract. Follow it task by task. If a question is uncle
 | Docs | Storybook 10 + `@storybook/web-components-vite` + addon-themes + addon-a11y; autodocs read `custom-elements.json` (CEM analyzer, built with core and shell) |
 | Linting | ESLint 10 flat config (typescript-eslint 8, lit, wc, vue, angular-eslint) + Prettier. Pre-existing violations of new rules sit in `eslint-suppressions.json`; `pnpm check:suppressions` fails when the count grows |
 | Dev warnings | `warnDev` follows Lit's convention: `esm-env` `DEV` (the `development` export condition). Prints in dev builds and tests, compiled out in production (Angular CLI keeps the dead strings — open owner decision, spec §10.4) |
-| CI | GitHub Actions on `ubuntu-26.04` (pinned): `ci.yml` (PR + main: typecheck, build, `check:dist`, lint, tests in three engines, app builds, `pnpm audit --prod`), `deploy.yml` (Cloudflare Pages, after CI succeeds), `release.yml` (changesets, manual dispatch only) |
+| CI | GitHub Actions on `ubuntu-26.04` (pinned): `ci.yml` (PR, push to `main` and push to `phase*/**`: typecheck, build, `check:dist`, lint, tests in three engines, app builds, `pnpm audit --prod`), `deploy.yml` (Cloudflare Pages, after CI succeeds), `release.yml` (changesets, manual dispatch only) |
 | Node | 26.13.0 LTS (pinned in `.nvmrc`; CI + deploy read it via `node-version-file`) |
 
 ## Commands
@@ -101,6 +101,8 @@ pnpm dev                                    # ALL: tokens + core + wrappers + pl
 pnpm dev:ng                                 # tokens + core + angular wrappers + playground-ng (localhost:4310)
 pnpm dev:vue                                # tokens + core + vue wrappers + playground-vue (localhost:5273)
 pnpm dev:storybook                          # tokens + core + Storybook (localhost:6006)
+#   Autodocs (custom-elements.json) refresh only on `pnpm build`, not in watch mode.
+#   Standalone Storybook (builds prerequisites first, no watchers): pnpm --filter docs storybook
 
 # Per-package
 pnpm --filter @tulpar-ui/tokens build
@@ -115,6 +117,8 @@ pnpm --filter playground-vue dev            # localhost:5273 (no watch loop — 
 pnpm changeset                              # create a changeset for pending changes
 pnpm version-packages                       # bump versions per changesets
 pnpm release                                # build + publish to npm (manual only until 1.8; CI release is workflow_dispatch)
+# Publish only via pnpm/changesets — `npm publish` would ship the Angular source tree
+# (publishConfig.directory is pnpm-only); OIDC trusted publishing in 1.8.
 ```
 
 ## Working Conventions
@@ -139,7 +143,7 @@ Otherwise Vue's compiler will treat `<tulpar-button>` as a Vue component and thr
 
 ### Token usage in component CSS
 
-Component CSS (inside Lit's `css` tagged template) **only** uses semantic tokens (`var(--tulpar-color-brand-default)`). Never reference primitive tokens directly inside component styles — that would defeat the multi-brand layer. **This is enforced by ESLint:** a `no-restricted-syntax` rule on `*.styles.ts` rejects any `--tulpar-primitive-*` reference. Bind primitives in the brand layer (`brand/tulpar/*.ts`) instead.
+Component CSS (inside Lit's `css` tagged template) **only** uses semantic tokens (`var(--tulpar-color-brand-default)`). Never reference primitive tokens directly inside component styles — that would defeat the multi-brand layer. **This is enforced by ESLint:** a `no-restricted-syntax` rule rejects any `--tulpar-primitive-*` reference in every string and template literal under `packages/{core,shell}/src` (test files excluded), not only in `*.styles.ts`. Bind primitives in the brand layer (`brand/tulpar/*.ts`) instead.
 
 Provide a fallback in `var()` calls for when tokens CSS hasn't been loaded:
 ```css
