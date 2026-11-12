@@ -1,7 +1,7 @@
 # Tulpar UI — Phase 1.1: Infrastructure (design)
 
 - **Date:** 2026-11-11
-- **Status:** Draft — awaiting owner approval
+- **Status:** Implemented on branch `phase1/1.1-infra`; pending owner review and merge. Close-out in §10.
 - **Branch:** `phase1/1.1-infra`
 - **Inputs:** retro review `docs/reviews/2026-11-11-retrospective/` (INF-1…INF-21, K5, K7, DOC-17, DOC-24), phase plan (CLAUDE.md "Current phase plan"), decisions D10–D12.
 
@@ -166,3 +166,96 @@ New gates (typecheck in CI, `eslint-plugin-lit`/`wc`, `eslint-plugin-vue`, `angu
 ## 9. Builder-check record
 
 A fresh reviewer read this design as the future planner. Its questions were resolved as follows: Angular wrapper tests run on Analog, whose 2.9.x line supports Vite 8 and Vitest 5 (answered by the code, §5.1); the gate-violation policy (§5.7), unrecorded engine failures (§5.2), release trigger and changesets, and the audit gate (§5.3) are the author's calls, marked in place.
+
+## 10. Close-out (2026-11-12)
+
+CI evidence: GitHub Actions run 43159150351 on commit 27ecb36, branch `phase1/1.1-infra`: completed / success, every step, three engines. <https://github.com/KaanAkcan1/tulpar-ui/actions/runs/43159150351>
+
+Local runs: Windows 11, Git Bash, Node 26.3.0 (the pinned `.nvmrc` is 26.13.0; `engines >=26` holds), pnpm 12.18.0, HEAD 27ecb36.
+
+### 10.1 Acceptance results (§6)
+
+| # | Item | Command / evidence | Outcome |
+|---|---|---|---|
+| 1 | `install`, `build`, `lint`, `typecheck` green on Windows | `pnpm install --frozen-lockfile` (lockfile up to date), `pnpm build`, `pnpm lint`, `pnpm typecheck`: all exit 0 | passed |
+| 1 | `pnpm test` green 10 runs in a row | 10 consecutive `pnpm test` runs, all exit 0. Counts in each run: tokens 197, shell 103, core 1,373, vue 244, angular 202, test-utils 9 | passed |
+| 2 | CI green, three engines, every skip listed | CI run 43159150351 (above). Locally: `pnpm --filter @tulpar-ui/core --filter @tulpar-ui/shell run test:all-browsers` exit 0 (core 1,373 and shell 103 in Chromium, Firefox and WebKit). Skips: none, 0 `ENG-*` entries | passed |
+| 3 | One version per tool; `catalogMode: strict` | `pnpm why -r vite`, `vitest`, `happy-dom` → vite 8.3.5, vitest 5.1.0, happy-dom 21.0.4, one version each. `catalogMode: strict` is set in `pnpm-workspace.yaml` | passed |
+| 4 | No `litHtmlVersions` in dist; Angular FESM partial; pack lists reviewed | `pnpm check:dist` exit 0 ("no inlined lit-html; element registrations covered by sideEffects; Angular FESM is partial-compiled"); `grep -rl litHtmlVersions packages/*/dist` → 0 files. `npm pack --dry-run` file counts: tokens 33, core 194, shell 55, angular 72, vue 89 (lists reviewed in the Task 7 report) | passed |
+| 5 | Playgrounds run without `prebundle:false` / `dedupe`; rail and toasts verified | Workarounds removed in Task 3. Task 3 and Task 9 verified rail flyout, toast and Select in both playgrounds with `playwright-cli` (Task 9 in light and dark), `litHtmlVersions.length === 1`. Live `pnpm dev:vue` run in Task 9. Live `pnpm dev:ng` and `pnpm dev:storybook` were not run; production builds cover them (`pnpm --filter playground-ng build` and `pnpm --filter docs build-storybook`, both exit 0 today) | open — verified via production builds; live check pending with owner |
+| 6 | `warnDev` prints in dev, not in prod | Dev: WTR runs with the `development` condition and the 3 `warn-dev.test.ts` tests pass; the unresolved-`for` probe printed the warning in dev (Task 7). Prod: Vue prod bundle has 0 hits for the warning text (re-grepped today). Angular prod bundle prints nothing at runtime (Task 7 static-serve check) but keeps the dead strings: 15 files in `apps/playground-ng/dist` still contain the text | passed with a recorded deviation (owner decision 1, §10.4) |
+| 7 | Storybook 10 builds; autodocs from the manifest | `pnpm --filter docs build-storybook` exit 0 (Storybook 10.6.7). `custom-elements.json`: core 24 elements, shell 5; `"customElements"` is set in `package.json`. Autodocs tables were checked in Task 6, not re-checked in a browser today | passed |
+| 8 | No behaviour change; baseline tests green in Chromium | core 1,373 (baseline 1,371), shell 103, angular 202, vue 244, tokens 197: none below baseline | passed |
+| 9 | Every `ENG-*` skip, `@ts-expect-error` and ESLint suppression listed with owner | §10.2 | passed |
+| 10 | `release.yml` cannot run without a manual dispatch | `.github/workflows/release.yml` has `on: workflow_dispatch` only | passed |
+
+Additional gates, run today: `pnpm lint:probe` (all cases PASS), `pnpm check:suppressions` (first introduction on this branch; passes).
+
+### 10.2 Lists
+
+- **`ENG-*` entries:** none. `ENGINE_KNOWN_FAILURES` is empty (stop rule: more than 20). `itUnlessEngine` exists in `tooling/test-utils` but has no caller. The six Firefox/WebKit failures found in Task 5 were harness or timing issues and were fixed in the tests (Task 5 report §5).
+- **`@ts-expect-error`:** none (Task 8; `grep` over `packages`, `apps`, `tooling` and `scripts` finds no occurrence).
+- **Suppressed ESLint rules** (`eslint-suppressions.json`, 236 in total, re-counted today):
+
+| Rule | Count | Owning package | Planned fix |
+|---|---|---|---|
+| `vue/require-default-prop` | 193 | `@tulpar-ui/vue` | 1.7 |
+| `vue/no-template-shadow` | 1 | `@tulpar-ui/vue` | 1.7 |
+| `@angular-eslint/no-input-rename` | 11 | `@tulpar-ui/angular` | 1.7 |
+| `@angular-eslint/no-output-native` | 6 | `@tulpar-ui/angular` | 1.7 |
+| `lit/attribute-value-entities` | 23 | `@tulpar-ui/shell` | 1.4 |
+| `lit/no-invalid-html` | 1 | `@tulpar-ui/core` | 1.4 |
+| `lit/no-legacy-template-syntax` | 1 | `@tulpar-ui/core` | 1.4 |
+
+  Also accepted: `vue/no-deprecated-slot-attribute` is off (Vue 3 needs native `slot=` on custom elements); `eslint-config-prettier` is applied to `.vue`; two extra primitive-token disables in `core/src/_internal/selection-control-base.ts` and `core/src/_internal/tone/tone-resolver.ts` (owner 1.2, brand layer).
+- **Coverage** (Chromium, `wtr --coverage`, Task 5 report §7; thresholds 80/80/80/80 unchanged):
+
+| Package | Lines | Branches | Functions | WTR summary |
+|---|---|---|---|---|
+| `@tulpar-ui/core` | 98.16 % | 89.33 % | 96.35 % | 95.49 % |
+| `@tulpar-ui/shell` | 98.43 % | 95.14 % | 99.01 % | 97.75 % |
+
+### 10.3 Dependency baseline
+
+| | Task 0 (before) | Now (HEAD 27ecb36) |
+|---|---|---|
+| `pnpm outdated -r` | 140 lines (`task0-outdated-before.txt`) | 39 lines: vite 8.3.5 (latest 8.3.8; pinned to the `@angular/build` pin), plus minors of `@vue/test-utils`, `karma-jasmine-html-reporter`, `lint-staged`, `prettier`, `tslib`, `tsx`, `wrangler`, `zone.js`; `@angular/platform-browser-dynamic` is deprecated upstream |
+| `pnpm audit --prod --audit-level high` | 20 vulnerabilities (15 high, 5 moderate), all under `apps/playground-*` (`task0-audit-before.txt`) | `No known vulnerabilities found` (re-run today) |
+| `pnpm audit` including dev dependencies | not recorded | 69 (11 low, 24 moderate, 34 high), all in dev tooling (undici, fast-uri, minimatch, sharp and others); outside the `--prod` CI gate |
+
+### 10.4 Open owner decisions
+
+1. **Angular production bundles keep dead dev-warning strings.** Angular CLI (esbuild) does not fold esm-env's re-exported `DEV`; the strings stay (15 files in `apps/playground-ng/dist`) and the warning never runs. Vite builds drop them. Options: (a) accept, and read acceptance item 6 as "no warning at runtime in production"; (b) replace esm-env with a `#dev` subpath-import condition, which esbuild folds; (c) another approach chosen by the owner. Cost of (a): a few hundred bytes per Angular app.
+2. **`playground-ng` initial budget is 2 MB (interim).** The official `@lucide/angular` costs about 3.2 kB per icon (main chunk 1,495,172 B; initial 1.59 MB), so the old 1.5 MB budget does not hold. Options: (1) lazy demo routes in both playgrounds (the correct fix); (2) `lucideLegacyIcon` data (about 1.43 MB); (3) keep 2 MB. Playground only; no package impact.
+
+### 10.5 Open items (not failures)
+
+- Live dev-loop check of `pnpm dev:ng` and `pnpm dev:storybook`: open, see acceptance item 5. Five `pnpm dev:vue` processes from Task 9 (PIDs 55856, 54936, 54044, 23444, 49612, port 5274) and an older owner `dev:vue` may still run; the owner stops them.
+- Local `pnpm format:check` shows 42 files as CRLF because of the Windows `autocrlf` working copy; `.gitattributes` sets `eol=lf`, so Linux CI is clean.
+- `actionlint` reports only "unknown label ubuntu-26.04" (stale label list).
+- Release stays manual until 1.8.
+
+### 10.6 Deferred findings (minor and notes, from the ledger)
+
+| Source | Finding | Target |
+|---|---|---|
+| Task 1 | pre-existing core test timing flakes under load (`public type exports`, toast swipe); not seen in the 10 runs above | watch (harness) |
+| Task 1 | `sync-exports` resolves `dirArg` against cwd; `readdirSync` stack trace when `src` is missing; `.gitignore` `!packages/*/build/` negations may be stale | next infra touch |
+| Task 2 | `check-suppressions` failed open when the `origin/main` ref was missing | closed in Task 10 (fails closed under CI) |
+| Task 2 | relative `_internal` boundary patterns cover only 2–3 levels of `../` | 1.4 |
+| Task 2 | fix-safe `consistent-type-imports` is not applied to `.vue` `<script lang="ts">`; the vetted rule list lives in two configs (drift risk) | 1.7 |
+| Task 3 | `tulpar-option.ts` has a long comment line | next touch of core |
+| Task 4 | K5 did not reproduce in 10/10 after the upgrade; root cause not isolated | CI is the watch |
+| Task 4 | vue tests create happy-dom 22 times (performance hint, not applied) | 1.7 |
+| Task 5 | `test:all-browsers` stops at the first failing engine | closed in Task 10 (CI runs each engine as its own step) |
+| Task 5 | unverified that WTR keeps `it.skip`-pending tests in `testResults` (an all-skipped file could false-fail `wtr-strict`); `wtr-strict` ignores SIGTERM (as stock WTR) | verify when the first `ENG-*` entry appears |
+| Task 5 | `expectA11yNode` throws for `required` (Playwright 1.65 snapshot lacks it) | 1.4 |
+| Task 5 | toast tests depend on real timers; auto-dismiss limit 1000 ms, WebKit concurrency 4 | 1.6 (overlay/toast) |
+| Task 6 | manifest imported by relative path instead of the exports map | next `sync-exports` change |
+| Task 6 | static Lit fields (`shadowRootOptions`, `formAssociated`) and `dataDisabled` stay in manifest members | 1.4 |
+| Task 7 | `warnDev` non-DEV branch has no unit test | covered by the CI prod-bundle grep (Task 10) |
+| Task 8 | docs/Storybook not in `typecheck`; `as unknown as` cast in `active-descendant-controller.test.ts` | 1.8 / 1.4 |
+| Task 9 | root `dev` filter lists are verbose; root-only tools are outside the catalog (documented) | 1.8 |
+| Task 9 | `typescript` 5.4.2 is nested in the CEM analyzer and api-extractor (not ours) | upstream |
+| Task 9 | live `dev:ng` / `dev:storybook` run | open, see §10.5 |
+| Task 10 | `actions/cache@v4`: check for a newer major at CI time | next CI touch |

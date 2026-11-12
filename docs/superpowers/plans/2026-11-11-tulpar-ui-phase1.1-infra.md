@@ -39,7 +39,7 @@
 
 ### Task 0: Dependency baseline
 
-- [ ] **Step 1: Run** `pnpm outdated -r > /tmp/outdated-before.txt; pnpm audit --prod --audit-level high` and attach both outputs to the Task 11 close-out (spec §5.3: every package starts with this check).
+- [x] **Step 1: Run** `pnpm outdated -r > /tmp/outdated-before.txt; pnpm audit --prod --audit-level high` and attach both outputs to the Task 11 close-out (spec §5.3: every package starts with this check). _(Outputs saved in `.superpowers/sdd/.../task0-*.txt`, not `/tmp`.)_
 
 ### Task 1: Repo hygiene and line endings
 
@@ -93,23 +93,23 @@
 - Produces: `externalsFrom(pkgJsonPath: string): RegExp[]` — one RegExp per name in `dependencies` + `peerDependencies` matching the bare name and any subpath (`/^lit($|\/)/`), plus `/^@lit\//`, `/^lit-html($|\/)/`, `/^lit-element($|\/)/`.
 - Produces: `pnpm check:dist` — exits 1 if any `packages/*/dist/**/*.js` contains `litHtmlVersions` (extended in Task 7).
 
-- [ ] **Step 1:** Write `check-dist.mjs`; **run** `pnpm build && pnpm check:dist` → Expected: FAIL, at least one file reported (shell `tulpar-nav-item-*.js` among them).
-- [ ] **Step 2:** Upgrade Vite to 8.3.x and vite-plugin-dts to 5.x in tokens, core, shell, vue; `@vitejs/plugin-vue` 6.x and `vue-tsc` 3.x in vue. Replace `rollupOptions.external` in core, shell and vue with `externalsFrom(resolve(__dirname, "package.json"))`.
-- [ ] **Step 3: Run** `pnpm build && pnpm check:dist` → PASS. `pnpm test` → baseline.
-- [ ] **Step 4:** Remove `"prebundle": false` and `resolve.dedupe`. Start both playgrounds; with `playwright-cli` verify in each: collapse to rail and open a flyout, open a toast, `globalThis.litHtmlVersions.length === 1`, no console errors.
-- [ ] **Step 5:** If Step 4 is clean, replace the "avoid Lit directives / dual instance" code comments (`grep -rniE "dual|duplicate|cross-instance" packages/*/src --include=*.ts`) with one line: cause fixed in phase 1.1 (INF-2). No code change.
-- [ ] **Step 6:** Commit `build: vite 8 + externals by pattern; single lit-html instance; drop playground workarounds`.
+- [x] **Step 1:** Write `check-dist.mjs`; **run** `pnpm build && pnpm check:dist` → Expected: FAIL, at least one file reported (shell `tulpar-nav-item-*.js` among them).
+- [x] **Step 2:** Upgrade Vite to 8.3.x and vite-plugin-dts to 5.x in tokens, core, shell, vue; `@vitejs/plugin-vue` 6.x and `vue-tsc` 3.x in vue. Replace `rollupOptions.external` in core, shell and vue with `externalsFrom(resolve(__dirname, "package.json"))`.
+- [x] **Step 3: Run** `pnpm build && pnpm check:dist` → PASS. `pnpm test` → baseline.
+- [x] **Step 4:** Remove `"prebundle": false` and `resolve.dedupe`. Start both playgrounds; with `playwright-cli` verify in each: collapse to rail and open a flyout, open a toast, `globalThis.litHtmlVersions.length === 1`, no console errors.
+- [x] **Step 5:** If Step 4 is clean, replace the "avoid Lit directives / dual instance" code comments (`grep -rniE "dual|duplicate|cross-instance" packages/*/src --include=*.ts`) with one line: cause fixed in phase 1.1 (INF-2). No code change.
+- [x] **Step 6:** Commit `build: vite 8 + externals by pattern; single lit-html instance; drop playground workarounds`.
 
 ### Task 4: Vitest 5, happy-dom 21, Analog 2.9
 
 **Files:**
 - Modify: `packages/{tokens,vue,angular}/package.json`, `packages/vue/vite.config.ts` (test block), `packages/angular/vitest.config.ts`
 
-- [ ] **Step 1:** Upgrade Vitest 5.1.x, happy-dom 21.x, `@analogjs/vite-plugin-angular` + `@analogjs/vitest-angular` 2.9.x; apply Vitest migration notes for removed options.
-- [ ] **Step 2: Run** the three package test commands → Expected: 197 / 244 / 202 passed.
-- [ ] **Step 3: Run** `pnpm install` → Expected: no `unmet peer vitest` (K7 closed).
-- [ ] **Step 4: Run** `for i in $(seq 10); do pnpm -r --filter "./packages/*" run test || break; done` → Expected: 10/10 green, no `UNKNOWN: unknown error, open …\Temp\…` (K5 closed). (Playground Karma tests are excluded, as in CI.)
-- [ ] **Step 5:** Commit `test: vitest 5 + happy-dom 21 + analog 2.9 everywhere (fixes K5, K7)`.
+- [x] **Step 1:** Upgrade Vitest 5.1.x, happy-dom 21.x, `@analogjs/vite-plugin-angular` + `@analogjs/vitest-angular` 2.9.x; apply Vitest migration notes for removed options.
+- [x] **Step 2: Run** the three package test commands → Expected: 197 / 244 / 202 passed.
+- [x] **Step 3: Run** `pnpm install` → Expected: no `unmet peer vitest` (K7 closed).
+- [x] **Step 4: Run** `for i in $(seq 10); do pnpm -r --filter "./packages/*" run test || break; done` → Expected: 10/10 green, no `UNKNOWN: unknown error, open …\Temp\…` (K5 closed). (Playground Karma tests are excluded, as in CI.)
+- [x] **Step 5:** Commit `test: vitest 5 + happy-dom 21 + analog 2.9 everywhere (fixes K5, K7)`.
 
 ### Task 5: Test runner 1.0, three engines, accessibility helpers
 
@@ -124,8 +124,8 @@
 - Produces: `itUnlessEngine(id: string, title: string, fn: Mocha.Func): void` and `ENGINE_KNOWN_FAILURES: ReadonlyArray<{ id: string; engines: ("firefox" | "webkit")[]; test: string; reason: string; ownerPackage: "1.2" | "1.3" | "1.4" | "1.5" | "1.6" | "1.7" }>`; `id` is a retro finding ID or `ENG-<n>`.
 - Produces scripts (core, shell): `test` (Chromium), `test:all-browsers` (Chromium + Firefox + WebKit), `test:ci` (all browsers; coverage collected in the Chromium run only).
 
-- [ ] **Step 1:** Upgrade `@web/test-runner` + `@web/test-runner-playwright` to 1.0.x, `@open-wc/testing` to 5.x; add `nodeResolve: { exportConditions: ["development"] }` to both WTR configs (needed by Task 7's dev warnings). Run `pnpm test` → baseline.
-- [ ] **Step 2: Write the failing example tests** in `tulpar-switch.test.ts`:
+- [x] **Step 1:** Upgrade `@web/test-runner` + `@web/test-runner-playwright` to 1.0.x, `@open-wc/testing` to 5.x; add `nodeResolve: { exportConditions: ["development"] }` to both WTR configs (needed by Task 7's dev warnings). Run `pnpm test` → baseline.
+- [x] **Step 2: Write the failing example tests** in `tulpar-switch.test.ts`:
 
 ```ts
 it("is exposed as a named switch", async () => {
@@ -138,13 +138,13 @@ it("passes axe", async () => {
 });
 ```
 
-- [ ] **Step 3: Run** `pnpm --filter @tulpar-ui/core exec wtr --files src/switch/tulpar-switch.test.ts` → Expected: FAIL (`expectA11yNode` not found).
-- [ ] **Step 4:** Implement `tooling/test-utils` per the interfaces; add it as a devDependency of core and shell. Run Step 3 → PASS. (The retro found Switch correctly named, so this proves the helper, not a fix.)
-- [ ] **Step 5:** Add Firefox and WebKit launchers behind `test:all-browsers` / `test:ci`; copy core's coverage `include`/`exclude` to shell; set thresholds to the measured value where below 80% and record the numbers for Task 11.
-- [ ] **Step 6: Run** `pnpm exec playwright install firefox webkit`, then `test:all-browsers` for core and shell.
-- [ ] **Step 7:** For every failure decide: harness/timing → fix in the test or config; product bug → entry in `ENGINE_KNOWN_FAILURES` (retro ID if it matches, else `ENG-<n>`) and the test switches to `itUnlessEngine`. Stop and report if > 20 `ENG-*` entries.
-- [ ] **Step 8: Run** `test:ci` for core and shell → green in three engines; coverage report produced.
-- [ ] **Step 9:** Commit `test: wtr 1.0, chromium+firefox+webkit, aria-snapshot and axe helpers`.
+- [x] **Step 3: Run** `pnpm --filter @tulpar-ui/core exec wtr --files src/switch/tulpar-switch.test.ts` → Expected: FAIL (`expectA11yNode` not found).
+- [x] **Step 4:** Implement `tooling/test-utils` per the interfaces; add it as a devDependency of core and shell. Run Step 3 → PASS. (The retro found Switch correctly named, so this proves the helper, not a fix.)
+- [x] **Step 5:** Add Firefox and WebKit launchers behind `test:all-browsers` / `test:ci`; copy core's coverage `include`/`exclude` to shell; set thresholds to the measured value where below 80% and record the numbers for Task 11.
+- [x] **Step 6: Run** `pnpm exec playwright install firefox webkit`, then `test:all-browsers` for core and shell.
+- [x] **Step 7:** For every failure decide: harness/timing → fix in the test or config; product bug → entry in `ENGINE_KNOWN_FAILURES` (retro ID if it matches, else `ENG-<n>`) and the test switches to `itUnlessEngine`. Stop and report if > 20 `ENG-*` entries.
+- [x] **Step 8: Run** `test:ci` for core and shell → green in three engines; coverage report produced.
+- [x] **Step 9:** Commit `test: wtr 1.0, chromium+firefox+webkit, aria-snapshot and axe helpers`.
 
 ### Task 6: Storybook 10 and Custom Elements Manifest
 
@@ -155,11 +155,11 @@ it("passes axe", async () => {
 **Interfaces:**
 - Produces: `packages/{core,shell}/custom-elements.json` (generated at build, published, git-ignored).
 
-- [ ] **Step 1:** `npx storybook@latest upgrade` in `apps/docs`; accept automigrations; ensure `@storybook/addon-docs` is installed and listed (autodocs moved out of essentials in 9+); bump the docs Vite to 8.3.x.
-- [ ] **Step 2: Run** `pnpm --filter docs build-storybook` → success.
-- [ ] **Step 3:** Append `cem analyze --litelement` to core and shell `build` (config excludes `src/_internal/**`, `**/*.test.ts`); publish the manifest; in `preview.ts` import `setCustomElementsManifest` from `@storybook/web-components-vite` and pass the merged core + shell manifests.
-- [ ] **Step 4: Verify** — `pnpm build`; `node -e "const m=require('./packages/core/custom-elements.json');console.log(m.modules.flatMap(x=>x.declarations||[]).filter(d=>d.customElement).length)"` → 24; shell → 5. Storybook Button docs page → properties table lists `size`, `variant`, `disabled`.
-- [ ] **Step 5:** Commit `docs: storybook 10 + custom elements manifest for core and shell`.
+- [x] **Step 1:** `npx storybook@latest upgrade` in `apps/docs`; accept automigrations; ensure `@storybook/addon-docs` is installed and listed (autodocs moved out of essentials in 9+); bump the docs Vite to 8.3.x.
+- [x] **Step 2: Run** `pnpm --filter docs build-storybook` → success.
+- [x] **Step 3:** Append `cem analyze --litelement` to core and shell `build` (config excludes `src/_internal/**`, `**/*.test.ts`); publish the manifest; in `preview.ts` import `setCustomElementsManifest` from `@storybook/web-components-vite` and pass the merged core + shell manifests.
+- [x] **Step 4: Verify** — `pnpm build`; `node -e "const m=require('./packages/core/custom-elements.json');console.log(m.modules.flatMap(x=>x.declarations||[]).filter(d=>d.customElement).length)"` → 24; shell → 5. Storybook Button docs page → properties table lists `size`, `variant`, `disabled`.
+- [x] **Step 5:** Commit `docs: storybook 10 + custom elements manifest for core and shell`.
 
 ### Task 7: Correct build outputs
 
@@ -171,13 +171,13 @@ it("passes axe", async () => {
 - Consumes: `pnpm check:dist` (Task 3).
 - Produces: `warnDev(message: string, ...args: unknown[]): void` — unchanged signature; gate `import { DEV } from "esm-env"`.
 
-- [ ] **Step 1:** Extend `check-dist.mjs`: fail when `packages/angular/dist/fesm2022/*.mjs` contains `ɵɵdefineComponent` or lacks `ɵɵngDeclareComponent`. Run → FAIL.
-- [ ] **Step 2:** `tsconfig.lib.prod.json` with `angularCompilerOptions.compilationMode: "partial"`; `build` uses it, `dev` stays full. Make the source `package.json` APF-minimal (no `main/module/types/exports`) and add `"publishConfig": { "directory": "dist", "linkDirectory": true }` so workspace consumers resolve `dist` (dist is built before the playground starts — see Task 9 Step 5). Run `pnpm --filter @tulpar-ui/angular build && pnpm check:dist` → PASS; no "types condition would be overridden" warning; `pnpm --filter playground-ng build` → success.
-- [ ] **Step 3:** Rewrite `warn-dev.ts` with `esm-env` `DEV`; its tests stay green (WTR has the `development` condition from Task 5).
-- [ ] **Step 4: Verify** — in **both** playgrounds add, in a dev-only probe, `<tulpar-tooltip for="does-not-exist">` (unresolved `for` triggers `warnDev`): dev server → console warning appears; production build → `grep -r "<the warning text>" apps/playground-*/dist` finds nothing. Remove the probe.
-- [ ] **Step 5:** Manifest hygiene in every published package: `workspace:^`; `sideEffects` (`false` for vue; `["**/*.css"]` for tokens; for core/shell list `./dist/index.js`, `./dist/*/index.js` and the hashed element chunks `./dist/tulpar-*.js`); drop the `vue-router` peer and external; `@tulpar-ui/tokens` as a `dependency` of core, shell, angular and vue; `"./package.json": "./package.json"` export; `declarationMap: false` for publish builds.
-- [ ] **Step 6: Tarball smoke test (outside the workspace)** — `pnpm -r --filter "./packages/*" pack --pack-destination "$TMP/tulpar-smoke/tarballs"`; create a minimal Vite app in `$TMP/tulpar-smoke/app` whose `package.json` uses `pnpm.overrides` mapping every `@tulpar-ui/*` to `file:../tarballs/<name>.tgz`; install with `--ignore-workspace`; import `@tulpar-ui/tokens/css/tulpar.css`, `@tulpar-ui/core/button`, `@tulpar-ui/core/select`, `@tulpar-ui/shell/shell`; `vite build && vite preview`; with `playwright-cli` assert the button renders styled, `globalThis.litHtmlVersions.length === 1`, and `customElements.get(...)` is defined for `tulpar-button`, `tulpar-select`, `tulpar-option`, `tulpar-shell`, `tulpar-sidenav`, `tulpar-nav-item`. Review every `npm pack --dry-run` file list. Nothing from `$TMP` is committed.
-- [ ] **Step 7:** Add the patch changeset; commit `build: angular partial + APF, esm-env dev warnings, manifest hygiene`.
+- [x] **Step 1:** Extend `check-dist.mjs`: fail when `packages/angular/dist/fesm2022/*.mjs` contains `ɵɵdefineComponent` or lacks `ɵɵngDeclareComponent`. Run → FAIL.
+- [x] **Step 2:** `tsconfig.lib.prod.json` with `angularCompilerOptions.compilationMode: "partial"`; `build` uses it, `dev` stays full. Make the source `package.json` APF-minimal (no `main/module/types/exports`) and add `"publishConfig": { "directory": "dist", "linkDirectory": true }` so workspace consumers resolve `dist` (dist is built before the playground starts — see Task 9 Step 5). Run `pnpm --filter @tulpar-ui/angular build && pnpm check:dist` → PASS; no "types condition would be overridden" warning; `pnpm --filter playground-ng build` → success.
+- [x] **Step 3:** Rewrite `warn-dev.ts` with `esm-env` `DEV`; its tests stay green (WTR has the `development` condition from Task 5).
+- [x] **Step 4: Verify** — in **both** playgrounds add, in a dev-only probe, `<tulpar-tooltip for="does-not-exist">` (unresolved `for` triggers `warnDev`): dev server → console warning appears; production build → `grep -r "<the warning text>" apps/playground-*/dist` finds nothing. Remove the probe.
+- [x] **Step 5:** Manifest hygiene in every published package: `workspace:^`; `sideEffects` (`false` for vue; `["**/*.css"]` for tokens; for core/shell list `./dist/index.js`, `./dist/*/index.js` and the hashed element chunks `./dist/tulpar-*.js`); drop the `vue-router` peer and external; `@tulpar-ui/tokens` as a `dependency` of core, shell, angular and vue; `"./package.json": "./package.json"` export; `declarationMap: false` for publish builds.
+- [x] **Step 6: Tarball smoke test (outside the workspace)** — `pnpm -r --filter "./packages/*" pack --pack-destination "$TMP/tulpar-smoke/tarballs"`; create a minimal Vite app in `$TMP/tulpar-smoke/app` whose `package.json` uses `pnpm.overrides` mapping every `@tulpar-ui/*` to `file:../tarballs/<name>.tgz`; install with `--ignore-workspace`; import `@tulpar-ui/tokens/css/tulpar.css`, `@tulpar-ui/core/button`, `@tulpar-ui/core/select`, `@tulpar-ui/shell/shell`; `vite build && vite preview`; with `playwright-cli` assert the button renders styled, `globalThis.litHtmlVersions.length === 1`, and `customElements.get(...)` is defined for `tulpar-button`, `tulpar-select`, `tulpar-option`, `tulpar-shell`, `tulpar-sidenav`, `tulpar-nav-item`. Review every `npm pack --dry-run` file list. Nothing from `$TMP` is committed.
+- [x] **Step 7:** Add the patch changeset; commit `build: angular partial + APF, esm-env dev warnings, manifest hygiene`.
 
 ### Task 8: Type-check gate
 
@@ -187,40 +187,40 @@ it("passes axe", async () => {
 **Interfaces:**
 - Produces: `pnpm typecheck` — `tsc -b --noEmit` (tokens, core, shell incl. test tsconfigs), `tsc -p tsconfig.lib.prod.json --noEmit` for angular, `vue-tsc --noEmit` for vue and playground-vue. Requires built `dist` of core/shell (run after `pnpm build`).
 
-- [ ] **Step 1:** Add scripts; **run** `pnpm build && pnpm typecheck` → record error counts per package.
-- [ ] **Step 2:** Fix type-only errors; for errors that need a behaviour change add `// @ts-expect-error <finding ID or ENG-n> — fixed in <package>`.
-- [ ] **Step 3: Run** `pnpm typecheck` → exit 0; `pnpm test` → baseline.
-- [ ] **Step 4:** Commit `chore: typecheck gate for all packages`.
+- [x] **Step 1:** Add scripts; **run** `pnpm build && pnpm typecheck` → record error counts per package.
+- [x] **Step 2:** Fix type-only errors; for errors that need a behaviour change add `// @ts-expect-error <finding ID or ENG-n> — fixed in <package>`.
+- [x] **Step 3: Run** `pnpm typecheck` → exit 0; `pnpm test` → baseline.
+- [x] **Step 4:** Commit `chore: typecheck gate for all packages`.
 
 ### Task 9: pnpm 12, catalog strict, explicit scripts, framework bumps
 
 **Files:**
 - Modify: root `package.json` (`packageManager`, `engines`, `scripts`), `.npmrc`, `pnpm-workspace.yaml`, every `package.json` with a shared dep, `apps/docs/package.json` (`predev` → explicit), `apps/playground-{ng,vue}` (Angular 22.2.x, Vue 3.5.45+, current official Lucide packages)
 
-- [ ] **Step 1:** Set `"packageManager": "pnpm@12.<x>.<y>"` (current 12.x) by hand; install pnpm 12 globally (`npm i -g pnpm@12`); move settings from `.npmrc` to `pnpm-workspace.yaml`; set `allowBuilds` for packages that need install scripts (esbuild, playwright, others reported by `pnpm install`).
-- [ ] **Step 2:** Upgrade `@changesets/cli` to 3.x (`pnpm changeset status` still lists the pending changesets). Move every dependency used by more than one package into the catalog (`catalog:`); enable `catalogMode: strict`. **Run** `pnpm install` → success; `pnpm why vite`, `pnpm why vitest`, `pnpm why happy-dom`, `pnpm why typescript` each show one version.
-- [ ] **Step 3:** Replace **every** `pre*` hook with explicit scripts: root `dev`, `dev:ng`, `dev:vue`, `dev:storybook` start with `pnpm build &&`; tokens `build` runs `build:fallbacks` explicitly; core/shell already explicit (Task 1); docs `dev`/`storybook` call the tokens build explicitly. Remove `enable-pre-post-scripts` from `.npmrc`. Set `engines.node` to `>=26`.
-- [ ] **Step 4:** Bump Angular to 22.2.x and Vue to 3.5.45+; replace `lucide-angular` / `lucide-vue-next` with the current official Lucide packages, same icons in both playgrounds (parity). **Run** `pnpm audit --prod --audit-level high` → exit 0 (an advisory without a fix goes to `audit.ignoreGhsas` with a reason and review date).
-- [ ] **Step 5: Verify the dev loop** — delete every `packages/*/dist`, run `pnpm dev:vue` → packages build first, playground serves on 5273 with no resolution errors; same for `pnpm dev:ng` (4310) and `pnpm dev:storybook` (6006). Confirm Select, Toast and rail mode render in both playgrounds.
-- [ ] **Step 6:** Commit `chore: pnpm 12, strict catalog, explicit dev scripts, angular 22.2 / vue 3.5.45 / lucide`.
+- [x] **Step 1:** Set `"packageManager": "pnpm@12.<x>.<y>"` (current 12.x) by hand; install pnpm 12 globally (`npm i -g pnpm@12`); move settings from `.npmrc` to `pnpm-workspace.yaml`; set `allowBuilds` for packages that need install scripts (esbuild, playwright, others reported by `pnpm install`).
+- [x] **Step 2:** Upgrade `@changesets/cli` to 3.x (`pnpm changeset status` still lists the pending changesets). Move every dependency used by more than one package into the catalog (`catalog:`); enable `catalogMode: strict`. **Run** `pnpm install` → success; `pnpm why vite`, `pnpm why vitest`, `pnpm why happy-dom`, `pnpm why typescript` each show one version.
+- [x] **Step 3:** Replace **every** `pre*` hook with explicit scripts: root `dev`, `dev:ng`, `dev:vue`, `dev:storybook` start with `pnpm build &&`; tokens `build` runs `build:fallbacks` explicitly; core/shell already explicit (Task 1); docs `dev`/`storybook` call the tokens build explicitly. Remove `enable-pre-post-scripts` from `.npmrc`. Set `engines.node` to `>=26`.
+- [x] **Step 4:** Bump Angular to 22.2.x and Vue to 3.5.45+; replace `lucide-angular` / `lucide-vue-next` with the current official Lucide packages, same icons in both playgrounds (parity). **Run** `pnpm audit --prod --audit-level high` → exit 0 (an advisory without a fix goes to `audit.ignoreGhsas` with a reason and review date).
+- [ ] **Step 5: Verify the dev loop** — delete every `packages/*/dist`, run `pnpm dev:vue` → packages build first, playground serves on 5273 with no resolution errors; same for `pnpm dev:ng` (4310) and `pnpm dev:storybook` (6006). Confirm Select, Toast and rail mode render in both playgrounds. _(Not done as written: live `dev:vue` check done; `dev:ng` and `dev:storybook` verified via production builds only. Live check pending with owner.)_
+- [x] **Step 6:** Commit `chore: pnpm 12, strict catalog, explicit dev scripts, angular 22.2 / vue 3.5.45 / lucide`.
 
 ### Task 10: CI as a gate
 
 **Files:**
 - Modify: `.github/workflows/{ci,deploy,release}.yml`
 
-- [ ] **Step 1:** `ci.yml`: top-level `permissions: contents: read`; triggers `pull_request`, `push` on `main` and `phase*/**`; cache `~/.cache/ms-playwright` keyed on the Playwright version; `playwright install --with-deps chromium firefox webkit`; steps: install → lint → `check:suppressions` → `lint:probe` → format:check → sync-exports:check (core, shell) → build → typecheck → check:dist → `pnpm -r --filter "./packages/*" run test:ci` → build apps (`playground-ng`, `playground-vue`, docs) → `pnpm audit --prod --audit-level high` → changeset status (informational).
-- [ ] **Step 2:** `deploy.yml`: `on: workflow_run: { workflows: [CI], types: [completed], branches: [main] }` + `workflow_dispatch`; job `if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')`; checkout `ref: ${{ github.event.workflow_run.head_sha || github.sha }}`.
-- [ ] **Step 3:** `release.yml`: `on: workflow_dispatch` only; job `if: github.ref == 'refs/heads/main'`; comment that phase 1.8 restores the CI-gated trigger with OIDC.
-- [ ] **Step 4:** Push the branch → CI runs on `phase1/1.1-infra`; fix until green in all three engines.
-- [ ] **Step 5:** Commit `ci: typecheck, three engines, app builds, audit; deploy after CI; manual release`.
+- [x] **Step 1:** `ci.yml`: top-level `permissions: contents: read`; triggers `pull_request`, `push` on `main` and `phase*/**`; cache `~/.cache/ms-playwright` keyed on the Playwright version; `playwright install --with-deps chromium firefox webkit`; steps: install → lint → `check:suppressions` → `lint:probe` → format:check → sync-exports:check (core, shell) → build → typecheck → check:dist → `pnpm -r --filter "./packages/*" run test:ci` → build apps (`playground-ng`, `playground-vue`, docs) → `pnpm audit --prod --audit-level high` → changeset status (informational).
+- [x] **Step 2:** `deploy.yml`: `on: workflow_run: { workflows: [CI], types: [completed], branches: [main] }` + `workflow_dispatch`; job `if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')`; checkout `ref: ${{ github.event.workflow_run.head_sha || github.sha }}`.
+- [x] **Step 3:** `release.yml`: `on: workflow_dispatch` only; job `if: github.ref == 'refs/heads/main'`; comment that phase 1.8 restores the CI-gated trigger with OIDC.
+- [ ] **Step 4:** Push the branch → CI runs on `phase1/1.1-infra`; fix until green in all three engines. _(Not done by the implementer: the controller pushed after owner approval. CI run 43159150351 on 27ecb36 is green.)_
+- [x] **Step 5:** Commit `ci: typecheck, three engines, app builds, audit; deploy after CI; manual release`.
 
 ### Task 11: Acceptance and close-out
 
 **Files:**
 - Modify: `CLAUDE.md` (Tech Stack, Commands), this plan (ticks), the spec (status → Implemented + close-out block)
 
-- [ ] **Step 1:** Run every item of the spec's §6 Acceptance; record command + outcome in the spec's close-out block, plus Task 0's before/after `pnpm outdated` and audit.
-- [ ] **Step 2:** In the close-out list every `ENG-*` entry, every suppressed ESLint rule with count, every `@ts-expect-error`, measured coverage — each with its owning package.
-- [ ] **Step 3:** Update CLAUDE.md: tool versions, new scripts (`typecheck`, `test:all-browsers`, `test:ci`, `check:dist`, `lint:probe`, `check:suppressions`), explicit dev scripts, "release is manual until 1.8", dev warnings follow Lit's convention.
-- [ ] **Step 4:** Commit `docs: close out phase 1.1`. Report "branch ready for review".
+- [x] **Step 1:** Run every item of the spec's §6 Acceptance; record command + outcome in the spec's close-out block, plus Task 0's before/after `pnpm outdated` and audit.
+- [x] **Step 2:** In the close-out list every `ENG-*` entry, every suppressed ESLint rule with count, every `@ts-expect-error`, measured coverage — each with its owning package.
+- [x] **Step 3:** Update CLAUDE.md: tool versions, new scripts (`typecheck`, `test:all-browsers`, `test:ci`, `check:dist`, `lint:probe`, `check:suppressions`), explicit dev scripts, "release is manual until 1.8", dev warnings follow Lit's convention.
+- [x] **Step 4:** Commit `docs: close out phase 1.1`. Report "branch ready for review".
