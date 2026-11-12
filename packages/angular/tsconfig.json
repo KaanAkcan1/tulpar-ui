@@ -4,7 +4,6 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
     "useDefineForClassFields": false,
     "lib": ["ES2022", "DOM"],
     "moduleResolution": "bundler",

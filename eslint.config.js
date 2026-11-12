@@ -1,3 +1,4 @@
+import { defineConfig } from "eslint/config";
 import tseslint from "typescript-eslint";
 import lit from "eslint-plugin-lit";
 import wc from "eslint-plugin-wc";
@@ -8,7 +9,7 @@ import prettier from "eslint-config-prettier/flat";
 const PRIMITIVE_MESSAGE =
   "Component code must use semantic tokens (var(--tulpar-...)), never primitives (--tulpar-primitive-...). Bind primitives in the brand layer instead.";
 
-export default tseslint.config(
+export default defineConfig(
   {
     ignores: [
       "**/dist/**",

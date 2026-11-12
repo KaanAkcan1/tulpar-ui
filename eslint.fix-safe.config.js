@@ -5,7 +5,7 @@
 //
 // Vetted list:
 //  - @typescript-eslint/consistent-type-imports: moves type-only imports to `import type`;
-//    erased at compile time. Safe here: no emitDecoratorMetadata, no importsNotUsedAsValues.
+//    erased at compile time. Safe here: `emitDecoratorMetadata` is off in every package (tsconfig.base.json), and no importsNotUsedAsValues.
 //  - vue/attributes-order: reorders element attributes only. Safe: the repo has no
 //    `v-bind="object"` whose precedence depends on order.
 // The staged run passes `--pass-on-unpruned-suppressions`: this config enables only two rules, so

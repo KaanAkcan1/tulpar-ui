@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "pnpm --filter @tulpar-ui/tokens build && node copy-tokens.mjs && storybook dev -p 6006",
+    "dev": "node copy-tokens.mjs && storybook dev -p 6006",
     "storybook": "pnpm --filter \"docs^...\" build && node copy-tokens.mjs && storybook dev -p 6006",
     "build-storybook": "pnpm --filter \"docs^...\" build && node copy-tokens.mjs && storybook build"
   },
