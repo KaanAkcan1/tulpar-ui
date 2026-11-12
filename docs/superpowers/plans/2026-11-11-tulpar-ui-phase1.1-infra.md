@@ -212,7 +212,7 @@ it("passes axe", async () => {
 - [x] **Step 1:** `ci.yml`: top-level `permissions: contents: read`; triggers `pull_request`, `push` on `main` and `phase*/**`; cache `~/.cache/ms-playwright` keyed on the Playwright version; `playwright install --with-deps chromium firefox webkit`; steps: install → lint → `check:suppressions` → `lint:probe` → format:check → sync-exports:check (core, shell) → build → typecheck → check:dist → `pnpm -r --filter "./packages/*" run test:ci` → build apps (`playground-ng`, `playground-vue`, docs) → `pnpm audit --prod --audit-level high` → changeset status (informational).
 - [x] **Step 2:** `deploy.yml`: `on: workflow_run: { workflows: [CI], types: [completed], branches: [main] }` + `workflow_dispatch`; job `if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')`; checkout `ref: ${{ github.event.workflow_run.head_sha || github.sha }}`.
 - [x] **Step 3:** `release.yml`: `on: workflow_dispatch` only; job `if: github.ref == 'refs/heads/main'`; comment that phase 1.8 restores the CI-gated trigger with OIDC.
-- [ ] **Step 4:** Push the branch → CI runs on `phase1/1.1-infra`; fix until green in all three engines. _(Not done by the implementer: the controller pushed after owner approval. CI run 43159150351 on 27ecb36 is green.)_
+- [x] **Step 4:** Push the branch → CI runs on `phase1/1.1-infra`; fix until green in all three engines. _(Done by the controller after owner approval; CI run 43159150351 on 27ecb36 is green in all three engines.)_
 - [x] **Step 5:** Commit `ci: typecheck, three engines, app builds, audit; deploy after CI; manual release`.
 
 ### Task 11: Acceptance and close-out
