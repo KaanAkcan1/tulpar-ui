@@ -374,6 +374,12 @@ importers:
       '@tulpar-ui/tokens':
         specifier: workspace:^
         version: link:../../packages/tokens
+      esm-env:
+        specifier: 'catalog:'
+        version: 1.2.2
+      lit:
+        specifier: 'catalog:'
+        version: 3.3.3
       rxjs:
         specifier: ~7.8.0
         version: 7.8.2
@@ -895,6 +901,7 @@ packages:
   '@angular/platform-browser-dynamic@22.2.5':
     resolution: {integrity: sha512-PkGRpia8wPzuPT+P0X6YknU1DmdN96nECwpgWXqAWT+B2/nXpgfUDRkRRWxbMLZt6JnFd1b8KJJ3SP/Izp2qVg==}
     engines: {node: ^22.22.3 || ^24.15.0 || >=26.0.0}
+    deprecated: '@angular/platform-browser-dynamic is deprecated. Use `@angular/platform-browser` instead.'
     peerDependencies:
       '@angular/common': 22.2.5
       '@angular/compiler': 22.2.5

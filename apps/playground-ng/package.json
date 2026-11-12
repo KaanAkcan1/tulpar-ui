@@ -34,6 +34,8 @@
     "@tulpar-ui/angular": "workspace:^",
     "@tulpar-ui/core": "workspace:^",
     "@tulpar-ui/tokens": "workspace:^",
+    "esm-env": "catalog:",
+    "lit": "catalog:",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
