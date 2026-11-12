@@ -5,6 +5,8 @@
 // - a core/shell dist file registers an element (`customElements.define`) but
 //   no glob in that package's `sideEffects` covers it, so a consumer's bundler
 //   would drop the registration;
+// - a published dist contains test declarations (`*.spec.d.ts`, `*.test.d.ts`) or
+//   declaration maps (`*.d.ts.map`; src/ is not in the tarball);
 // - the Angular FESM is full-compiled (`ɵɵdefineComponent`) instead of
 //   partial-compiled (`ɵɵngDeclareComponent`), which npm consumers' linkers need.
 import { readdirSync, readFileSync, statSync, existsSync } from "node:fs";
@@ -50,6 +52,8 @@ const missing = [];
 const litOffenders = [];
 const sideEffectOffenders = [];
 const ngOffenders = [];
+const strayOffenders = [];
+const STRAY = /(\.(spec|test)\.d\.ts|\.d\.ts\.map)$/;
 
 for (const pkg of REQUIRED) {
   if (!existsSync(join(pkgsDir, pkg, "dist"))) missing.push(pkg);
@@ -59,6 +63,10 @@ for (const pkg of readdirSync(pkgsDir)) {
   const pkgDir = join(pkgsDir, pkg);
   const dist = join(pkgDir, "dist");
   if (!existsSync(dist)) continue;
+
+  for (const file of walk(dist, "")) {
+    if (STRAY.test(file)) strayOffenders.push(relative(root, file));
+  }
 
   const isElementPkg = ELEMENT_PACKAGES.includes(pkg);
   const covered = isElementPkg
@@ -106,9 +114,14 @@ if (ngOffenders.length > 0) {
   console.error("check:dist FAILED: Angular FESM is not partial-compiled:");
   for (const o of ngOffenders) console.error(`  ${o}`);
 }
+if (strayOffenders.length > 0) {
+  console.error("check:dist FAILED: test declarations or .d.ts.map files in a published dist:");
+  for (const o of strayOffenders) console.error(`  ${o}`);
+}
 const failures =
+  strayOffenders.length +
   missing.length + litOffenders.length + sideEffectOffenders.length + ngOffenders.length;
 if (failures > 0) process.exit(1);
 console.log(
-  "check:dist OK: every dist present; no inlined lit-html; element registrations covered by sideEffects; Angular FESM is partial-compiled",
+  "check:dist OK: every dist present; no inlined lit-html; element registrations covered by sideEffects; Angular FESM is partial-compiled; no test declarations or .d.ts.map",
 );

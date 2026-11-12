@@ -16,7 +16,7 @@ export default defineConfig({
     dts({
       entryRoot: "src",
       outDir: "dist",
-      tsconfigPath: "./tsconfig.json",
+      tsconfigPath: "./tsconfig.build.json",
       // Publish builds ship no .d.ts.map (src/ is not in the tarball, INF-17);
       // watch builds keep them so go-to-definition reaches src/.
       compilerOptions: { declarationMap: process.argv.includes("--watch") },
