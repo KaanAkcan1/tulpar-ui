@@ -1,14 +1,20 @@
 // New code may not add ESLint suppressions: per rule, the total count in the working
 // tree's eslint-suppressions.json must not exceed the count in the base branch's file.
 //
-// Base file lookup: `origin/main`, else the merge-base with it. If neither has the file
+// Base file lookup: `SUPPRESSIONS_BASE_REF` (CI push: the previous tip), else `origin/main`, else the merge-base with it. If neither has the file
 // (first introduction of suppressions, as on the first phase-1 PR), there is no baseline
 // and the check passes. A missing base is NOT treated as "all counts zero".
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 
 const FILE = "eslint-suppressions.json";
-const BASE_REF = process.env.SUPPRESSIONS_BASE_REF ?? "origin/main";
+// On `push`, CI passes the previous tip (`github.event.before`) so a push to main compares
+// against what main held before it (origin/main would equal HEAD and always pass). A new
+// branch push reports an all-zero `before`: fall back to origin/main. Unset or empty
+// (pull_request, local runs) also means origin/main.
+const requestedRef = process.env.SUPPRESSIONS_BASE_REF;
+const BASE_REF =
+  requestedRef && !/^0+$/.test(requestedRef) ? requestedRef : "origin/main";
 
 const git = (...args) =>
   execFileSync("git", args, { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });

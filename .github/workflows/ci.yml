@@ -34,15 +34,19 @@ jobs:
 
       - run: pnpm lint
 
+      # push: compare against the previous tip (all-zero on a new branch -> origin/main inside the script);
+      # pull_request: origin/main.
       - run: pnpm check:suppressions
+        env:
+          SUPPRESSIONS_BASE_REF: ${{ github.event_name == 'push' && github.event.before || '' }}
 
       - run: pnpm lint:probe
 
       - run: pnpm format:check
 
-      - run: pnpm --filter @tulpar-ui/core run sync-exports:check
+      - run: pnpm --filter @tulpar-ui/core run check:exports
 
-      - run: pnpm --filter @tulpar-ui/shell run sync-exports:check
+      - run: pnpm --filter @tulpar-ui/shell run check:exports
 
       - run: pnpm build
 

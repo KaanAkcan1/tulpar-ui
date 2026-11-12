@@ -54,7 +54,7 @@
 
 - [x] **Step 1:** Add `.gitattributes`: `* text=auto eol=lf`; `binary` for `*.png *.jpg *.ico *.woff *.woff2 *.tgz`.
 - [x] **Step 2:** Commit `git add --renormalize .` alone: `chore: normalize line endings to LF`.
-- [x] **Step 3:** Merge both `sync-exports.ts` copies into `scripts/sync-exports.ts` (interface above); call it from `build` (not `prebuild`) and from `sync-exports` / `sync-exports:check`.
+- [x] **Step 3:** Merge both `sync-exports.ts` copies into `scripts/sync-exports.ts` (interface above); call it from `build` (not `prebuild`) and from `sync-exports` / `check:exports`.
 - [x] **Step 4: Verify** — `pnpm build && pnpm build && git status --porcelain` → Expected: empty.
 - [x] **Step 5:** `git rm -r .claire build-output.txt`; add `graphify-out/`, `.wrangler/`, `.playwright/`, `*.log`, `build-output*.txt` to `.gitignore`; add `@tulpar-ui/shell` to the README package table.
 - [x] **Step 6:** Commit `chore: repo hygiene (gitattributes, shared sync-exports, stray files)`.
@@ -209,7 +209,7 @@ it("passes axe", async () => {
 **Files:**
 - Modify: `.github/workflows/{ci,deploy,release}.yml`
 
-- [x] **Step 1:** `ci.yml`: top-level `permissions: contents: read`; triggers `pull_request`, `push` on `main` and `phase*/**`; cache `~/.cache/ms-playwright` keyed on the Playwright version; `playwright install --with-deps chromium firefox webkit`; steps: install → lint → `check:suppressions` → `lint:probe` → format:check → sync-exports:check (core, shell) → build → typecheck → check:dist → `pnpm -r --filter "./packages/*" run test:ci` → build apps (`playground-ng`, `playground-vue`, docs) → `pnpm audit --prod --audit-level high` → changeset status (informational).
+- [x] **Step 1:** `ci.yml`: top-level `permissions: contents: read`; triggers `pull_request`, `push` on `main` and `phase*/**`; cache `~/.cache/ms-playwright` keyed on the Playwright version; `playwright install --with-deps chromium firefox webkit`; steps: install → lint → `check:suppressions` → `lint:probe` → format:check → check:exports (core, shell) → build → typecheck → check:dist → `pnpm -r --filter "./packages/*" run test:ci` → build apps (`playground-ng`, `playground-vue`, docs) → `pnpm audit --prod --audit-level high` → changeset status (informational).
 - [x] **Step 2:** `deploy.yml`: `on: workflow_run: { workflows: [CI], types: [completed], branches: [main] }` + `workflow_dispatch`; job `if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')`; checkout `ref: ${{ github.event.workflow_run.head_sha || github.sha }}`.
 - [x] **Step 3:** `release.yml`: `on: workflow_dispatch` only; job `if: github.ref == 'refs/heads/main'`; comment that phase 1.8 restores the CI-gated trigger with OIDC.
 - [x] **Step 4:** Push the branch → CI runs on `phase1/1.1-infra`; fix until green in all three engines. _(Done by the controller after owner approval; CI run 43159150351 on 27ecb36 is green in all three engines.)_

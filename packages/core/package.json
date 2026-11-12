@@ -115,7 +115,7 @@
   ],
   "scripts": {
     "sync-exports": "tsx ../../scripts/sync-exports.ts .",
-    "sync-exports:check": "tsx ../../scripts/sync-exports.ts . --check",
+    "check:exports": "tsx ../../scripts/sync-exports.ts . --check",
     "build": "tsx ../../scripts/sync-exports.ts . && vite build && cem analyze",
     "dev": "vite build --watch",
     "test": "wtr-strict",
