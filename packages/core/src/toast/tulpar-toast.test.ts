@@ -1397,9 +1397,32 @@ describe("<tulpar-toast> enter animation attribute lifecycle", () => {
     // that ran before the first paint, cancelling the keyframe immediately.
     // The FIX: [data-enter] is removed only on animationend or the 300ms fallback.
     // This test ensures the attribute is STILL present after one rAF fires.
+    //
+    // The two legitimate removal paths are wall-clock based, so the test holds
+    // both still and checks only the rAF claim: on a loaded CI runner two frames
+    // can take longer than the 300ms fallback (seen in headless WebKit).
+    // - the fallback timer, registered synchronously in connectedCallback, is
+    //   captured and never fired;
+    // - a 10s enter duration keeps `animationend` out of the window.
     const el = document.createElement("tulpar-toast") as TulparToast;
     el.setAttribute("heading", "T");
-    document.body.appendChild(el);
+    el.style.setProperty("--tulpar-feedback-motion-duration-enter", "10s");
+
+    const realSetTimeout = window.setTimeout;
+    const heldTimers: unknown[] = [];
+    window.setTimeout = ((handler: TimerHandler) => {
+      heldTimers.push(handler);
+      return 0;
+    }) as typeof window.setTimeout;
+    try {
+      document.body.appendChild(el);
+    } finally {
+      window.setTimeout = realSetTimeout;
+    }
+    expect(
+      heldTimers.length,
+      "the 300ms fallback timer is registered on connect",
+    ).to.be.greaterThan(0);
 
     // Yield two animation frames — more than the old code's one-rAF removal.
     await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
