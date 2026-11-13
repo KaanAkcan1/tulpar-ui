@@ -24,7 +24,7 @@ function makeHarness() {
   let pointerDownCount = 0;
 
   const overlay = new ListboxOverlay({
-    host: host as HTMLElement & { updateComplete: Promise<unknown> },
+    host: host as unknown as HTMLElement & { updateComplete: Promise<unknown> },
     getTrigger: () => trigger,
     getListbox: () => listbox,
     onDismiss: () => {

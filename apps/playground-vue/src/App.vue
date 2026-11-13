@@ -7,6 +7,7 @@ import {
   BookOpen,
   CheckSquare,
   ChevronsUpDown,
+  Circle,
   CircleDot,
   CircleUserRound,
   FormInput,
@@ -19,13 +20,14 @@ import {
   MessageSquare,
   MessageSquareText,
   Palette,
+  PanelTop,
   RectangleHorizontal,
   SquareMousePointer,
   Tag,
   TextCursorInput,
   ToggleLeft,
   WrapText,
-} from "lucide-vue-next";
+} from "@lucide/vue";
 import { TulparShell, TulparTopbar, TulparSidenav } from "@tulpar-ui/vue";
 import type { ShellSidenavMode, TulparNavItemVueData } from "@tulpar-ui/vue";
 
@@ -92,7 +94,7 @@ const menu: TulparNavItemVueData[] = [
         items: [
           { label: "Switch", href: "/switch", icon: ToggleLeft },
           { label: "Checkbox", href: "/checkbox", icon: CheckSquare },
-          { label: "RadioGroup", href: "/radio-group", icon: CircleDot },
+          { label: "RadioGroup", href: "/radio-group", icon: Circle },
           { label: "CheckboxGroup", href: "/checkbox-group", icon: ListChecks },
         ],
       },
@@ -102,8 +104,8 @@ const menu: TulparNavItemVueData[] = [
         icon: Layers,
         items: [
           { label: "Tooltip", href: "/tooltip", icon: MessageSquare },
-          { label: "Toggletip", href: "/toggletip", icon: MessageCircle },
-          { label: "Popover", href: "/popover", icon: MessageSquareText },
+          { label: "Toggletip", href: "/toggletip", icon: MessageSquareText },
+          { label: "Popover", href: "/popover", icon: PanelTop },
         ],
       },
     ],
@@ -166,18 +168,17 @@ const densities: { value: SidenavDensity; label: string }[] = [
 
 function onLogout() {
   // Placeholder action — a real app would clear the session and redirect.
-  // eslint-disable-next-line no-console
   console.info("[playground-vue] logout requested");
 }
 </script>
 
 <template>
   <TulparShell
+    v-model:aside-open="asideOpen"
     :sidenav-mode="sidenavMode"
     :sidenav-layout="sidenavLayout"
     persist-key="playground-vue-shell"
     :dark="dark"
-    v-model:aside-open="asideOpen"
   >
     <!-- ── Topbar ───────────────────────────────────────────────────────── -->
     <TulparTopbar slot="topbar">

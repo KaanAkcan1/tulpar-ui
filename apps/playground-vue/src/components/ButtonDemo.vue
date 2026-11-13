@@ -16,7 +16,7 @@ import {
   Plus,
   Sparkles,
   Loader2,
-} from "lucide-vue-next";
+} from "@lucide/vue";
 
 const submittedEmail = ref<string | null>(null);
 const dataDisabledClicked = ref(false);
@@ -643,7 +643,7 @@ const slotEscapeHatchCode = `<!-- Escape hatch: non-Lucide libraries (Heroicons,
     <section class="doc-section">
       <h2 class="section-title">17. :icon prop — Lucide convenience API (v0.3.1)</h2>
       <p class="section-desc">
-        Pass any <code class="inline-code">lucide-vue-next</code> component reference via
+        Pass any <code class="inline-code">@lucide/vue</code> component reference via
         <code class="inline-code">:icon</code>. The wrapper renders it into
         <code class="inline-code">slot="start"</code> at the correct size for the button's
         <code class="inline-code">size</code>. Use <code class="inline-code">:icon-size</code>

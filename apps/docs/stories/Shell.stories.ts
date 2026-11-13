@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/web-components";
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
 import { html, svg } from "lit";
 import type { TulparNavItemData } from "@tulpar-ui/shell";
 import "@tulpar-ui/shell";

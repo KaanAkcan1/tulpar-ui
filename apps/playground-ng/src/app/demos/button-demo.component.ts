@@ -8,31 +8,31 @@ import {
 import { TulparButtonComponent } from '@tulpar-ui/angular';
 import '@tulpar-ui/core/button-group';
 import {
-  LucideAngularModule,
-  Check,
-  ArrowRight,
-  ArrowLeft,
-  Trash2,
-  Crown,
-  Mail,
-  Settings,
-  Save,
-  Download,
-  Heart,
-  Plus,
-  Sparkles,
-  Loader2,
-} from 'lucide-angular';
+  LucideDynamicIcon,
+  LucideCheck,
+  LucideArrowRight,
+  LucideArrowLeft,
+  LucideTrash2,
+  LucideCrown,
+  LucideMail,
+  LucideSettings,
+  LucideSave,
+  LucideDownload,
+  LucideHeart,
+  LucidePlus,
+  LucideSparkles,
+  LucideLoader2,
+} from '@lucide/angular';
 
 // ─── Demo icon component for Pattern 2 (named-component [icon] prop) ──
 @Component({
   selector: 'app-check-icon',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-angular [img]="iconData" [size]="size()"></lucide-angular>`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="iconData" [size]="size()"></svg>`,
 })
 class AppCheckIcon {
-  readonly iconData = Check;
+  readonly iconData = LucideCheck;
   size = input(16);
 }
 
@@ -77,87 +77,87 @@ const SHAPE_CODE = `<!-- Default (rectangle) -->
 
 <!-- Circle (icon-only) — slot pattern + explicit [iconOnly]="true" -->
 <tulpar-button-ng shape="circle" ariaLabel="Add item" [iconOnly]="true">
-  <lucide-angular slot="start" [img]="Plus" [size]="16"></lucide-angular>
+  <svg slot="start" [lucideIcon]="Plus" [size]="16"></svg>
 </tulpar-button-ng>`;
 
 const ICONS_CODE = `<!-- Leading icon via slot="start" -->
 <tulpar-button-ng severity="success">
-  <lucide-angular slot="start" [img]="Check" [size]="16"></lucide-angular>
+  <svg slot="start" [lucideIcon]="Check" [size]="16"></svg>
   Save
 </tulpar-button-ng>
 
 <!-- Trailing icon via slot="end" -->
 <tulpar-button-ng severity="primary">
   Continue
-  <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+  <span slot="end"><svg [lucideIcon]="ArrowRight" [size]="16"></svg></span>
 </tulpar-button-ng>
 
 <!-- Both: slot="start" for leading, slot="end" for trailing -->
 <tulpar-button-ng severity="primary">
-  <lucide-angular slot="start" [img]="Check" [size]="16"></lucide-angular>
+  <svg slot="start" [lucideIcon]="Check" [size]="16"></svg>
   Save and continue
-  <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+  <span slot="end"><svg [lucideIcon]="ArrowRight" [size]="16"></svg></span>
 </tulpar-button-ng>`;
 
 const ICON_ONLY_CODE = `<!-- Icon-only: slot="start" pattern + explicit [iconOnly]="true" -->
 <tulpar-button-ng severity="danger" ariaLabel="Delete item" [iconOnly]="true">
-  <lucide-angular slot="start" [img]="Trash2" [size]="16"></lucide-angular>
+  <svg slot="start" [lucideIcon]="Trash2" [size]="16"></svg>
 </tulpar-button-ng>
 <tulpar-button-ng severity="secondary" ariaLabel="Settings" [iconOnly]="true">
-  <lucide-angular slot="start" [img]="Settings" [size]="16"></lucide-angular>
+  <svg slot="start" [lucideIcon]="Settings" [size]="16"></svg>
 </tulpar-button-ng>
 
 <!-- Icon-only + circle shape -->
 <tulpar-button-ng severity="success" shape="circle" ariaLabel="Save" [iconOnly]="true">
-  <lucide-angular slot="start" [img]="Save" [size]="16"></lucide-angular>
+  <svg slot="start" [lucideIcon]="Save" [size]="16"></svg>
 </tulpar-button-ng>
 
 <!-- Explicit iconOnly + round shape -->
 <tulpar-button-ng severity="premium" [iconOnly]="true" shape="round" ariaLabel="Premium">
-  <lucide-angular slot="start" [img]="Crown" [size]="16"></lucide-angular>
+  <svg slot="start" [lucideIcon]="Crown" [size]="16"></svg>
 </tulpar-button-ng>`;
 
 const ICON_POSITION_CODE = `<!-- Start (default) -->
 <tulpar-button-ng iconPosition="start" size="lg">
-  <lucide-angular slot="start" [img]="Check" [size]="18"></lucide-angular>
+  <svg slot="start" [lucideIcon]="Check" [size]="18"></svg>
   Confirm
 </tulpar-button-ng>
 
 <!-- Top -->
 <tulpar-button-ng iconPosition="top" size="lg">
-  <lucide-angular slot="start" [img]="Check" [size]="18"></lucide-angular>
+  <svg slot="start" [lucideIcon]="Check" [size]="18"></svg>
   Confirm
 </tulpar-button-ng>
 
 <!-- Bottom -->
 <tulpar-button-ng iconPosition="bottom" size="lg">
-  <lucide-angular slot="start" [img]="Check" [size]="18"></lucide-angular>
+  <svg slot="start" [lucideIcon]="Check" [size]="18"></svg>
   Confirm
 </tulpar-button-ng>
 
 <!-- End — use slot="end" -->
 <tulpar-button-ng iconPosition="end" size="lg">
   Confirm
-  <span slot="end"><lucide-angular [img]="Check" [size]="18"></lucide-angular></span>
+  <span slot="end"><svg [lucideIcon]="Check" [size]="18"></svg></span>
 </tulpar-button-ng>`;
 
 const ICON_SEPARATOR_CODE = `<!-- Outlined + separator + leading icon -->
 <tulpar-button-ng variant="outlined" [iconSeparator]="true">
-  <lucide-angular slot="start" [img]="Download" [size]="16"></lucide-angular>
+  <svg slot="start" [lucideIcon]="Download" [size]="16"></svg>
   Download
 </tulpar-button-ng>
 
 <!-- Tonal + separator + both icons (leading + trailing via slots) -->
 <tulpar-button-ng variant="tonal" [iconSeparator]="true">
-  <lucide-angular slot="start" [img]="ArrowLeft" [size]="16"></lucide-angular>
+  <svg slot="start" [lucideIcon]="ArrowLeft" [size]="16"></svg>
   Navigate
-  <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+  <span slot="end"><svg [lucideIcon]="ArrowRight" [size]="16"></svg></span>
 </tulpar-button-ng>
 
 <!-- Solid + separator + trailing icon -->
 <tulpar-button-ng variant="solid" [iconSeparator]="true">
   Next
-  <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+  <span slot="end"><svg [lucideIcon]="ArrowRight" [size]="16"></svg></span>
 </tulpar-button-ng>`;
 
 const MODIFIERS_CODE = `<!-- Raised solid -->
@@ -171,9 +171,9 @@ const MODIFIERS_CODE = `<!-- Raised solid -->
 
 <!-- Block + justify=between with icons -->
 <tulpar-button-ng [block]="true" justify="between">
-  <lucide-angular slot="start" [img]="Mail" [size]="16"></lucide-angular>
+  <svg slot="start" [lucideIcon]="Mail" [size]="16"></svg>
   Send Email
-  <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+  <span slot="end"><svg [lucideIcon]="ArrowRight" [size]="16"></svg></span>
 </tulpar-button-ng>`;
 
 const LOADING_CODE = `<!-- Loading (default center) -->
@@ -191,7 +191,7 @@ const LOADING_CODE = `<!-- Loading (default center) -->
 <!-- Loading with custom icon (Loader2 spinning) -->
 <tulpar-button-ng [loading]="true" severity="success">
   <span slot="loading-icon" class="spin-icon">
-    <lucide-angular [img]="Loader2" [size]="16"></lucide-angular>
+    <svg [lucideIcon]="Loader2" [size]="16"></svg>
   </span>
   Upload
 </tulpar-button-ng>`;
@@ -208,7 +208,7 @@ const DISABLED_CODE = `<!-- Regular disabled (no interaction) -->
 
 const POLYMORPHISM_CODE = `<!-- External link — renders as <a> -->
 <tulpar-button-ng href="https://example.com" target="_blank" rel="noopener noreferrer">
-  <span slot="start"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+  <span slot="start"><svg [lucideIcon]="ArrowRight" [size]="16"></svg></span>
   Visit Example
 </tulpar-button-ng>
 
@@ -220,7 +220,7 @@ const POLYMORPHISM_CODE = `<!-- External link — renders as <a> -->
 const FORM_CODE = `<form (submit)="onSubmit($event)">
   <input name="email" type="email" placeholder="your@email.com" />
   <tulpar-button-ng type="submit" severity="primary">
-    <lucide-angular slot="start" [img]="Mail" [size]="16"></lucide-angular>
+    <svg slot="start" [lucideIcon]="Mail" [size]="16"></svg>
     Submit
   </tulpar-button-ng>
   <tulpar-button-ng type="reset" severity="secondary" variant="outlined">
@@ -249,19 +249,19 @@ const BUTTON_GROUP_CODE = `<!-- Horizontal group (ArrowLeft/Right navigation) --
 
 const PREMIUM_CODE = `<!-- Solid premium — ulgen antique-gold marketing CTA -->
 <tulpar-button-ng severity="premium">
-  <lucide-angular slot="start" [img]="Crown" [size]="16"></lucide-angular>
+  <svg slot="start" [lucideIcon]="Crown" [size]="16"></svg>
   Upgrade to Pro
 </tulpar-button-ng>
 
 <!-- Tonal premium — softer CTA -->
 <tulpar-button-ng severity="premium" variant="tonal">
-  <lucide-angular slot="start" [img]="Sparkles" [size]="16"></lucide-angular>
+  <svg slot="start" [lucideIcon]="Sparkles" [size]="16"></svg>
   Get early access
 </tulpar-button-ng>
 
 <!-- Larger icon for premium large CTA -->
 <tulpar-button-ng severity="premium" size="lg">
-  <lucide-angular slot="start" [img]="Crown" [size]="24"></lucide-angular>
+  <svg slot="start" [lucideIcon]="Crown" [size]="24"></svg>
   Go Pro
 </tulpar-button-ng>
 
@@ -277,11 +277,11 @@ const ICON_PROP_CODE = `<!-- Pattern 2: [icon] accepts an Angular component clas
 @Component({
   selector: 'app-check-icon',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: \`<lucide-angular [img]="iconData" [size]="size()"></lucide-angular>\`,
+  imports: [LucideDynamicIcon],
+  template: \`<svg [lucideIcon]="iconData" [size]="size()"></svg>\`,
 })
 class AppCheckIcon {
-  readonly iconData = Check;
+  readonly iconData = LucideCheck;
   size = input(16);
 }
 
@@ -294,12 +294,12 @@ class AppCheckIcon {
 
 const TOOLTIP_CODE = `<!-- Tooltip on icon-only button (fills the a11y gap) -->
 <tulpar-button-ng tooltip="Open settings" ariaLabel="Open settings" [iconOnly]="true">
-  <lucide-angular slot="start" [img]="Settings" [size]="16"></lucide-angular>
+  <svg slot="start" [lucideIcon]="Settings" [size]="16"></svg>
 </tulpar-button-ng>
 
 <!-- Tooltip on a labelled button -->
 <tulpar-button-ng severity="danger" tooltip="Permanently delete this item">
-  <lucide-angular slot="start" [img]="Trash2" [size]="16"></lucide-angular>
+  <svg slot="start" [lucideIcon]="Trash2" [size]="16"></svg>
   Delete
 </tulpar-button-ng>
 
@@ -326,9 +326,9 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
 <!-- Multi-icon pattern (two icons) — slots are the only option;
      [icon] (Pattern 2) supports a single leading icon component only -->
 <tulpar-button-ng severity="secondary" variant="outlined">
-  <span slot="start"><lucide-angular [img]="ArrowLeft" [size]="16"></lucide-angular></span>
+  <span slot="start"><svg [lucideIcon]="ArrowLeft" [size]="16"></svg></span>
   Navigate
-  <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+  <span slot="end"><svg [lucideIcon]="ArrowRight" [size]="16"></svg></span>
 </tulpar-button-ng>`;
 
 @Component({
@@ -337,7 +337,7 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
   // AppCheckIcon is intentionally NOT in imports: its selector never appears in
   // this template — it is rendered dynamically via NgComponentOutlet inside the
   // button wrapper ([icon] class-reference binding).
-  imports: [TulparButtonComponent, LucideAngularModule],
+  imports: [TulparButtonComponent, LucideDynamicIcon],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -355,14 +355,14 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
     <section class="doc-section">
       <div class="hero">
         <tulpar-button-ng severity="primary" size="lg">
-          <lucide-angular slot="start" [img]="Check" [size]="18"></lucide-angular>
+          <svg slot="start" [lucideIcon]="Check" [size]="18"></svg>
           Save changes
         </tulpar-button-ng>
         <tulpar-button-ng severity="secondary" variant="outlined" size="lg"
           >Cancel</tulpar-button-ng
         >
         <tulpar-button-ng severity="premium" variant="tonal" size="lg">
-          <lucide-angular slot="start" [img]="Crown" [size]="18"></lucide-angular>
+          <svg slot="start" [lucideIcon]="Crown" [size]="18"></svg>
           Upgrade
         </tulpar-button-ng>
       </div>
@@ -455,7 +455,7 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
         <tulpar-button-ng shape="default">Default</tulpar-button-ng>
         <tulpar-button-ng shape="round">Round</tulpar-button-ng>
         <tulpar-button-ng shape="circle" ariaLabel="Add item" [iconOnly]="true">
-          <lucide-angular slot="start" [img]="Plus" [size]="16"></lucide-angular>
+          <svg slot="start" [lucideIcon]="Plus" [size]="16"></svg>
         </tulpar-button-ng>
       </div>
       <pre class="code"><code>{{ shapeCode }}</code></pre>
@@ -471,17 +471,17 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
       </p>
       <div class="preview">
         <tulpar-button-ng severity="success">
-          <lucide-angular slot="start" [img]="Check" [size]="16"></lucide-angular>
+          <svg slot="start" [lucideIcon]="Check" [size]="16"></svg>
           Save
         </tulpar-button-ng>
         <tulpar-button-ng severity="primary">
           Continue
-          <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+          <span slot="end"><svg [lucideIcon]="ArrowRight" [size]="16"></svg></span>
         </tulpar-button-ng>
         <tulpar-button-ng severity="primary">
-          <lucide-angular slot="start" [img]="Check" [size]="16"></lucide-angular>
+          <svg slot="start" [lucideIcon]="Check" [size]="16"></svg>
           Save and continue
-          <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+          <span slot="end"><svg [lucideIcon]="ArrowRight" [size]="16"></svg></span>
         </tulpar-button-ng>
       </div>
       <pre class="code"><code>{{ iconsCode }}</code></pre>
@@ -497,16 +497,16 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
       </p>
       <div class="preview preview--baseline">
         <tulpar-button-ng severity="danger" ariaLabel="Delete item" [iconOnly]="true">
-          <lucide-angular slot="start" [img]="Trash2" [size]="16"></lucide-angular>
+          <svg slot="start" [lucideIcon]="Trash2" [size]="16"></svg>
         </tulpar-button-ng>
         <tulpar-button-ng severity="secondary" ariaLabel="Settings" [iconOnly]="true">
-          <lucide-angular slot="start" [img]="Settings" [size]="16"></lucide-angular>
+          <svg slot="start" [lucideIcon]="Settings" [size]="16"></svg>
         </tulpar-button-ng>
         <tulpar-button-ng severity="success" shape="circle" ariaLabel="Save" [iconOnly]="true">
-          <lucide-angular slot="start" [img]="Save" [size]="16"></lucide-angular>
+          <svg slot="start" [lucideIcon]="Save" [size]="16"></svg>
         </tulpar-button-ng>
         <tulpar-button-ng severity="premium" [iconOnly]="true" shape="round" ariaLabel="Premium">
-          <lucide-angular slot="start" [img]="Crown" [size]="16"></lucide-angular>
+          <svg slot="start" [lucideIcon]="Crown" [size]="16"></svg>
         </tulpar-button-ng>
       </div>
       <pre class="code"><code>{{ iconOnlyCode }}</code></pre>
@@ -522,19 +522,19 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
       </p>
       <div class="preview preview--baseline">
         <tulpar-button-ng iconPosition="start" size="lg">
-          <lucide-angular slot="start" [img]="Check" [size]="18"></lucide-angular>
+          <svg slot="start" [lucideIcon]="Check" [size]="18"></svg>
           Confirm
         </tulpar-button-ng>
         <tulpar-button-ng iconPosition="end" size="lg">
           Confirm
-          <span slot="end"><lucide-angular [img]="Check" [size]="18"></lucide-angular></span>
+          <span slot="end"><svg [lucideIcon]="Check" [size]="18"></svg></span>
         </tulpar-button-ng>
         <tulpar-button-ng iconPosition="top" size="lg">
-          <lucide-angular slot="start" [img]="Check" [size]="18"></lucide-angular>
+          <svg slot="start" [lucideIcon]="Check" [size]="18"></svg>
           Confirm
         </tulpar-button-ng>
         <tulpar-button-ng iconPosition="bottom" size="lg">
-          <lucide-angular slot="start" [img]="Check" [size]="18"></lucide-angular>
+          <svg slot="start" [lucideIcon]="Check" [size]="18"></svg>
           Confirm
         </tulpar-button-ng>
       </div>
@@ -550,17 +550,17 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
       </p>
       <div class="preview">
         <tulpar-button-ng variant="outlined" [iconSeparator]="true">
-          <lucide-angular slot="start" [img]="Download" [size]="16"></lucide-angular>
+          <svg slot="start" [lucideIcon]="Download" [size]="16"></svg>
           Download
         </tulpar-button-ng>
         <tulpar-button-ng variant="tonal" [iconSeparator]="true">
-          <lucide-angular slot="start" [img]="ArrowLeft" [size]="16"></lucide-angular>
+          <svg slot="start" [lucideIcon]="ArrowLeft" [size]="16"></svg>
           Navigate
-          <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+          <span slot="end"><svg [lucideIcon]="ArrowRight" [size]="16"></svg></span>
         </tulpar-button-ng>
         <tulpar-button-ng variant="solid" [iconSeparator]="true">
           Next
-          <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+          <span slot="end"><svg [lucideIcon]="ArrowRight" [size]="16"></svg></span>
         </tulpar-button-ng>
       </div>
       <pre class="code"><code>{{ iconSeparatorCode }}</code></pre>
@@ -581,9 +581,9 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
         </div>
         <tulpar-button-ng [block]="true">Block Button</tulpar-button-ng>
         <tulpar-button-ng [block]="true" justify="between">
-          <lucide-angular slot="start" [img]="Mail" [size]="16"></lucide-angular>
+          <svg slot="start" [lucideIcon]="Mail" [size]="16"></svg>
           Send Email
-          <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+          <span slot="end"><svg [lucideIcon]="ArrowRight" [size]="16"></svg></span>
         </tulpar-button-ng>
       </div>
       <pre class="code"><code>{{ modifiersCode }}</code></pre>
@@ -604,7 +604,7 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
         <tulpar-button-ng [loading]="true" loadingLabel="Saving…">Save</tulpar-button-ng>
         <tulpar-button-ng [loading]="true" severity="success">
           <span slot="loading-icon" class="spin-icon">
-            <lucide-angular [img]="Loader2" [size]="16"></lucide-angular>
+            <svg [lucideIcon]="Loader2" [size]="16"></svg>
           </span>
           Upload
         </tulpar-button-ng>
@@ -643,7 +643,7 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
       </p>
       <div class="preview">
         <tulpar-button-ng href="https://example.com" target="_blank" rel="noopener noreferrer">
-          <span slot="start"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+          <span slot="start"><svg [lucideIcon]="ArrowRight" [size]="16"></svg></span>
           Visit Example
         </tulpar-button-ng>
         <tulpar-button-ng href="/dashboard" severity="secondary" variant="outlined">
@@ -665,7 +665,7 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
         <form class="demo-form" (submit)="onSubmit($event)">
           <input class="demo-input" name="email" type="email" placeholder="your@email.com" />
           <tulpar-button-ng type="submit" severity="primary">
-            <lucide-angular slot="start" [img]="Mail" [size]="16"></lucide-angular>
+            <svg slot="start" [lucideIcon]="Mail" [size]="16"></svg>
             Submit
           </tulpar-button-ng>
           <tulpar-button-ng type="reset" severity="secondary" variant="outlined">
@@ -720,15 +720,15 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
       </p>
       <div class="preview preview--baseline">
         <tulpar-button-ng severity="premium">
-          <lucide-angular slot="start" [img]="Crown" [size]="16"></lucide-angular>
+          <svg slot="start" [lucideIcon]="Crown" [size]="16"></svg>
           Upgrade to Pro
         </tulpar-button-ng>
         <tulpar-button-ng severity="premium" variant="tonal">
-          <lucide-angular slot="start" [img]="Sparkles" [size]="16"></lucide-angular>
+          <svg slot="start" [lucideIcon]="Sparkles" [size]="16"></svg>
           Get early access
         </tulpar-button-ng>
         <tulpar-button-ng severity="premium" size="lg">
-          <lucide-angular slot="start" [img]="Crown" [size]="24"></lucide-angular>
+          <svg slot="start" [lucideIcon]="Crown" [size]="24"></svg>
           Go Pro
         </tulpar-button-ng>
       </div>
@@ -762,10 +762,10 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
       </p>
       <div class="preview preview--baseline">
         <tulpar-button-ng tooltip="Open settings" ariaLabel="Open settings" [iconOnly]="true">
-          <lucide-angular slot="start" [img]="Settings" [size]="16"></lucide-angular>
+          <svg slot="start" [lucideIcon]="Settings" [size]="16"></svg>
         </tulpar-button-ng>
         <tulpar-button-ng severity="danger" tooltip="Permanently delete this item">
-          <lucide-angular slot="start" [img]="Trash2" [size]="16"></lucide-angular>
+          <svg slot="start" [lucideIcon]="Trash2" [size]="16"></svg>
           Delete
         </tulpar-button-ng>
         <tulpar-button-ng
@@ -807,9 +807,9 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
           Save with custom icon
         </tulpar-button-ng>
         <tulpar-button-ng severity="secondary" variant="outlined">
-          <span slot="start"><lucide-angular [img]="ArrowLeft" [size]="16"></lucide-angular></span>
+          <span slot="start"><svg [lucideIcon]="ArrowLeft" [size]="16"></svg></span>
           Navigate
-          <span slot="end"><lucide-angular [img]="ArrowRight" [size]="16"></lucide-angular></span>
+          <span slot="end"><svg [lucideIcon]="ArrowRight" [size]="16"></svg></span>
         </tulpar-button-ng>
       </div>
       <pre class="code"><code>{{ slotEscapeHatchCode }}</code></pre>
@@ -828,11 +828,11 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
           <div class="toolbar">
             <div class="toolbar-group">
               <tulpar-button-ng severity="primary" size="sm">
-                <lucide-angular slot="start" [img]="Save" [size]="15"></lucide-angular>
+                <svg slot="start" [lucideIcon]="Save" [size]="15"></svg>
                 Save
               </tulpar-button-ng>
               <tulpar-button-ng severity="secondary" variant="outlined" size="sm">
-                <lucide-angular slot="start" [img]="Download" [size]="15"></lucide-angular>
+                <svg slot="start" [lucideIcon]="Download" [size]="15"></svg>
                 Export
               </tulpar-button-ng>
             </div>
@@ -845,7 +845,7 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
                 tooltip="Settings"
                 [iconOnly]="true"
               >
-                <lucide-angular slot="start" [img]="Settings" [size]="16"></lucide-angular>
+                <svg slot="start" [lucideIcon]="Settings" [size]="16"></svg>
               </tulpar-button-ng>
               <tulpar-button-ng
                 severity="secondary"
@@ -855,7 +855,7 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
                 tooltip="Favorite"
                 [iconOnly]="true"
               >
-                <lucide-angular slot="start" [img]="Heart" [size]="16"></lucide-angular>
+                <svg slot="start" [lucideIcon]="Heart" [size]="16"></svg>
               </tulpar-button-ng>
               <tulpar-button-ng
                 severity="danger"
@@ -865,7 +865,7 @@ const SLOT_ESCAPE_HATCH_CODE = `<!-- Non-Lucide libraries (Heroicons, Tabler, cu
                 tooltip="Delete document"
                 [iconOnly]="true"
               >
-                <lucide-angular slot="start" [img]="Trash2" [size]="16"></lucide-angular>
+                <svg slot="start" [lucideIcon]="Trash2" [size]="16"></svg>
               </tulpar-button-ng>
             </div>
           </div>
@@ -1127,19 +1127,19 @@ export class ButtonDemoComponent {
   dataDisabledClicked = signal(false);
 
   // ─── Lucide icon references ────────────────────────────────────────────────
-  protected readonly Check = Check;
-  protected readonly ArrowRight = ArrowRight;
-  protected readonly ArrowLeft = ArrowLeft;
-  protected readonly Trash2 = Trash2;
-  protected readonly Crown = Crown;
-  protected readonly Mail = Mail;
-  protected readonly Settings = Settings;
-  protected readonly Save = Save;
-  protected readonly Download = Download;
-  protected readonly Heart = Heart;
-  protected readonly Plus = Plus;
-  protected readonly Sparkles = Sparkles;
-  protected readonly Loader2 = Loader2;
+  protected readonly Check = LucideCheck;
+  protected readonly ArrowRight = LucideArrowRight;
+  protected readonly ArrowLeft = LucideArrowLeft;
+  protected readonly Trash2 = LucideTrash2;
+  protected readonly Crown = LucideCrown;
+  protected readonly Mail = LucideMail;
+  protected readonly Settings = LucideSettings;
+  protected readonly Save = LucideSave;
+  protected readonly Download = LucideDownload;
+  protected readonly Heart = LucideHeart;
+  protected readonly Plus = LucidePlus;
+  protected readonly Sparkles = LucideSparkles;
+  protected readonly Loader2 = LucideLoader2;
 
   // ─── Pattern 2 demo: named icon component ─────────────────────────────────
   protected readonly AppCheckIcon = AppCheckIcon;

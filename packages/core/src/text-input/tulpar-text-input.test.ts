@@ -430,9 +430,13 @@ describe("<tulpar-text-input> mask integration", () => {
     const input = el.shadowRoot!.querySelector<HTMLInputElement>("input#control")!;
     const dt = new DataTransfer();
     dt.setData("text/plain", "abc12d3xyz");
-    input.dispatchEvent(
-      new ClipboardEvent("paste", { clipboardData: dt, bubbles: true, cancelable: true }),
-    );
+    // Firefox copies the `clipboardData` init into a protected DataTransfer whose
+    // getData() returns "" for script-created (untrusted) events; a real user paste
+    // is trusted and carries the data. Pin the event's clipboardData to `dt` so the
+    // synthetic paste carries its data in every engine.
+    const paste = new ClipboardEvent("paste", { bubbles: true, cancelable: true });
+    Object.defineProperty(paste, "clipboardData", { value: dt });
+    input.dispatchEvent(paste);
     await el.updateComplete;
     expect(el.rawValue).to.equal("123");
   });

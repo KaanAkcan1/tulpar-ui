@@ -6,14 +6,14 @@ import {
   TulparTooltipDirective,
 } from '@tulpar-ui/angular';
 import {
-  LucideAngularModule,
-  Settings2,
-  UserRound,
-  Filter,
-  Bell,
-  HelpCircle,
-  Loader2,
-} from 'lucide-angular';
+  LucideDynamicIcon,
+  LucideSettings2,
+  LucideUserRound,
+  LucideFilter,
+  LucideBell,
+  LucideHelpCircle,
+  LucideLoader2,
+} from '@lucide/angular';
 
 // ─── Code snippet strings ─────────────────────────────────────────────────────
 
@@ -109,7 +109,7 @@ const NESTED_CODE = `<!-- A tooltip can live inside an open popover. The overlay
     TulparPopoverDirective,
     TulparPopoverRefDirective,
     TulparTooltipDirective,
-    LucideAngularModule,
+    LucideDynamicIcon,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -147,7 +147,7 @@ const NESTED_CODE = `<!-- A tooltip can live inside an open popover. The overlay
           </div>
         </tulpar-popover>
         <tulpar-button-ng severity="primary" tulparPopoverRef="pop-hero">
-          <lucide-angular slot="start" [img]="UserRound" [size]="16" />
+          <svg slot="start" [lucideIcon]="UserRound" [size]="16" />
           Account
         </tulpar-button-ng>
       </div>
@@ -278,7 +278,7 @@ const NESTED_CODE = `<!-- A tooltip can live inside an open popover. The overlay
           </div>
         </tulpar-popover>
         <button class="plain-btn edge-trigger" tulparPopoverRef="pop-edge">
-          <lucide-angular [img]="Filter" [size]="15" />
+          <svg [lucideIcon]="Filter" [size]="15" />
           Near the edge
         </button>
       </div>
@@ -303,7 +303,7 @@ const NESTED_CODE = `<!-- A tooltip can live inside an open popover. The overlay
           </div>
         </tulpar-popover>
         <button class="plain-btn" tulparPopoverRef="pop-scroll">
-          <lucide-angular [img]="Bell" [size]="15" />
+          <svg [lucideIcon]="Bell" [size]="15" />
           Activity log
         </button>
       </div>
@@ -326,7 +326,7 @@ const NESTED_CODE = `<!-- A tooltip can live inside an open popover. The overlay
               <p class="pop-text">{{ loadedText }}</p>
             } @else {
               <span class="async-loading">
-                <lucide-angular class="spin-icon" [img]="Loader2" [size]="16" />
+                <svg class="spin-icon" [lucideIcon]="Loader2" [size]="16" />
                 Loading…
               </span>
             }
@@ -383,16 +383,16 @@ const NESTED_CODE = `<!-- A tooltip can live inside an open popover. The overlay
           <div class="pop-menu">
             <button class="pop-menu-item" tulparTooltip="Controls who can see this project">
               <span>Visibility</span>
-              <lucide-angular [img]="HelpCircle" [size]="14" />
+              <svg [lucideIcon]="HelpCircle" [size]="14" />
             </button>
             <button class="pop-menu-item" tulparTooltip="Email + in-app alerts for this project">
               <span>Notifications</span>
-              <lucide-angular [img]="HelpCircle" [size]="14" />
+              <svg [lucideIcon]="HelpCircle" [size]="14" />
             </button>
           </div>
         </tulpar-popover>
         <button class="plain-btn" tulparPopoverRef="pop-nested">
-          <lucide-angular [img]="Settings2" [size]="15" />
+          <svg [lucideIcon]="Settings2" [size]="15" />
           Settings
         </button>
       </div>
@@ -807,12 +807,12 @@ const NESTED_CODE = `<!-- A tooltip can live inside an open popover. The overlay
   ],
 })
 export class PopoverDemoComponent {
-  protected readonly Settings2 = Settings2;
-  protected readonly UserRound = UserRound;
-  protected readonly Filter = Filter;
-  protected readonly Bell = Bell;
-  protected readonly HelpCircle = HelpCircle;
-  protected readonly Loader2 = Loader2;
+  protected readonly Settings2 = LucideSettings2;
+  protected readonly UserRound = LucideUserRound;
+  protected readonly Filter = LucideFilter;
+  protected readonly Bell = LucideBell;
+  protected readonly HelpCircle = LucideHelpCircle;
+  protected readonly Loader2 = LucideLoader2;
 
   protected readonly activity = Array.from({ length: 12 }, (_, i) => i + 1);
 

@@ -7,7 +7,7 @@ interface PropRow {
 
 const MENU_SNIPPET = `import { TulparShell, TulparTopbar, TulparSidenav } from "@tulpar-ui/vue";
 import type { TulparNavItemVueData } from "@tulpar-ui/vue";
-import { SquareMousePointer, FormInput, TextCursorInput } from "lucide-vue-next";
+import { SquareMousePointer, FormInput, TextCursorInput } from "@lucide/vue";
 
 // Lucide functional components are passed straight through as the item icon.
 const menu: TulparNavItemVueData[] = [

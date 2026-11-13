@@ -122,13 +122,13 @@ const pgSnippet = computed(() => {
         <div class="pg-controls">
           <label class="pg-field">
             <span class="pg-field-label">Variant</span>
-            <select class="pg-select" v-model="pgVariant">
+            <select v-model="pgVariant" class="pg-select">
               <option v-for="v in variants" :key="v" :value="v">{{ v }}</option>
             </select>
           </label>
           <label class="pg-field">
             <span class="pg-field-label">Animation</span>
-            <select class="pg-select" v-model="pgAnim">
+            <select v-model="pgAnim" class="pg-select">
               <option v-for="a in animations" :key="a" :value="a">{{ a }}</option>
             </select>
           </label>
@@ -142,11 +142,11 @@ const pgSnippet = computed(() => {
           </label>
           <label class="pg-field">
             <span class="pg-field-label">Width</span>
-            <input class="pg-input" type="text" v-model="pgWidth" placeholder="100%" />
+            <input v-model="pgWidth" class="pg-input" type="text" placeholder="100%" />
           </label>
           <label v-if="pgVariant !== 'text'" class="pg-field">
             <span class="pg-field-label">Height</span>
-            <input class="pg-input" type="text" v-model="pgHeight" placeholder="72px" />
+            <input v-model="pgHeight" class="pg-input" type="text" placeholder="72px" />
           </label>
         </div>
         <div class="pg-stage">
@@ -345,7 +345,7 @@ const pgSnippet = computed(() => {
                 </div>
               </div>
             </div>
-            <button class="trigger-btn" @click="reload" :disabled="loading">
+            <button class="trigger-btn" :disabled="loading" @click="reload">
               {{ loading ? "Loading…" : "Reload (simulate fetch)" }}
             </button>
           </div>

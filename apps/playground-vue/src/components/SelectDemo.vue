@@ -347,55 +347,55 @@ const pgWarn = ref(false);
         <div class="pg-controls">
           <label class="pg-field">
             <span class="pg-field-label">Variant</span>
-            <select class="pg-select" v-model="pgVariant">
+            <select v-model="pgVariant" class="pg-select">
               <option v-for="v in variants" :key="v" :value="v">{{ v }}</option>
             </select>
           </label>
           <label class="pg-field">
             <span class="pg-field-label">Size</span>
-            <select class="pg-select" v-model="pgSize">
+            <select v-model="pgSize" class="pg-select">
               <option v-for="s in sizes" :key="s" :value="s">{{ s }}</option>
             </select>
           </label>
           <label class="pg-field">
             <span class="pg-field-label">Label position</span>
-            <select class="pg-select" v-model="pgLabelPos">
+            <select v-model="pgLabelPos" class="pg-select">
               <option v-for="p in labelPositions" :key="p" :value="p">{{ p }}</option>
             </select>
           </label>
           <label class="pg-field">
             <span class="pg-field-label">Placeholder</span>
-            <input class="pg-text" type="text" v-model="pgPlaceholder" />
+            <input v-model="pgPlaceholder" class="pg-text" type="text" />
           </label>
           <label class="pg-check">
-            <input type="checkbox" v-model="pgClearable" />
+            <input v-model="pgClearable" type="checkbox" />
             <span>clearable</span>
           </label>
           <label class="pg-check">
-            <input type="checkbox" v-model="pgLoading" />
+            <input v-model="pgLoading" type="checkbox" />
             <span>loading</span>
           </label>
           <label class="pg-check">
-            <input type="checkbox" v-model="pgDisabled" />
+            <input v-model="pgDisabled" type="checkbox" />
             <span>disabled</span>
           </label>
           <label class="pg-check">
-            <input type="checkbox" v-model="pgRequired" />
+            <input v-model="pgRequired" type="checkbox" />
             <span>required</span>
           </label>
           <label class="pg-check">
-            <input type="checkbox" v-model="pgInvalid" />
+            <input v-model="pgInvalid" type="checkbox" />
             <span>invalid</span>
           </label>
           <label class="pg-check">
-            <input type="checkbox" v-model="pgWarn" />
+            <input v-model="pgWarn" type="checkbox" />
             <span>warn</span>
           </label>
         </div>
         <div class="pg-stage">
           <TulparSelect
-            class="field"
             v-model:value="pgValue"
+            class="field"
             :variant="pgVariant"
             :size="pgSize"
             label="Framework"

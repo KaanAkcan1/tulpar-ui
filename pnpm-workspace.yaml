@@ -1,7 +1,58 @@
 packages:
   - "packages/*"
   - "apps/*"
+  - "tooling/*"
+
+# One version per tool: every shared dependency is declared here and referenced as `catalog:`.
+# catalogMode strict makes `pnpm add` reject a version that is not in the catalog.
+# Peer dependency ranges of published packages stay literal (they are a public contract).
+catalogMode: strict
+
+# Root engines.node (>=26) is enforced on install.
+engineStrict: true
+
+# Dependency lifecycle scripts are blocked by default (pnpm 11+). Allow only what needs them.
+# Denied packages ship prebuilt platform binaries as optionalDependencies; their install
+# script only verifies the binary or builds from source as a fallback.
+allowBuilds:
+  esbuild: true
+  workerd: true
+  "@parcel/watcher": false
+  lmdb: false
+  msgpackr-extract: false
+  rs-module-lexer: false
+  sharp: false
 
 catalog:
+  "@angular/build": ^22.2.6
+  "@angular/cli": ^22.2.6
+  "@angular/common": ^22.2.5
+  "@angular/compiler": ^22.2.5
+  "@angular/compiler-cli": ^22.2.5
+  "@angular/core": ^22.2.5
+  "@angular/forms": ^22.2.5
+  "@angular/platform-browser": ^22.2.5
+  "@angular/platform-browser-dynamic": ^22.2.5
+  "@angular/router": ^22.2.5
+  "@custom-elements-manifest/analyzer": ^0.11.0
+  "@open-wc/testing": ^5.0.0
+  "@types/mocha": ^10.0.6
+  "@vitejs/plugin-vue": ^6.0.10
+  "@web/dev-server-esbuild": ^2.0.1
+  "@web/test-runner": ^1.0.1
+  "@web/test-runner-commands": ^1.0.2
+  "@web/test-runner-playwright": ^1.0.1
+  esm-env: ^1.2.2
+  happy-dom: ^21.0.4
   lit: ^3.1.0
-  vite-plugin-dts: ^3.7.0
+  ng-packagr: ^22.2.6
+  picomatch: ^4.0.4
+  playwright: ^1.65.0
+  tsx: ^4.7.0
+  typescript: ~6.0.3
+  # Exact: @angular/build pins vite exactly (22.2.6 -> 8.3.5). Bump together with Angular.
+  vite: 8.3.5
+  vite-plugin-dts: ^5.1.2
+  vitest: ^5.1.0
+  vue: ^3.5.45
+  vue-tsc: ^3.3.14

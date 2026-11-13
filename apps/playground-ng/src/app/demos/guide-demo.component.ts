@@ -13,18 +13,18 @@ const MENU_SNIPPET = `import {
   TulparSidenavComponent,
   type TulparNavItemNgData,
 } from '@tulpar-ui/angular';
-import { SquareMousePointer, FormInput } from 'lucide-angular';
+import { LucideSquareMousePointer, LucideFormInput } from '@lucide/angular';
 
 // Lucide icons are plain data — wrap each in a tiny standalone component so the
 // sidenav can project it (the wrapper renders component icons via ngComponentOutlet).
 @Component({
   selector: 'app-icon-button',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: \`<lucide-icon [img]="icon" [size]="18" />\`,
+  imports: [LucideDynamicIcon],
+  template: \`<svg [lucideIcon]="icon" [size]="18" />\`,
 })
 class IconButton {
-  readonly icon = SquareMousePointer;
+  readonly icon = LucideSquareMousePointer;
 }
 
 readonly menu: TulparNavItemNgData[] = [

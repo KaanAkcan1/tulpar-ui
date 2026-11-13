@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/web-components";
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
 import { html } from "lit";
 import "@tulpar-ui/core/popover";
 import "@tulpar-ui/core/tooltip";
@@ -146,9 +146,10 @@ export const FormInPopover: Story = {
           style="min-width:280px; display:flex; flex-direction:column; gap:12px;"
           @submit=${(e: Event) => {
             e.preventDefault();
-            (e.currentTarget as HTMLElement).closest("tulpar-popover") &&
-              (document.getElementById("form-pop")?.dispatchEvent(new Event("noop")),
-              (document.querySelector("tulpar-popover[for='form-pop']") as OverlayEl | null)?.hide());
+            if ((e.currentTarget as HTMLElement).closest("tulpar-popover")) {
+              document.getElementById("form-pop")?.dispatchEvent(new Event("noop"));
+              (document.querySelector("tulpar-popover[for='form-pop']") as OverlayEl | null)?.hide();
+            }
           }}
         >
           <h3 style="margin:0; font-size:0.95rem;">Edit profile</h3>

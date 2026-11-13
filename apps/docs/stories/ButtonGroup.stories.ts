@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/web-components";
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
 import { html, nothing, svg } from "lit";
 import "@tulpar-ui/core/button";
 import "@tulpar-ui/core/button-group";

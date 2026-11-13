@@ -138,8 +138,7 @@ export class TulparOption extends LitElement {
   };
 
   // ── Check SVG ─────────────────────────────────────────────────────────────
-  // Inline SVG string (no unsafeSVG directive — avoids dual-instance crash,
-  // see CLAUDE.md Lit directive gotcha). A 16×16 checkmark.
+  // Inline SVG string (no unsafeSVG directive). Dual-instance cause fixed in phase 1.1 (INF-2). A 16×16 checkmark.
   private _checkSvg() {
     return html`<svg viewBox="0 0 16 16" fill="none" width="16" height="16" aria-hidden="true">
       <path

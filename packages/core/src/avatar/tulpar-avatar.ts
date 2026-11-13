@@ -189,6 +189,7 @@ export class TulparAvatar extends LitElement {
     if (!this._showInitials) return;
 
     const override = this.color?.trim();
+    /* eslint-disable no-restricted-syntax -- custom-colour escape hatch, moved to the brand layer in phase 1.2 */
     if (override) {
       if (BRAND_FAMILIES.has(override)) {
         this.style.setProperty(
@@ -211,6 +212,7 @@ export class TulparAvatar extends LitElement {
     const family = hashToFamily(this.name?.trim() ?? "");
     this.style.setProperty("--tulpar-avatar-bg-l", `var(--tulpar-primitive-color-${family}-600)`);
     this.style.setProperty("--tulpar-avatar-bg-d", `var(--tulpar-primitive-color-${family}-500)`);
+    /* eslint-enable no-restricted-syntax */
   }
 
   // ─── Accessibility ────────────────────────────────────────────────────────────

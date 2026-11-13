@@ -155,41 +155,41 @@ const pgSnippet = computed(() => {
               min="0"
               max="100"
               :value="pgValue"
-              @input="onPgInput"
               :disabled="pgIndeterminate"
               aria-label="Playground value"
+              @input="onPgInput"
             />
           </label>
           <label class="pg-field">
             <span class="pg-field-label">Variant</span>
-            <select class="pg-select" v-model="pgVariant">
+            <select v-model="pgVariant" class="pg-select">
               <option v-for="v in variants" :key="v" :value="v">{{ v }}</option>
             </select>
           </label>
           <label class="pg-field">
             <span class="pg-field-label">Tone</span>
-            <select class="pg-select" v-model="pgTone">
+            <select v-model="pgTone" class="pg-select">
               <option v-for="t in pgTones" :key="t" :value="t">{{ t }}</option>
             </select>
           </label>
           <label v-if="pgVariant === 'linear'" class="pg-field">
             <span class="pg-field-label">Thickness</span>
-            <select class="pg-select" v-model="pgThickness">
+            <select v-model="pgThickness" class="pg-select">
               <option v-for="t in thicknesses" :key="t" :value="t">{{ t }}</option>
             </select>
           </label>
           <label v-else class="pg-field">
             <span class="pg-field-label">Size</span>
-            <select class="pg-select" v-model="pgSize">
+            <select v-model="pgSize" class="pg-select">
               <option v-for="s in sizes" :key="s" :value="s">{{ s }}</option>
             </select>
           </label>
           <label class="pg-check">
-            <input type="checkbox" v-model="pgIndeterminate" />
+            <input v-model="pgIndeterminate" type="checkbox" />
             <span>indeterminate</span>
           </label>
           <label class="pg-check">
-            <input type="checkbox" v-model="pgValueLabel" />
+            <input v-model="pgValueLabel" type="checkbox" />
             <span>valueLabel</span>
           </label>
         </div>
@@ -237,8 +237,8 @@ const pgSnippet = computed(() => {
               min="0"
               max="100"
               :value="liveValue"
-              @input="onLiveInput"
               aria-label="Progress value"
+              @input="onLiveInput"
             />
             <span class="progress-value">{{ liveValue }}%</span>
           </div>

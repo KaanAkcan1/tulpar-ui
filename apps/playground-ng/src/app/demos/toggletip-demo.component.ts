@@ -5,13 +5,13 @@ import {
   TulparToggletipRefDirective,
 } from '@tulpar-ui/angular';
 import {
-  LucideAngularModule,
-  Info,
-  CircleCheck,
-  TriangleAlert,
-  CircleAlert,
-  HelpCircle,
-} from 'lucide-angular';
+  LucideDynamicIcon,
+  LucideInfo,
+  LucideCircleCheck,
+  LucideTriangleAlert,
+  LucideCircleAlert,
+  LucideHelpCircle,
+} from '@lucide/angular';
 
 // ─── Code snippet strings ─────────────────────────────────────────────────────
 
@@ -36,7 +36,7 @@ const TONE_CODE = `<!-- Five tones, each pairing a status icon (slot="icon") wit
 const TONE_ICON_CODE = `<!-- For a status ICON inside the bubble, declare the element and reference it.
      The icon lives in slot="icon"; the bubble inherits the tone. -->
 <tulpar-toggletip id="tt-success" tone="success">
-  <lucide-angular slot="icon" [img]="CircleCheck" [size]="16" />
+  <svg slot="icon" [lucideIcon]="CircleCheck" [size]="16" />
   Your changes were saved to the server.
 </tulpar-toggletip>
 <button tulparToggletipRef="tt-success">Save status</button>`;
@@ -71,7 +71,7 @@ const KEYBOARD_CODE = `<!-- The trigger is a real button, so Enter / Space toggl
     TulparButtonComponent,
     TulparToggletipDirective,
     TulparToggletipRefDirective,
-    LucideAngularModule,
+    LucideDynamicIcon,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -98,7 +98,7 @@ const KEYBOARD_CODE = `<!-- The trigger is a real button, so Enter / Space toggl
           tulparToggletip="Monthly Active Users — distinct users with at least one session in the last 28 days."
           toggletipTone="info"
         >
-          <lucide-angular slot="start" [img]="HelpCircle" [size]="16" />
+          <svg slot="start" [lucideIcon]="HelpCircle" [size]="16" />
           What is MAU?
         </tulpar-button-ng>
       </div>
@@ -180,25 +180,25 @@ const KEYBOARD_CODE = `<!-- The trigger is a real button, so Enter / Space toggl
       </p>
       <div class="preview preview--baseline">
         <tulpar-toggletip id="tt-info" tone="info">
-          <lucide-angular slot="icon" [img]="Info" [size]="16" />
+          <svg slot="icon" [lucideIcon]="Info" [size]="16" />
           Read replicas may lag a few seconds behind the primary.
         </tulpar-toggletip>
         <button class="plain-btn" tulparToggletipRef="tt-info">Replica lag</button>
 
         <tulpar-toggletip id="tt-success" tone="success">
-          <lucide-angular slot="icon" [img]="CircleCheck" [size]="16" />
+          <svg slot="icon" [lucideIcon]="CircleCheck" [size]="16" />
           Your changes were saved to the server.
         </tulpar-toggletip>
         <button class="plain-btn" tulparToggletipRef="tt-success">Save status</button>
 
         <tulpar-toggletip id="tt-warning" tone="warning">
-          <lucide-angular slot="icon" [img]="TriangleAlert" [size]="16" />
+          <svg slot="icon" [lucideIcon]="TriangleAlert" [size]="16" />
           Your trial ends in 3 days — add a card to avoid interruption.
         </tulpar-toggletip>
         <button class="plain-btn" tulparToggletipRef="tt-warning">Trial</button>
 
         <tulpar-toggletip id="tt-danger" tone="danger">
-          <lucide-angular slot="icon" [img]="CircleAlert" [size]="16" />
+          <svg slot="icon" [lucideIcon]="CircleAlert" [size]="16" />
           Two payments failed this billing cycle.
         </tulpar-toggletip>
         <button class="plain-btn" tulparToggletipRef="tt-danger">Billing</button>
@@ -455,11 +455,11 @@ const KEYBOARD_CODE = `<!-- The trigger is a real button, so Enter / Space toggl
   ],
 })
 export class ToggletipDemoComponent {
-  protected readonly Info = Info;
-  protected readonly CircleCheck = CircleCheck;
-  protected readonly TriangleAlert = TriangleAlert;
-  protected readonly CircleAlert = CircleAlert;
-  protected readonly HelpCircle = HelpCircle;
+  protected readonly Info = LucideInfo;
+  protected readonly CircleCheck = LucideCircleCheck;
+  protected readonly TriangleAlert = LucideTriangleAlert;
+  protected readonly CircleAlert = LucideCircleAlert;
+  protected readonly HelpCircle = LucideHelpCircle;
 
   protected readonly introCode = INTRO_CODE;
   protected readonly toneCode = TONE_CODE;

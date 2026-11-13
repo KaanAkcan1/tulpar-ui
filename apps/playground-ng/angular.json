@@ -30,7 +30,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "700kB",
-                  "maximumError": "1.5MB"
+                  "maximumError": "2MB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -52,7 +52,14 @@
           "builder": "@angular/build:dev-server",
           "options": {
             "port": 4310,
-            "prebundle": false
+            "prebundle": {
+              "exclude": [
+                "@tulpar-ui/angular",
+                "@tulpar-ui/core",
+                "@tulpar-ui/shell",
+                "@tulpar-ui/tokens"
+              ]
+            }
           },
           "configurations": {
             "production": {

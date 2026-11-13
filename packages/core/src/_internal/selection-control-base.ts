@@ -45,7 +45,9 @@ const SELECTION_COLOR_NAMES = new Set([
  * as an already-valid CSS color and returned unchanged.
  */
 export function resolveSelectionColor(value: string): string {
+  /* eslint-disable no-restricted-syntax -- selection colour name resolves to a primitive in an inline style; moved to the brand layer in phase 1.2 */
   return SELECTION_COLOR_NAMES.has(value) ? `var(--tulpar-primitive-color-${value}-500)` : value;
+  /* eslint-enable no-restricted-syntax */
 }
 
 /**

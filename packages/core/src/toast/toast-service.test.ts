@@ -6,7 +6,7 @@
  * All timers use short durations (50-150ms) so tests complete within the 5s WTR budget.
  */
 
-import { expect } from "@open-wc/testing";
+import { expect, waitUntil } from "@open-wc/testing";
 import { toast, message, __resetToastServiceForTest } from "./toast-service";
 import type { TulparToast } from "./tulpar-toast";
 import "./tulpar-toast"; // ensure element is registered
@@ -615,8 +615,13 @@ describe("message() — location + minimal variant", () => {
     message("Gone soon", { duration: 60 });
     await nextFrame();
     expect(toastsInLocation("top-center").length).to.equal(1);
-    await wait(120);
-    expect(toastsInLocation("top-center").length).to.equal(0);
+    // Poll instead of one fixed 120 ms sleep: under parallel load a WebKit page's
+    // timers fire late, so a fixed sleep raced the 60 ms duration + exit fallback.
+    await waitUntil(
+      () => toastsInLocation("top-center").length === 0,
+      "message was not auto-dismissed",
+      { timeout: 1000 },
+    );
   });
 });
 

@@ -84,7 +84,7 @@ const ICONS_SLOT_CODE = `<!-- slot="icon" — any content: Lucide, custom SVG, i
 <tulpar-toast-ng tone="info" heading="Lucide ile özel ikon">
   <span slot="icon">
     <!-- Lucide icon via angular component: -->
-    <lucide-angular [img]="ZapIcon" [size]="20"></lucide-angular>
+    <svg [lucideIcon]="ZapIcon" [size]="20"></svg>
   </span>
 </tulpar-toast-ng>
 

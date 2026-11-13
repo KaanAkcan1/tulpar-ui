@@ -64,6 +64,7 @@ export type ButtonColor =
  * override stop. Light/mid-luminance families keep dark ink even at .700.
  */
 const ON_COLOR_MAP: Record<ButtonColor, string> = {
+  /* eslint-disable no-restricted-syntax -- custom-colour escape hatch, moved to the brand layer in phase 1.2 */
   al: "var(--tulpar-primitive-color-colpan-50)",
   kizagan: "var(--tulpar-primitive-color-colpan-50)",
   umay: "var(--tulpar-primitive-color-colpan-50)",
@@ -86,6 +87,7 @@ const ON_COLOR_MAP: Record<ButtonColor, string> = {
   boz: "var(--tulpar-primitive-color-yagiz-900)",
   kara: "var(--tulpar-primitive-color-colpan-50)",
   yagiz: "var(--tulpar-primitive-color-colpan-50)",
+  /* eslint-enable no-restricted-syntax */
 };
 
 export class TulparButton extends LitElement {
@@ -246,6 +248,7 @@ export class TulparButton extends LitElement {
       return;
     }
     const c = this.color;
+    /* eslint-disable no-restricted-syntax -- custom-colour escape hatch, moved to the brand layer in phase 1.2 */
     this.style.setProperty("--_btn-color-default", `var(--tulpar-primitive-color-${c}-700)`);
     this.style.setProperty("--_btn-color-hover", `var(--tulpar-primitive-color-${c}-800)`);
     this.style.setProperty("--_btn-color-active", `var(--tulpar-primitive-color-${c}-900)`);
@@ -253,6 +256,7 @@ export class TulparButton extends LitElement {
     this.style.setProperty("--_btn-color-on", ON_COLOR_MAP[c]);
     this.style.setProperty("--_btn-color-subtle", `var(--tulpar-primitive-color-${c}-50)`);
     this.style.setProperty("--_btn-color-subtle-hover", `var(--tulpar-primitive-color-${c}-100)`);
+    /* eslint-enable no-restricted-syntax */
   }
 
   private _handleClick = (e: Event): void => {

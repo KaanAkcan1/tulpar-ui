@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/web-components";
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
 import { html } from "lit";
 
 const STOPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] as const;

@@ -519,7 +519,7 @@ describe("<tulpar-nav-item>", () => {
     // Wrap the nav-item inside a position="right" sidenav so that
     // closest("tulpar-sidenav")?.getAttribute("position") resolves to "right".
     // We use a slotted item in light DOM so closest() can traverse the DOM tree.
-    const sidenav = await fixture<HTMLElement>(html`
+    const sidenav = await fixture<TulparSidenav>(html`
       <tulpar-sidenav position="right" data-rail style="position:fixed;right:0;top:0;width:60px;">
         <tulpar-nav-item href="/x" label="Longish label" data-rail></tulpar-nav-item>
       </tulpar-sidenav>

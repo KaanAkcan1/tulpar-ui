@@ -160,11 +160,11 @@ watchEffect(() => {
     <p class="demo-desc">Quantity spinner with min/max/step and two-way binding.</p>
     <div class="preview preview--col">
       <TulparNumberInput
+        v-model="qty"
         label="Quantity"
         :min="1"
         :max="100"
         :step="1"
-        v-model="qty"
         helper-text="Min 1 · Max 100"
       />
       <p class="value-display">qty = {{ qty }}</p>
@@ -182,39 +182,39 @@ watchEffect(() => {
     <div class="preview preview--col">
       <div class="preview-row">
         <TulparNumberInput
+          v-model="tryAmount"
           label="TRY (tr-TR)"
           format-style="currency"
           currency="TRY"
           locale="tr-TR"
           :min-fraction-digits="2"
           :max-fraction-digits="2"
-          v-model="tryAmount"
         />
         <TulparNumberInput
+          v-model="usdAmount"
           label="USD (en-US)"
           format-style="currency"
           currency="USD"
           locale="en-US"
           :min-fraction-digits="2"
           :max-fraction-digits="2"
-          v-model="usdAmount"
         />
         <TulparNumberInput
+          v-model="eurAmount"
           label="EUR (de-DE)"
           format-style="currency"
           currency="EUR"
           locale="de-DE"
           :min-fraction-digits="2"
           :max-fraction-digits="2"
-          v-model="eurAmount"
         />
       </div>
       <div class="preview-row">
         <TulparNumberInput
+          v-model="percentVal"
           label="Percent (Intl ×100)"
           format-style="percent"
           locale="tr-TR"
-          v-model="percentVal"
           helper-text="value=0.125 → displays %12,5"
         />
         <TulparNumberInput label="Grouping ON (default)" :value="1234567" :use-grouping="true" />
@@ -246,8 +246,8 @@ watchEffect(() => {
       />
 
       <TulparNumberInput
-        label="allow-empty=false"
         v-model="noEmptyVal"
+        label="allow-empty=false"
         helper-text="Clear and blur — reverts to last value"
         :allow-empty.prop="false"
       />
@@ -291,11 +291,11 @@ watchEffect(() => {
     </ul>
     <div class="preview preview--col">
       <TulparNumberInput
+        v-model="kbVal"
         label="Keyboard demo (step=5, min=0, max=1000)"
         :min="0"
         :max="1000"
         :step="5"
-        v-model="kbVal"
         helper-text="↑/↓ ±5 · Shift ×10 · Ctrl ×100 · Home/End"
       />
       <p class="value-display">value = {{ kbVal }}</p>
@@ -328,9 +328,9 @@ watchEffect(() => {
     <div class="preview preview--col">
       <TulparNumberInput
         ref="advancedRef"
+        v-model="advancedVal"
         label="Compact TRY accounting"
         locale="tr-TR"
-        v-model="advancedVal"
         helper-text="-1234567.89 renders as compact accounting notation"
       />
       <p class="value-display">raw value = {{ advancedVal }}</p>
@@ -352,11 +352,11 @@ watchEffect(() => {
           <span class="order-unit">{{ orderUnitDisplay }} / seat</span>
         </div>
         <TulparNumberInput
+          v-model="orderQty"
           label="Seats"
           :min="1"
           :max="50"
           :step="1"
-          v-model="orderQty"
           :no-message-space="true"
         />
       </div>

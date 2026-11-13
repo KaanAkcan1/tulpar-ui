@@ -885,13 +885,29 @@ function swipe(
     pointerType: "touch",
   });
 
-  // Set a timestamp gap to control velocity calculation.
-  // We cannot set `timeStamp` directly on PointerEvent constructors (read-only),
-  // so we rely on the implementation using Date.now() or event.timeStamp and
-  // we just confirm the threshold-based path works (threshold is more reliable).
-  target.dispatchEvent(down);
-  target.dispatchEvent(move);
-  target.dispatchEvent(up);
+  // `timeStamp` is read-only on PointerEvent, and the component measures the
+  // gesture with Date.now(). Synchronous dispatch usually gives elapsed = 0
+  // (velocity 0), but when a millisecond tick falls between down and up the
+  // 40 px move reads as 40 px/ms and counts as a fast flick — the source of the
+  // "small drag" flake under load. For `velocityFast: false`, pin the clock so
+  // the gesture takes 1000 ms (a slow drag) in every run.
+  if (opts.velocityFast !== false) {
+    target.dispatchEvent(down);
+    target.dispatchEvent(move);
+    target.dispatchEvent(up);
+    return;
+  }
+  const realNow = Date.now;
+  let clock = realNow.call(Date);
+  Date.now = () => clock;
+  try {
+    target.dispatchEvent(down);
+    target.dispatchEvent(move);
+    clock += 1000;
+    target.dispatchEvent(up);
+  } finally {
+    Date.now = realNow;
+  }
 }
 
 describe("<tulpar-toast> swipe-to-dismiss", () => {
@@ -1267,7 +1283,7 @@ describe("<tulpar-toast> Esc key dismisses focused toast (Task 4.3)", () => {
     const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
     await el.updateComplete;
 
-    let detail: Record<string, unknown> | null = null;
+    let detail = null as Record<string, unknown> | null;
     el.addEventListener("tulpar-dismiss", (e) => (detail = (e as CustomEvent).detail));
 
     // Focus the element, then fire Esc.
@@ -1289,7 +1305,7 @@ describe("<tulpar-toast> Esc key dismisses focused toast (Task 4.3)", () => {
     const el = await fixture<TulparToast>(html`<tulpar-toast heading="T"></tulpar-toast>`);
     await el.updateComplete;
 
-    let detail: Record<string, unknown> | null = null;
+    let detail = null as Record<string, unknown> | null;
     el.addEventListener("tulpar-dismiss", (e) => (detail = (e as CustomEvent).detail));
 
     // Simulate Esc from the close button inside shadow DOM (composed: true → bubbles out).
@@ -1381,9 +1397,32 @@ describe("<tulpar-toast> enter animation attribute lifecycle", () => {
     // that ran before the first paint, cancelling the keyframe immediately.
     // The FIX: [data-enter] is removed only on animationend or the 300ms fallback.
     // This test ensures the attribute is STILL present after one rAF fires.
+    //
+    // The two legitimate removal paths are wall-clock based, so the test holds
+    // both still and checks only the rAF claim: on a loaded CI runner two frames
+    // can take longer than the 300ms fallback (seen in headless WebKit).
+    // - the fallback timer, registered synchronously in connectedCallback, is
+    //   captured and never fired;
+    // - a 10s enter duration keeps `animationend` out of the window.
     const el = document.createElement("tulpar-toast") as TulparToast;
     el.setAttribute("heading", "T");
-    document.body.appendChild(el);
+    el.style.setProperty("--tulpar-feedback-motion-duration-enter", "10s");
+
+    const realSetTimeout = window.setTimeout;
+    const heldTimers: unknown[] = [];
+    window.setTimeout = ((handler: TimerHandler) => {
+      heldTimers.push(handler);
+      return 0;
+    }) as typeof window.setTimeout;
+    try {
+      document.body.appendChild(el);
+    } finally {
+      window.setTimeout = realSetTimeout;
+    }
+    expect(
+      heldTimers.length,
+      "the 300ms fallback timer is registered on connect",
+    ).to.be.greaterThan(0);
 
     // Yield two animation frames — more than the old code's one-rAF removal.
     await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));

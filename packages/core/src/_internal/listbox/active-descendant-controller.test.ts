@@ -29,7 +29,7 @@ function makeHarness(specs: ReadonlyArray<{ value: string; label: string; disabl
   host.appendChild(listbox);
   document.body.appendChild(host);
 
-  const options: HTMLElement[] = specs.map((s, i) => {
+  const options: HTMLElement[] = specs.map((_s, i) => {
     const el = document.createElement("tulpar-option");
     el.id = `opt-${i}`;
     listbox.appendChild(el);

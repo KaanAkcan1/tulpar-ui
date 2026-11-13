@@ -87,7 +87,7 @@ function onInput(e: Event) {
     @input="onInput"
     @change="(e: Event) => emit('change', e)"
   >
-    <span style="display: contents" slot="label"><slot name="label" /></span>
+    <span slot="label" style="display: contents"><slot name="label" /></span>
     <!-- Default passthrough: lets consumers use <span slot="x"> (Vue 3 routes a
          literal slot attr here to the core). -->
     <slot />

@@ -13,17 +13,16 @@ import {
   type TooltipPlacement,
 } from '@tulpar-ui/angular';
 import {
-  LucideAngularModule,
-  Settings,
-  Trash2,
-  Info,
-  Bell,
-  Bold,
-  Italic,
-  Underline,
-  Link2,
-  Copy,
-} from 'lucide-angular';
+  LucideDynamicIcon,
+  LucideSettings,
+  LucideTrash2,
+  LucideInfo,
+  LucideBell,
+  LucideBold,
+  LucideItalic,
+  LucideUnderline,
+  LucideLink2,
+} from '@lucide/angular';
 
 // ─── Code snippet strings (outside @Component to avoid backtick nesting) ──────
 
@@ -33,12 +32,12 @@ const INLINE_CODE = `<!-- The directive attaches a <tulpar-tooltip> next to the 
 
 const ANY_ELEMENT_CODE = `<!-- On an icon-only button (fills the a11y gap) -->
 <tulpar-button-ng tulparTooltip="Open settings" ariaLabel="Open settings" [iconOnly]="true">
-  <lucide-angular slot="start" [img]="Settings" [size]="16" />
+  <svg slot="start" [lucideIcon]="Settings" [size]="16" />
 </tulpar-button-ng>
 
 <!-- On a NON-button element — the directive attaches to anything -->
 <span class="info-dot" tabindex="0" tulparTooltip="Pulled from the billing API">
-  <lucide-angular [img]="Info" [size]="18" />
+  <svg [lucideIcon]="Info" [size]="18" />
 </span>
 
 <!-- On a plain text span -->
@@ -129,7 +128,7 @@ const FOR_ID_CODE = `<!-- The plain core form — no Angular directive at all. D
     TulparButtonComponent,
     TulparTooltipDirective,
     TulparTooltipRefDirective,
-    LucideAngularModule,
+    LucideDynamicIcon,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -160,7 +159,7 @@ const FOR_ID_CODE = `<!-- The plain core form — no Angular directive at all. D
           tulparTooltip="3 unread notifications"
           [iconOnly]="true"
         >
-          <lucide-angular slot="start" [img]="Bell" [size]="16" />
+          <svg slot="start" [lucideIcon]="Bell" [size]="16" />
         </tulpar-button-ng>
         <span
           class="hero-chip"
@@ -197,7 +196,7 @@ const FOR_ID_CODE = `<!-- The plain core form — no Angular directive at all. D
       </p>
       <div class="preview preview--baseline">
         <tulpar-button-ng tulparTooltip="Open settings" ariaLabel="Open settings" [iconOnly]="true">
-          <lucide-angular slot="start" [img]="Settings" [size]="16" />
+          <svg slot="start" [lucideIcon]="Settings" [size]="16" />
         </tulpar-button-ng>
         <span
           class="info-dot"
@@ -206,7 +205,7 @@ const FOR_ID_CODE = `<!-- The plain core form — no Angular directive at all. D
           aria-label="Source info"
           tulparTooltip="Pulled from the billing API"
         >
-          <lucide-angular [img]="Info" [size]="18" />
+          <svg [lucideIcon]="Info" [size]="18" />
         </span>
         <span class="ref-text" tabindex="0" tulparTooltip="The unique customer reference"
           >CUST-4815</span
@@ -273,16 +272,16 @@ const FOR_ID_CODE = `<!-- The plain core form — no Angular directive at all. D
           <p class="preview-label">Grouped toolbar (skip-delay between siblings)</p>
           <div class="fmt-toolbar">
             <button class="fmt-btn" aria-label="Bold" tulparTooltip="Bold (Ctrl+B)">
-              <lucide-angular [img]="Bold" [size]="16" />
+              <svg [lucideIcon]="Bold" [size]="16" />
             </button>
             <button class="fmt-btn" aria-label="Italic" tulparTooltip="Italic (Ctrl+I)">
-              <lucide-angular [img]="Italic" [size]="16" />
+              <svg [lucideIcon]="Italic" [size]="16" />
             </button>
             <button class="fmt-btn" aria-label="Underline" tulparTooltip="Underline (Ctrl+U)">
-              <lucide-angular [img]="Underline" [size]="16" />
+              <svg [lucideIcon]="Underline" [size]="16" />
             </button>
             <button class="fmt-btn" aria-label="Insert link" tulparTooltip="Insert link (Ctrl+K)">
-              <lucide-angular [img]="Link2" [size]="16" />
+              <svg [lucideIcon]="Link2" [size]="16" />
             </button>
           </div>
         </div>
@@ -716,15 +715,14 @@ const FOR_ID_CODE = `<!-- The plain core form — no Angular directive at all. D
 })
 export class TooltipDemoComponent {
   // Lucide icon references
-  protected readonly Settings = Settings;
-  protected readonly Trash2 = Trash2;
-  protected readonly Info = Info;
-  protected readonly Bell = Bell;
-  protected readonly Bold = Bold;
-  protected readonly Italic = Italic;
-  protected readonly Underline = Underline;
-  protected readonly Link2 = Link2;
-  protected readonly Copy = Copy;
+  protected readonly Settings = LucideSettings;
+  protected readonly Trash2 = LucideTrash2;
+  protected readonly Info = LucideInfo;
+  protected readonly Bell = LucideBell;
+  protected readonly Bold = LucideBold;
+  protected readonly Italic = LucideItalic;
+  protected readonly Underline = LucideUnderline;
+  protected readonly Link2 = LucideLink2;
 
   // The 12 placements (auto rendered separately).
   protected readonly placements: TooltipPlacement[] = [

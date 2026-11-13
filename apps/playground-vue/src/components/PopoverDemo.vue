@@ -10,7 +10,7 @@ import { ref } from "vue";
 import { TulparButton } from "@tulpar-ui/vue";
 import { vTulparPopover, vTulparTooltip } from "@tulpar-ui/vue";
 import "@tulpar-ui/core/popover";
-import { Settings2, UserRound, Filter, Bell, HelpCircle, Loader2 } from "lucide-vue-next";
+import { Settings2, UserRound, Filter, Bell, HelpCircle, Loader2 } from "@lucide/vue";
 
 const activity = Array.from({ length: 12 }, (_, i) => i + 1);
 
@@ -165,7 +165,7 @@ const nestedCode = `<!-- A tooltip can live inside an open popover. The overlay 
             </div>
           </div>
         </tulpar-popover>
-        <TulparButton severity="primary" :icon="UserRound" v-tulpar-popover:ref="'pop-hero'">
+        <TulparButton v-tulpar-popover:ref="'pop-hero'" severity="primary" :icon="UserRound">
           Account
         </TulparButton>
       </div>
@@ -195,7 +195,7 @@ const nestedCode = `<!-- A tooltip can live inside an open popover. The overlay 
             </div>
           </div>
         </tulpar-popover>
-        <button class="plain-btn" v-tulpar-popover:ref="'pop-profile'">Open profile</button>
+        <button v-tulpar-popover:ref="'pop-profile'" class="plain-btn">Open profile</button>
       </div>
       <pre class="code"><code>{{ refCode }}</code></pre>
     </section>
@@ -209,8 +209,8 @@ const nestedCode = `<!-- A tooltip can live inside an open popover. The overlay 
       </p>
       <div class="preview">
         <button
-          class="plain-btn"
           v-tulpar-popover="'A quick note rendered on the popover surface.'"
+          class="plain-btn"
         >
           Quick note
         </button>
@@ -239,7 +239,7 @@ const nestedCode = `<!-- A tooltip can live inside an open popover. The overlay 
             </div>
           </form>
         </tulpar-popover>
-        <button class="plain-btn" v-tulpar-popover:ref="'pop-form'">Rename…</button>
+        <button v-tulpar-popover:ref="'pop-form'" class="plain-btn">Rename…</button>
         <span v-if="renamed" class="state-badge state-badge--on">Saved: {{ renamed }}</span>
       </div>
       <pre class="code"><code>{{ formCode }}</code></pre>
@@ -256,12 +256,12 @@ const nestedCode = `<!-- A tooltip can live inside an open popover. The overlay 
         <tulpar-popover id="pop-info" tone="info">
           <p class="pop-text">Read replicas may lag a few seconds behind the primary database.</p>
         </tulpar-popover>
-        <button class="plain-btn" v-tulpar-popover:ref="'pop-info'">Info</button>
+        <button v-tulpar-popover:ref="'pop-info'" class="plain-btn">Info</button>
 
         <tulpar-popover id="pop-warning" tone="warning">
           <p class="pop-text">Your trial ends in 3 days. Add a payment method to keep your data.</p>
         </tulpar-popover>
-        <button class="plain-btn" v-tulpar-popover:ref="'pop-warning'">Warning</button>
+        <button v-tulpar-popover:ref="'pop-warning'" class="plain-btn">Warning</button>
 
         <tulpar-popover id="pop-danger" tone="danger" label="Delete project">
           <p class="pop-text">
@@ -272,7 +272,7 @@ const nestedCode = `<!-- A tooltip can live inside an open popover. The overlay 
             <button class="plain-btn plain-btn--danger" type="button">Delete</button>
           </div>
         </tulpar-popover>
-        <button class="plain-btn" v-tulpar-popover:ref="'pop-danger'">Delete project</button>
+        <button v-tulpar-popover:ref="'pop-danger'" class="plain-btn">Delete project</button>
       </div>
       <pre class="code"><code>{{ toneCode }}</code></pre>
     </section>
@@ -296,7 +296,7 @@ const nestedCode = `<!-- A tooltip can live inside an open popover. The overlay 
             <button class="pop-menu-item">A–Z</button>
           </div>
         </tulpar-popover>
-        <button class="plain-btn edge-trigger" v-tulpar-popover:ref="'pop-edge'">
+        <button v-tulpar-popover:ref="'pop-edge'" class="plain-btn edge-trigger">
           <Filter :size="15" />
           Near the edge
         </button>
@@ -319,7 +319,7 @@ const nestedCode = `<!-- A tooltip can live inside an open popover. The overlay 
             </div>
           </div>
         </tulpar-popover>
-        <button class="plain-btn" v-tulpar-popover:ref="'pop-scroll'">
+        <button v-tulpar-popover:ref="'pop-scroll'" class="plain-btn">
           <Bell :size="15" />
           Activity log
         </button>
@@ -347,8 +347,8 @@ const nestedCode = `<!-- A tooltip can live inside an open popover. The overlay 
           </div>
         </tulpar-popover>
         <button
-          class="plain-btn"
           v-tulpar-popover="{ ref: 'pop-async', onOpenChange: onAsyncOpen }"
+          class="plain-btn"
         >
           Load details
         </button>
@@ -374,8 +374,8 @@ const nestedCode = `<!-- A tooltip can live inside an open popover. The overlay 
           </p>
         </tulpar-popover>
         <button
-          class="plain-btn"
           v-tulpar-popover="{ ref: 'pop-ext', open: ext, onOpenChange: (o) => (ext = o) }"
+          class="plain-btn"
         >
           Anchor
         </button>
@@ -397,20 +397,20 @@ const nestedCode = `<!-- A tooltip can live inside an open popover. The overlay 
       <div class="preview">
         <tulpar-popover id="pop-nested" label="Project settings">
           <div class="pop-menu">
-            <button class="pop-menu-item" v-tulpar-tooltip="'Controls who can see this project'">
+            <button v-tulpar-tooltip="'Controls who can see this project'" class="pop-menu-item">
               <span>Visibility</span>
               <HelpCircle :size="14" />
             </button>
             <button
-              class="pop-menu-item"
               v-tulpar-tooltip="'Email + in-app alerts for this project'"
+              class="pop-menu-item"
             >
               <span>Notifications</span>
               <HelpCircle :size="14" />
             </button>
           </div>
         </tulpar-popover>
-        <button class="plain-btn" v-tulpar-popover:ref="'pop-nested'">
+        <button v-tulpar-popover:ref="'pop-nested'" class="plain-btn">
           <Settings2 :size="15" />
           Settings
         </button>

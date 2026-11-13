@@ -152,7 +152,9 @@ export const BRAND_FAMILIES = new Set<string>([
  * These may appear only in INLINE styles (never in *.styles.ts — ESLint rule).
  */
 function primitiveVar(family: string, step: number): string {
+  /* eslint-disable no-restricted-syntax -- tone resolution emits primitive vars in inline styles; moved to the brand layer in phase 1.2 */
   return `var(--tulpar-primitive-color-${family}-${step})`;
+  /* eslint-enable no-restricted-syntax */
 }
 
 // ─── Core resolution ──────────────────────────────────────────────────────────

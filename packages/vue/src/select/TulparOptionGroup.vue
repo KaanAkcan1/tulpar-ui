@@ -20,7 +20,7 @@ const { label } = defineProps<Props>();
 <template>
   <tulpar-option-group :label="label ?? undefined">
     <!-- Named slot carrier for the group header label. -->
-    <span v-if="$slots.label" style="display: contents" slot="label"><slot name="label" /></span>
+    <span v-if="$slots.label" slot="label" style="display: contents"><slot name="label" /></span>
     <!-- Default slot: projects <tulpar-option> children. -->
     <slot />
   </tulpar-option-group>

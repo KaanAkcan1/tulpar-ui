@@ -1,6 +1,5 @@
 import { expect, fixture, html } from "@open-wc/testing";
 import { LitElement } from "lit";
-import type { TemplateResult } from "lit";
 import { renderMessageRow, type SelectionMessageHost } from "./selection-message-row";
 
 /**
@@ -17,7 +16,7 @@ class MsgRowHost extends LitElement implements SelectionMessageHost {
   noMessageSpace = false;
   _msgId = "msg-test-1";
 
-  override render(): TemplateResult {
+  override render() {
     return renderMessageRow(this);
   }
 }

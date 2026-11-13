@@ -4,29 +4,17 @@
   "description": "Angular wrappers for Tulpar UI Web Components",
   "license": "MIT",
   "type": "module",
-  "main": "./dist/fesm2022/tulpar-ui-angular.mjs",
-  "module": "./dist/fesm2022/tulpar-ui-angular.mjs",
-  "types": "./dist/types/tulpar-ui-angular.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/types/tulpar-ui-angular.d.ts",
-      "import": "./dist/fesm2022/tulpar-ui-angular.mjs"
-    }
-  },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ],
   "scripts": {
-    "build": "ng-packagr -p ng-package.json -c tsconfig.json",
+    "build": "ng-packagr -p ng-package.json -c tsconfig.lib.prod.json",
     "dev": "ng-packagr -p ng-package.json -c tsconfig.json --watch",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:ci": "vitest run",
+    "typecheck": "tsc -p tsconfig.lib.prod.json --noEmit"
   },
   "dependencies": {
-    "@tulpar-ui/core": "workspace:*",
-    "@tulpar-ui/shell": "workspace:*",
-    "@tulpar-ui/tokens": "workspace:*"
+    "@tulpar-ui/core": "workspace:^",
+    "@tulpar-ui/shell": "workspace:^",
+    "@tulpar-ui/tokens": "workspace:^"
   },
   "peerDependencies": {
     "@angular/common": "^22.0.0",
@@ -39,24 +27,23 @@
     }
   },
   "devDependencies": {
-    "@analogjs/vite-plugin-angular": "^2.6.0",
-    "@analogjs/vitest-angular": "^2.6.0",
-    "@angular/common": "^22.0.0",
-    "@angular/compiler": "^22.0.0",
-    "@angular/compiler-cli": "^22.0.0",
-    "@angular/core": "^22.0.0",
-    "@angular/platform-browser": "^22.0.0",
-    "@angular/platform-browser-dynamic": "^22.0.0",
-    "@angular/router": "^22.0.0",
-    "@tulpar-ui/core": "workspace:*",
-    "@tulpar-ui/shell": "workspace:*",
-    "@tulpar-ui/tokens": "workspace:*",
-    "happy-dom": "^20.0.0",
-    "ng-packagr": "^22.0.0",
-    "vite": "^8.0.0",
-    "vitest": "^3.0.0"
+    "@analogjs/vite-plugin-angular": "^2.9.6",
+    "@analogjs/vitest-angular": "^2.9.6",
+    "@angular/common": "catalog:",
+    "@angular/compiler": "catalog:",
+    "@angular/compiler-cli": "catalog:",
+    "@angular/core": "catalog:",
+    "@angular/platform-browser": "catalog:",
+    "@angular/platform-browser-dynamic": "catalog:",
+    "@angular/router": "catalog:",
+    "happy-dom": "catalog:",
+    "ng-packagr": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "directory": "dist",
+    "linkDirectory": true
   }
 }

@@ -6,28 +6,36 @@ import {
   signal,
 } from '@angular/core';
 import { TulparSwitchComponent, TulparButtonComponent } from '@tulpar-ui/angular';
-import { LucideAngularModule, Sun, Moon, Wifi, Bell, Shield, Eye } from 'lucide-angular';
+import {
+  LucideDynamicIcon,
+  LucideSun,
+  LucideMoon,
+  LucideWifi,
+  LucideBell,
+  LucideShield,
+  LucideEye,
+} from '@lucide/angular';
 
 // ─── Icon components for [iconOn] / [iconOff] (named-component prop form) ──
 @Component({
   selector: 'app-sun-icon',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-angular [img]="iconData" [size]="size()"></lucide-angular>`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="iconData" [size]="size()"></svg>`,
 })
 class AppSunIcon {
-  readonly iconData = Sun;
+  readonly iconData = LucideSun;
   size = input(12);
 }
 
 @Component({
   selector: 'app-moon-icon',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: `<lucide-angular [img]="iconData" [size]="size()"></lucide-angular>`,
+  imports: [LucideDynamicIcon],
+  template: `<svg [lucideIcon]="iconData" [size]="size()"></svg>`,
 })
 class AppMoonIcon {
-  readonly iconData = Moon;
+  readonly iconData = LucideMoon;
   size = input(12);
 }
 
@@ -117,10 +125,10 @@ const ICON_PROP_CODE = `<!-- Custom icons via PROP — pass a component class to
 @Component({
   selector: 'app-sun-icon',
   standalone: true,
-  imports: [LucideAngularModule],
-  template: \`<lucide-angular [img]="iconData" [size]="size()"></lucide-angular>\`,
+  imports: [LucideDynamicIcon],
+  template: \`<svg [lucideIcon]="iconData" [size]="size()"></svg>\`,
 })
-class AppSunIcon { readonly iconData = Sun; size = input(12); }
+class AppSunIcon { readonly iconData = LucideSun; size = input(12); }
 
 <tulpar-switch-ng
   [checked]="true"
@@ -134,10 +142,10 @@ class AppSunIcon { readonly iconData = Sun; size = input(12); }
 const ICON_SLOT_CODE = `<!-- Custom icons via SLOT — any SVG works -->
 <tulpar-switch-ng [checked]="true" [showIcon]="true" size="lg" label="Day / Night (slot)">
   <span slot="icon-on">
-    <lucide-angular [img]="Sun" [size]="12"></lucide-angular>
+    <svg [lucideIcon]="Sun" [size]="12"></svg>
   </span>
   <span slot="icon-off">
-    <lucide-angular [img]="Moon" [size]="12"></lucide-angular>
+    <svg [lucideIcon]="Moon" [size]="12"></svg>
   </span>
 </tulpar-switch-ng>`;
 
@@ -160,7 +168,7 @@ const COLOR_CODE = `<!-- Single color override (on-state) — bind it -->
   // AppSunIcon / AppMoonIcon are rendered dynamically via NgComponentOutlet
   // inside the switch wrapper ([iconOn] / [iconOff] class-reference bindings),
   // so their selectors never appear in this template.
-  imports: [TulparSwitchComponent, TulparButtonComponent, LucideAngularModule],
+  imports: [TulparSwitchComponent, TulparButtonComponent, LucideDynamicIcon],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -371,12 +379,12 @@ const COLOR_CODE = `<!-- Single color override (on-state) — bind it -->
           size="lg"
           label="Day / Night (slot, on)"
         >
-          <span slot="icon-on"><lucide-angular [img]="Sun" [size]="12"></lucide-angular></span>
-          <span slot="icon-off"><lucide-angular [img]="Moon" [size]="12"></lucide-angular></span>
+          <span slot="icon-on"><svg [lucideIcon]="Sun" [size]="12"></svg></span>
+          <span slot="icon-off"><svg [lucideIcon]="Moon" [size]="12"></svg></span>
         </tulpar-switch-ng>
         <tulpar-switch-ng [showIcon]="true" size="lg" label="Day / Night (slot, off)">
-          <span slot="icon-on"><lucide-angular [img]="Sun" [size]="12"></lucide-angular></span>
-          <span slot="icon-off"><lucide-angular [img]="Moon" [size]="12"></lucide-angular></span>
+          <span slot="icon-on"><svg [lucideIcon]="Sun" [size]="12"></svg></span>
+          <span slot="icon-off"><svg [lucideIcon]="Moon" [size]="12"></svg></span>
         </tulpar-switch-ng>
       </div>
       <pre class="code"><code>{{ iconSlotCode }}</code></pre>
@@ -421,28 +429,28 @@ const COLOR_CODE = `<!-- Single color override (on-state) — bind it -->
           <h3 class="settings-card-title">Device settings</h3>
           <div class="settings-list">
             <div class="settings-row">
-              <lucide-angular class="settings-icon" [img]="Wifi" [size]="18"></lucide-angular>
+              <svg class="settings-icon" [lucideIcon]="Wifi" [size]="18"></svg>
               <tulpar-switch-ng [(checked)]="wifiEnabled" [noMessageSpace]="true">
                 <span slot="label">Wi-Fi</span>
                 <span slot="description">Connect to wireless networks automatically.</span>
               </tulpar-switch-ng>
             </div>
             <div class="settings-row">
-              <lucide-angular class="settings-icon" [img]="Bell" [size]="18"></lucide-angular>
+              <svg class="settings-icon" [lucideIcon]="Bell" [size]="18"></svg>
               <tulpar-switch-ng [(checked)]="notificationsEnabled" [noMessageSpace]="true">
                 <span slot="label">Push notifications</span>
                 <span slot="description">Receive alerts for activity and updates.</span>
               </tulpar-switch-ng>
             </div>
             <div class="settings-row">
-              <lucide-angular class="settings-icon" [img]="Shield" [size]="18"></lucide-angular>
+              <svg class="settings-icon" [lucideIcon]="Shield" [size]="18"></svg>
               <tulpar-switch-ng [(checked)]="privacyEnabled" [noMessageSpace]="true">
                 <span slot="label">Privacy mode</span>
                 <span slot="description">Hide your online status from other users.</span>
               </tulpar-switch-ng>
             </div>
             <div class="settings-row">
-              <lucide-angular class="settings-icon" [img]="Eye" [size]="18"></lucide-angular>
+              <svg class="settings-icon" [lucideIcon]="Eye" [size]="18"></svg>
               <tulpar-switch-ng [(checked)]="visibilityEnabled" [noMessageSpace]="true">
                 <span slot="label">Profile visibility</span>
                 <span slot="description">Allow others to find you by name or email.</span>
@@ -664,12 +672,12 @@ export class SwitchDemoComponent {
   }
 
   // ── Lucide icon references ──────────────────────────────────────────────────
-  protected readonly Sun = Sun;
-  protected readonly Moon = Moon;
-  protected readonly Wifi = Wifi;
-  protected readonly Bell = Bell;
-  protected readonly Shield = Shield;
-  protected readonly Eye = Eye;
+  protected readonly Sun = LucideSun;
+  protected readonly Moon = LucideMoon;
+  protected readonly Wifi = LucideWifi;
+  protected readonly Bell = LucideBell;
+  protected readonly Shield = LucideShield;
+  protected readonly Eye = LucideEye;
 
   // ── Named icon components for [iconOn] / [iconOff] ──────────────────────────
   protected readonly AppSunIcon = AppSunIcon;

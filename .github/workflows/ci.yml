@@ -3,7 +3,10 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, "phase*/**"]
+
+permissions:
+  contents: read
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -13,8 +16,12 @@ jobs:
   verify:
     name: lint, build & test
     runs-on: ubuntu-26.04
+    timeout-minutes: 45
     steps:
+      # fetch-depth 0: check:suppressions and changeset status compare against origin/main.
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v6
 
@@ -27,21 +34,103 @@ jobs:
 
       - run: pnpm lint
 
+      # push: compare against the previous tip (all-zero on a new branch -> origin/main inside the script);
+      # pull_request: origin/main.
+      - run: pnpm check:suppressions
+        env:
+          SUPPRESSIONS_BASE_REF: ${{ github.event_name == 'push' && github.event.before || '' }}
+
+      - run: pnpm lint:probe
+
       - run: pnpm format:check
 
-      - run: pnpm --filter @tulpar-ui/core run sync-exports:check
+      - run: pnpm --filter @tulpar-ui/core run check:exports
+
+      - run: pnpm --filter @tulpar-ui/shell run check:exports
 
       - run: pnpm build
 
-      - name: Install Playwright (core browser tests)
-        run: pnpm --filter @tulpar-ui/core exec playwright install --with-deps chromium
+      - run: pnpm typecheck
 
-      # Test the published packages only. The demo apps (playground-ng/-vue, docs)
-      # are not published; their dogfooding value is in compiling against the shell,
-      # which the Deploy workflow exercises. Their generated Karma/headless tests are
-      # boilerplate and flake in CI (ChromeHeadless /dev/shm disconnects).
-      - name: Test packages
-        run: pnpm -r --filter "./packages/*" run test
+      - run: pnpm check:dist
+
+      - name: Read Playwright version
+        id: playwright
+        run: echo "version=$(pnpm --filter @tulpar-ui/core exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+
+      # On a cache hit the browsers exist; only the OS libraries are needed.
+      - name: Install Playwright browsers and system deps
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm --filter @tulpar-ui/core exec playwright install --with-deps chromium firefox webkit
+
+      - name: Install Playwright system deps (cache hit)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: pnpm --filter @tulpar-ui/core exec playwright install-deps chromium firefox webkit
+
+      # Test the published packages only. Each engine is its own step with
+      # `!cancelled()`, so a failure in one engine never hides the others.
+      # core/shell run exactly what `test:ci` runs (Chromium + coverage, then
+      # Firefox + WebKit), split into steps.
+      - name: Test tokens, angular, vue
+        run: pnpm -r --no-bail --filter "./packages/*" --filter "!@tulpar-ui/core" --filter "!@tulpar-ui/shell" run test:ci
+
+      - name: Test core (Chromium + coverage)
+        if: ${{ !cancelled() }}
+        run: pnpm --filter @tulpar-ui/core exec wtr-strict --coverage
+
+      - name: Test core (Firefox + WebKit)
+        if: ${{ !cancelled() }}
+        run: pnpm --filter @tulpar-ui/core exec wtr-strict --config web-test-runner.engines.config.js
+
+      - name: Test shell (Chromium + coverage)
+        if: ${{ !cancelled() }}
+        run: pnpm --filter @tulpar-ui/shell exec wtr-strict --coverage
+
+      - name: Test shell (Firefox + WebKit)
+        if: ${{ !cancelled() }}
+        run: pnpm --filter @tulpar-ui/shell exec wtr-strict --config web-test-runner.engines.config.js
+
+      - name: Test test-utils (all engines)
+        if: ${{ !cancelled() }}
+        run: pnpm --filter @tulpar-ui/test-utils run test:ci
+
+      # App builds report even when a test step failed, so one run shows every signal.
+      - name: Build playground-ng
+        if: ${{ !cancelled() }}
+        run: pnpm --filter playground-ng build
+
+      - name: Build playground-vue
+        if: ${{ !cancelled() }}
+        run: pnpm --filter playground-vue build
+
+      # Production bundles must not contain dev warnings (esm-env DEV is false there).
+      # Checked for playground-vue only. playground-ng is deliberately NOT checked
+      # (phase 1.1 ruling, owner decision pending): the Angular CLI resolves the
+      # `production` condition, so DEV is false and nothing warns at runtime, but
+      # esbuild does not fold esm-env's re-exported constant, so dead warning
+      # strings stay in its bundle.
+      - name: Check playground-vue bundle has no dev warnings
+        if: ${{ !cancelled() }}
+        run: |
+          if grep -rIl "icon-only/circle buttons require an aria-label" apps/playground-vue/dist; then
+            echo "::error::Dev warning strings found in the playground-vue production bundle"
+            exit 1
+          fi
+
+      - name: Build docs (Storybook)
+        if: ${{ !cancelled() }}
+        run: pnpm --filter docs build-storybook
+
+      - name: Audit production dependencies
+        if: ${{ !cancelled() }}
+        run: pnpm audit --prod --audit-level high
 
       - name: Changeset status (informational)
-        run: pnpm exec changeset status --since=origin/main || echo "::warning::No changeset found - add one with 'pnpm changeset' if this PR changes published packages"
+        run: pnpm exec changeset status --since=origin/main || echo "::warning::No changeset found - add one with 'pnpm changeset' if this change affects published packages"

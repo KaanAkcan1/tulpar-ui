@@ -1,4 +1,4 @@
-import { fixture, html, expect, aTimeout, oneEvent } from "@open-wc/testing";
+import { fixture, html, expect, aTimeout, nextFrame, oneEvent } from "@open-wc/testing";
 import "./tulpar-tooltip";
 import type { TulparTooltip } from "./tulpar-tooltip";
 import { __resetOverlayRootForTest } from "../_internal/overlay/overlay-root";
@@ -244,6 +244,10 @@ describe("<tulpar-tooltip> open/close behavior + WCAG 1.4.13", () => {
     trigger.dispatchEvent(new FocusEvent("focus", { bubbles: false }));
     await aTimeout(20);
     expect(isOpen(el)).to.be.false;
+    // The pointer flag resets on the next animation frame (not after a fixed
+    // time). A loaded WebKit page can take longer than 20 ms to paint, so wait
+    // for that frame before the keyboard focus.
+    await nextFrame();
 
     // Keyboard focus (no preceding pointerdown) opens immediately.
     trigger.dispatchEvent(new FocusEvent("focus", { bubbles: false }));

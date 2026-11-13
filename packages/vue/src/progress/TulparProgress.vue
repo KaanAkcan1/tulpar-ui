@@ -98,6 +98,6 @@ watchEffect(() => {
     :thickness="props.thickness ?? undefined"
     :size="props.size ?? undefined"
   >
-    <span v-if="$slots.label" style="display: contents" slot="label"><slot name="label" /></span>
+    <span v-if="$slots.label" slot="label" style="display: contents"><slot name="label" /></span>
   </tulpar-progress>
 </template>

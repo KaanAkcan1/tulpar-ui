@@ -7,7 +7,7 @@
 import { TulparButton } from "@tulpar-ui/vue";
 import { vTulparToggletip } from "@tulpar-ui/vue";
 import "@tulpar-ui/core/toggletip";
-import { Info, CircleCheck, TriangleAlert, CircleAlert, HelpCircle } from "lucide-vue-next";
+import { Info, CircleCheck, TriangleAlert, CircleAlert, HelpCircle } from "@lucide/vue";
 
 // ─── Code snippet strings ─────────────────────────────────────────────────────
 
@@ -79,13 +79,13 @@ const keyboardCode = `<!-- The trigger is a real button, so Enter / Space toggle
     <section class="doc-section">
       <div class="hero">
         <TulparButton
-          severity="secondary"
-          variant="outlined"
-          :icon="HelpCircle"
           v-tulpar-toggletip="{
             text: 'Monthly Active Users — distinct users with at least one session in the last 28 days.',
             tone: 'info',
           }"
+          severity="secondary"
+          variant="outlined"
+          :icon="HelpCircle"
         >
           What is MAU?
         </TulparButton>
@@ -103,8 +103,8 @@ const keyboardCode = `<!-- The trigger is a real button, so Enter / Space toggle
       </p>
       <div class="preview">
         <button
-          class="plain-btn"
           v-tulpar-toggletip="'This metric counts active users in the last 28 days.'"
+          class="plain-btn"
         >
           What is MAU?
         </button>
@@ -123,32 +123,32 @@ const keyboardCode = `<!-- The trigger is a real button, so Enter / Space toggle
       </p>
       <div class="preview">
         <button
-          class="plain-btn"
           v-tulpar-toggletip="{ text: 'Synced 2 minutes ago.', tone: 'neutral' }"
+          class="plain-btn"
         >
           Neutral
         </button>
         <button
-          class="plain-btn"
           v-tulpar-toggletip="{ text: 'Read replicas may lag briefly.', tone: 'info' }"
+          class="plain-btn"
         >
           Info
         </button>
         <button
-          class="plain-btn"
           v-tulpar-toggletip="{ text: 'Your changes were saved.', tone: 'success' }"
+          class="plain-btn"
         >
           Success
         </button>
         <button
-          class="plain-btn"
           v-tulpar-toggletip="{ text: 'This plan expires in 3 days.', tone: 'warning' }"
+          class="plain-btn"
         >
           Warning
         </button>
         <button
-          class="plain-btn"
           v-tulpar-toggletip="{ text: 'Two payments failed this cycle.', tone: 'danger' }"
+          class="plain-btn"
         >
           Danger
         </button>
@@ -170,25 +170,25 @@ const keyboardCode = `<!-- The trigger is a real button, so Enter / Space toggle
           <Info slot="icon" :size="16" />
           Read replicas may lag a few seconds behind the primary.
         </tulpar-toggletip>
-        <button class="plain-btn" v-tulpar-toggletip:ref="'tt-info'">Replica lag</button>
+        <button v-tulpar-toggletip:ref="'tt-info'" class="plain-btn">Replica lag</button>
 
         <tulpar-toggletip id="tt-success" tone="success">
           <CircleCheck slot="icon" :size="16" />
           Your changes were saved to the server.
         </tulpar-toggletip>
-        <button class="plain-btn" v-tulpar-toggletip:ref="'tt-success'">Save status</button>
+        <button v-tulpar-toggletip:ref="'tt-success'" class="plain-btn">Save status</button>
 
         <tulpar-toggletip id="tt-warning" tone="warning">
           <TriangleAlert slot="icon" :size="16" />
           Your trial ends in 3 days — add a card to avoid interruption.
         </tulpar-toggletip>
-        <button class="plain-btn" v-tulpar-toggletip:ref="'tt-warning'">Trial</button>
+        <button v-tulpar-toggletip:ref="'tt-warning'" class="plain-btn">Trial</button>
 
         <tulpar-toggletip id="tt-danger" tone="danger">
           <CircleAlert slot="icon" :size="16" />
           Two payments failed this billing cycle.
         </tulpar-toggletip>
-        <button class="plain-btn" v-tulpar-toggletip:ref="'tt-danger'">Billing</button>
+        <button v-tulpar-toggletip:ref="'tt-danger'" class="plain-btn">Billing</button>
       </div>
       <pre class="code"><code>{{ toneIconCode }}</code></pre>
     </section>
@@ -203,29 +203,29 @@ const keyboardCode = `<!-- The trigger is a real button, so Enter / Space toggle
       </p>
       <div class="preview preview--baseline">
         <button
-          class="plain-btn"
           v-tulpar-toggletip="{ text: 'Opens above the trigger', placement: 'top' }"
+          class="plain-btn"
         >
           top
         </button>
         <button
-          class="plain-btn"
           v-tulpar-toggletip="{ text: 'Opens to the right', placement: 'right' }"
+          class="plain-btn"
         >
           right
         </button>
-        <button class="plain-btn" v-tulpar-toggletip="{ text: 'Opens below', placement: 'bottom' }">
+        <button v-tulpar-toggletip="{ text: 'Opens below', placement: 'bottom' }" class="plain-btn">
           bottom
         </button>
         <button
-          class="plain-btn"
           v-tulpar-toggletip="{ text: 'No arrow on this one', arrow: false }"
+          class="plain-btn"
         >
           arrow off
         </button>
         <button
-          class="plain-btn"
           v-tulpar-toggletip="{ text: 'Best-fit side picked automatically', placement: 'auto' }"
+          class="plain-btn"
         >
           auto
         </button>
@@ -242,14 +242,14 @@ const keyboardCode = `<!-- The trigger is a real button, so Enter / Space toggle
         disclosure, not a dialog.
       </p>
       <div class="preview preview--baseline">
-        <button class="plain-btn" v-tulpar-toggletip="'A short, plain-text explanation.'">
+        <button v-tulpar-toggletip="'A short, plain-text explanation.'" class="plain-btn">
           Brief
         </button>
 
         <tulpar-toggletip id="tt-markup">
           <span><strong>Heads up:</strong> billing runs on the 1st of each month.</span>
         </tulpar-toggletip>
-        <button class="plain-btn" v-tulpar-toggletip:ref="'tt-markup'">Short markup</button>
+        <button v-tulpar-toggletip:ref="'tt-markup'" class="plain-btn">Short markup</button>
       </div>
       <pre class="code"><code>{{ markupCode }}</code></pre>
     </section>
@@ -264,8 +264,8 @@ const keyboardCode = `<!-- The trigger is a real button, so Enter / Space toggle
       </p>
       <div class="preview">
         <button
-          class="plain-btn"
           v-tulpar-toggletip="'Press Esc to close — focus returns right here.'"
+          class="plain-btn"
         >
           Keyboard demo
         </button>

@@ -168,10 +168,10 @@ function onChange(e: Event) {
     <!-- Named slot carriers: keep the real slot= attribute so the core's
          named slots receive the projected content. Without this carrier the
          Vue compiler strips slot targeting and the shadow slot stays empty. -->
-    <span v-if="$slots.label" style="display: contents" slot="label"><slot name="label" /></span>
-    <span v-if="$slots.prefix" style="display: contents" slot="prefix"><slot name="prefix" /></span>
-    <span v-if="$slots.suffix" style="display: contents" slot="suffix"><slot name="suffix" /></span>
-    <span v-if="$slots['no-match']" style="display: contents" slot="no-match"
+    <span v-if="$slots.label" slot="label" style="display: contents"><slot name="label" /></span>
+    <span v-if="$slots.prefix" slot="prefix" style="display: contents"><slot name="prefix" /></span>
+    <span v-if="$slots.suffix" slot="suffix" style="display: contents"><slot name="suffix" /></span>
+    <span v-if="$slots['no-match']" slot="no-match" style="display: contents"
       ><slot name="no-match"
     /></span>
     <!-- Default slot: options / option-groups project naturally. -->

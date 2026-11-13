@@ -111,8 +111,7 @@ export class TulparTag extends LitElement {
       this._applyToneVars();
     }
 
-    // Inject icon content imperatively (avoids unsafeSVG/unsafeHTML directive
-    // dual-instance crash — see CLAUDE.md Lit directive gotcha).
+    // Inject icon content imperatively. Dual-instance cause fixed in phase 1.1 (INF-2).
     if (changed.has("icon")) {
       this._applyIconContent();
     }
