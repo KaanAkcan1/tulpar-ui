@@ -6,7 +6,7 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 **Tulpar UI** — A from-scratch design system that ships as Web Components (Lit-based) with idiomatic Angular and Vue wrappers. The goal is a single source of truth for UI behavior + rendering, consumable from any framework.
 
-**Status (2026-11-11):** v0.1–v0.15 are on `main` (24 core elements + 5 shell elements, see below). npm still publishes 0.6.0 — the pending changesets have not been released. A retrospective review (2026-11-11) found 181 findings (21 Blocker); the next work is **phase 1: hardening + token foundation**, before any new component. See "Current phase plan" below. **Phase 1.1 infra: done on branch `phase1/1.1-infra`, pending merge** (close-out: spec §10). Next: lazy demo routes in both playgrounds (owner decision 2026-11-13), then 1.1b visual regression, then 1.2.
+**Status (2026-11-11):** v0.1–v0.15 are on `main` (24 core elements + 5 shell elements, see below). npm still publishes 0.6.0 — the pending changesets have not been released. A retrospective review (2026-11-11) found 181 findings (21 Blocker); the next work is **phase 1: hardening + token foundation**, before any new component. See "Current phase plan" below. **Phase 1.1 infra: done on branch `phase1/1.1-infra`, pending merge** (close-out: spec §10). Lazy demo routes in both playgrounds done (owner decision 2026-11-13, playground-ng budget back to 1.5 MB). Next: 1.1b visual regression, then 1.2.
 
 **Owner:** Kaan Akcan. This is a personal project being built gradually — possible commercial product down the line.
 
